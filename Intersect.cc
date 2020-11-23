@@ -1,6 +1,6 @@
 //
-// Intersect.cc - revision 27 (2019/1/6)
-// Copyright(C) 2019 by Richard Bradley
+// Intersect.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of intersect module
 //

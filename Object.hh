@@ -1,13 +1,11 @@
 //
-// Object.hh - revision 59 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Object.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Definition of base object class
 //
 
-#ifndef Object_hh
-#define Object_hh
-
+#pragma once
 #include "Transform.hh"
 #include "SceneItem.hh"
 #include "Types.hh"
@@ -104,5 +102,3 @@ class Primitive : public Object
 int InitObjectList(
   Scene& s, Object* list, Shader* sh = nullptr, const Transform* t = nullptr);
 int MakeBound(BBox& b, const Transform& t, const Vec3 pt_list[], int pt_count);
-
-#endif

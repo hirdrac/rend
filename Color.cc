@@ -1,6 +1,6 @@
 //
-// Color.cc - revision 19 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Color.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of Color class library
 //

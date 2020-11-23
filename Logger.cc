@@ -1,6 +1,6 @@
 //
-// Logger.cc - revision 3 (2019/1/21)
-// Copyright(C) 2019 by Richard Bradley
+// Logger.cc
+// Copyright (C) 2020 Richard Bradley
 //
 
 #include "Logger.hh"

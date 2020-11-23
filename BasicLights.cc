@@ -1,6 +1,6 @@
 //
-// BasicLights.cc - revision 1 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// BasicLights.cc
+// Copyright (C) 2020 Richard Bradley
 //
 
 #include "BasicLights.hh"

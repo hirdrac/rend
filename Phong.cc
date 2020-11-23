@@ -1,6 +1,6 @@
 //
-// Phong.cc - revision 19 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// Phong.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of the phong illumination class
 //

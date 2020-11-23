@@ -1,6 +1,6 @@
 //
-// DList.hh - revision 13 (2019/3/7)
-// Copyright(C) 2019 by Richard Bradley
+// DList.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // intrusive double linked list
 //
@@ -12,9 +12,7 @@
 // Node* n = list.removeHead();
 //
 
-#ifndef DList_hh
-#define DList_hh
-
+#pragma once
 #include "ListUtility.hh"
 
 
@@ -355,5 +353,3 @@ type* DList<type>::extractNodes()
 // **** Functions ****
 template<typename type>
 void swap(DList<type>& a, DList<type>& b) noexcept { a.swap(b); }
-
-#endif

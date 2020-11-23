@@ -1,13 +1,11 @@
 //
-// CSG.hh - revision 22 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// CSG.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // CSG object classes
 //
 
-#ifndef CSG_hh
-#define CSG_hh
-
+#pragma once
 #include "Object.hh"
 #include "SList.hh"
 #include <iostream>
@@ -81,5 +79,3 @@ class Difference : public CSG
   int intersect(const Ray& r, HitList& hit_list) const override;
   int bound(BBox& b) const override;
 };
-
-#endif

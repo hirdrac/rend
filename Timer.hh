@@ -1,13 +1,11 @@
 //
-// Timer.hh - revision 4 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Timer.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Elaplsed time messuring class
 //
 
-#ifndef Timer_hh
-#define Timer_hh
-
+#pragma once
 #include <cstdint>
 #include <sys/time.h>
 
@@ -61,5 +59,3 @@ class Timer
 
   void addToElapsed(long sec, long usec);
 };
-
-#endif

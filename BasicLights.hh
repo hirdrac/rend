@@ -1,13 +1,11 @@
 //
-// BasicLights.hh - revision 1 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// BasicLights.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Basic light objects
 //
 
-#ifndef BasicLight_hh
-#define BasicLight_hh
-
+#pragma once
 #include "Light.hh"
 #include <iostream>
 
@@ -48,5 +46,3 @@ class SpotLight : public Light
     const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
     const Vec3& map, LightResult& result) const override;
 };
-
-#endif

@@ -1,6 +1,6 @@
 //
-// Shadow.cc - revision 11 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// Shadow.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of shadow module
 //

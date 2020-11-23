@@ -1,13 +1,11 @@
 //
-// Transform.hh - revision 10 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Transform.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // definition of motion/tranformation class
 //
 
-#ifndef Transform_hh
-#define Transform_hh
-
+#pragma once
 #include "Types.hh"
 #include <iosfwd>
 
@@ -47,5 +45,3 @@ inline Vec3 Transform::normalLocalToGlobal(const Vec3& normal, Flt time) const
   // global normal = local normal * transpose(inverse(global transform))
   return UnitVec(MultVectorTrans(normal, GlobalInv(time)));
 }
-
-#endif

@@ -1,6 +1,6 @@
 //
-// Transform.cc - revision 10 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Transform.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of motion module
 //

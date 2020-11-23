@@ -1,13 +1,11 @@
 //
-// Intersect.hh - revision 19 (2019/1/6)
-// Copyright(C) 2019 by Richard Bradley
+// Intersect.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Intersection class and calculations
 //
 
-#ifndef Intersect_hh
-#define Intersect_hh
-
+#pragma once
 #include "Types.hh"
 #include "DList.hh"
 #include <iosfwd>
@@ -71,5 +69,3 @@ class HitList
 
 // **** Functions ****
 std::ostream& operator<<(std::ostream& out, const HitInfo& h);
-
-#endif

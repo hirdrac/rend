@@ -1,6 +1,6 @@
 //
-// ListUtility - revision 35 (2019/3/7)
-// Copyright(C) 2019 by Richard Bradley
+// ListUtility.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // linked list node template classes & support functions
 //
@@ -12,8 +12,7 @@
 //  void setFore(type* n) - set pointer to node preceding current node
 //
 
-#ifndef ListUtility_hh
-#define ListUtility_hh
+#pragma once
 
 
 // **** Functions ****
@@ -115,5 +114,3 @@ void ForEachNode(type* list, fn_type fn)
     list = next;
   }
 }
-
-#endif

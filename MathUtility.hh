@@ -1,14 +1,12 @@
 //
-// MathUtility.hh - revision 7 (2019/3/8)
-// Copyright(C) 2019 by Richard Bradley
+// MathUtility.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // fun and useful numeric constants and
 // various numeric functions needing a home
 //
 
-#ifndef MathUtility_hh
-#define MathUtility_hh
-
+#pragma once
 #include <cmath>
 
 
@@ -177,5 +175,3 @@ constexpr int Sgn(const numType& x)
 {
   return (x < 0) ? -1 : ((x > 0) ? 1 : 0);
 }
-
-#endif

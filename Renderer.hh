@@ -1,11 +1,9 @@
 //
-// Renderer.hh - revision 1 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// Renderer.hh
+// Copyright (C) 2020 Richard Bradley
 //
 
-#ifndef Renderer_hh
-#define Renderer_hh
-
+#pragma once
 #include "Intersect.hh"
 #include "Types.hh"
 #include <condition_variable>
@@ -71,5 +69,3 @@ class Renderer
   void jobMain(Job* j);
   //void jobMain2(Job* j, int start_y, int inc_y);
 };
-
-#endif

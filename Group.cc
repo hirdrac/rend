@@ -1,6 +1,6 @@
 //
-// Group.cc - revision 1 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// Group.cc
+// Copyright (C) 2020 Richard Bradley
 //
 
 #include "Group.hh"

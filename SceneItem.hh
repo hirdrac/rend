@@ -1,11 +1,9 @@
 //
-// SceneItem.hh - revision 2 (2019/1/1)
-// Copyright(C) 2010 by Ricahrd Bradley
+// SceneItem.hh
+// Copyright (C) 2020 Ricahrd Bradley
 //
 
-#ifndef SceneItem_hh
-#define SceneItem_hh
-
+#pragma once
 #include <string>
 #include <iostream>
 
@@ -79,5 +77,3 @@ void PrintList2(std::ostream& out, const ContainerType& x, int indent = 0)
 
   for (SceneItem* item : x) { item->print(out, indent); }
 }
-
-#endif

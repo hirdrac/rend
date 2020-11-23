@@ -1,5 +1,5 @@
-# rend Makefile - revision 17 (2019/1/23)
-# Copyright(C) 2019 by Richard Bradley
+# rend Makefile
+# Copyright (C) 2020 Richard Bradley
 
 BIN_rend.SRC =\
   BasicLights.cc BasicObjects.cc BasicShaders.cc Bound.cc Color.cc CSG.cc\
@@ -10,7 +10,7 @@ BIN_rend.SRC =\
 STANDARD = c++17
 PACKAGES = readline
 OPTIONS = pthread lto modern_c++
-#LIBS = -l:libreadline.a -ltinfo
+
 
 include Makefile.mk
 

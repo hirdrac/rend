@@ -1,13 +1,11 @@
 //
-// Color.hh - revision 21 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Color.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Standard color class library
 //
 
-#ifndef Color_hh
-#define Color_hh
-
+#pragma once
 #include "Types.hh"
 #include <iosfwd>
 
@@ -82,5 +80,3 @@ inline Color operator/(Color& c, Flt s) {
 void MultColor(const Color& a, const Color& b, Color& r);
 Color MultColor(const Color& a, const Color& b);
   // multiply 2 colors together
-
-#endif

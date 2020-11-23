@@ -1,6 +1,6 @@
 //
-// Parse.cc - revision 24 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Parse.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of a parse module
 //

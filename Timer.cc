@@ -1,6 +1,6 @@
 //
-// Timer.cc - revision 4 (2019/1/6)
-// Copyright(C) 2019 by Richard Bradley
+// Timer.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of Timer module
 //

@@ -1,6 +1,6 @@
 //
-// Primitive.cc - revision 32 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// BasicObjects.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of primitive module
 //

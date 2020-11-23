@@ -1,13 +1,11 @@
 //
-// Parse.hh - revision 20 (2019/1/9)
-// Copyright(C) 2019 by Richard Bradley
+// Parse.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Scene description file parser
 //
 
-#ifndef Parse_hh
-#define Parse_hh
-
+#pragma once
 #include "SceneItem.hh"
 #include "Types.hh"
 #include "SList.hh"
@@ -61,5 +59,3 @@ int GetFlt(AstNode*& n, Flt& val, Flt def);
 int GetInt(AstNode*& n, int& val, int def);
 int GetVec2(AstNode*& n, Vec2& v, const Vec2& def);
 int GetVec3(AstNode*& n, Vec3& v, const Vec3& def);
-
-#endif

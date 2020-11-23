@@ -1,13 +1,11 @@
 //
-// Matrix3D.hh - revision 10 (2019/4/29)
-// Copyright(C) 2019 by Richard Bradley
+// Matrix3D.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
 
-#ifndef Matrix3D_hh
-#define Matrix3D_hh
-
+#pragma once
 #include "Vector3D.hh"
 #include "MathUtility.hh"
 #include <iostream>
@@ -668,5 +666,3 @@ int InvertMatrix(const Matrix4x4<T,MOT>& m, Matrix4x4<T,MOT>& dst)
   // no errors
   return 0;
 }
-
-#endif

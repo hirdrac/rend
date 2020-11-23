@@ -1,6 +1,6 @@
 //
-// FrameBuffer.cc - revision 26 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// FrameBuffer.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of FrameBuffer module
 //

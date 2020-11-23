@@ -1,6 +1,6 @@
 //
-// Vector3D.hh - revision 13 (2019/12/2)
-// Copyright(C) 2019 by Richard Bradley
+// Vector3D.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // vector template types/functions for 3D calculations
 //
@@ -8,9 +8,7 @@
 // - constexpr std::sqrt() is a non-standard extension only available in gcc
 //
 
-#ifndef Vector3D_hh
-#define Vector3D_hh
-
+#pragma once
 #include "MathUtility.hh"
 #include <iostream>
 
@@ -387,5 +385,3 @@ inline Vector2<T> UnitVec(const Vector2<T>& v) {
 template<typename T>
 inline Vector3<T> UnitVec(const Vector3<T>& v) {
   return v * (static_cast<T>(1) / v.length()); }
-
-#endif

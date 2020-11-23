@@ -1,13 +1,11 @@
 //
-// BasicObjects.hh - revision 24 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// BasicObjects.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Definitions for primitive object classes
 //
 
-#ifndef BasicObjects_hh
-#define BasicObjects_hh
-
+#pragma once
 #include "Object.hh"
 #include "HitCostInfo.hh"
 #include <iostream>
@@ -191,5 +189,3 @@ class Torus : public Primitive
  private:
   Flt radius, r_constant;
 };
-
-#endif

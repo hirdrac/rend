@@ -1,13 +1,11 @@
 //
-// Phong.hh - revision 1 (2019/1/23)
-// Copyright(C) 2019 by Richard Bradley
+// Phong.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Standard phong illumination model shader
 //
 
-#ifndef Phong_hh
-#define Phong_hh
-
+#pragma once
 #include "Shader.hh"
 
 
@@ -33,5 +31,3 @@ class Phong : public Shader
     const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
     const Vec3& map, Color& result) const override;
 };
-
-#endif

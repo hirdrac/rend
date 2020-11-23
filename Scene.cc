@@ -1,6 +1,6 @@
 //
-// Scene.cc - revision 39 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// Scene.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of scene class
 //

@@ -1,6 +1,6 @@
 //
-// BasicShaders.cc - revision 1 (2019/1/22)
-// Copyright(C) 2019 by Richard Bradley
+// BasicShaders.cc
+// Copyright (C) 2020 Richard Bradley
 //
 
 #include "BasicShaders.hh"

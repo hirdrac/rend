@@ -1,11 +1,9 @@
 //
-// Logger.hh - revision 3 (2019/1/21)
-// Copyright(C) 2019 by Richard Bradley
+// Logger.hh
+// Copyright (C) 2020 Richard Bradley
 //
 
-#ifndef Logger_hh
-#define Logger_hh
-
+#pragma once
 #include <string>
 #include <memory>
 #include <sstream>
@@ -69,5 +67,3 @@ class Logger
 #define LOG_WARN(x)  LOG_STREAM(Logger::defaultLogger(),Logger::WARN,x)
 #define LOG_ERROR(x) LOG_STREAM(Logger::defaultLogger(),Logger::ERROR,x)
 #define LOG_FATAL(x) LOG_STREAM(Logger::defaultLogger(),Logger::FATAL,x)
-
-#endif

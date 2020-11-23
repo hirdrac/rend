@@ -1,6 +1,6 @@
 //
-// Bound.cc - revision 20 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// Bound.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of bound module
 //

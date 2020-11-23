@@ -1,6 +1,6 @@
 //
-// Shader.cc - revision 30 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Shader.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of shader module
 //

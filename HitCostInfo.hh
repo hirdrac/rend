@@ -1,13 +1,11 @@
 //
-// HitCostInfo.hh - revision 1 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// HitCostInfo.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // primitive hit cost values used for bound creation
 //
 
-#ifndef HitCostInfo_hh
-#define HitCostInfo_hh
-
+#pragma once
 #include "Types.hh"
 
 
@@ -38,5 +36,3 @@ class HitCostInfo
 
 // **** Globals ****
 extern HitCostInfo CostTable;
-
-#endif

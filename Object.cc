@@ -1,6 +1,6 @@
 //
-// Object.cc - revision 28 (2019/1/22)
-// Copyright(C) 2019 by Richard Bradley
+// Object.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of object classes
 //

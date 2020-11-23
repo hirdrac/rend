@@ -1,11 +1,9 @@
 //
-// Group.hh - revision 1 (2018/12/31)
-// Copyright(C) 2018 by Richard Bradley
+// Group.hh
+// Copyright (C) 2020 Richard Bradley
 //
 
-#ifndef Group_hh
-#define Group_hh
-
+#pragma once
 #include "Object.hh"
 #include "SList.hh"
 
@@ -34,5 +32,3 @@ class Group final : public Primitive
  protected:
   SList<Object> child_list;
 };
-
-#endif

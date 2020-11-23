@@ -1,6 +1,6 @@
 //
-// Stats.cc - revision 12 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// Stats.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of stats module
 //

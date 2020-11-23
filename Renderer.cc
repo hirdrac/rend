@@ -1,6 +1,6 @@
 //
-// Renderer.cc - revision 1 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// Renderer.cc
+// Copyright (C) 2020 Richard Bradley
 //
 
 #include "Renderer.hh"

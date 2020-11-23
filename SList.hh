@@ -1,6 +1,6 @@
 //
-// SList.hh - revision 13 (2019/3/7)
-// Copyright(C) 2019 by Richard Bradley
+// SList.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // intrusive single linked list
 //
@@ -12,9 +12,7 @@
 // Node* n = list.removeHead();
 //
 
-#ifndef SList_hh
-#define SList_hh
-
+#pragma once
 #include "ListUtility.hh"
 
 
@@ -281,5 +279,3 @@ type* SList<type>::extractNodes()
 // **** Functions ****
 template<typename type>
 void swap(SList<type>& a, SList<type>& b) noexcept { a.swap(b); }
-
-#endif

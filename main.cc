@@ -1,6 +1,6 @@
 //
-// main.cc - revision 27 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// main.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // startup for rend
 //

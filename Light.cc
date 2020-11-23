@@ -1,6 +1,6 @@
 //
-// Light.cc - revision 21 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Light.cc
+// Copyright (C) 2020 Richard Bradley
 //
 
 #include "Light.hh"

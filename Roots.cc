@@ -1,6 +1,6 @@
 //
-// Roots.cc - revision 7 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Roots.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of polynominal root finding functions
 // Most of SolveQuadric(), SolveCubic(), SolveQuartic() taken from code

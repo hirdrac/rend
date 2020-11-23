@@ -1,14 +1,12 @@
 //
-// Bound.hh - revision 20 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// Bound.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Defintion of Bound object class and
 // bounding box heiarchy function
 //
 
-#ifndef Bound_hh
-#define Bound_hh
-
+#pragma once
 #include "Object.hh"
 #include "HitCostInfo.hh"
 #include <vector>
@@ -39,5 +37,3 @@ class Bound : public Object
 
 // **** Functions ****
 Bound* MakeBoundList(const Object* list);
-
-#endif

@@ -1,13 +1,11 @@
 //
-// Types.hh - revision 37 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Types.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Definition of standard types and constants
 //
 
-#ifndef Types_hh
-#define Types_hh
-
+#pragma once
 #include "Matrix3D.hh"
 #include "Vector3D.hh"
 #include "MathUtility.hh"
@@ -25,5 +23,3 @@ constexpr Flt VERY_SMALL = 1.0e-12;
 constexpr Flt VERY_LARGE = 1.0e99;
 
 constexpr Flt PI = MathVal<Flt>::PI;
-
-#endif

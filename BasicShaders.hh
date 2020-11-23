@@ -1,13 +1,11 @@
 //
-// BasicShaders.hh - revision 1 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// BasicShaders.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Various simple shaders
 //
 
-#ifndef BasicShaders_hh
-#define BasicShaders_hh
-
+#pragma once
 #include "Shader.hh"
 #include <iostream>
 
@@ -151,6 +149,4 @@ class TextureMap : public PatternShader
     const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
     const Vec3& map, Color& result) const override;
 };
-#endif
-
 #endif

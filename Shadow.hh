@@ -1,13 +1,11 @@
 //
-// Shadow.hh - revision 9 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Shadow.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Shadow calculation functions
 //
 
-#ifndef Shadow_hh
-#define Shadow_hh
-
+#pragma once
 #include "Types.hh"
 
 
@@ -28,5 +26,3 @@ int CastShadow(
 int CastNoShadow(
   const Scene& s, const Ray& r, const Vec3& globalPt,
   const Vec3& lightDir, Flt lightDist, Color& energy);
-
-#endif

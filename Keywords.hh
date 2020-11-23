@@ -1,11 +1,9 @@
 //
-// Keywords.hh - revision 16 (2019/1/1)
-// Copyright(C) 2019 by Richard Bradley
+// Keywords.hh
+// Copyright (C) 2020 Richard Bradley
 //
 
-#ifndef Keywords_hh
-#define Keywords_hh
-
+#pragma once
 #include "SceneItem.hh"
 //#include <functional>
 
@@ -21,5 +19,3 @@ typedef int (*ItemFn)
 
 // **** Functions ****
 ItemFn FindItemFn(const std::string& str);
-
-#endif

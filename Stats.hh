@@ -1,13 +1,11 @@
 //
-// Stats.hh - revision 14 (2019/1/3)
-// Copyright(C) 2019 by Richard Bradley
+// Stats.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // raytracing statistics gathering
 //
 
-#ifndef Stats_hh
-#define Stats_hh
-
+#pragma once
 #include "Types.hh"
 #include <iosfwd>
 
@@ -68,5 +66,3 @@ class StatInfo
 // **** Globals ****
 extern InventoryInfo Inventory;
 extern StatInfo Stats;
-
-#endif

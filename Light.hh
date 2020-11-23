@@ -1,13 +1,11 @@
 //
-// Light.hh - revision 19 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Light.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Light base class
 //
 
-#ifndef Light_hh
-#define Light_hh
-
+#pragma once
 #include "SceneItem.hh"
 #include "Color.hh"
 #include "Shadow.hh"
@@ -52,5 +50,3 @@ class Light : public SceneItem
 
 // **** Functions ****
 int InitLight(Scene& s, Light& lt, ShadowFn shadow_fn);
-
-#endif

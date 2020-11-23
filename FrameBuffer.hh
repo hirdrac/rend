@@ -1,13 +1,11 @@
 //
-// FrameBuffer.hh - revision 19 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// FrameBuffer.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // RGB image frame buffer class library (holds render result)
 //
 
-#ifndef FrameBuffer_hh
-#define FrameBuffer_hh
-
+#pragma once
 #include <string>
 #include <vector>
 
@@ -44,5 +42,3 @@ class FrameBuffer
   FrameBuffer(const FrameBuffer&) = delete;
   FrameBuffer& operator=(const FrameBuffer&) = delete;
 };
-
-#endif

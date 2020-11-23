@@ -1,6 +1,6 @@
 //
-// Ray.cc - revision 18 (2019/1/6)
-// Copyright(C) 2019 by Richard Bradley
+// Ray.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of ray class and functions
 //

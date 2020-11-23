@@ -1,6 +1,6 @@
 //
-// CSG.cc - revision 26 (2019/1/6)
-// Copyright(C) 2019 by Richard Bradley
+// CSG.cc
+// Copyright (C) 2020 Richard Bradley
 //
 // Implementation of CSG classes
 //

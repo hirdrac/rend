@@ -1,13 +1,11 @@
 //
-// Ray.hh - revision 19 (2019/1/10)
-// Copyright(C) 2019 by Richard Bradley
+// Ray.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Definition of ray class and functions
 //
 
-#ifndef Ray_hh
-#define Ray_hh
-
+#pragma once
 #include "Intersect.hh"
 #include "Types.hh"
 
@@ -47,5 +45,3 @@ constexpr Vec3 CalcHitPoint(const Vec3& base, const Vec3& dir, Flt t)
 {
   return base + (dir * t);
 }
-
-#endif

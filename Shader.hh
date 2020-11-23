@@ -1,13 +1,11 @@
 //
-// Shader.hh - revision 29 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Shader.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Shader base classes
 //
 
-#ifndef Shader_hh
-#define Shader_hh
-
+#pragma once
 #include "Scene.hh"
 #include "Transform.hh"
 #include "Types.hh"
@@ -56,5 +54,3 @@ class PatternShader : public Shader
 // **** Functions ****
 int InitShader(
   Scene& s, Shader& sh, Flt value = 1.0, const Transform* t = nullptr);
-
-#endif

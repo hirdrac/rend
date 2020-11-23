@@ -1,13 +1,11 @@
 //
-// Scene.hh - revision 29 (2019/1/4)
-// Copyright(C) 2019 by Richard Bradley
+// Scene.hh
+// Copyright (C) 2020 Richard Bradley
 //
 // Definition of scene class
 //
 
-#ifndef Scene_hh
-#define Scene_hh
-
+#pragma once
 #include "Object.hh"
 #include "Light.hh"
 #include "Shader.hh"
@@ -68,5 +66,3 @@ class Scene
  private:
   std::vector<Shader*> _shaders;
 };
-
-#endif
