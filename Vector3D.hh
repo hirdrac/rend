@@ -10,7 +10,7 @@
 
 #pragma once
 #include "MathUtility.hh"
-#include <iostream>
+#include <ostream>
 
 
 // **** Template Types ****
@@ -34,7 +34,7 @@ class Vector2
 
 
   // Constructors
-  Vector2() { }
+  Vector2() = default;
   constexpr Vector2(T vx, T vy) : x(vx), y(vy) { }
 
 
@@ -79,9 +79,9 @@ class Vector2
   T length() const { return std::sqrt(lengthSqr()); }
   constexpr bool isUnit() const { return IsOne(lengthSqr()); }
 
-  void set(T vx, T vy) { x = vx; y = vy; }
-  void set(const T* v) { set(v[0], v[1]); }
-  void invert() { x = -x; y = -y; }
+  constexpr void set(T vx, T vy) { x = vx; y = vy; }
+  constexpr void set(const T* v) { set(v[0], v[1]); }
+  constexpr void invert() { x = -x; y = -y; }
   void normalize() { operator*=(static_cast<T>(1) / length()); }
 };
 
@@ -102,7 +102,7 @@ class Vector3
 
 
   // Constructors
-  Vector3() { }
+  Vector3() = default;
   constexpr Vector3(T vx, T vy, T vz) : x(vx), y(vy), z(vz) { }
 
 
@@ -147,9 +147,9 @@ class Vector3
   T length() const { return std::sqrt(lengthSqr()); }
   constexpr bool isUnit() const { return IsOne(lengthSqr()); }
 
-  void set(T vx, T vy, T vz) { x = vx; y = vy; z = vz; }
-  void set(const T* v) { set(v[0], v[1], v[2]); }
-  void invert() { x = -x; y = -y; z = -z; }
+  constexpr void set(T vx, T vy, T vz) { x = vx; y = vy; z = vz; }
+  constexpr void set(const T* v) { set(v[0], v[1], v[2]); }
+  constexpr void invert() { x = -x; y = -y; z = -z; }
   void normalize() { operator*=(static_cast<T>(1) / length()); }
 
   // Vector2 swizzle
@@ -181,7 +181,7 @@ class Vector4
 
 
   // Constructors
-  Vector4() { }
+  Vector4() = default;
   constexpr Vector4(T vx, T vy, T vz, T vw) : x(vx), y(vy), z(vz), w(vw) { }
   constexpr Vector4(const Vector3<T>& v, T vw)
     : Vector4(v[0], v[1], v[2], vw) { }
@@ -224,11 +224,11 @@ class Vector4
   constexpr T* data() noexcept { return _val; }
   constexpr const T* data() const noexcept { return _val; }
 
-  void set(T vx, T vy, T vz, T vw) { x = vx; y = vy; z = vz; w = vw; }
-  void set(const T* v) { set(v[0], v[1], v[2], v[3]); }
-  void set(const T* v, T vw) { set(v[0], v[1], v[2], vw); }
-  void set(const Vector3<T>& v, T vw) { set(v.x, v.y, v.z, vw); }
-  void invert() { x = -x; y = -y; z = -z; w = -w; }
+  constexpr void set(T vx, T vy, T vz, T vw) { x = vx; y = vy; z = vz; w = vw; }
+  constexpr void set(const T* v) { set(v[0], v[1], v[2], v[3]); }
+  constexpr void set(const T* v, T vw) { set(v[0], v[1], v[2], vw); }
+  constexpr void set(const Vector3<T>& v, T vw) { set(v.x, v.y, v.z, vw); }
+  constexpr void invert() { x = -x; y = -y; z = -z; w = -w; }
 
   // Vector2 swizzle
   constexpr Vector2<T>& xy() {
