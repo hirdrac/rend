@@ -1,6 +1,6 @@
 //
 // Matrix3D.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
@@ -41,8 +41,8 @@ class Matrix4x4
 
 
   // Operators
-  constexpr T& operator[](size_type i) { return _val[i]; }
-  constexpr const T& operator[](size_type i) const { return _val[i]; }
+  [[nodiscard]] constexpr T& operator[](size_type i) { return _val[i]; }
+  [[nodiscard]] constexpr const T& operator[](size_type i) const { return _val[i]; }
 
   template<unsigned int N>
   constexpr self_type& operator=(const T (&vals)[N]) {
@@ -63,19 +63,19 @@ class Matrix4x4
   using iterator = T*;
   using const_iterator = const T*;
 
-  constexpr iterator begin() noexcept { return data(); }
-  constexpr const_iterator begin() const noexcept { return data(); }
-  constexpr const_iterator cbegin() const noexcept { return data(); }
+  [[nodiscard]] constexpr iterator begin() noexcept { return data(); }
+  [[nodiscard]] constexpr const_iterator begin() const noexcept { return data(); }
+  [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return data(); }
 
-  constexpr iterator end() noexcept { return data() + size(); }
-  constexpr const_iterator end() const noexcept { return data() + size(); }
-  constexpr const_iterator cend() const noexcept { return data() + size(); }
+  [[nodiscard]] constexpr iterator end() noexcept { return data() + size(); }
+  [[nodiscard]] constexpr const_iterator end() const noexcept { return data() + size(); }
+  [[nodiscard]] constexpr const_iterator cend() const noexcept { return data() + size(); }
 
 
   // Member Functions
-  static constexpr size_type size() noexcept { return 16; }
-  constexpr T* data() noexcept { return _val; }
-  constexpr const T* data() const noexcept { return _val; }
+  [[nodiscard]] static constexpr size_type size() noexcept { return 16; }
+  [[nodiscard]] constexpr T* data() noexcept { return _val; }
+  [[nodiscard]] constexpr const T* data() const noexcept { return _val; }
 
   constexpr void setZero();
   constexpr void setIdentity();
@@ -126,7 +126,7 @@ class Matrix4x4
 
 // **** Binary operators ****
 template<typename T>
-constexpr Matrix4x4<T,ROW_MAJOR> operator*(
+[[nodiscard]] constexpr Matrix4x4<T,ROW_MAJOR> operator*(
   const Matrix4x4<T,ROW_MAJOR>& a, const Matrix4x4<T,ROW_MAJOR>& b)
 {
   Matrix4x4<T,ROW_MAJOR> m;
@@ -147,7 +147,7 @@ constexpr Matrix4x4<T,ROW_MAJOR> operator*(
 }
 
 template<typename T>
-constexpr Matrix4x4<T,COLUMN_MAJOR> operator*(
+[[nodiscard]] constexpr Matrix4x4<T,COLUMN_MAJOR> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& a, const Matrix4x4<T,COLUMN_MAJOR>& b)
 {
   Matrix4x4<T,COLUMN_MAJOR> m;
@@ -168,7 +168,7 @@ constexpr Matrix4x4<T,COLUMN_MAJOR> operator*(
 }
 
 template<typename T>
-constexpr Vector4<T> operator*(
+[[nodiscard]] constexpr Vector4<T> operator*(
   const Vector4<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   return Vector4<T>(
@@ -179,7 +179,7 @@ constexpr Vector4<T> operator*(
 }
 
 template<typename T>
-constexpr Vector4<T> operator*(
+[[nodiscard]] constexpr Vector4<T> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector4<T>& v)
 {
   return Vector4<T>(
@@ -517,7 +517,7 @@ constexpr void Matrix4x4<T,MOT>::transpose()
 // **** Template Functions ****
 // MultPoint() - row vector * row major matrix
 template<typename T>
-constexpr Vector3<T> MultPoint(
+[[nodiscard]] constexpr Vector3<T> MultPoint(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 1, m[3,7,11] = 0, m[15] = 1
@@ -528,7 +528,7 @@ constexpr Vector3<T> MultPoint(
 
 // MultPoint() - column major matrix * column vector
 template<typename T>
-constexpr Vector3<T> MultPoint(
+[[nodiscard]] constexpr Vector3<T> MultPoint(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 1, m[3,7,11] = 0, m[15] = 1
@@ -539,7 +539,7 @@ constexpr Vector3<T> MultPoint(
 
 // MultVector() - row vector * row major matrix
 template<typename T>
-constexpr Vector3<T> MultVector(
+[[nodiscard]] constexpr Vector3<T> MultVector(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 0, m[3,7,11] = 0, m[15] = 1
@@ -550,7 +550,7 @@ constexpr Vector3<T> MultVector(
 
 // MultVector() - column major matrix * column vector
 template<typename T>
-constexpr Vector3<T> MultVector(
+[[nodiscard]] constexpr Vector3<T> MultVector(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 0, m[3,7,11] = 0, m[15] = 1
@@ -561,7 +561,7 @@ constexpr Vector3<T> MultVector(
 
 // MultVectorTrans - row vector * transpose(row major matrix)
 template<typename T>
-constexpr Vector3<T> MultVectorTrans(
+[[nodiscard]] constexpr Vector3<T> MultVectorTrans(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 0, m[12,13,14] = 0, m[15] = 1
@@ -572,7 +572,7 @@ constexpr Vector3<T> MultVectorTrans(
 
 // MultVectorTrans() - transpose(column major matrix) * column vector
 template<typename T>
-constexpr Vector3<T> MultVectorTrans(
+[[nodiscard]] constexpr Vector3<T> MultVectorTrans(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 0, m[12,13,14] = 0, m[15] = 1
