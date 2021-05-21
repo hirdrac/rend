@@ -1,6 +1,6 @@
 //
 // Logger.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #include "Logger.hh"
@@ -15,10 +15,23 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
+#if __has_include(<sys/syscall.h>)
+#include <sys/syscall.h>
+#endif
 
 namespace {
+#ifdef SYS_gettid
   // Linux specific thread id
-  inline pid_t get_threadid() { return syscall(SYS_gettid); }
+  // NOTE: 'gettid()' is available in glibc 2.30
+  //   for earlier versions, this function is needed
+  [[nodiscard]] inline pid_t get_threadid() {
+    return pid_t(syscall(SYS_gettid)); }
+#else
+  // thread ID logging disabled
+  [[nodiscard]] inline pid_t get_threadid() { return 0; }
+#endif
+
+  const pid_t mainThreadID = get_threadid();
 
   std::string logTime()
   {
@@ -104,7 +117,7 @@ namespace
     std::string _filename;
   };
 
-  constexpr const char* levelStr(Logger::Level l)
+  [[nodiscard]] constexpr const char* levelStr(Logger::Level l)
   {
     switch (l) {
       case Logger::TRACE: return "[TRACE] ";
@@ -139,10 +152,10 @@ void Logger::setFile(const std::string& fileName)
 void Logger::log(Level l, const std::string& msg, const char* file, int line)
 {
   std::ostringstream os;
-  os << logTime() << levelStr(l) << msg << " ("
-    //<< std::this_thread::get_id() << ' '
-     << get_threadid() << ' '
-     << file << ':' << line << ")\n";
+  pid_t tid = get_threadid();
+  os << logTime() << levelStr(l) << msg << " (";
+  if (tid != mainThreadID) { os << "t=" << tid << ' '; }
+  os << file << ':' << line << ")\n";
   std::string s = os.str();
   _impl->log(s.c_str(), s.length());
 }
