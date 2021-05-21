@@ -49,69 +49,69 @@ namespace math {
 
 
 // **** Functions ****
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr fltType DegToRad(fltType deg)
 {
   return deg * math::DEG_TO_RAD<fltType>;
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr fltType RadToDeg(fltType rad)
 {
   return rad * math::RAD_TO_DEG<fltType>;
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsZero(fltType x)
 {
   return (x > -math::VERY_SMALL<fltType>) && (x < math::VERY_SMALL<fltType>);
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsOne(fltType x)
 {
   return (x > (static_cast<fltType>(1) - math::VERY_SMALL<fltType>))
     && (x < (static_cast<fltType>(1) + math::VERY_SMALL<fltType>));
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsPositive(fltType x)
 {
   return (x >= math::VERY_SMALL<fltType>);
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsNegative(fltType x)
 {
   return (x <= -math::VERY_SMALL<fltType>);
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsEqual(fltType x, fltType y)
 {
   return IsZero(x-y);
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsLess(fltType x, fltType y)
 {
   return IsNegative(x-y);
 }
 
-template<typename fltType>
+template<class fltType>
 [[nodiscard]] constexpr bool IsGreater(fltType x, fltType y)
 {
   return IsPositive(x-y);
 }
 
-template<typename intType>
+template<class intType>
 [[nodiscard]] constexpr bool IsPowerOf2(intType x)
 {
   static_assert(std::is_integral_v<intType>);
   return (x & (x - 1)) == 0;
 }
 
-template<typename numType, typename fltType>
+template<class numType, class fltType>
 [[nodiscard]] constexpr numType Lerp(numType a, numType b, fltType s)
 {
   // use std::lerp() for C++20
@@ -125,18 +125,18 @@ template<typename numType, typename fltType>
   }
 }
 
-template<typename numType>
+template<class numType>
 [[nodiscard]] constexpr numType Sqr(numType x)
 {
   return x * x;
 }
 
-template<typename intType>
-[[nodiscard]] constexpr intType iPow(intType x, int y)
+template<class numType>
+[[nodiscard]] constexpr numType iPow(numType x, int y)
 {
   if (y < 0) { return 0; }
 
-  intType val = 1;
+  numType val = static_cast<numType>(1);
   while (y) {
     if (y & 1) { val *= x; }
     y >>= 1;
@@ -146,7 +146,7 @@ template<typename intType>
   return val;
 }
 
-template <typename numType>
+template<class numType>
 [[nodiscard]] constexpr int Sgn(numType x)
 {
   if constexpr (std::is_signed_v<numType>) {
@@ -163,7 +163,7 @@ template <typename numType>
   return (x < 0) ? -int(x) : int(x); }
 
 // template for all other types
-template<typename numType>
+template<class numType>
 [[nodiscard]] constexpr numType Abs(numType x)
 {
   if constexpr (std::is_signed_v<numType>) {
