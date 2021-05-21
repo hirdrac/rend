@@ -1,6 +1,6 @@
 //
 // FrameBuffer.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of FrameBuffer module
 //
@@ -63,9 +63,9 @@ int FrameBuffer::saveBMP(const std::string& filename) const
     float g = *itr++;
     float b = *itr++;
 
-    file << uint8_t((Clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
-    file << uint8_t((Clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
-    file << uint8_t((Clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
+    file << uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
+    file << uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
+    file << uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
   }
 
   return 0;

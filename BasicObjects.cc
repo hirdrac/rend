@@ -1,6 +1,6 @@
 //
 // BasicObjects.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of primitive module
 //
@@ -10,6 +10,7 @@
 #include "Ray.hh"
 #include "Roots.hh"
 #include "Stats.hh"
+#include <algorithm>
 #include <cmath>
 
 
@@ -150,7 +151,7 @@ int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
     Vec2 dir = {h.local_pt.x, h.local_pt.y};
     dir.normalize();
-    Flt x = Clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
+    Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
     Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
     map.set((h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0);
   }
@@ -368,7 +369,7 @@ int Cylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
       Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
       normal = _trans.normalLocalToGlobal(n, 0);
 
-      Flt x = Clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
+      Flt x = std::clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
       Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
       map.set((h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0);
       break;
@@ -449,7 +450,7 @@ int OpenCone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
   Vec2 dir{h.local_pt.x, h.local_pt.y};
   dir.normalize();
-  Flt x = Clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
+  Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
   Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
 
   map.set((h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0);
@@ -512,7 +513,7 @@ int OpenCylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
   Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
   normal = _trans.normalLocalToGlobal(n, 0);
 
-  Flt x = Clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
+  Flt x = std::clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
   Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
   map.set((h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0);
   return 0;

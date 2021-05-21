@@ -50,78 +50,69 @@ namespace math {
 
 // **** Functions ****
 template<typename fltType>
-[[nodiscard]] constexpr fltType DegToRad(const fltType& deg)
+[[nodiscard]] constexpr fltType DegToRad(fltType deg)
 {
   return deg * math::DEG_TO_RAD<fltType>;
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr fltType RadToDeg(const fltType& rad)
+[[nodiscard]] constexpr fltType RadToDeg(fltType rad)
 {
   return rad * math::RAD_TO_DEG<fltType>;
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsZero(const fltType& x)
+[[nodiscard]] constexpr bool IsZero(fltType x)
 {
   return (x > -math::VERY_SMALL<fltType>) && (x < math::VERY_SMALL<fltType>);
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsOne(const fltType& x)
+[[nodiscard]] constexpr bool IsOne(fltType x)
 {
   return (x > (static_cast<fltType>(1) - math::VERY_SMALL<fltType>))
     && (x < (static_cast<fltType>(1) + math::VERY_SMALL<fltType>));
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsPositive(const fltType& x)
+[[nodiscard]] constexpr bool IsPositive(fltType x)
 {
   return (x >= math::VERY_SMALL<fltType>);
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsNegative(const fltType& x)
+[[nodiscard]] constexpr bool IsNegative(fltType x)
 {
   return (x <= -math::VERY_SMALL<fltType>);
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsEqual(const fltType& x, const fltType& y)
+[[nodiscard]] constexpr bool IsEqual(fltType x, fltType y)
 {
   return IsZero(x-y);
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsLess(const fltType& x, const fltType& y)
+[[nodiscard]] constexpr bool IsLess(fltType x, fltType y)
 {
   return IsNegative(x-y);
 }
 
 template<typename fltType>
-[[nodiscard]] constexpr bool IsGreater(const fltType& x, const fltType& y)
+[[nodiscard]] constexpr bool IsGreater(fltType x, fltType y)
 {
   return IsPositive(x-y);
 }
 
-template<typename numType>
-[[nodiscard]] constexpr numType Clamp(
-  const numType& x, const numType& low, const numType& high)
-{
-  // assume high >= low
-  // use std::clamp() instead for C++17
-  return (x < low) ? low : ((high < x) ? high : x);
-}
-
 template<typename intType>
-[[nodiscard]] constexpr bool IsPowerOf2(const intType& x)
+[[nodiscard]] constexpr bool IsPowerOf2(intType x)
 {
+  static_assert(std::is_integral_v<intType>);
   return (x & (x - 1)) == 0;
 }
 
 template<typename numType, typename fltType>
-[[nodiscard]] constexpr numType Lerp(
-  const numType& a, const numType& b, const fltType& s)
+[[nodiscard]] constexpr numType Lerp(numType a, numType b, fltType s)
 {
   // use std::lerp() for C++20
   static_assert(std::is_floating_point_v<fltType>);
@@ -135,51 +126,9 @@ template<typename numType, typename fltType>
 }
 
 template<typename numType>
-[[nodiscard]] constexpr numType Sqr(const numType& x)
+[[nodiscard]] constexpr numType Sqr(numType x)
 {
   return x * x;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow3(const numType& x)
-{
-  return x * x * x;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow4(const numType& x)
-{
-  numType x2 = x * x; return x2 * x2;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow5(const numType& x)
-{
-  numType x2 = x * x; return x2 * x2 * x;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow6(const numType& x)
-{
-  numType x2 = x * x; return x2 * x2 * x2;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow7(const numType& x)
-{
-  numType x2 = x * x; return x2 * x2 * x2 * x;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow8(const numType& x)
-{
-  numType x2 = x * x, x4 = x2 * x2; return x4 * x4;
-}
-
-template<typename numType>
-[[nodiscard]] constexpr numType Pow9(const numType& x)
-{
-  numType x2 = x * x, x4 = x2 * x2; return x4 * x4 * x;
 }
 
 template<typename intType>
@@ -198,7 +147,7 @@ template<typename intType>
 }
 
 template <typename numType>
-[[nodiscard]] constexpr int Sgn(const numType& x)
+[[nodiscard]] constexpr int Sgn(numType x)
 {
   if constexpr (std::is_signed_v<numType>) {
     return int(x > 0) - int(x < 0);
