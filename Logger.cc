@@ -35,24 +35,22 @@ namespace {
   std::string logTime()
   {
     std::time_t t = std::time(nullptr);
-    std::tm tdata;
-    localtime_r(&t, &tdata);
+    std::tm* td = std::localtime(&t);
     char str[32];
     int len = snprintf(str, sizeof(str), "%d-%02d-%02d %02d:%02d:%02d ",
-		       tdata.tm_year + 1900, tdata.tm_mon + 1, tdata.tm_mday,
-		       tdata.tm_hour, tdata.tm_min, tdata.tm_sec);
+		       td->tm_year + 1900, td->tm_mon + 1, td->tm_mday,
+		       td->tm_hour, td->tm_min, td->tm_sec);
     return std::string(str, len);
   }
 
   std::string fileTime()
   {
     std::time_t t = std::time(nullptr);
-    std::tm tdata;
-    localtime_r(&t, &tdata);
+    std::tm* td = std::localtime(&t);
     char str[32];
     int len = snprintf(str, sizeof(str), "-%d%02d%02d_%02d%02d%02d",
-		       tdata.tm_year + 1900, tdata.tm_mon + 1, tdata.tm_mday,
-		       tdata.tm_hour, tdata.tm_min, tdata.tm_sec);
+		       td->tm_year + 1900, td->tm_mon + 1, td->tm_mday,
+		       td->tm_hour, td->tm_min, td->tm_sec);
     return std::string(str, len);
   }
 }
