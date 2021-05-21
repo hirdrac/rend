@@ -1,6 +1,6 @@
 //
 // Keywords.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #pragma once
@@ -18,4 +18,4 @@ typedef int (*ItemFn)
 
 
 // **** Functions ****
-ItemFn FindItemFn(const std::string& str);
+[[nodiscard]] ItemFn FindItemFn(const std::string& str);

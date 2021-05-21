@@ -114,22 +114,10 @@ bool Color::isBlack(Flt v) const
 }
 
 
-// **** Function ****
-std::ostream& operator<<(std::ostream& out, const Color& c)
+// **** Functions ****
+std::ostream& operator<<(std::ostream& os, const Color& c)
 {
-  out << '[' << c[0];
-  for (int i = 1; i < c.waves(); ++i) { out << ' ' << c[i]; }
-  return out << ']';
-}
-
-void MultColor(const Color& a, const Color& b, Color& r)
-{
-  for (int i = 0; i < r.waves(); ++i) { r[i] = a[i] * b[i]; }
-}
-
-Color MultColor(const Color& a, const Color& b)
-{
-  Color r;
-  for (int i = 0; i < a.waves(); ++i) { r[i] = a[i] * b[i]; }
-  return r;
+  os << '[' << c[0];
+  for (int i = 1; i < c.waves(); ++i) { os << ' ' << c[i]; }
+  return os << ']';
 }

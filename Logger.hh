@@ -1,6 +1,6 @@
 //
 // Logger.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #pragma once
@@ -24,7 +24,7 @@ class Logger
   void setOStream(std::ostream& os);
   void setFile(const std::string& fileName);
 
-  Level level() const { return _level; }
+  [[nodiscard]] Level level() const { return _level; }
   void setLevel(Level l) { _level = l; }
 
   void log(Level l, const std::string& msg, const char* file, int line);

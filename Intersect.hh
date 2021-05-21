@@ -1,6 +1,6 @@
 //
 // Intersect.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Intersection class and calculations
 //
@@ -46,17 +46,16 @@ class HitList
   int mergeList(HitList& list);
   void clear();
 
-  HitInfo* findFirstHit(const Ray& r) const;
-
-  HitInfo* extractFirst() { return _hitList.removeHead(); }
-  bool     empty() const { return _hitList.empty(); }
-  int      count() const { return _hitList.count(); }
+  [[nodiscard]] HitInfo* findFirstHit(const Ray& r) const;
+  [[nodiscard]] HitInfo* extractFirst() { return _hitList.removeHead(); }
+  [[nodiscard]] bool empty() const { return _hitList.empty(); }
+  [[nodiscard]] int  count() const { return _hitList.count(); }
 
   int csgMerge(const Object* csg);
   int csgUnion(const Object* csg);
   int csgIntersection(const Object* csg, int objectCount);
 
-  DList<HitInfo>* freeCache() { return _freeCache; }
+  [[nodiscard]] DList<HitInfo>* freeCache() { return _freeCache; }
 
  private:
   DList<HitInfo> _hitList;
@@ -68,4 +67,4 @@ class HitList
 
 
 // **** Functions ****
-std::ostream& operator<<(std::ostream& out, const HitInfo& h);
+std::ostream& operator<<(std::ostream& os, const HitInfo& h);

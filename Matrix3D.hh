@@ -42,7 +42,7 @@ class Matrix4x4
 
   // Operators
   [[nodiscard]] constexpr T& operator[](size_type i) { return _val[i]; }
-  [[nodiscard]] constexpr const T& operator[](size_type i) const { return _val[i]; }
+  [[nodiscard]] constexpr T  operator[](size_type i) const { return _val[i]; }
 
   template<unsigned int N>
   constexpr self_type& operator=(const T (&vals)[N]) {

@@ -1,6 +1,6 @@
 //
 // FrameBuffer.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // RGB image frame buffer class library (holds render result)
 //
@@ -31,8 +31,8 @@ class FrameBuffer
   int value(int x, int y, float& r, float& g, float& b) const;
   int range(float& min, float& max) const;
 
-  int width() const { return _width; }
-  int height() const { return _height; }
+  [[nodiscard]] int width() const { return _width; }
+  [[nodiscard]] int height() const { return _height; }
 
  private:
   int _width = 0, _height = 0, _pixels = 0;

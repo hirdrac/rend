@@ -1,6 +1,6 @@
 //
 // Ray.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Definition of ray class and functions
 //
@@ -36,12 +36,14 @@ int CalcTransmitResult(
 
 
 // **** Inlined Functions ****
-constexpr Vec3 CalcReflect(const Vec3& incident, const Vec3& normal)
+[[nodiscard]] constexpr Vec3 CalcReflect(
+  const Vec3& incident, const Vec3& normal)
 {
   return (normal * (2.0 * DotProduct(-incident, normal))) + incident;
 }
 
-constexpr Vec3 CalcHitPoint(const Vec3& base, const Vec3& dir, Flt t)
+[[nodiscard]] constexpr Vec3 CalcHitPoint(
+  const Vec3& base, const Vec3& dir, Flt t)
 {
   return base + (dir * t);
 }

@@ -1,6 +1,6 @@
 //
 // Intersect.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of intersect module
 //
@@ -156,7 +156,7 @@ void HitList::kill(HitInfo* h)
   }
 }
 
-std::ostream& operator<<(std::ostream& out, const HitInfo& h)
+std::ostream& operator<<(std::ostream& os, const HitInfo& h)
 {
-  return out << "<Hit " << h.distance << ' ' << *(h.object) << '>';
+  return os << "<Hit " << h.distance << ' ' << *(h.object) << '>';
 }

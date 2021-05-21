@@ -1,9 +1,11 @@
 //
 // Timer.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Elaplsed time messuring class
 //
+
+// FIXME - replace linux time system calls with std::chrono
 
 #pragma once
 #include <cstdint>
@@ -19,15 +21,15 @@ class TimeStamp
   TimeStamp(timeval& tv) : _val(tv) { }
 
   // Member Functions
-  void clear()       { timerclear(&_val); }
-  int  set()         { return gettimeofday(&_val, nullptr); }
-  bool isSet() const { return timerisset(&_val); }
+  void clear() { timerclear(&_val); }
+  int  set()   { return gettimeofday(&_val, nullptr); }
+  [[nodiscard]] bool isSet() const { return timerisset(&_val); }
 
-  long sec()  const { return _val.tv_sec; }
-  long usec() const { return _val.tv_usec; }
+  [[nodiscard]] long sec()  const { return _val.tv_sec; }
+  [[nodiscard]] long usec() const { return _val.tv_usec; }
 
-  double  elapsedSec(const TimeStamp& endTime) const;
-  int64_t elapsedMilliSec(const TimeStamp& endTime) const;
+  [[nodiscard]] double  elapsedSec(const TimeStamp& endTime) const;
+  [[nodiscard]] int64_t elapsedMilliSec(const TimeStamp& endTime) const;
 
  private:
   timeval _val;
@@ -46,11 +48,11 @@ class Timer
   int stop();
   int stop(const TimeStamp& ts);
 
-  double elapsedSec() const;
-  double elapsedSec(const TimeStamp& endTime) const;
+  [[nodiscard]] double elapsedSec() const;
+  [[nodiscard]] double elapsedSec(const TimeStamp& endTime) const;
 
-  int64_t elapsedMilliSec() const;
-  int64_t elapsedMilliSec(const TimeStamp& endTime) const;
+  [[nodiscard]] int64_t elapsedMilliSec() const;
+  [[nodiscard]] int64_t elapsedMilliSec(const TimeStamp& endTime) const;
 
  private:
   TimeStamp _start;

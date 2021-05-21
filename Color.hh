@@ -1,6 +1,6 @@
 //
 // Color.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Standard color class library
 //
@@ -14,10 +14,9 @@
 class Color
 {
  public:
-  enum {
-    WAVES_MAX     = 3,
-    WAVES_DEFAULT = 3
-  };
+  // Constants
+  static constexpr int WAVES_MAX = 3;
+  static constexpr int WAVES_DEFAULT = 3;
 
   // Constructors
   Color() : _waves(WAVES_DEFAULT) { }
@@ -37,9 +36,9 @@ class Color
     return setRGB(array[0], array[1], array[2]); }
 
   int getRGB(Flt& r, Flt& g, Flt& b) const;
-  bool isBlack(Flt v = 1.0e-6) const;
+  [[nodiscard]] bool isBlack(Flt v = 1.0e-6) const;
 
-  int waves() const { return _waves; }
+  [[nodiscard]] int waves() const { return _waves; }
 
   // Operators
   Color& operator+=(const Color& c);
@@ -49,8 +48,8 @@ class Color
   Color& operator*=(Flt s);
   Color& operator/=(Flt s);
 
-  Flt&       operator[](int i)       { return _val[i]; }
-  const Flt& operator[](int i) const { return _val[i]; }
+  [[nodiscard]] Flt& operator[](int i)       { return _val[i]; }
+  [[nodiscard]] Flt  operator[](int i) const { return _val[i]; }
 
   // Static Members
   static const Color black; // 0 for all values
@@ -62,21 +61,28 @@ class Color
 };
 
 
-// **** Function ****
-std::ostream& operator<<(std::ostream& stream, const Color& c);
+// **** Functions ****
+std::ostream& operator<<(std::ostream& os, const Color& c);
 
-inline Color operator*(Color& c, Flt s) {
+[[nodiscard]] inline Color operator*(Color& c, Flt s) {
   Color result(c.waves());
   for (int w = 0; w < c.waves(); ++w) { result[w] = c[w] * s; }
   return result;
 }
 
-inline Color operator/(Color& c, Flt s) {
+[[nodiscard]] inline Color operator/(Color& c, Flt s) {
   Color result(c.waves());
   for (int w = 0; w < c.waves(); ++w) { result[w] = c[w] / s; }
   return result;
 }
 
-void MultColor(const Color& a, const Color& b, Color& r);
-Color MultColor(const Color& a, const Color& b);
-  // multiply 2 colors together
+// multiply 2 colors together
+inline void MultColor(const Color& a, const Color& b, Color& result) {
+  for (int i = 0; i < result.waves(); ++i) { result[i] = a[i] * b[i]; }
+}
+
+[[nodiscard]] inline Color MultColor(const Color& a, const Color& b) {
+  Color result(a.waves());
+  for (int i = 0; i < a.waves(); ++i) { result[i] = a[i] * b[i]; }
+  return result;
+}
