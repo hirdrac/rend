@@ -184,7 +184,7 @@ class Vector4
   Vector4() = default;
   constexpr Vector4(T vx, T vy, T vz, T vw) : x(vx), y(vy), z(vz), w(vw) { }
   constexpr Vector4(const Vector3<T>& v, T vw)
-    : Vector4(v[0], v[1], v[2], vw) { }
+    : Vector4(v.x, v.y, v.z, vw) { }
 
 
   // Operators
