@@ -14,7 +14,6 @@
 // **** Helper Functions ****
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/syscall.h>
 #if __has_include(<sys/syscall.h>)
 #include <sys/syscall.h>
 #endif
