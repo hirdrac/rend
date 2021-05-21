@@ -327,7 +327,7 @@ int RotateXFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 
   Flt angle;
   int error = GetFlt(n, angle, 0.0);
-  t->local.rotateX(angle * MathVal<Flt>::DEG_TO_RAD);
+  t->local.rotateX(angle * math::DEG_TO_RAD<Flt>);
   return error;
 }
 
@@ -338,7 +338,7 @@ int RotateYFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 
   Flt angle;
   int error = GetFlt(n, angle, 0.0);
-  t->local.rotateY(angle * MathVal<Flt>::DEG_TO_RAD);
+  t->local.rotateY(angle * math::DEG_TO_RAD<Flt>);
   return error;
 }
 
@@ -349,7 +349,7 @@ int RotateZFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 
   Flt angle;
   int error = GetFlt(n, angle, 0.0);
-  t->local.rotateZ(angle * MathVal<Flt>::DEG_TO_RAD);
+  t->local.rotateZ(angle * math::DEG_TO_RAD<Flt>);
   return error;
 }
 

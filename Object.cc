@@ -30,9 +30,9 @@ void BBox::reset()
 
 Flt BBox::weight() const
 {
-  Flt x = std::abs(pmax.x - pmin.x);
-  Flt y = std::abs(pmax.y - pmin.y);
-  Flt z = std::abs(pmax.z - pmin.z);
+  Flt x = Abs(pmax.x - pmin.x);
+  Flt y = Abs(pmax.y - pmin.y);
+  Flt z = Abs(pmax.z - pmin.z);
   return (x * (y + z)) + (y * z);
 }
 

@@ -22,4 +22,4 @@ using Matrix = Matrix4x4<Flt,ROW_MAJOR>;
 constexpr Flt VERY_SMALL = 1.0e-12;
 constexpr Flt VERY_LARGE = 1.0e99;
 
-constexpr Flt PI = MathVal<Flt>::PI;
+constexpr Flt PI = math::PI<Flt>;

@@ -11,15 +11,40 @@
 
 
 // **** Constants ****
-template<typename fltType>
-struct MathVal
-{
-  static constexpr fltType PI = M_PI;
-  static constexpr fltType PI_2 = M_PI_2;  // pi/2
-  static constexpr fltType PI_4 = M_PI_4;  // pi/4
-  static constexpr fltType DEG_TO_RAD = M_PI / 180.0;
-  static constexpr fltType RAD_TO_DEG = 180.0 / M_PI;
-  static constexpr fltType VERY_SMALL = static_cast<fltType>(1.0e-7);
+namespace math {
+  // various math constants
+  template<class T>
+#ifndef M_PI
+  constexpr T PI = static_cast<T>(3.14159265358979323846);
+#else
+  constexpr T PI = static_cast<T>(M_PI);
+#endif
+
+  template<class T>
+#ifndef M_PI_2
+  constexpr T PI_2 = static_cast<T>(1.57079632679489661923);
+#else
+  constexpr T PI_2 = static_cast<T>(M_PI_2);  // pi/2
+#endif
+
+  template<class T>
+#ifndef M_PI_4
+  constexpr T PI_4 = static_cast<T>(0.78539816339744830962);
+#else
+  constexpr T PI_4 = static_cast<T>(M_PI_4);  // pi/4
+#endif
+
+  template<class T>
+  constexpr T DEG_TO_RAD = PI<T> / static_cast<T>(180);
+
+  template<class T>
+  constexpr T RAD_TO_DEG = static_cast<T>(180) / PI<T>;
+
+  template<class T>
+  constexpr T VERY_SMALL = static_cast<T>(1.0e-12);
+
+  template<>
+  constexpr float VERY_SMALL<float> = 1.0e-7f;
 };
 
 
@@ -27,39 +52,38 @@ struct MathVal
 template<typename fltType>
 [[nodiscard]] constexpr fltType DegToRad(const fltType& deg)
 {
-  return deg * MathVal<fltType>::DEG_TO_RAD;
+  return deg * math::DEG_TO_RAD<fltType>;
 }
 
 template<typename fltType>
 [[nodiscard]] constexpr fltType RadToDeg(const fltType& rad)
 {
-  return rad * MathVal<fltType>::RAD_TO_DEG;
+  return rad * math::RAD_TO_DEG<fltType>;
 }
 
 template<typename fltType>
 [[nodiscard]] constexpr bool IsZero(const fltType& x)
 {
-  return (x > -MathVal<fltType>::VERY_SMALL)
-    && (x < MathVal<fltType>::VERY_SMALL);
+  return (x > -math::VERY_SMALL<fltType>) && (x < math::VERY_SMALL<fltType>);
 }
 
 template<typename fltType>
 [[nodiscard]] constexpr bool IsOne(const fltType& x)
 {
-  return (x > (static_cast<fltType>(1.0) - MathVal<fltType>::VERY_SMALL))
-    && (x < (static_cast<fltType>(1.0) + MathVal<fltType>::VERY_SMALL));
+  return (x > (static_cast<fltType>(1) - math::VERY_SMALL<fltType>))
+    && (x < (static_cast<fltType>(1) + math::VERY_SMALL<fltType>));
 }
 
 template<typename fltType>
 [[nodiscard]] constexpr bool IsPositive(const fltType& x)
 {
-  return (x >= MathVal<fltType>::VERY_SMALL);
+  return (x >= math::VERY_SMALL<fltType>);
 }
 
 template<typename fltType>
 [[nodiscard]] constexpr bool IsNegative(const fltType& x)
 {
-  return (x <= -MathVal<fltType>::VERY_SMALL);
+  return (x <= -math::VERY_SMALL<fltType>);
 }
 
 template<typename fltType>
@@ -96,11 +120,14 @@ template<typename intType>
 }
 
 template<typename numType, typename fltType>
-[[nodiscard]] constexpr numType Lerp(const numType& a, const numType& b, const fltType& s)
+[[nodiscard]] constexpr numType Lerp(
+  const numType& a, const numType& b, const fltType& s)
 {
+  // use std::lerp() for C++20
+  static_assert(std::is_floating_point_v<fltType>);
   if (s <= 0) {
     return a;
-  } else if (s >= static_cast<fltType>(1.0)) {
+  } else if (s >= static_cast<fltType>(1)) {
     return b;
   } else {
     return a + ((b - a) * s);
@@ -173,5 +200,28 @@ template<typename intType>
 template <typename numType>
 [[nodiscard]] constexpr int Sgn(const numType& x)
 {
-  return (x < 0) ? -1 : ((x > 0) ? 1 : 0);
+  if constexpr (std::is_signed_v<numType>) {
+    return int(x > 0) - int(x < 0);
+  } else {
+    return int(x > 0);
+  }
+}
+
+// return type promoted to int for small types
+[[nodiscard]] constexpr int Abs(signed char x) {
+  return (x < 0) ? -int(x) : int(x); }
+[[nodiscard]] constexpr int Abs(short x) {
+  return (x < 0) ? -int(x) : int(x); }
+
+// template for all other types
+template<typename numType>
+[[nodiscard]] constexpr numType Abs(numType x)
+{
+  if constexpr (std::is_signed_v<numType>) {
+    // constexpr version of std::abs
+    // NOTE: Abs(-MAX_INT) is undefined
+    return (x < 0) ? -x : x;
+  } else {
+    return x;
+  }
 }

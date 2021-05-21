@@ -32,7 +32,7 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
   Vec3 vside = UnitVec(CrossProduct(vnormal, vtop));
 
   // Calculate Screen/Pixel vectors
-  Flt ss = std::tan((_scene->fov * .5) * MathVal<Flt>::DEG_TO_RAD);
+  Flt ss = std::tan((_scene->fov * .5) * math::DEG_TO_RAD<Flt>);
   Flt screenHeight = ss;
   Flt screenWidth = ss * (Flt(_scene->image_width) / Flt(_scene->image_height));
   Flt screenDistance = 1.0;
