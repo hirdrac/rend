@@ -1,10 +1,11 @@
 //
 // Group.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #include "Group.hh"
 #include "Stats.hh"
+#include <sstream>
 
 
 /**** Group Class ****/
@@ -32,20 +33,22 @@ int Group::add(SceneItem* i, SceneItemFlag flag)
   }
 }
 
-void Group::print(std::ostream& out, int indent) const
+std::string Group::desc(int indent) const
 {
-  out << "<Group";
+  std::ostringstream os;
+  os << "<Group";
   if (!_name.empty()) {
-    out << " \"" << _name << '\"';
+    os << " \"" << _name << '\"';
   }
 
-  out << '>';
+  os << '>';
 
   if (!child_list.empty()) {
-    out << '\n';
-    PrintList(out, child_list.head(), indent + 2);
-    out << '\n';
+    os << '\n';
+    PrintList(os, child_list.head(), indent + 2);
+    os << '\n';
   }
+  return os.str();
 }
 
 int Group::init(Scene& s)

@@ -1,6 +1,6 @@
 //
 // CSG.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of CSG classes
 //
@@ -11,6 +11,7 @@
 #include "HitCostInfo.hh"
 #include "Logger.hh"
 #include <algorithm>
+#include <sstream>
 
 
 /**** CSG Class ****/
@@ -42,7 +43,7 @@ int CSG::init(Scene& s)
 {
   o_count = child_list.count();
   if (o_count <= 1) {
-    LOG_ERROR("Too few objects for CSG (" << o_count << ")");
+    LOG_ERROR("Too few objects for CSG (", o_count, ")");
     return -1;
   }
 
@@ -88,14 +89,16 @@ int Merge::bound(BBox& b) const
   return 0;
 }
 
-void Merge::print(std::ostream& out, int indent) const
+std::string Merge::desc(int indent) const
 {
-  out << "<Merge>";
+  std::ostringstream os;
+  os << "<Merge>";
   if (!child_list.empty()) {
-    out << '\n';
-    PrintList(out, child_list.head(), indent + 2);
-    out << '\n';
+    os << '\n';
+    PrintList(os, child_list.head(), indent + 2);
+    os << '\n';
   }
+  return os.str();
 }
 
 
@@ -122,14 +125,16 @@ int Union::bound(BBox& b) const
   return 0;
 }
 
-void Union::print(std::ostream& out, int indent) const
+std::string Union::desc(int indent) const
 {
-  out << "<Union>";
+  std::ostringstream os;
+  os << "<Union>";
   if (!child_list.empty()) {
-    out << '\n';
-    PrintList(out, child_list.head(), indent + 2);
-    out << '\n';
+    os << '\n';
+    PrintList(os, child_list.head(), indent + 2);
+    os << '\n';
   }
+  return os.str();
 }
 
 
@@ -166,14 +171,16 @@ int Intersection::bound(BBox& b) const
   return 0;
 }
 
-void Intersection::print(std::ostream& out, int indent) const
+std::string Intersection::desc(int indent) const
 {
-  out << "<Intersection>";
+  std::ostringstream os;
+  os << "<Intersection>";
   if (!child_list.empty()) {
-    out << '\n';
-    PrintList(out, child_list.head(), indent + 2);
-    out << '\n';
+    os << '\n';
+    PrintList(os, child_list.head(), indent + 2);
+    os << '\n';
   }
+  return os.str();
 }
 
 
@@ -201,12 +208,14 @@ int Difference::bound(BBox& b) const
   return child_list.head()->bound(b);
 }
 
-void Difference::print(std::ostream& out, int indent) const
+std::string Difference::desc(int indent) const
 {
-  out << "<Difference>";
+  std::ostringstream os;
+  os << "<Difference>";
   if (!child_list.empty()) {
-    out << '\n';
-    PrintList(out, child_list.head(), indent + 2);
-    out << '\n';
+    os << '\n';
+    PrintList(os, child_list.head(), indent + 2);
+    os << '\n';
   }
+  return os.str();
 }

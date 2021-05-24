@@ -1,6 +1,6 @@
 //
 // Bound.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of bound module
 //
@@ -12,6 +12,7 @@
 #include "Group.hh"
 #include "Logger.hh"
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 
@@ -67,9 +68,11 @@ Bound::~Bound()
 }
 
 // Member Functions
-void Bound::print(std::ostream& out, int) const
+std::string Bound::desc(int) const
 {
-  out << "<Bound " << object_list.size() << ">\n";
+  std::ostringstream os;
+  os << "<Bound " << object_list.size() << ">\n";
+  return os.str();
 }
 
 int Bound::intersect(const Ray& r, HitList& hit_list) const
@@ -175,24 +178,23 @@ void KillTree(OptNode* node_list)
   }
 }
 
-void PrintBoundList(const OptNode* node_list, std::ostream& stream,
+void PrintBoundList(const OptNode* node_list, std::ostream& os,
 		    int indent = 0)
 {
   if (!node_list) {
-    for (int i = 0; i < indent; ++i) { stream << ' '; }
-    stream << "EMPTY\n";
+    for (int i = 0; i < indent; ++i) { os << ' '; }
+    os << "EMPTY\n";
     return;
   }
 
   while (node_list) {
-    for (int i = 0; i < indent; ++i) { stream << ' '; }
+    for (int i = 0; i < indent; ++i) { os << ' '; }
 
     if (node_list->object) {
-      node_list->object->print(stream, indent + 2);
-      stream << '\n';
+      os << node_list->object->desc(indent + 2) << '\n';
     } else {
-      stream << "<Bound>\n";
-      PrintBoundList(node_list->child, stream, indent + 2);
+      os << "<Bound>\n";
+      PrintBoundList(node_list->child, os, indent + 2);
     }
 
     node_list = node_list->next;

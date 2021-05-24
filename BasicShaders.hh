@@ -1,13 +1,13 @@
 //
 // BasicShaders.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Various simple shaders
 //
 
 #pragma once
 #include "Shader.hh"
-#include <iostream>
+#include <sstream>
 
 
 // **** Types ****
@@ -22,8 +22,10 @@ class ShaderColor : public Shader
   ShaderColor(Flt r, Flt g, Flt b) { color.setRGB(r,g,b); }
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override {
-    out << "<Color " << color << '>'; }
+  std::string desc(int) const override {
+    std::ostringstream os; os << "<Color " << color << '>';
+    return os.str();
+  }
   int init(Scene& s) override;
 
   // Shader Functions
@@ -38,7 +40,7 @@ class ShaderGlobal : public Shader
  public:
   // SceneItem Functions
   int  add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
-  void print(std::ostream& out, int) const override { out << "<Global>"; }
+  std::string desc(int) const override { return "<Global>"; }
   int  init(Scene& s) override;
 
   // Shader Functions
@@ -56,7 +58,7 @@ class ShaderLocal : public Shader
  public:
   // SceneItem Functions
   int  add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
-  void print(std::ostream& out, int) const override { out << "<Local>"; }
+  std::string desc(int) const override { return "<Local>"; }
   int  init(Scene& s) override;
 
   // Shader Functions
@@ -73,7 +75,7 @@ class Checkerboard : public PatternShader
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Checkerboard>"; }
+  std::string desc(int) const override { return "<Checkerboard>"; }
 
   // Shader Functions
   int evaluate(
@@ -86,7 +88,7 @@ class ColorCube : public PatternShader
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<ColorCube>"; }
+  std::string desc(int) const override { return "<ColorCube>"; }
 
   // Shader Functions
   int evaluate(
@@ -99,7 +101,7 @@ class Ring : public PatternShader
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Ring>"; }
+  std::string desc(int) const override { return "<Ring>"; }
 
   // Shader Functions
   int evaluate(
@@ -112,7 +114,7 @@ class ShaderSide : public PatternShader
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Side>"; }
+  std::string desc(int) const override { return "<Side>"; }
 
   // Shader Functions
   int evaluate(
@@ -125,7 +127,7 @@ class Stripe : public PatternShader
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Stripe>"; }
+  std::string desc(int) const override { return "<Stripe>"; }
 
   // Shader Functions
   int evaluate(
@@ -141,8 +143,8 @@ class TextureMap : public PatternShader
   Flt  sx, sy;
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<TextureMap>"; }
-  int  init(Scene& s) override;
+  std::string desc(int) const override { return "<TextureMap>"; }
+  int init(Scene& s) override;
 
   // Shader Functions
   int evaluate(

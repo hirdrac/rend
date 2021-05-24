@@ -1,6 +1,6 @@
 //
 // CSG.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // CSG object classes
 //
@@ -8,7 +8,6 @@
 #pragma once
 #include "Object.hh"
 #include "SList.hh"
-#include <iostream>
 
 
 // **** Class Definitions ****
@@ -40,7 +39,7 @@ class Merge : public CSG
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& stream, int) const override;
+  std::string desc(int) const override;
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -51,7 +50,7 @@ class Union : public CSG
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& stream, int) const override;
+  std::string desc(int) const override;
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -62,7 +61,7 @@ class Intersection : public CSG
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& stream, int) const override;
+  std::string desc(int) const override;
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -73,7 +72,7 @@ class Difference : public CSG
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& stream, int) const override;
+  std::string desc(int) const override;
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;

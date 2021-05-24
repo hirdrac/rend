@@ -1,6 +1,6 @@
 //
 // Object.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of object classes
 //
@@ -10,8 +10,9 @@
 #include "Shader.hh"
 #include "Intersect.hh"
 #include "Stats.hh"
-#include <cstring>
+#include <iostream>
 #include <algorithm>
+#include <cstring>
 
 
 /**** BBox class ****/
@@ -111,9 +112,7 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
   while (list) {
     Transform* trans = list->trans();
     if (!trans) {
-      std::cout << "No Trans ERROR: ";
-      list->print(std::cout, 0);
-      std::cout << '\n';
+      std::cout << "No Trans ERROR: " << list->desc(0) << '\n';
       return -1;
     }
 
@@ -131,9 +130,7 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
     // Init primitive
     int error = list->init(s);
     if (error) {
-      std::cout << "INIT ERROR: ";
-      list->print(std::cout, 0);
-      std::cout << '\n';
+      std::cout << "INIT ERROR: " << list->desc(0) << '\n';
       return error;
     }
 

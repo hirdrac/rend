@@ -1,13 +1,15 @@
 //
 // Parse.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of a parse module
 //
 
 #include "Parse.hh"
 #include "Keywords.hh"
+#include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cctype>
 
 
@@ -164,23 +166,25 @@ namespace {
 
 /**** AstNode Class ****/
 // Member functions
-void AstNode::print(std::ostream& out, int indent) const
+std::string AstNode::desc(int indent) const
 {
   if (ast_type == AST_LIST) {
-    out << "<List>";
-    return;
+    return "<List>";
   }
 
+  std::ostringstream os;
   switch (ast_type) {
-    case AST_NUMBER:  out << "<Number " << val << '>'; break;
-    case AST_KEYWORD: out << "<Keyword " << val << '>'; break;
-    default:          out << "<Symbol " << val << '>'; break;
+    case AST_NUMBER:  os << "<Number " << val << '>'; break;
+    case AST_KEYWORD: os << "<Keyword " << val << '>'; break;
+    default:          os << "<Symbol " << val << '>'; break;
   }
 
   if (child) {
-    out << '\n';
-    PrintList(out, child, indent + 2);
+    os << '\n';
+    PrintList(os, child, indent + 2);
   }
+
+  return os.str();
 }
 
 

@@ -1,6 +1,6 @@
 //
 // BasicObjects.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Definitions for primitive object classes
 //
@@ -8,7 +8,6 @@
 #pragma once
 #include "Object.hh"
 #include "HitCostInfo.hh"
-#include <iostream>
 
 
 // **** Types ****
@@ -19,7 +18,7 @@ class Disc : public Primitive
   Disc();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Disc>"; }
+  std::string desc(int) const override { return "<Disc>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -39,7 +38,7 @@ class Cone : public Primitive
   Cone();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Cone>"; }
+  std::string desc(int) const override { return "<Cone>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -58,7 +57,7 @@ class Cube : public Primitive
   Cube();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Cube>"; }
+  std::string desc(int) const override { return "<Cube>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -77,7 +76,7 @@ class Cylinder : public Primitive
   Cylinder();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Cylinder>"; }
+  std::string desc(int) const override { return "<Cylinder>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -96,7 +95,7 @@ class OpenCone : public Primitive
   OpenCone();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<OpenCone>"; }
+  std::string desc(int) const override { return "<OpenCone>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -111,7 +110,7 @@ class OpenCylinder : public Primitive
   OpenCylinder();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<OpenCylinder>"; }
+  std::string desc(int) const override { return "<OpenCylinder>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -126,7 +125,7 @@ class Paraboloid : public Primitive
   Paraboloid();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Paraboloid>"; }
+  std::string desc(int) const override { return "<Paraboloid>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -141,7 +140,7 @@ class Plane : public Primitive
   Plane();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Plane>"; }
+  std::string desc(int) const override { return "<Plane>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -161,7 +160,7 @@ class Sphere : public Primitive
   Sphere();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Sphere>"; }
+  std::string desc(int) const override { return "<Sphere>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -176,7 +175,7 @@ class Torus : public Primitive
   Torus();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Torus>"; }
+  std::string desc(int) const override { return "<Torus>"; }
   int init(Scene& s) override;
 
   // Object Functions

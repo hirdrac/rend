@@ -1,13 +1,12 @@
 //
 // BasicLights.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Basic light objects
 //
 
 #pragma once
 #include "Light.hh"
-#include <iostream>
 
 
 // **** Types ****
@@ -15,7 +14,7 @@ class Sun : public Light
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Sun>"; }
+  std::string desc(int) const override { return "<Sun>"; }
 
   // Light Functions
   int luminate(
@@ -27,7 +26,7 @@ class PointLight : public Light
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<PointLight>"; }
+  std::string desc(int) const override { return "<PointLight>"; }
 
   // Light Functions
   int luminate(
@@ -39,7 +38,7 @@ class SpotLight : public Light
 {
  public:
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<SpotLight>"; }
+  std::string desc(int) const override { return "<SpotLight>"; }
 
   // Light Functions
   int luminate(

@@ -6,7 +6,6 @@
 #include "Light.hh"
 #include "Scene.hh"
 #include "Stats.hh"
-#include <iostream>
 
 
 /**** Light Class ****/

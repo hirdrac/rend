@@ -51,7 +51,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   // create BMP file
   std::ofstream file(filename, std::ios::out | std::ios::binary);
   if (!file) {
-    LOG_ERROR("Error writing file '" << filename << "'");
+    LOG_ERROR("Error writing file '", filename, "'");
     return -1;
   }
 

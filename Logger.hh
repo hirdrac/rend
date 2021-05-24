@@ -4,9 +4,9 @@
 //
 
 #pragma once
-#include <string>
-#include <memory>
-#include <sstream>
+#include <string_view>
+#include <memory>  // unique_ptr
+#include <sstream> // ostringstream
 #include <ostream>
 
 
@@ -19,26 +19,54 @@ class Logger
   enum Level { TRACE, INFO, WARN, ERROR, FATAL };
 
   Logger();
+  ~Logger();
 
   // members
   void setOStream(std::ostream& os);
-  void setFile(const std::string& fileName);
-
-  [[nodiscard]] Level level() const { return _level; }
-  void setLevel(Level l) { _level = l; }
-
-  void log(Level l, const std::string& msg, const char* file, int line);
-  void log(Level l, const std::ostringstream& os, const char* file, int line);
+  void setFile(std::string_view fileName);
   void rotate();
 
+  [[nodiscard]] Level level() const { return _level; }
+  void setLevel(Level lvl) { _level = lvl; }
+
   // static members
-  static Logger& defaultLogger() { return _defaultLogger; }
+  static Logger& defaultLogger() {
+    static Logger instance;
+    return instance;
+  }
+
+  // log method
+  template<typename... Args>
+  void log(Level lvl, const char* file, int line, Args... args) {
+    std::ostringstream os;
+    Data d{file, line, lvl};
+    setHeader(os, d);
+    logElements(os, d, args...);
+  }
 
  private:
   std::unique_ptr<LoggerImpl> _impl;
   Level _level;
 
-  static Logger _defaultLogger;
+  struct Data { const char* file; int line; Level level; };
+
+  // methods
+  void logElements(std::ostringstream& os, const Data& d) {
+    // complete log steam
+    setFooter(os, d);
+    logMsg(os);
+  }
+
+  template<typename T, typename... Args>
+  void logElements(std::ostringstream& os, const Data& d,
+		   const T& x, Args... args) {
+    os << x;
+    logElements(os, d, args...);
+  }
+
+  void setHeader(std::ostream& os, const Data& d);
+  void setFooter(std::ostream& os, const Data& d);
+  void logMsg(const std::ostringstream& os);
 
   // disable copy/assignment
   Logger(const Logger&) = delete;
@@ -47,23 +75,17 @@ class Logger
 
 
 // **** Macros ****
-// string logging macros
-#define LOG_STRING_LINE(logger,lvl,x,line) \
-  do { if ((lvl)>=(logger).level()) { (logger).log(lvl,x,__FILE__,line); } } while (false)
-
-#define LOG_STRING(logger,lvl,x) LOG_STREAM_LINE(logger,lvl,x,__LINE__)
-
-
-// stream logging macros
-#define LOG_STREAM_LINE(logger,lvl,x,line) \
-  do { if ((lvl)>=(logger).level()) { std::ostringstream os; os << x; (logger).log(lvl,os,__FILE__,line); } } while (false)
-
-#define LOG_STREAM(logger,lvl,x) LOG_STREAM_LINE(logger,lvl,x,__LINE__)
-
+#define LOGGER_LOG(logger,lvl,...) \
+  do { if (Logger& lg(logger); (lvl)>=lg.level()) { lg.log((lvl),__FILE__,__LINE__,__VA_ARGS__); } } while (false)
 
 // default logger instance logging macros
-#define LOG_TRACE(x) LOG_STREAM(Logger::defaultLogger(),Logger::TRACE,x)
-#define LOG_INFO(x)  LOG_STREAM(Logger::defaultLogger(),Logger::INFO,x)
-#define LOG_WARN(x)  LOG_STREAM(Logger::defaultLogger(),Logger::WARN,x)
-#define LOG_ERROR(x) LOG_STREAM(Logger::defaultLogger(),Logger::ERROR,x)
-#define LOG_FATAL(x) LOG_STREAM(Logger::defaultLogger(),Logger::FATAL,x)
+#define LOG_TRACE(...) \
+  LOGGER_LOG(Logger::defaultLogger(),Logger::TRACE,__VA_ARGS__)
+#define LOG_INFO(...) \
+  LOGGER_LOG(Logger::defaultLogger(),Logger::INFO,__VA_ARGS__)
+#define LOG_WARN(...) \
+  LOGGER_LOG(Logger::defaultLogger(),Logger::WARN,__VA_ARGS__)
+#define LOG_ERROR(...) \
+  LOGGER_LOG(Logger::defaultLogger(),Logger::ERROR,__VA_ARGS__)
+#define LOG_FATAL(...) \
+  LOGGER_LOG(Logger::defaultLogger(),Logger::FATAL,__VA_ARGS__)

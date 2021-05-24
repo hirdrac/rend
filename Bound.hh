@@ -1,6 +1,6 @@
 //
 // Bound.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Defintion of Bound object class and
 // bounding box heiarchy function
@@ -27,7 +27,7 @@ class Bound : public Object
   ~Bound();
 
   // SceneItem Functions
-  void print(std::ostream& stream, int) const override;
+  std::string desc(int) const override;
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;

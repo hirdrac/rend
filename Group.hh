@@ -1,6 +1,6 @@
 //
 // Group.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #pragma once
@@ -20,7 +20,7 @@ class Group final : public Primitive
   ~Group();
 
   // SceneItem Functions
-  void print(std::ostream& stream, int indent = 0) const override;
+  std::string desc(int indent) const override;
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   int init(Scene& s) override;
 

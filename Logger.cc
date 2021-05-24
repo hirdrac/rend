@@ -5,34 +5,34 @@
 
 #include "Logger.hh"
 #include <string>
+#include <string_view>
 #include <iostream>
 #include <fstream>
 #include <cstdio>
 #include <ctime>
-
-
-// **** Helper Functions ****
 #include <unistd.h>
 #include <sys/types.h>
 #if __has_include(<sys/syscall.h>)
 #include <sys/syscall.h>
 #endif
 
+
+// **** Helper Functions ****
 namespace {
 #ifdef SYS_gettid
   // Linux specific thread id
   // NOTE: 'gettid()' is available in glibc 2.30
   //   for earlier versions, this function is needed
-  [[nodiscard]] inline pid_t get_threadid() {
+  [[nodiscard]] static inline pid_t get_threadid() {
     return pid_t(syscall(SYS_gettid)); }
 #else
   // thread ID logging disabled
-  [[nodiscard]] inline pid_t get_threadid() { return 0; }
+  [[nodiscard]] static inline pid_t get_threadid() { return 0; }
 #endif
 
   const pid_t mainThreadID = get_threadid();
 
-  std::string logTime()
+  void logTime(std::ostream& os)
   {
     std::time_t t = std::time(nullptr);
     std::tm* td = std::localtime(&t);
@@ -40,10 +40,10 @@ namespace {
     int len = snprintf(str, sizeof(str), "%d-%02d-%02d %02d:%02d:%02d ",
 		       td->tm_year + 1900, td->tm_mon + 1, td->tm_mday,
 		       td->tm_hour, td->tm_min, td->tm_sec);
-    return std::string(str, len);
+    os.write(str, len);
   }
 
-  std::string fileTime()
+  [[nodiscard]] std::string fileTime()
   {
     std::time_t t = std::time(nullptr);
     std::tm* td = std::localtime(&t);
@@ -61,8 +61,10 @@ class LoggerImpl
 {
  public:
   virtual ~LoggerImpl() { }
-  virtual void log(const char* str, int len) = 0;
+  virtual void log(const char* str, std::streamsize len) = 0;
   virtual void rotate() { }
+
+  void log(std::string_view s) { return log(s.data(), s.size()); }
 };
 
 namespace
@@ -72,7 +74,7 @@ namespace
    public:
     OStreamLogger(std::ostream& os) : _os(os) { }
 
-    void log(const char* str, int len) override
+    void log(const char* str, std::streamsize len) override
     {
       _os.write(str, len);
       _os.flush();
@@ -85,10 +87,10 @@ namespace
   class FileLogger : public LoggerImpl
   {
    public:
-    FileLogger(const std::string& file)
-      : _os(file, std::ios_base::app), _filename(file) { }
+    FileLogger(std::string_view file)
+      : _filename(file), _os(_filename, std::ios_base::app) { }
 
-    void log(const char* str, int len) override
+    void log(const char* str, std::streamsize len) override
     {
       _os.write(str, len);
       _os.flush();
@@ -97,11 +99,9 @@ namespace
     void rotate() override
     {
       auto x = _filename.rfind('.');
-      std::string nf;
-      if (x == std::string::npos) {
-	nf = _filename + fileTime();
-      } else {
-	nf = _filename.substr(0,x) + fileTime() + _filename.substr(x);
+      std::string nf = _filename.substr(0,x) + fileTime();
+      if (x != std::string::npos) {
+	nf += _filename.substr(x);
       }
 
       _os.close();
@@ -110,11 +110,11 @@ namespace
     }
 
    private:
-    std::ofstream _os;
     std::string _filename;
+    std::ofstream _os;
   };
 
-  [[nodiscard]] constexpr const char* levelStr(Logger::Level l)
+  constexpr std::string_view levelStr(Logger::Level l)
   {
     switch (l) {
       case Logger::TRACE: return "[TRACE] ";
@@ -129,11 +129,14 @@ namespace
 
 
 // **** Logger class ****
-Logger Logger::_defaultLogger;
-
 Logger::Logger() : _level(INFO)
 {
-  setOStream(std::cerr);
+}
+
+Logger::~Logger()
+{
+  // NOTE: empty destructor needed here because LoggerImpl is not
+  //   visible externally
 }
 
 void Logger::setOStream(std::ostream& os)
@@ -141,29 +144,32 @@ void Logger::setOStream(std::ostream& os)
   _impl.reset(new OStreamLogger(os));
 }
 
-void Logger::setFile(const std::string& fileName)
+void Logger::setFile(std::string_view fileName)
 {
   _impl.reset(new FileLogger(fileName));
 }
 
-void Logger::log(Level l, const std::string& msg, const char* file, int line)
+void Logger::logMsg(const std::ostringstream& os)
 {
-  std::ostringstream os;
-  pid_t tid = get_threadid();
-  os << logTime() << levelStr(l) << msg << " (";
-  if (tid != mainThreadID) { os << "t=" << tid << ' '; }
-  os << file << ':' << line << ")\n";
-  std::string s = os.str();
-  _impl->log(s.c_str(), s.length());
-}
-
-void Logger::log(Level l, const std::ostringstream& os,
-		 const char* file, int line)
-{
-  log(l, os.str(), file, line);
+  if (!_impl) { setOStream(std::cerr); }
+  _impl->log(os.str());
 }
 
 void Logger::rotate()
 {
-  _impl->rotate();
+  if (_impl) { _impl->rotate(); }
+}
+
+void Logger::setHeader(std::ostream& os, const Data& d)
+{
+  logTime(os);
+  os << levelStr(d.level);
+}
+
+void Logger::setFooter(std::ostream& os, const Data& d)
+{
+  pid_t tid = get_threadid();
+  os << " (";
+  if (tid != mainThreadID) { os << get_threadid() << ' '; }
+  os << d.file << ':' << d.line << ")\n";
 }

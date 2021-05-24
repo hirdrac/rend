@@ -1,13 +1,12 @@
 //
 // Stats.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of stats module
 //
 
 #include "Stats.hh"
 #include "Scene.hh"
-#include <iostream>
 
 
 // **** Globals ****

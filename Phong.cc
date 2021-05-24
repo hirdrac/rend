@@ -1,6 +1,6 @@
 //
 // Phong.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of the phong illumination class
 //
@@ -12,7 +12,6 @@
 #include "Ray.hh"
 #include "Bound.hh"
 #include "BasicShaders.hh"
-#include <iostream>
 
 
 // ---- Phong Class ----

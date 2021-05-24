@@ -1,12 +1,11 @@
 //
 // Transform.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of motion module
 //
 
 #include "Transform.hh"
-#include <iostream>
 
 
 /**** Transform Class ****/

@@ -1,11 +1,11 @@
 //
 // SceneItem.hh
-// Copyright (C) 2020 Ricahrd Bradley
+// Copyright (C) 2021 Ricahrd Bradley
 //
 
 #pragma once
 #include <string>
-#include <iostream>
+#include <ostream>
 
 
 // **** Types ****
@@ -33,7 +33,7 @@ class SceneItem
   virtual const char*      name() const { return nullptr; }
   virtual Transform*       trans()       { return nullptr; }
   virtual const Transform* trans() const { return nullptr; }
-  virtual void print(std::ostream& out, int indent) const = 0;
+  virtual std::string desc(int indent) const = 0;
 
   virtual int setName(const std::string& val) { return -1; }
   virtual int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) { return -1; }
@@ -43,14 +43,8 @@ class SceneItem
 
 
 // **** Inlined Functions ****
-inline std::ostream& operator<<(std::ostream& out, const SceneItem& i)
-{
-  i.print(out, 0);
-  return out;
-}
-
-template<typename type>
-void PrintList(std::ostream& out, type* list, int indent = 0)
+template<class T>
+void PrintList(std::ostream& out, T* list, int indent = 0)
 {
   for (int i = 0; i < indent; ++i) { out << ' '; }
 
@@ -60,12 +54,12 @@ void PrintList(std::ostream& out, type* list, int indent = 0)
   }
 
   for (; list != nullptr; list = list->next()) {
-    list->print(out, indent);
+    out << list->desc(indent);
   }
 }
 
-template<typename ContainerType>
-void PrintList2(std::ostream& out, const ContainerType& x, int indent = 0)
+template<class ContainerT>
+void PrintList2(std::ostream& out, const ContainerT& x, int indent = 0)
 {
   //while (--indent >= 0) { out << ' '; }
   for (int i = 0; i < indent; ++i) { out << ' '; }
@@ -75,5 +69,5 @@ void PrintList2(std::ostream& out, const ContainerType& x, int indent = 0)
     return;
   }
 
-  for (SceneItem* item : x) { item->print(out, indent); }
+  for (SceneItem* item : x) { out << item->desc(indent); }
 }

@@ -1,6 +1,6 @@
 //
 // Shader.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Shader base classes
 //
@@ -9,7 +9,6 @@
 #include "Scene.hh"
 #include "Transform.hh"
 #include "Types.hh"
-#include <iostream>
 #include <vector>
 
 
@@ -28,7 +27,7 @@ class Shader : public SceneItem
   ~Shader();
 
   // SceneItem Functions
-  void print(std::ostream& out, int) const override { out << "<Shader>"; }
+  std::string desc(int) const override { return "<Shader>"; }
 
   // Member Functions
   virtual int evaluate(

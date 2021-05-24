@@ -1,6 +1,6 @@
 //
 // Phong.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Standard phong illumination model shader
 //
@@ -22,7 +22,7 @@ class Phong : public Shader
   ~Phong();
 
   // SceneItem Functions
-  void print(std::ostream& stream, int) const override { stream << "<Phong>"; }
+  std::string desc(int) const override { return "<Phong>"; }
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   int init(Scene& s) override;
 

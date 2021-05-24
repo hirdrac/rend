@@ -1,6 +1,6 @@
 //
 // Keywords.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of keywords module
 //
@@ -24,7 +24,7 @@ Transform* FindTrans(SceneItem* p)
 {
   Transform* t = p->trans();
   if (!t) {
-    LOG_ERROR("SceneItem " << *p << " cannot be transformed");
+    LOG_ERROR("SceneItem ", p->desc(0), " cannot be transformed");
   }
 
   return t;

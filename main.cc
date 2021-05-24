@@ -13,6 +13,7 @@
 #include "Timer.hh"
 #include "Renderer.hh"
 #include "Logger.hh"
+#include <iostream>
 #include <cctype>
 #include <sstream>
 #include <readline/readline.h>

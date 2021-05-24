@@ -35,7 +35,7 @@ class AstNode : public SListNode<AstNode>
     : line(fileLine), val(std::move(value)) { }
 
   // Member Functions
-  void print(std::ostream& stream, int indent = 0) const;
+  std::string desc(int indent) const;
 };
 
 

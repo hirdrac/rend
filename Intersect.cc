@@ -158,5 +158,5 @@ void HitList::kill(HitInfo* h)
 
 std::ostream& operator<<(std::ostream& os, const HitInfo& h)
 {
-  return os << "<Hit " << h.distance << ' ' << *(h.object) << '>';
+  return os << "<Hit " << h.distance << ' ' << h.object->desc(0) << '>';
 }

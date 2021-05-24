@@ -1,12 +1,11 @@
 //
 // Color.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of Color class library
 //
 
 #include "Color.hh"
-#include <iostream>
 
 // ADD - colors with more than 3 waves not handled
 // BUG - operations between colors with different waves not handled properly
