@@ -57,15 +57,17 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
   file.write(reinterpret_cast<char*>(header), sizeof(header));
 
+  uint8_t tmp[4];
   auto itr = _buffer.begin(), end = _buffer.end();
   while (itr != end) {
     float r = *itr++;
     float g = *itr++;
     float b = *itr++;
 
-    file << uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
-    file << uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
-    file << uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
+    tmp[0] = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
+    tmp[1] = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
+    tmp[2] = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
+    file.write(reinterpret_cast<char*>(tmp), 3);
   }
 
   return 0;
