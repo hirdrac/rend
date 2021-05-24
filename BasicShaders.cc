@@ -1,15 +1,23 @@
 //
 // BasicShaders.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #include "BasicShaders.hh"
 #include "Intersect.hh"
 #include "Ray.hh"
+#include <sstream>
 #include <cmath>
 
 
 // **** ShaderColor Class ****
+std::string ShaderColor::desc(int) const
+{
+  std::ostringstream os;
+  os << "<Color " << color << '>';
+  return os.str();
+}
+
 int ShaderColor::init(Scene& s)
 {
   color *= value;

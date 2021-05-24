@@ -7,7 +7,6 @@
 
 #pragma once
 #include "Shader.hh"
-#include <sstream>
 
 
 // **** Types ****
@@ -22,10 +21,7 @@ class ShaderColor : public Shader
   ShaderColor(Flt r, Flt g, Flt b) { color.setRGB(r,g,b); }
 
   // SceneItem Functions
-  std::string desc(int) const override {
-    std::ostringstream os; os << "<Color " << color << '>';
-    return os.str();
-  }
+  std::string desc(int) const override;
   int init(Scene& s) override;
 
   // Shader Functions
