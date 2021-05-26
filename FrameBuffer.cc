@@ -101,7 +101,7 @@ int FrameBuffer::line(int x0, int y0, int x1, int y1,
 		      float r, float g, float b)
 {
   int dir_x   = Sgn(x1 - x0), dir_y   = Sgn(y1 - y0);
-  int delta_x = abs(x1 - x0), delta_y = abs(y1 - y0);
+  int delta_x = Abs(x1 - x0), delta_y = Abs(y1 - y0);
   int step    = 0;
 
   if (delta_x < delta_y) {
