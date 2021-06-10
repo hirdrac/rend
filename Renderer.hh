@@ -26,7 +26,7 @@ class Renderer
 	     DList<HitInfo>* freeCache, StatInfo* stats);
 
   // jobs/task methods
-  [[nodiscard]] int jobs() const { return _jobs.size(); }
+  [[nodiscard]] int jobs() const { return int(_jobs.size()); }
   int setJobs(int jobs);
     // number of jobs (thread) to execute render
 

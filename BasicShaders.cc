@@ -99,7 +99,7 @@ int Checkerboard::evaluate(
   int gx = int(std::floor(m.x + VERY_SMALL) + 1.0);
   int gy = int(std::floor(m.y + VERY_SMALL) + 1.0);
   int gz = int(std::floor(m.z + VERY_SMALL) + 1.0);
-  int x  = Abs(gx + gy + gz) % children.size();
+  int x  = Abs(gx + gy + gz) % int(children.size());
   return children[x]->evaluate(s, r, h, normal, map, result);
 }
 
@@ -122,7 +122,7 @@ int Ring::evaluate(
 {
   Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
   int d = int(std::sqrt(Sqr(m.x) + Sqr(m.y) + Sqr(m.z)) * 2.0);
-  int x = Abs(d) % children.size();
+  int x = Abs(d) % int(children.size());
   return children[x]->evaluate(s, r, h, normal, map, result);
 }
 
@@ -132,7 +132,7 @@ int ShaderSide::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  int x = h.side % children.size();
+  int x = h.side % int(children.size());
   return children[x]->evaluate(s, r, h, normal, map, result);
 }
 
@@ -144,7 +144,7 @@ int Stripe::evaluate(
 {
   Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
   int gx = int(std::floor(m.x + VERY_SMALL) + 1.0);
-  int x  = Abs(gx) % children.size();
+  int x  = Abs(gx) % int(children.size());
   return children[x]->evaluate(s, r, h, normal, map, result);
 }
 

@@ -556,7 +556,7 @@ static const std::map<std::string,ItemFn> KeyWords = {
 ItemFn FindItemFn(const std::string& str)
 {
   std::string key = str;
-  for (char& ch : key) { ch = std::tolower(ch); }
+  for (char& ch : key) { ch = char(std::tolower(ch)); }
 
   auto i = KeyWords.find(key);
   return (i != KeyWords.end()) ? i->second : nullptr;

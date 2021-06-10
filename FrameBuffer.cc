@@ -29,24 +29,24 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
   // Set up 24bit BMP header
   uint8_t header[54] = {};
-  header[ 0] = 66;                      // BMP type
+  header[ 0] = 66;                               // BMP type
   header[ 1] = 77;
-  header[ 2] = file_size         & 255; // File size
-  header[ 3] = (file_size >>  8) & 255;
-  header[ 4] = (file_size >> 16) & 255;
-  header[ 5] = (file_size >> 24) & 255;
-  header[10] = 54;                      // Bitmap start
-  header[14] = 40;                      // BITMAPINFOHEADER size
-  header[18] = _width          & 255;   // BMP width
-  header[19] = (_width  >>  8) & 255;
-  header[20] = (_width  >> 16) & 255;
-  header[21] = (_width  >> 24) & 255;
-  header[22] = _height         & 255;   // BMP height
-  header[23] = (_height >>  8) & 255;
-  header[24] = (_height >> 16) & 255;
-  header[25] = (_height >> 24) & 255;
-  header[26] = 1;                       // Planes
-  header[28] = 24;                      // Bit count
+  header[ 2] = uint8_t(file_size         & 255); // File size
+  header[ 3] = uint8_t((file_size >>  8) & 255);
+  header[ 4] = uint8_t((file_size >> 16) & 255);
+  header[ 5] = uint8_t((file_size >> 24) & 255);
+  header[10] = 54;                               // Bitmap start
+  header[14] = 40;                               // BITMAPINFOHEADER size
+  header[18] = uint8_t(_width          & 255);   // BMP width
+  header[19] = uint8_t((_width  >>  8) & 255);
+  header[20] = uint8_t((_width  >> 16) & 255);
+  header[21] = uint8_t((_width  >> 24) & 255);
+  header[22] = uint8_t(_height         & 255);   // BMP height
+  header[23] = uint8_t((_height >>  8) & 255);
+  header[24] = uint8_t((_height >> 16) & 255);
+  header[25] = uint8_t((_height >> 24) & 255);
+  header[26] = 1;                                // Planes
+  header[28] = 24;                               // Bit count
 
   // create BMP file
   std::ofstream file(filename, std::ios::out | std::ios::binary);

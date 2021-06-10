@@ -63,6 +63,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
   const Flt halfWidth  = Flt(_scene->image_width)  * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
+  const Flt samples    = Flt(_samples.size());
 
   Ray initRay;
   initRay.base = _scene->eye;
@@ -89,10 +90,10 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
         c += result;
       }
 
-      c /= _samples.size();
+      c /= samples;
       Flt cr = 0, cg = 0, cb = 0;
       c.getRGB(cr, cg, cb);
-      _fb->plot(x, y, cr, cg, cb);
+      _fb->plot(x, y, float(cr), float(cg), float(cb));
     }
   }
 
@@ -137,29 +138,11 @@ int Renderer::waitForJobs(int timeout_ms)
 {
   std::chrono::milliseconds timeout(timeout_ms);
   std::unique_lock lock(_tasksMutex);
-  //_tasksCV.wait(lock);
-  //return _tasks.size();
-
-  //if (_tasksCV.wait_for(lock, timeout, [&]{return _tasks.empty();})) {
-  //  return 0; // done;
-  //} else {
-  //  return _tasks.size(); // timeout
-  //}
-
-#if 1
   while (!_tasks.empty()) {
     if (_tasksCV.wait_for(lock, timeout) == std::cv_status::timeout) {
-      return _tasks.size(); // timeout
+      return int(_tasks.size()); // timeout
     }
   }
-#else
-  while (_jobsRunning > 0) {
-    if (_tasksCV.wait_for(lock, timeout) == std::cv_status::timeout) {
-      return 1; // timeout
-    }
-  }
-#endif
-
   return 0; // done
 }
 

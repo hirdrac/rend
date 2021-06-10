@@ -1,5 +1,5 @@
 # rend Makefile
-# Copyright (C) 2020 Richard Bradley
+# Copyright (C) 2021 Richard Bradley
 
 BIN_rend.SRC =\
   BasicLights.cc BasicObjects.cc BasicShaders.cc Bound.cc Color.cc CSG.cc\
@@ -10,6 +10,7 @@ BIN_rend.SRC =\
 STANDARD = c++17
 PACKAGES = readline
 OPTIONS = pthread lto modern_c++
+WARN_EXTRA = extra-semi fatal-errors conversion cast-align cast-qual
 
 
 include Makefile.mk
