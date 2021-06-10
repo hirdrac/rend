@@ -1,6 +1,6 @@
 //
 // Renderer.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #include "Renderer.hh"
@@ -19,6 +19,7 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
 {
   _scene = s;
   _fb = fb;
+  _stats.clear();
 
   // Set up view vectors
   Vec3 vnormal = UnitVec(_scene->coi - _scene->eye);
@@ -57,11 +58,11 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
 }
 
 int Renderer::render(int min_x, int min_y, int max_x, int max_y,
-		     DList<HitInfo>* freeCache)
+		     DList<HitInfo>* freeCache, StatInfo* stats)
 {
-  Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
-  Flt halfWidth  = Flt(_scene->image_width)  * .5;
-  Flt halfHeight = Flt(_scene->image_height) * .5;
+  const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
+  const Flt halfWidth  = Flt(_scene->image_width)  * .5;
+  const Flt halfHeight = Flt(_scene->image_height) * .5;
 
   Ray initRay;
   initRay.base = _scene->eye;
@@ -69,6 +70,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   initRay.depth = 0;
   initRay.time = 0.0;
   initRay.freeCache = freeCache;
+  initRay.stats = stats ? stats : &_stats;
 
   // start rendering
   for (int y = min_y; y <= max_y; ++y) {
@@ -99,13 +101,19 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 
 int Renderer::setJobs(int jobs)
 {
+  std::size_t oldSize = _jobs.size();
   _jobs.resize(jobs);
+  std::size_t newSize = _jobs.size();
+  if (newSize > oldSize) {
+    for (std::size_t i = oldSize; i < newSize; ++i) {
+      _jobs[i] = std::make_unique<Job>();
+    }
+  }
   return 0;
 }
 
 int Renderer::startJobs()
 {
-#if 1
   // make render tasks
   int max_y = _scene->image_height - 1;
   int inc_y = std::max(2, int(_scene->image_height / (_jobs.size() * 10)));
@@ -116,26 +124,19 @@ int Renderer::startJobs()
   std::cout << "tasks: " << _tasks.size() << "   size: " << inc_y << '\n';
 
   // start render jobs
-  for (Job& j : _jobs) {
-    j.halt = false;
-    j.jobThread = std::thread(&Renderer::jobMain, this, &j);
+  for (auto& j : _jobs) {
+    j->stats.clear();
+    j->halt = false;
+    j->jobThread = std::thread(&Renderer::jobMain, this, j.get());
   }
-#else
-  // start render jobs (alternating scanlines for each job)
-  int y = 0;
-  _jobsRunning = _jobs.size();
-  for (Job& j : _jobs) {
-    j.halt = false;
-    j.jobThread = std::thread(&Renderer::jobMain2, this, &j, y++, _jobs.size());
-  }
-#endif
+
   return 0;
 }
 
 int Renderer::waitForJobs(int timeout_ms)
 {
   std::chrono::milliseconds timeout(timeout_ms);
-  std::unique_lock<std::mutex> lock(_tasksMutex);
+  std::unique_lock lock(_tasksMutex);
   //_tasksCV.wait(lock);
   //return _tasks.size();
 
@@ -164,8 +165,11 @@ int Renderer::waitForJobs(int timeout_ms)
 
 int Renderer::stopJobs()
 {
-  for (Job& j : _jobs) { j.halt = true; }
-  for (Job& j : _jobs) { j.jobThread.join(); }
+  for (auto& j : _jobs) { j->halt = true; }
+  for (auto& j : _jobs) {
+    j->jobThread.join();
+    _stats += j->stats;
+  }
   return 0;
 }
 
@@ -174,7 +178,7 @@ void Renderer::jobMain(Job* j)
   Task t;
   while (!j->halt) {
     {
-      std::lock_guard<std::mutex> lock(_tasksMutex);
+      std::lock_guard lock(_tasksMutex);
       if (_tasks.empty()) {
 	j->halt = true;
 	_tasksCV.notify_one();
@@ -185,22 +189,7 @@ void Renderer::jobMain(Job* j)
       _tasks.pop_back();
     }
 
-    render(t.min_x, t.min_y, t.max_x, t.max_y, &j->hitCache);
+    render(t.min_x, t.min_y, t.max_x, t.max_y, &j->hitCache, &j->stats);
   }
   //std::cerr << "thread halt\n";
 }
-
-#if 0
-void Renderer::jobMain2(Job* j, int start_y, int inc_y)
-{
-  int x_max = _scene->image_width - 1;
-  int y_max = _scene->image_height - 1;
-  for (int y = start_y; y <= y_max; y += inc_y) {
-    render(0, y, x_max, y, &j->hitCache);
-  }
-
-  j->halt = true;
-  --_jobsRunning;
-  _tasksCV.notify_one();
-}
-#endif

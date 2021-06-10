@@ -78,7 +78,7 @@ std::string Bound::desc(int) const
 int Bound::intersect(const Ray& r, HitList& hit_list) const
 {
   if (!always_hit) {
-    ++Stats.bound_tried;
+    ++r.stats->bound_tried;
     Flt h1, h2, near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
     // X
@@ -139,7 +139,7 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
       return 0;  // cube completely behind ray origin
     }
 
-    ++Stats.bound_hit;
+    ++r.stats->bound_hit;
   }
 
   // bounding box hit - intersect child bounds

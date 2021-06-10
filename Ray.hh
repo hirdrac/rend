@@ -12,20 +12,23 @@
 
 // **** Types ****
 class Transform;
+class StatInfo;
 
 class Ray
 {
  public:
+  // base ray properties
   Vec3 base, dir;
   Flt  max_length, time;
   int  depth;
+
+  // job specific buffers
   DList<HitInfo>* freeCache = nullptr;
+  StatInfo* stats = nullptr;
 
   // Member Functions
   void globalToLocal(const Transform& t, Vec3& base, Vec3& dir) const;
   void moveOut(Flt amount = .0001) { base += dir * amount; }
-
-  // FIXME - add HitInfo free cache
 };
 
 

@@ -1,6 +1,6 @@
 //
 // Stats.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // raytracing statistics gathering
 //
@@ -60,9 +60,10 @@ class StatInfo
   // Member Functions
   void clear();
   void print(const Scene& s, std::ostream& out) const;
+
+  StatInfo& operator+=(const StatInfo& stats);
 };
 
 
 // **** Globals ****
 extern InventoryInfo Inventory;
-extern StatInfo Stats;

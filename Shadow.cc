@@ -21,8 +21,10 @@ int CastShadow(
   feeler.max_length = lightDist;
   feeler.time       = r.time;
   feeler.depth      = 1;
-  feeler.freeCache  = r.freeCache;
   feeler.moveOut();
+
+  feeler.freeCache  = r.freeCache;
+  feeler.stats      = r.stats;
 
   Color result;
   s.traceShadowRay(feeler, result);

@@ -139,6 +139,9 @@ int Phong::evaluate(
     ray.depth = r.depth + 1;
     ray.moveOut();
 
+    ray.freeCache = r.freeCache;
+    ray.stats = r.stats;
+
     Color c;
     s.traceRay(ray, c);
     c *= color_s;

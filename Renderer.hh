@@ -1,16 +1,17 @@
 //
 // Renderer.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #pragma once
 #include "Intersect.hh"
+#include "Stats.hh"
 #include "Types.hh"
 #include <condition_variable>
 #include <mutex>
 #include <thread>
 #include <vector>
-//#include <atomic>
+#include <memory>
 
 
 // **** Types ****
@@ -22,10 +23,10 @@ class Renderer
  public:
   int init(Scene* s, FrameBuffer* fb);
   int render(int min_x, int min_y, int max_x, int max_y,
-	     DList<HitInfo>* freeCache = nullptr);
+	     DList<HitInfo>* freeCache, StatInfo* stats);
 
   // jobs/task methods
-  int jobs() const { return _jobs.size(); }
+  [[nodiscard]] int jobs() const { return _jobs.size(); }
   int setJobs(int jobs);
     // number of jobs (thread) to execute render
 
@@ -39,10 +40,13 @@ class Renderer
   int stopJobs();
     // stops active jobs, returns once all jobs are halted
 
+  [[nodiscard]] const StatInfo& stats() const { return _stats; }
+
  private:
   Scene* _scene;
   FrameBuffer* _fb;
   std::vector<Vec2> _samples;
+  StatInfo _stats;
 
   // Calculated Data
   Vec3 _pixelX, _pixelY, _rayDir;
@@ -53,9 +57,10 @@ class Renderer
     // HitInfo pool
     std::thread jobThread;
     DList<HitInfo> hitCache;
-    volatile bool halt = false;
+    StatInfo stats;
+    bool halt = false;
   };
-  std::vector<Job> _jobs;
+  std::vector<std::unique_ptr<Job>> _jobs;
 
   struct Task {
     // image region to render for task
@@ -64,8 +69,6 @@ class Renderer
   std::vector<Task> _tasks;
   std::mutex _tasksMutex;
   std::condition_variable _tasksCV;
-  //std::atomic<int> _jobsRunning;
 
   void jobMain(Job* j);
-  //void jobMain2(Job* j, int start_y, int inc_y);
 };

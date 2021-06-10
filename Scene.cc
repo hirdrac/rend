@@ -156,7 +156,7 @@ void Scene::info(std::ostream& out) const
 
 int Scene::traceRay(const Ray& r, Color& result) const
 {
-  ++Stats.rays_cast;
+  ++r.stats->rays_cast;
 
   const Object* o_list = bound_list.head();
   if (!o_list) { o_list = object_list.head(); }
@@ -175,7 +175,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
     return 0;
   }
 
-  ++Stats.rays_hit;
+  ++r.stats->rays_hit;
   Vec3 normal{}, map{};
   hit->object->evalHit(*hit, normal, map);
   if (DotProduct(r.dir, normal) > 0.0) { normal.invert(); }
@@ -197,7 +197,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
 
 int Scene::traceShadowRay(const Ray& r, Color& result) const
 {
-  ++Stats.shadow_rays_cast;
+  ++r.stats->shadow_rays_cast;
 
   const Object* o_list = bound_list.head();
   if (!o_list) { o_list = object_list.head(); }
@@ -209,6 +209,7 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
 
   HitInfo* hit = hit_list.findFirstHit(r);
   if (hit) {
+    ++r.stats->shadow_rays_hit;
     result.clear(); // transparency not supported
   } else {
     result.full();

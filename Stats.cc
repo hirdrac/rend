@@ -11,7 +11,6 @@
 
 // **** Globals ****
 InventoryInfo Inventory;
-StatInfo Stats;
 
 
 // **** StatInfo Class ****
@@ -21,6 +20,7 @@ void StatInfo::clear()
   rays_cast           = 0;
   rays_hit            = 0;
   shadow_rays_cast    = 0;
+  shadow_rays_hit     = 0;
   bound_tried         = 0;
   bound_hit           = 0;
   disc_tried          = 0;
@@ -60,8 +60,9 @@ void StatInfo::print(const Scene& s, std::ostream& out) const
   uint64_t total_tries = object_tried + bound_tried;
 
   out << "       Rays Cast  " << rays_cast;
-  out << "\nShadow Rays Cast  " << shadow_rays_cast;
   out << "\n        Rays Hit  " << rays_hit;
+  out << "\nShadow Rays Cast  " << shadow_rays_cast;
+  out << "\n Shadow Rays Hit  " << shadow_rays_hit;
   out << "\n     Light Count  " << Inventory.lights;
   out << "\n    Shader Count  " << Inventory.shaders;
   out << "\n    Object Count  " << Inventory.objects;
@@ -82,4 +83,35 @@ void StatInfo::print(const Scene& s, std::ostream& out) const
   }
 
   out << '\n';
+}
+
+StatInfo& StatInfo::operator+=(const StatInfo& s)
+{
+  rays_cast           += s.rays_cast;
+  rays_hit            += s.rays_hit;
+  shadow_rays_cast    += s.shadow_rays_cast;
+  shadow_rays_hit     += s.shadow_rays_hit;
+  bound_tried         += s.bound_tried;
+  bound_hit           += s.bound_hit;
+  disc_tried          += s.disc_tried;
+  disc_hit            += s.disc_hit;
+  cone_tried          += s.cone_tried;
+  cone_hit            += s.cone_hit;
+  cube_tried          += s.cube_tried;
+  cube_hit            += s.cube_hit;
+  cylinder_tried      += s.cylinder_tried;
+  cylinder_hit        += s.cylinder_hit;
+  open_cone_tried     += s.open_cone_tried;
+  open_cone_hit       += s.open_cone_hit;
+  open_cylinder_tried += s.open_cylinder_tried;
+  open_cylinder_hit   += s.open_cylinder_hit;
+  paraboloid_tried    += s.paraboloid_tried;
+  paraboloid_hit      += s.paraboloid_hit;
+  plane_tried         += s.plane_tried;
+  plane_hit           += s.plane_hit;
+  sphere_tried        += s.sphere_tried;
+  sphere_hit          += s.sphere_hit;
+  torus_tried         += s.torus_tried;
+  torus_hit           += s.torus_hit;
+  return *this;
 }

@@ -33,7 +33,7 @@ int Disc::init(Scene& s)
 // Object Functions
 int Disc::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.disc_tried;
+  ++r.stats->disc_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -53,7 +53,7 @@ int Disc::intersect(const Ray& r, HitList& hit_list) const
   }
 
   hit_list.addHit(this, h, pt);
-  ++Stats.disc_hit;
+  ++r.stats->disc_hit;
   return 1;
 }
 
@@ -90,7 +90,7 @@ int Cone::init(Scene& s)
 // Object Functions
 int Cone::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.cone_tried;
+  ++r.stats->cone_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -131,7 +131,7 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
     }
   }
 
-  if (hits > 0) { ++Stats.cone_hit; }
+  if (hits > 0) { ++r.stats->cone_hit; }
   return hits;
 }
 
@@ -185,7 +185,7 @@ int Cube::init(Scene& s)
 // Object Functions
 int Cube::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.cube_tried;
+  ++r.stats->cube_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -256,7 +256,7 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
 
   hit_list.addHit(this, near_hit, CalcHitPoint(base, dir, near_hit), near_side);
   hit_list.addHit(this, far_hit, CalcHitPoint(base, dir, far_hit), far_side);
-  ++Stats.cube_hit;
+  ++r.stats->cube_hit;
   return 2;
 }
 
@@ -298,7 +298,7 @@ int Cylinder::init(Scene& s)
 // Object Functions
 int Cylinder::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.cylinder_tried;
+  ++r.stats->cylinder_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -358,7 +358,7 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
 
   hit_list.addHit(this, near_hit, CalcHitPoint(base, dir, near_hit), near_side);
   hit_list.addHit(this, far_hit, CalcHitPoint(base, dir, far_hit), far_side);
-  ++Stats.cylinder_hit;
+  ++r.stats->cylinder_hit;
   return 2;
 }
 
@@ -400,7 +400,7 @@ OpenCone::OpenCone()
 // Object Functions
 int OpenCone::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.open_cone_tried;
+  ++r.stats->open_cone_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -437,7 +437,7 @@ int OpenCone::intersect(const Ray& r, HitList& hit_list) const
     ++hits;
   }
 
-  if (hits > 0) { ++Stats.open_cone_hit; }
+  if (hits > 0) { ++r.stats->open_cone_hit; }
   return hits;
 }
 
@@ -468,7 +468,7 @@ OpenCylinder::OpenCylinder()
 // Object Functions
 int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.open_cylinder_tried;
+  ++r.stats->open_cylinder_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -504,7 +504,7 @@ int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
     ++hits;
   }
 
-  if (hits > 0) { ++Stats.open_cylinder_hit; }
+  if (hits > 0) { ++r.stats->open_cylinder_hit; }
   return hits;
 }
 
@@ -530,7 +530,7 @@ Paraboloid::Paraboloid()
 // Object Functions
 int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.paraboloid_tried;
+  ++r.stats->paraboloid_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -567,7 +567,7 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
     ++hits;
   }
 
-  if (hits > 0) { ++Stats.paraboloid_hit; }
+  if (hits > 0) { ++r.stats->paraboloid_hit; }
   return hits;
 }
 
@@ -601,7 +601,7 @@ int Plane::init(Scene& s)
 // Object Functions
 int Plane::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.plane_tried;
+  ++r.stats->plane_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -627,7 +627,7 @@ int Plane::intersect(const Ray& r, HitList& hit_list) const
 
   pt.z = 0.0;
   hit_list.addHit(this, h, pt);
-  ++Stats.plane_hit;
+  ++r.stats->plane_hit;
   return 1;
 }
 
@@ -655,7 +655,7 @@ Sphere::Sphere()
 // Object Functions
 int Sphere::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.sphere_tried;
+  ++r.stats->sphere_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -681,7 +681,7 @@ int Sphere::intersect(const Ray& r, HitList& hit_list) const
   h = (-b - sqrt_x) / a;  // near hit
   hit_list.addHit(this, h, CalcHitPoint(base, dir, h));
 
-  ++Stats.sphere_hit;
+  ++r.stats->sphere_hit;
   return 2;
 }
 
@@ -715,7 +715,7 @@ int Torus::init(Scene& s)
 // Object Functions
 int Torus::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++Stats.torus_tried;
+  ++r.stats->torus_tried;
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
@@ -741,7 +741,7 @@ int Torus::intersect(const Ray& r, HitList& hit_list) const
     hit_list.addHit(this, root[i], CalcHitPoint(base, dir, root[i]));
   }
 
-  ++Stats.torus_hit;
+  ++r.stats->torus_hit;
   return n;
 }
 

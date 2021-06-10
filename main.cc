@@ -75,7 +75,6 @@ int ShellRender()
   Timer t;
   t.start();
 
-  Stats.clear();
   if (TheScene.init()) {
     std::cout << "Scene Initialization Failed - can't render\n";
     return -1;
@@ -96,7 +95,7 @@ int ShellRender()
     for (int y = TheScene.region_min[1]; y <= TheScene.region_max[1]; ++y) {
       std::cerr << "\rscanline -- " << y+1;
       Ren.render(TheScene.region_min[0], y, TheScene.region_max[0], y,
-		 &freeCache);
+		 &freeCache, nullptr);
     }
   } else {
     int j = Ren.jobs();
@@ -203,7 +202,7 @@ int ShellLoop()
     break;
 
   case 'z':
-    Stats.print(TheScene, std::cout);
+    Ren.stats().print(TheScene, std::cout);
     break;
 
   default:
