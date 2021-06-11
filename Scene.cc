@@ -1,6 +1,6 @@
 //
 // Scene.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Implementation of scene class
 //
@@ -21,17 +21,6 @@
 
 
 /**** Scene Class ****/
-// Constructor
-Scene::Scene() :
-  ambient(nullptr), background(nullptr), air(nullptr),
-  default_obj(nullptr), default_lt(nullptr),
-  image_width(256), image_height(256),
-  eye(0,0,1), coi(0,0,0), vup(0,1,0), fov(50), index(1.0),
-  samples_x(1), samples_y(1),
-  shadow(true), reflect(true), transmit(true),
-  max_ray_depth(99), min_ray_value(VERY_SMALL)
-{ }
-
 // Destructor
 Scene::~Scene()
 {
@@ -40,6 +29,37 @@ Scene::~Scene()
 }
 
 // Member Functions
+void Scene::clear()
+{
+  ambient = nullptr;
+  background = nullptr;
+  air = nullptr;
+  default_obj = nullptr;
+  default_lt = nullptr;
+  image_width = 256;
+  image_height = 256;
+  eye.set(0,0,1);
+  coi.set(0,0,0);
+  vup.set(0,1,0);
+  fov = 50.0;
+  index = 1.0;
+  samples_x = 1;
+  samples_y = 1;
+  shadow = true;
+  reflect = true;
+  transmit = true;
+  max_ray_depth = 99;
+  min_ray_value = VERY_SMALL;
+
+  // object clear
+  for (Light* lt : lights) { delete lt; }
+  lights.clear();
+  for (Shader* sh : _shaders) { delete sh; }
+  _shaders.clear();
+  object_list.purge();
+  bound_list.purge();
+}
+
 int Scene::generate(SceneDesc& sd)
 {
   int errors = ProcessList(*this, nullptr, sd.node_list.head());
@@ -67,15 +87,26 @@ int Scene::add(SceneItem* i, SceneItemFlag flag)
 
   Shader* sh = dynamic_cast<Shader*>(i);
   if (sh) {
-    _shaders.push_back(sh);
     switch (flag) {
-      case AIR:         air = sh; break;
-      case AMBIENT:     ambient = sh; break;
-      case BACKGROUND:  background = sh; break;
-      case DEFAULT_LT:  default_lt = sh; break;
-      case DEFAULT_OBJ: default_obj = sh; break;
-      default: break;
+      case AIR:
+        if (air) { return -1; } else { air = sh; }
+        break;
+      case AMBIENT:
+        if (ambient) { return -1; } else { ambient = sh; }
+        break;
+      case BACKGROUND:
+        if (background) { return -1; } else { background = sh; }
+        break;
+      case DEFAULT_LT:
+        if (default_lt) { return -1; } else { default_lt = sh; }
+        break;
+      case DEFAULT_OBJ:
+        if (default_obj) { return -1; } else { default_obj = sh; }
+        break;
+      default:
+        break;
     }
+    _shaders.push_back(sh);
     return 0;
   }
 

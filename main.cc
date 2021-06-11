@@ -1,6 +1,6 @@
 //
 // main.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // startup for rend
 //
@@ -55,6 +55,7 @@ int ShellLoad(const std::string& file)
   }
 
   std::cout << "Generating Scene\n";
+  TheScene.clear();
   if (TheScene.generate(sf)) {
     std::cout << "Error in scene generation\n";
     return -1;

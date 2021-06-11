@@ -1,6 +1,6 @@
 //
 // Scene.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Definition of scene class
 //
@@ -51,11 +51,12 @@ class Scene
   Flt  min_ray_value;
 
   // Constructor
-  Scene();
+  Scene() { clear(); }
   // Destructor
   ~Scene();
 
   // Member Functions
+  void clear();
   int generate(SceneDesc& sd);
   int add(SceneItem* i, SceneItemFlag flag);
   int init();
