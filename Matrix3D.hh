@@ -48,7 +48,7 @@ class Matrix4x4
   constexpr self_type& operator=(const T (&vals)[N]) {
     // NOTE: required by clang for 'Matrix m = {...}'
     static_assert(N == size());
-    for (int i = 0; i != size(); ++i) { _val[i] = vals[i]; }
+    for (size_type i = 0; i != size(); ++i) { _val[i] = vals[i]; }
     return *this;
   }
 
@@ -105,7 +105,7 @@ class Matrix4x4
   void rotateZ(T rad) { rotateZ_sc(std::sin(rad), std::cos(rad)); }
   constexpr void rotateZ_sc(T sinVal, T cosVal);
 
-  constexpr void setRotation(const Vector3<T>& axis, T rad) {
+  void setRotation(const Vector3<T>& axis, T rad) {
     setRotation_sc(axis, std::sin(rad), std::cos(rad)); }
   constexpr void setRotation_sc(const Vector3<T>& axis, T sinVal, T cosVal);
   void rotate(const Vector3<T>& axis, T rad) {

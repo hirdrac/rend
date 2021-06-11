@@ -13,7 +13,7 @@
 
 
 // **** Types ****
-class Bound : public Object
+class Bound final : public Object
 {
  public:
   SList<Object> child_list;

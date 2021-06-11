@@ -10,7 +10,7 @@
 
 
 // **** Types ****
-class Phong : public Shader
+class Phong final : public Shader
 {
  public:
   Shader* diffuse = nullptr;

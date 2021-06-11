@@ -1,6 +1,6 @@
 //
 // Object.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Definition of base object class
 //
@@ -10,7 +10,6 @@
 #include "SceneItem.hh"
 #include "Types.hh"
 #include "SList.hh"
-#include <string>
 
 
 // **** Types ****
@@ -46,10 +45,6 @@ class Object : public SceneItem, public SListNode<Object>
   // Destructor
   ~Object();
 
-  // SceneItem Functions
-  const char* name() const override { return _name.c_str(); }
-  int setName(const std::string& str) override { _name = str; return 0; }
-
   // Member Functions
   virtual int bound(BBox& b) const { return -1; }
   virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
@@ -63,9 +58,6 @@ class Object : public SceneItem, public SListNode<Object>
   virtual Shader* shader() const { return nullptr; }
   virtual int     setShader(Shader* sh) { return -1; }
   virtual Object* childList() const { return nullptr; }
-
- protected:
-  std::string _name;
 };
 
 

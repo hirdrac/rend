@@ -30,7 +30,6 @@ class SceneItem
   virtual ~SceneItem() = default;
 
   // Member Function
-  virtual const char*      name() const { return nullptr; }
   virtual Transform*       trans()       { return nullptr; }
   virtual const Transform* trans() const { return nullptr; }
   virtual std::string desc(int indent) const = 0;

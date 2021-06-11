@@ -10,7 +10,7 @@
 
 
 // **** Types ****
-class ShaderColor : public Shader
+class ShaderColor final : public Shader
 {
  public:
   Color color;
@@ -31,7 +31,7 @@ class ShaderColor : public Shader
 };
 
 
-class ShaderGlobal : public Shader
+class ShaderGlobal final : public Shader
 {
  public:
   // SceneItem Functions
@@ -49,7 +49,7 @@ class ShaderGlobal : public Shader
 };
 
 
-class ShaderLocal : public Shader
+class ShaderLocal final : public Shader
 {
  public:
   // SceneItem Functions
@@ -67,7 +67,7 @@ class ShaderLocal : public Shader
 };
 
 
-class Checkerboard : public PatternShader
+class Checkerboard final : public PatternShader
 {
  public:
   // SceneItem Functions
@@ -80,7 +80,7 @@ class Checkerboard : public PatternShader
 };
 
 
-class ColorCube : public PatternShader
+class ColorCube final : public PatternShader
 {
  public:
   // SceneItem Functions
@@ -93,7 +93,7 @@ class ColorCube : public PatternShader
 };
 
 
-class Ring : public PatternShader
+class Ring final : public PatternShader
 {
  public:
   // SceneItem Functions
@@ -106,7 +106,7 @@ class Ring : public PatternShader
 };
 
 
-class ShaderSide : public PatternShader
+class ShaderSide final : public PatternShader
 {
  public:
   // SceneItem Functions
@@ -119,7 +119,7 @@ class ShaderSide : public PatternShader
 };
 
 
-class Stripe : public PatternShader
+class Stripe final : public PatternShader
 {
  public:
   // SceneItem Functions
@@ -132,7 +132,7 @@ class Stripe : public PatternShader
 };
 
 #if 0
-class TextureMap : public PatternShader
+class TextureMap final : public PatternShader
 {
  public:
   FrameBuffer* fb;

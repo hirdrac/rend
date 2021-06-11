@@ -35,7 +35,7 @@ class CSG : public Primitive
 
 
 // **** CSG classes ****
-class Merge : public CSG
+class Merge final : public CSG
 {
  public:
   // SceneItem Functions
@@ -46,7 +46,7 @@ class Merge : public CSG
   int bound(BBox& b) const override;
 };
 
-class Union : public CSG
+class Union final : public CSG
 {
  public:
   // SceneItem Functions
@@ -57,7 +57,7 @@ class Union : public CSG
   int bound(BBox& b) const override;
 };
 
-class Intersection : public CSG
+class Intersection final : public CSG
 {
  public:
   // SceneItem Functions
@@ -68,7 +68,7 @@ class Intersection : public CSG
   int bound(BBox& b) const override;
 };
 
-class Difference : public CSG
+class Difference final : public CSG
 {
  public:
   // SceneItem Functions

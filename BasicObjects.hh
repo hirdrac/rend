@@ -11,7 +11,7 @@
 
 
 // **** Types ****
-class Disc : public Primitive
+class Disc final : public Primitive
 {
  public:
   // Constructor
@@ -31,7 +31,7 @@ class Disc : public Primitive
   Vec3 normal_cache;
 };
 
-class Cone : public Primitive
+class Cone final : public Primitive
 {
  public:
   // Constructor
@@ -50,7 +50,7 @@ class Cone : public Primitive
   Vec3 normal_cache;
 };
 
-class Cube : public Primitive
+class Cube final : public Primitive
 {
  public:
   // Constructor
@@ -69,7 +69,7 @@ class Cube : public Primitive
   Vec3 normal_cache[6];
 };
 
-class Cylinder : public Primitive
+class Cylinder final : public Primitive
 {
  public:
   // Constructor
@@ -88,7 +88,7 @@ class Cylinder : public Primitive
   Vec3 normal_cache[2];
 };
 
-class OpenCone : public Primitive
+class OpenCone final : public Primitive
 {
  public:
   // Constructor
@@ -103,7 +103,7 @@ class OpenCone : public Primitive
   Flt hitCost() const override { return CostTable.open_cone; }
 };
 
-class OpenCylinder : public Primitive
+class OpenCylinder final : public Primitive
 {
  public:
   // Constructor
@@ -118,7 +118,7 @@ class OpenCylinder : public Primitive
   Flt hitCost() const override { return CostTable.open_cylinder; }
 };
 
-class Paraboloid : public Primitive
+class Paraboloid final : public Primitive
 {
  public:
   // Constructor
@@ -133,7 +133,7 @@ class Paraboloid : public Primitive
   Flt hitCost() const override { return CostTable.paraboloid; }
 };
 
-class Plane : public Primitive
+class Plane final : public Primitive
 {
  public:
   // Constructor
@@ -153,7 +153,7 @@ class Plane : public Primitive
   Vec3 normal_cache;
 };
 
-class Sphere : public Primitive
+class Sphere final : public Primitive
 {
  public:
   // Constructor
@@ -168,7 +168,7 @@ class Sphere : public Primitive
   Flt hitCost() const override { return CostTable.sphere; }
 };
 
-class Torus : public Primitive
+class Torus final : public Primitive
 {
  public:
   // Constructor

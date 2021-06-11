@@ -21,6 +21,7 @@ class Group final : public Primitive
 
   // SceneItem Functions
   std::string desc(int indent) const override;
+  int setName(const std::string& str) override { _name = str; return 0; }
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   int init(Scene& s) override;
 
@@ -30,5 +31,6 @@ class Group final : public Primitive
   Object* childList() const override { return child_list.head(); }
 
  protected:
+  std::string _name;
   SList<Object> child_list;
 };

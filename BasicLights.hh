@@ -10,7 +10,7 @@
 
 
 // **** Types ****
-class Sun : public Light
+class Sun final : public Light
 {
  public:
   // SceneItem Functions
@@ -22,7 +22,7 @@ class Sun : public Light
     const Vec3& map, LightResult& result) const override;
 };
 
-class PointLight : public Light
+class PointLight final : public Light
 {
  public:
   // SceneItem Functions
@@ -34,7 +34,7 @@ class PointLight : public Light
     const Vec3& map, LightResult& result) const override;
 };
 
-class SpotLight : public Light
+class SpotLight final : public Light
 {
  public:
   // SceneItem Functions
