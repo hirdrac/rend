@@ -38,27 +38,22 @@ int ShaderColor::evaluate(
 int ShaderGlobal::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh) { return -1; }
+  if (!sh || child) { return -1; }
 
-  children.push_back(sh);
+  child = sh;
   return 0;
 }
 
 int ShaderGlobal::init(Scene& s)
 {
-  for (Shader* sh : children) {
-    int err = InitShader(s, *sh, value);
-    if (err) { return err; }
-  }
-  return 0;
+  return child ? InitShader(s, *child, value) : -1;
 }
 
 int ShaderGlobal::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  if (children.empty()) { return -1; }
-  return children.front()->evaluate(s, r, h, normal, h.global_pt, result);
+  return child->evaluate(s, r, h, normal, h.global_pt, result);
 }
 
 
@@ -66,27 +61,22 @@ int ShaderGlobal::evaluate(
 int ShaderLocal::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh) { return -1; }
+  if (!sh || child) { return -1; }
 
-  children.push_back(sh);
+  child = sh;
   return 0;
 }
 
 int ShaderLocal::init(Scene& s)
 {
-  for (Shader* sh : children) {
-    int err = InitShader(s, *sh, value);
-    if (err) { return err; }
-  }
-  return 0;
+  return child ? InitShader(s, *child, value) : -1;
 }
 
 int ShaderLocal::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  if (children.empty()) { return -1; }
-  return children.front()->evaluate(s, r, h, normal, h.local_pt, result);
+  return child->evaluate(s, r, h, normal, h.local_pt, result);
 }
 
 

@@ -35,9 +35,9 @@ class ShaderGlobal final : public Shader
 {
  public:
   // SceneItem Functions
-  int  add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   std::string desc(int) const override { return "<Global>"; }
-  int  init(Scene& s) override;
+  int init(Scene& s) override;
 
   // Shader Functions
   int evaluate(
@@ -45,7 +45,7 @@ class ShaderGlobal final : public Shader
     const Vec3& map, Color& result) const override;
 
  private:
-  std::vector<Shader*> children;
+  Shader* child = nullptr;
 };
 
 
@@ -53,9 +53,9 @@ class ShaderLocal final : public Shader
 {
  public:
   // SceneItem Functions
-  int  add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   std::string desc(int) const override { return "<Local>"; }
-  int  init(Scene& s) override;
+  int init(Scene& s) override;
 
   // Shader Functions
   int evaluate(
@@ -63,7 +63,7 @@ class ShaderLocal final : public Shader
     const Vec3& map, Color& result) const override;
 
  private:
-  std::vector<Shader*> children;
+  Shader* child = nullptr;
 };
 
 
@@ -136,7 +136,7 @@ class TextureMap final : public PatternShader
 {
  public:
   FrameBuffer* fb;
-  Flt  sx, sy;
+  Flt sx, sy;
 
   // SceneItem Functions
   std::string desc(int) const override { return "<TextureMap>"; }

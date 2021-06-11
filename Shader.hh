@@ -26,9 +26,6 @@ class Shader : public SceneItem
   // Destructor
   ~Shader();
 
-  // SceneItem Functions
-  std::string desc(int) const override { return "<Shader>"; }
-
   // Member Functions
   virtual int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
