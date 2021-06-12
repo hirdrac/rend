@@ -13,10 +13,7 @@
 class Phong final : public Shader
 {
  public:
-  Shader* diffuse = nullptr;
-  Shader* specular = nullptr;
-  Shader* transmit = nullptr;
-  Flt     exp = 5.0;
+  Flt exp = 5.0;
 
   // Destructor
   ~Phong();
@@ -30,4 +27,9 @@ class Phong final : public Shader
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
     const Vec3& map, Color& result) const override;
+
+ private:
+  Shader* _diffuse = nullptr;
+  Shader* _specular = nullptr;
+  Shader* _transmit = nullptr;
 };

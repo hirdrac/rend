@@ -35,48 +35,58 @@ int ShaderColor::evaluate(
 
 
 // **** ShaderGlobal Class ****
+ShaderGlobal::~ShaderGlobal()
+{
+  delete _child;
+}
+
 int ShaderGlobal::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh || child) { return -1; }
+  if (!sh || _child) { return -1; }
 
-  child = sh;
+  _child = sh;
   return 0;
 }
 
 int ShaderGlobal::init(Scene& s)
 {
-  return child ? InitShader(s, *child, value) : -1;
+  return _child ? InitShader(s, *_child, value) : -1;
 }
 
 int ShaderGlobal::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  return child->evaluate(s, r, h, normal, h.global_pt, result);
+  return _child->evaluate(s, r, h, normal, h.global_pt, result);
 }
 
 
 // **** ShaderLocal Class ****
+ShaderLocal::~ShaderLocal()
+{
+  delete _child;
+}
+
 int ShaderLocal::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh || child) { return -1; }
+  if (!sh || _child) { return -1; }
 
-  child = sh;
+  _child = sh;
   return 0;
 }
 
 int ShaderLocal::init(Scene& s)
 {
-  return child ? InitShader(s, *child, value) : -1;
+  return _child ? InitShader(s, *_child, value) : -1;
 }
 
 int ShaderLocal::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  return child->evaluate(s, r, h, normal, h.local_pt, result);
+  return _child->evaluate(s, r, h, normal, h.local_pt, result);
 }
 
 
@@ -86,11 +96,11 @@ int Checkerboard::evaluate(
   const Vec3& map, Color& result) const
 {
   Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
-  int gx = int(std::floor(m.x + VERY_SMALL) + 1.0);
-  int gy = int(std::floor(m.y + VERY_SMALL) + 1.0);
-  int gz = int(std::floor(m.z + VERY_SMALL) + 1.0);
-  int x  = Abs(gx + gy + gz) % int(children.size());
-  return children[x]->evaluate(s, r, h, normal, map, result);
+  int gx = int(std::floor(m.x));
+  int gy = int(std::floor(m.y));
+  int gz = int(std::floor(m.z));
+  int x  = Abs(gx + gy + gz) % int(_children.size());
+  return _children[x]->evaluate(s, r, h, normal, map, result);
 }
 
 
@@ -112,8 +122,8 @@ int Ring::evaluate(
 {
   Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
   int d = int(std::sqrt(Sqr(m.x) + Sqr(m.y) + Sqr(m.z)) * 2.0);
-  int x = Abs(d) % int(children.size());
-  return children[x]->evaluate(s, r, h, normal, map, result);
+  int x = Abs(d) % int(_children.size());
+  return _children[x]->evaluate(s, r, h, normal, map, result);
 }
 
 
@@ -122,8 +132,8 @@ int ShaderSide::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  int x = h.side % int(children.size());
-  return children[x]->evaluate(s, r, h, normal, map, result);
+  int x = h.side % int(_children.size());
+  return _children[x]->evaluate(s, r, h, normal, map, result);
 }
 
 
@@ -133,9 +143,9 @@ int Stripe::evaluate(
   const Vec3& map, Color& result) const
 {
   Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
-  int gx = int(std::floor(m.x + VERY_SMALL) + 1.0);
-  int x  = Abs(gx) % int(children.size());
-  return children[x]->evaluate(s, r, h, normal, map, result);
+  int gx = int(std::floor(m.x));
+  int x  = Abs(gx) % int(_children.size());
+  return _children[x]->evaluate(s, r, h, normal, map, result);
 }
 
 

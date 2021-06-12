@@ -10,64 +10,52 @@
 #include "Light.hh"
 #include "Intersect.hh"
 #include "Ray.hh"
-#include "Bound.hh"
 #include "BasicShaders.hh"
 
 
-// ---- Phong Class ----
+// **** Phong Class ****
 // Destructor
 Phong::~Phong()
 {
-  delete diffuse;
-  delete specular;
-  delete transmit;
+  delete _diffuse;
+  delete _specular;
+  delete _transmit;
 }
 
 // SceneItem Functions
 int Phong::init(Scene& s)
 {
   int error = 0;
-  if (!diffuse) {
-    diffuse = new ShaderColor(.5, .5, .5);
+  if (!_diffuse) {
+    _diffuse = new ShaderColor(.5, .5, .5);
   }
 
-  if (!specular) {
-    specular = new ShaderColor(0, 0, 0);
-  }
-
-  if (!transmit) {
-    transmit = new ShaderColor(0, 0, 0);
-  }
-
-  error += Shader::init(s);
-  error += InitShader(s, *diffuse, value);
-  error += InitShader(s, *specular, value);
-  error += InitShader(s, *transmit, value);
+  error += InitShader(s, *_diffuse, value);
+  if (_specular) { error += InitShader(s, *_specular, value); }
+  if (_transmit) { error += InitShader(s, *_transmit, value); }
   return error;
 }
 
 int Phong::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh) {
-    return Shader::add(i, flag);
-  }
+  if (!sh) { return -1; }
 
   switch (flag) {
     default:
     case DIFFUSE:
-      delete diffuse;
-      diffuse = sh;
+      if (_diffuse) { return -1; }
+      _diffuse = sh;
       break;
 
     case SPECULAR:
-      delete specular;
-      specular = sh;
+      if (_specular) { return -1; }
+      _specular = sh;
       break;
 
     case TRANSMIT:
-      delete transmit;
-      transmit = sh;
+      if (_transmit) { return -1; }
+      _transmit = sh;
       break;
   }
 
@@ -81,21 +69,32 @@ int Phong::evaluate(
 {
   // Evaluate Shaders
   Color color_d;
-  diffuse->evaluate(s, r, h, normal, map, color_d);
+  _diffuse->evaluate(s, r, h, normal, map, color_d);
   bool is_d = !color_d.isBlack(s.min_ray_value);
 
   Color color_s;
-  specular->evaluate(s, r, h, normal, map, color_s);
-  bool is_s = !color_s.isBlack(s.min_ray_value);
+  bool is_s;
+  if (_specular) {
+    _specular->evaluate(s, r, h, normal, map, color_s);
+    is_s = !color_s.isBlack(s.min_ray_value);
+  } else {
+    color_s.clear();
+    is_s = false;
+  }
 
 #if 0
   Color color_t;
-  transmit->evaluate(s, r, h, normal, map, color_t);
-  bool is_t = !color_t.isBlack(s.min_ray_value);
+  bool is_t;
+  if (_transmit) {
+    _transmit->evaluate(s, r, h, normal, map, color_t);
+    is_t = !color_t.isBlack(s.min_ray_value);
+  } else {
+    color_t.clear();
+    is_t = false;
+  }
 #endif
 
   Vec3 reflect = CalcReflect(r.dir, normal);
-
   Color tmp;
 
   // Ambient calculations
