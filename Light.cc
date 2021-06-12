@@ -1,6 +1,6 @@
 //
 // Light.cc
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #include "Light.hh"
@@ -34,12 +34,12 @@ int Light::init(Scene& s)
 int Light::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (sh) {
-    energy = sh;
-    return 0;
-  } else {
+  if (!sh || energy) {
     return -1;
   }
+
+  energy = sh;
+  return 0;
 }
 
 
