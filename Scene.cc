@@ -104,6 +104,8 @@ int Scene::add(SceneItem* i, SceneItemFlag flag)
         if (default_obj) { return -1; } else { default_obj = sh; }
         break;
       default:
+        // object/light shaders are added to the scene
+        // (which is in charge of initialization & memory)
         break;
     }
     _shaders.push_back(sh);
@@ -198,7 +200,8 @@ int Scene::traceRay(const Ray& r, Color& result) const
   }
 
   HitInfo* hit = hit_list.findFirstHit(r);
-  if (!hit || !hit->object) {
+  const Object* obj = hit ? hit->object : nullptr;
+  if (!obj) {
     // hit background
     HitInfo h(nullptr, VERY_LARGE, {0,0,0});
     Vec3 map{(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0};
@@ -208,10 +211,10 @@ int Scene::traceRay(const Ray& r, Color& result) const
 
   ++r.stats->rays_hit;
   Vec3 normal{}, map{};
-  hit->object->evalHit(*hit, normal, map);
+  obj->evalHit(*hit, normal, map);
   if (DotProduct(r.dir, normal) > 0.0) { normal.invert(); }
 
-  Shader* sh = hit->object->shader();
+  Shader* sh = obj->shader();
   if (!sh) {
     sh = default_obj;
     if (!sh) {
