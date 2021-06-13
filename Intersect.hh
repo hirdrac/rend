@@ -8,7 +8,6 @@
 #pragma once
 #include "Types.hh"
 #include "DList.hh"
-#include <iosfwd>
 
 
 // **** Types ****
@@ -42,8 +41,8 @@ class HitList
   ~HitList() { clear(); }
 
   // Member Functions
-  int addHit(const Object* ob, Flt t, const Vec3& local_pt, int side = 0);
-  int mergeList(HitList& list);
+  void addHit(const Object* ob, Flt t, const Vec3& local_pt, int side = 0);
+  void mergeList(HitList& list);
   void clear();
 
   [[nodiscard]] HitInfo* findFirstHit(const Ray& r) const;
@@ -51,9 +50,9 @@ class HitList
   [[nodiscard]] bool empty() const { return _hitList.empty(); }
   [[nodiscard]] int  count() const { return _hitList.count(); }
 
-  int csgMerge(const Object* csg);
-  int csgUnion(const Object* csg);
-  int csgIntersection(const Object* csg, int objectCount);
+  void csgMerge(const Object* csg);
+  void csgUnion(const Object* csg);
+  void csgIntersection(const Object* csg, int objectCount);
 
   [[nodiscard]] DList<HitInfo>* freeCache() { return _freeCache; }
 
@@ -61,10 +60,6 @@ class HitList
   DList<HitInfo> _hitList;
   DList<HitInfo>* _freeCache;
 
-  int add(HitInfo* ht);
+  void add(HitInfo* ht);
   void kill(HitInfo* ht);
 };
-
-
-// **** Functions ****
-std::ostream& operator<<(std::ostream& os, const HitInfo& h);

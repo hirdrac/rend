@@ -13,7 +13,7 @@
 
 /**** HitList Class ****/
 // Member Functions
-int HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
+void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
 {
   HitInfo* ht = _freeCache ? _freeCache->removeHead() : nullptr;
   if (!ht) { ht = new HitInfo; }
@@ -24,14 +24,12 @@ int HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
   ht->local_pt  = pt;
   ht->global_pt = {0,0,0};
   ht->side      = s;
-
-  return add(ht);
+  add(ht);
 }
 
-int HitList::mergeList(HitList& list)
+void HitList::mergeList(HitList& list)
 {
   while (!list.empty()) { add(list.extractFirst()); }
-  return 0;
 }
 
 void HitList::clear()
@@ -51,25 +49,21 @@ HitInfo* HitList::findFirstHit(const Ray& r) const
   return (h && (h->distance < r.max_length)) ? h : nullptr;
 }
 
-int HitList::csgMerge(const Object* csg)
+void HitList::csgMerge(const Object* csg)
 {
   for (HitInfo* h = _hitList.head(); h != nullptr; h = h->next()) {
     // claim hit as part of csg object
     if (!h->child) { h->child = h->object; }
     h->object = csg;
   }
-
-  return 0;
 }
 
-int HitList::csgUnion(const Object* csg)
+void HitList::csgUnion(const Object* csg)
 {
   HitInfo* h = _hitList.head();
   std::set<const void*> insideSet;
 
   while (h) {
-    HitInfo* next = h->next();
-
     // claim hit as part of csg object
     const Object* ob = h->object;
     if (!h->child) { h->child = ob; }
@@ -86,37 +80,33 @@ int HitList::csgUnion(const Object* csg)
       }
     }
 
+    HitInfo* next = h->next();
     if (!insideSet.empty()) { kill(h); }
     h = next;
   }
-
-  return 0;
 }
 
-int HitList::csgIntersection(const Object* csg, int objectCount)
+void HitList::csgIntersection(const Object* csg, int objectCount)
 {
   HitInfo* h = _hitList.head();
   std::set<const void*> insideSet;
   int count = 0;
 
   while (h) {
-    HitInfo* next = h->next();
-
     // claim hit as part of csg object
     const Object* ob = h->object;
     if (!h->child) { h->child = ob; }
     h->object = csg;
 
+    HitInfo* next = h->next();
     if (!ob->isSolid()) {
       // hollow object
       kill(h);
-
     } else if (insideSet.find(ob) != insideSet.end()) {
       // leaving solid object
       if (count < objectCount) { kill(h); }
       insideSet.erase(ob);
       --count;
-
     } else {
       // entering solid object
       insideSet.insert(ob);
@@ -125,11 +115,9 @@ int HitList::csgIntersection(const Object* csg, int objectCount)
 
     h = next;
   }
-
-  return 0;
 }
 
-int HitList::add(HitInfo* ht)
+void HitList::add(HitInfo* ht)
 {
   // sort hit into current hit list
   // (keep hit list sorted at all times)
@@ -142,8 +130,6 @@ int HitList::add(HitInfo* ht)
   } else {
     _hitList.addToHead(ht);
   }
-
-  return 0;
 }
 
 void HitList::kill(HitInfo* h)
@@ -154,9 +140,4 @@ void HitList::kill(HitInfo* h)
   } else {
     delete h;
   }
-}
-
-std::ostream& operator<<(std::ostream& os, const HitInfo& h)
-{
-  return os << "<Hit " << h.distance << ' ' << h.object->desc(0) << '>';
 }
