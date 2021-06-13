@@ -55,9 +55,9 @@ void StatInfo::print(const Scene& s, std::ostream& out) const
     + open_cylinder_hit + paraboloid_hit + plane_hit + sphere_hit + torus_hit;
 
   int64_t objs = Inventory.objects - (Inventory.groups + Inventory.bounds);
-  uint64_t total_rays = rays_cast + shadow_rays_cast;
-  uint64_t dumb_tries = total_rays * objs;
-  uint64_t total_tries = object_tried + bound_tried;
+  int64_t total_rays = int64_t(rays_cast + shadow_rays_cast);
+  int64_t dumb_tries = total_rays * objs;
+  int64_t total_tries = int64_t(object_tried + bound_tried);
 
   out << "       Rays Cast  " << rays_cast;
   out << "\n        Rays Hit  " << rays_hit;

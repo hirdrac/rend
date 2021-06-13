@@ -102,8 +102,10 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 
 int Renderer::setJobs(int jobs)
 {
+  if (jobs < 0) { jobs = 0; }
+
   std::size_t oldSize = _jobs.size();
-  _jobs.resize(jobs);
+  _jobs.resize(std::size_t(jobs));
   std::size_t newSize = _jobs.size();
   if (newSize > oldSize) {
     for (std::size_t i = oldSize; i < newSize; ++i) {
@@ -117,7 +119,7 @@ int Renderer::startJobs()
 {
   // make render tasks
   int max_y = _scene->image_height - 1;
-  int inc_y = std::max(2, int(_scene->image_height / (_jobs.size() * 10)));
+  int inc_y = std::max(2, int(_scene->image_height / int(_jobs.size() * 10)));
   for (int y = 0; y <= max_y; y += inc_y) {
     int yy = std::min(y + inc_y - 1, max_y);
     _tasks.push_back({0, y, _scene->image_width - 1, yy});

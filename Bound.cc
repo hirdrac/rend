@@ -158,9 +158,9 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
 
 
 // **** Functions ****
-int CountList(const OptNode* node_list)
+unsigned int CountList(const OptNode* node_list)
 {
-  int count = 0;
+  unsigned int count = 0;
   for (; node_list != nullptr; node_list = node_list->next) { ++count; }
   return count;
 }
@@ -287,19 +287,19 @@ int OptimizeOptNodeList(OptNode*& node_list, Flt weight, int depth = 0)
     return 0;
   }
 
-  int node_count = CountList(node_list);
+  unsigned int node_count = CountList(node_list);
   std::vector<OptNode*> node_array(node_count);
 
   // create array to index nodes
   OptNode* n = node_list;
-  for (int i = 0; i < node_count; ++i) {
+  for (unsigned int i = 0; i < node_count; ++i) {
     node_array[i] = n;
     n = n->next;
     node_array[i]->next = nullptr;
   }
 
   // bound any expensive objects
-  for (int i = 0; i < node_count; ++i) {
+  for (unsigned int i = 0; i < node_count; ++i) {
     n = node_array[i];
     Flt cost1 = n->cost(weight);
     Flt cost2 = (weight * CostTable.bound) + n->cost(n->box.weight());
@@ -315,15 +315,15 @@ int OptimizeOptNodeList(OptNode*& node_list, Flt weight, int depth = 0)
 
   // Group objects together in bounding boxes
   if (node_count > 1) {
-    int best_i = 0, best_j = 0;
+    unsigned int best_i = 0, best_j = 0;
     Flt save;
     do {
       Flt best = 0;
       save = 0;
-      for (int i = 0; i < (node_count-1); ++i) {
+      for (unsigned int i = 0; i < (node_count-1); ++i) {
         if (!node_array[i]) { continue;	}
 
-	for (int j = i+1; j < node_count; ++j) {
+	for (unsigned int j = i+1; j < node_count; ++j) {
 	  if (!node_array[j]) { continue; }
 
 	  Flt add = node_array[i]->cost(weight) + node_array[j]->cost(weight);
@@ -348,7 +348,7 @@ int OptimizeOptNodeList(OptNode*& node_list, Flt weight, int depth = 0)
   // Reconstruct linked list
   node_list = node_array[0];
   n = node_list;
-  for (int i = 1; i < node_count; ++i) {
+  for (unsigned int i = 1; i < node_count; ++i) {
     if (node_array[i]) {
       n->next = node_array[i];
       n = n->next;

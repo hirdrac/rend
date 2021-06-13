@@ -46,7 +46,7 @@ namespace math {
 
   template<>
   inline constexpr float VERY_SMALL<float> = 1.0e-7f;
-};
+}
 
 
 // **** Functions ****

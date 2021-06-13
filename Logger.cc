@@ -40,7 +40,7 @@ namespace {
     int len = snprintf(str, sizeof(str), "%d-%02d-%02d %02d:%02d:%02d ",
 		       td->tm_year + 1900, td->tm_mon + 1, td->tm_mday,
 		       td->tm_hour, td->tm_min, td->tm_sec);
-    os.write(str, len);
+    os.write(str, std::streamsize(len));
   }
 
   [[nodiscard]] std::string fileTime()
@@ -51,7 +51,7 @@ namespace {
     int len = snprintf(str, sizeof(str), "-%d%02d%02d_%02d%02d%02d",
 		       td->tm_year + 1900, td->tm_mon + 1, td->tm_mday,
 		       td->tm_hour, td->tm_min, td->tm_sec);
-    return std::string(str, len);
+    return std::string(str, std::size_t(len));
   }
 }
 
@@ -64,7 +64,7 @@ class LoggerImpl
   virtual void log(const char* str, std::streamsize len) = 0;
   virtual void rotate() { }
 
-  void log(std::string_view s) { return log(s.data(), s.size()); }
+  void log(std::string_view s) { log(s.data(), std::streamsize(s.size())); }
 };
 
 namespace

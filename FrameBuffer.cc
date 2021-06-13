@@ -19,7 +19,7 @@ int FrameBuffer::init(int w, int h)
   _width = w;
   _height = h;
   _pixels = w * h;
-  _buffer.resize(_pixels * 3);
+  _buffer.resize(std::size_t(_pixels * 3));
   return 0;
 }
 
@@ -90,7 +90,7 @@ int FrameBuffer::plot(int x, int y, float r, float g, float b)
     return -1;
   }
 
-  float* ptr = &_buffer[((y * _width) + x) * 3];
+  float* ptr = &_buffer[std::size_t(((y * _width) + x) * 3)];
   *ptr++ = r;
   *ptr++ = g;
   *ptr++ = b;
@@ -143,7 +143,7 @@ int FrameBuffer::value(int x, int y, float& r, float& g, float& b) const
     return -1;
   }
 
-  const float* ptr = &_buffer[((y * _width) + x) * 3];
+  const float* ptr = &_buffer[std::size_t(((y * _width) + x) * 3)];
   r = *ptr++;
   g = *ptr++;
   b = *ptr++;

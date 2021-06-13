@@ -137,8 +137,8 @@ template<typename T>
   //  m[i+3] = (a[i]*b[3]) + (a[i+1]*b[7]) + (a[i+2]*b[11]) + (a[i+3]*b[15]);
   //}
 
-  for (int i = 0; i != 16; ++i) {
-    const int aa = i & ~3, bb = i & 3;
+  for (unsigned int i = 0; i != 16; ++i) {
+    const unsigned int aa = i & ~3u, bb = i & 3u;
     m[i] = (a[aa]*b[bb]) + (a[aa+1]*b[bb+4])
       + (a[aa+2]*b[bb+8]) + (a[aa+3]*b[bb+12]);
   }
@@ -158,8 +158,8 @@ template<typename T>
   //  m[i+3] = (a[3]*b[i]) + (a[7]*b[i+1]) + (a[11]*b[i+2]) + (a[15]*b[i+3]);
   //}
 
-  for (int i = 0; i != 16; ++i) {
-    const int aa = i & 3, bb = i & ~3;
+  for (unsigned int i = 0; i != 16; ++i) {
+    const unsigned int aa = i & 3u, bb = i & ~3u;
     m[i] = (a[aa]*b[bb]) + (a[aa+4]*b[bb+1])
       + (a[aa+8]*b[bb+2]) + (a[aa+12]*b[bb+3]);
   }
@@ -195,7 +195,7 @@ template<typename T>
 inline std::ostream& operator<<(
   std::ostream& out, const Matrix4x4<T,ROW_MAJOR>& m)
 {
-  for (int i = 0; i != 16; i += 4) {
+  for (unsigned int i = 0; i != 16; i += 4) {
     out << '[' << m[i] << '\t' << m[i+1] << '\t' << m[i+2]
 	<< '\t'	<< m[i+3] << "\t]\n";
   }
@@ -207,7 +207,7 @@ template<typename T>
 inline std::ostream& operator<<(
   std::ostream& out, const Matrix4x4<T,COLUMN_MAJOR>& m)
 {
-  for (int i = 0; i != 4; ++i) {
+  for (unsigned int i = 0; i != 4; ++i) {
     out << '[' << m[i] << '\t' << m[i+4] << '\t' << m[i+8]
 	<< '\t'	<< m[i+12] << "\t]\n";
   }
