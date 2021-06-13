@@ -58,7 +58,7 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
 }
 
 int Renderer::render(int min_x, int min_y, int max_x, int max_y,
-		     DList<HitInfo>* freeCache, StatInfo* stats)
+		     SList<HitInfo>* freeCache, StatInfo* stats)
 {
   const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
   const Flt halfWidth  = Flt(_scene->image_width)  * .5;

@@ -61,6 +61,7 @@ void HitList::csgMerge(const Object* csg)
 void HitList::csgUnion(const Object* csg)
 {
   HitInfo* h = _hitList.head();
+  HitInfo* prev = nullptr;
   std::set<const void*> insideSet;
 
   while (h) {
@@ -81,7 +82,7 @@ void HitList::csgUnion(const Object* csg)
     }
 
     HitInfo* next = h->next();
-    if (!insideSet.empty()) { kill(h); }
+    if (!insideSet.empty()) { killNext(prev); } else { prev = h; }
     h = next;
   }
 }
@@ -89,6 +90,7 @@ void HitList::csgUnion(const Object* csg)
 void HitList::csgIntersection(const Object* csg, int objectCount)
 {
   HitInfo* h = _hitList.head();
+  HitInfo* prev = nullptr;
   std::set<const void*> insideSet;
   int count = 0;
 
@@ -101,16 +103,16 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
     HitInfo* next = h->next();
     if (!ob->isSolid()) {
       // hollow object
-      kill(h);
+      killNext(prev);
     } else if (insideSet.find(ob) != insideSet.end()) {
       // leaving solid object
-      if (count < objectCount) { kill(h); }
+      if (count < objectCount) { killNext(prev); } else { prev = h; }
       insideSet.erase(ob);
       --count;
     } else {
       // entering solid object
       insideSet.insert(ob);
-      if (++count < objectCount) { kill(h); }
+      if (++count < objectCount) { killNext(prev); } else { prev = h; }
     }
 
     h = next;
@@ -122,19 +124,15 @@ void HitList::add(HitInfo* ht)
   // sort hit into current hit list
   // (keep hit list sorted at all times)
 
-  HitInfo* h = _hitList.tail();
-  while (h && h->distance > ht->distance) { h = h->fore(); }
-
-  if (h) {
-    _hitList.addAfterNode(h, ht);
-  } else {
-    _hitList.addToHead(ht);
-  }
+  HitInfo* h = _hitList.head();
+  HitInfo* prev = nullptr;
+  while (h && h->distance < ht->distance) { prev = h; h = h->next(); }
+  _hitList.addAfterNode(prev, ht);
 }
 
-void HitList::kill(HitInfo* h)
+void HitList::killNext(HitInfo* prev)
 {
-  _hitList.remove(h);
+  HitInfo* h = _hitList.removeNext(prev);
   if (_freeCache) {
     _freeCache->addToTail(h);
   } else {

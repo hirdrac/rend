@@ -9,10 +9,10 @@
 #include "Parse.hh"
 #include "FrameBuffer.hh"
 #include "Stats.hh"
-#include "Types.hh"
 #include "Timer.hh"
 #include "Renderer.hh"
 #include "Logger.hh"
+#include "Types.hh"
 #include <iostream>
 #include <cctype>
 #include <sstream>
@@ -92,7 +92,7 @@ int ShellRender()
 
   if (Ren.jobs() <= 0) {
     // single thread
-    DList<HitInfo> freeCache;
+    SList<HitInfo> freeCache;
     for (int y = TheScene.region_min[1]; y <= TheScene.region_max[1]; ++y) {
       std::cerr << "\rscanline -- " << y+1;
       Ren.render(TheScene.region_min[0], y, TheScene.region_max[0], y,

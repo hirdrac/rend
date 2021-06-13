@@ -23,7 +23,7 @@ class Ray
   int  depth;
 
   // job specific buffers
-  DList<HitInfo>* freeCache = nullptr;
+  SList<HitInfo>* freeCache = nullptr;
   StatInfo* stats = nullptr;
 
   // Member Functions

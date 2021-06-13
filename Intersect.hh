@@ -7,14 +7,14 @@
 
 #pragma once
 #include "Types.hh"
-#include "DList.hh"
+#include "SList.hh"
 
 
 // **** Types ****
 class Object;
 class Ray;
 
-class HitInfo : public DListNode<HitInfo>
+class HitInfo : public SListNode<HitInfo>
 {
  public:
   // basic hit information
@@ -36,7 +36,7 @@ class HitList
 {
  public:
   // Constructor
-  HitList(DList<HitInfo>* cache = nullptr) : _freeCache(cache) { }
+  HitList(SList<HitInfo>* cache = nullptr) : _freeCache(cache) { }
   // Destructor
   ~HitList() { clear(); }
 
@@ -54,12 +54,12 @@ class HitList
   void csgUnion(const Object* csg);
   void csgIntersection(const Object* csg, int objectCount);
 
-  [[nodiscard]] DList<HitInfo>* freeCache() { return _freeCache; }
+  [[nodiscard]] SList<HitInfo>* freeCache() { return _freeCache; }
 
  private:
-  DList<HitInfo> _hitList;
-  DList<HitInfo>* _freeCache;
+  SList<HitInfo> _hitList;
+  SList<HitInfo>* _freeCache;
 
   void add(HitInfo* ht);
-  void kill(HitInfo* ht);
+  void killNext(HitInfo* ht);
 };

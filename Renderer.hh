@@ -23,7 +23,7 @@ class Renderer
  public:
   int init(Scene* s, FrameBuffer* fb);
   int render(int min_x, int min_y, int max_x, int max_y,
-	     DList<HitInfo>* freeCache, StatInfo* stats);
+	     SList<HitInfo>* freeCache, StatInfo* stats);
 
   // jobs/task methods
   [[nodiscard]] int jobs() const { return int(_jobs.size()); }
@@ -56,7 +56,7 @@ class Renderer
     // thread local stuff
     // HitInfo pool
     std::thread jobThread;
-    DList<HitInfo> hitCache;
+    SList<HitInfo> hitCache;
     StatInfo stats;
     bool halt = false;
   };
