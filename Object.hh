@@ -26,7 +26,7 @@ class BBox
   Vec3 pmin, pmax;
 
   // Constructor
-  BBox();
+  BBox() { reset(); }
 
   // Member Functions
   void reset();

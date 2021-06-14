@@ -16,12 +16,6 @@
 
 
 /**** BBox class ****/
-// Constructor
-BBox::BBox() :
-  pmin( VERY_LARGE,  VERY_LARGE,  VERY_LARGE),
-  pmax(-VERY_LARGE, -VERY_LARGE, -VERY_LARGE)
-{ }
-
 // Member Functions
 void BBox::reset()
 {
@@ -79,12 +73,12 @@ Object::~Object()
 int Primitive::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
-  if (sh) {
-    _shader = sh;
-    return 0;
-  } else {
-    return Object::add(i, flag);
+  if (!sh || _shader) {
+    return -1;
   }
+
+  _shader = sh;
+  return 0;
 }
 
 int Primitive::init(Scene& s)
@@ -96,7 +90,7 @@ int Primitive::init(Scene& s)
 // Object Functions
 int Primitive::bound(BBox& b) const
 {
-  Vec3 pt[8] = {
+  static constexpr Vec3 pt[8] = {
     { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
     {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
   return MakeBound(b, _trans, pt, 8);
@@ -109,7 +103,7 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
   //std::cout << "InitObjectList()\n";
   //PrintList(std::cout, list);
 
-  while (list) {
+  for (; list != nullptr; list = list->next()) {
     Transform* trans = list->trans();
     if (!trans) {
       std::cout << "No Trans ERROR: " << list->desc(0) << '\n';
@@ -133,8 +127,6 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
       std::cout << "INIT ERROR: " << list->desc(0) << '\n';
       return error;
     }
-
-    list = list->next();
   }
 
   return 0;

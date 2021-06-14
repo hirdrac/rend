@@ -272,8 +272,8 @@ constexpr void Matrix4x4<T,MOT>::translate(T tx, T ty, T tz)
   //_val[13] += _val[15] * ty;
   //_val[14] += _val[15] * tz;
 
-  for (int i = 0; i != 16; i += 4) {
-    const T v = _val[(i & ~3) + 3];
+  for (unsigned int i = 0; i != 16; i += 4) {
+    const T v = _val[(i & ~3u) + 3];
     _val[i]   += v * tx;
     _val[i+1] += v * ty;
     _val[i+2] += v * tz;
@@ -320,7 +320,7 @@ constexpr void Matrix4x4<T,MOT>::rotateX_sc(T sinVal, T cosVal)
   // [c0 c1 c2 c3] [0 -s  c  0] [c0  (c1)(c)-(c2)(s)  (c1)(s)+(c2)(c)  c3]
   // [d0 d1 d2 d3] [0  0  0  1] [d0  (d1)(c)-(d2)(s)  (d1)(s)+(d2)(c)  d3]
 
-  for (int i = 0; i != 16; i += 4) {
+  for (unsigned int i = 0; i != 16; i += 4) {
     const T t1 = _val[i+1], t2 = _val[i+2];
     _val[i+1] = (t1*cosVal) - (t2*sinVal);
     _val[i+2] = (t1*sinVal) + (t2*cosVal);
@@ -352,7 +352,7 @@ constexpr void Matrix4x4<T,MOT>::rotateY_sc(T sinVal, T cosVal)
   // [c0 c1 c2 c3] [s  0  c  0] [(c0)(c)+(c2)(s)  c1  -(c0)(s)+(c2)(c)  c3]
   // [d0 d1 d2 d3] [0  0  0  1] [(d0)(c)+(d2)(s)  d1  -(d0)(s)+(d2)(c)  d3]
 
-  for (int i = 0; i != 16; i += 4) {
+  for (unsigned int i = 0; i != 16; i += 4) {
     const T t0 = _val[i], t2 = _val[i+2];
     _val[i]   = (t0*cosVal) + (t2*sinVal);
     _val[i+2] = (t2*cosVal) - (t0*sinVal);
@@ -384,7 +384,7 @@ constexpr void Matrix4x4<T,MOT>::rotateZ_sc(T sinVal, T cosVal)
   // [c0 c1 c2 c3] [ 0  0  1  0] [(c0)(c)-(c1)(s)  (c0)(s)+(c1)(c)  c2  c3]
   // [d0 d1 d2 d3] [ 0  0  0  1] [(d0)(c)-(d1)(s)  (d0)(s)+(d1)(c)  d2  d3]
 
-  for (int i = 0; i != 16; i += 4) {
+  for (unsigned int i = 0; i != 16; i += 4) {
     const T t0 = _val[i], t1 = _val[i+1];
     _val[i]   = (t0*cosVal) - (t1*sinVal);
     _val[i+1] = (t0*sinVal) + (t1*cosVal);
@@ -446,7 +446,7 @@ constexpr void Matrix4x4<T,MOT>::rotate_sc(
   const T ys = axis.y * sinVal;
   const T zs = axis.z * sinVal;
 
-  for (int i = 0; i != 16; i += 4) {
+  for (unsigned int i = 0; i != 16; i += 4) {
     const T t0 = _val[i];
     const T t1 = _val[i+1];
     const T t2 = _val[i+2];

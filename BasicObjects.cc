@@ -66,7 +66,8 @@ int Disc::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 int Disc::bound(BBox& b) const
 {
-  Vec3 pt[4] = {{ 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
+  static constexpr Vec3 pt[4] = {
+    { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
   return MakeBound(b, _trans, pt, 4);
 }
 
@@ -172,7 +173,7 @@ int Cube::init(Scene& s)
 {
   if (Primitive::init(s)) { return -1; }
 
-  static const Vec3 n[] = {
+  static constexpr Vec3 n[6] = {
     {1, 0, 0}, {-1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, -1}};
 
   for (int i = 0; i < 6; ++i) {
@@ -289,7 +290,7 @@ int Cylinder::init(Scene& s)
 {
   if (Primitive::init(s)) { return -1; }
 
-  static const Vec3 n0{0, 0, 1}, n1{0, 0, -1};
+  static constexpr Vec3 n0{0, 0, 1}, n1{0, 0, -1};
   normal_cache[0] = _trans.normalLocalToGlobal(n0, 0);
   normal_cache[1] = _trans.normalLocalToGlobal(n1, 0);
   return 0;
@@ -640,7 +641,8 @@ int Plane::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 int Plane::bound(BBox& b) const
 {
-  Vec3 pt[4] = {{ 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
+  static constexpr Vec3 pt[4] = {
+    { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
   return MakeBound(b, _trans, pt, 4);
 }
 
