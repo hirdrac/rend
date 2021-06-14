@@ -48,7 +48,7 @@ int Disc::intersect(const Ray& r, HitList& hit_list) const
   }
 
   Vec3 pt{base.x + (dir.x * h), base.y + (dir.y * h), 0.0};
-  if ((Sqr(pt.x) + Sqr(pt.y)) >= 1.0) {
+  if ((Sqr(pt.x) + Sqr(pt.y)) > 1.0) {
     return 0;
   }
 
@@ -107,7 +107,7 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
     Flt sqrt_x = std::sqrt(x);
     Flt h = (-b - sqrt_x) / a;  // near hit
     Vec3 pt = CalcHitPoint(base, dir, h);
-    if ((pt.z > -1.0) && (pt.z <= 1.0)) {
+    if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
       // hit side
       hit_list.addHit(this, h, pt);
       ++hits;
@@ -115,7 +115,7 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
 
     h = (-b + sqrt_x) / a;  // far hit
     pt = CalcHitPoint(base, dir, h);
-    if ((pt.z > -1.0) && (pt.z <= 1.0)) {
+    if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
       // hit side
       hit_list.addHit(this, h, pt);
       ++hits;
@@ -145,8 +145,7 @@ int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
   } else {
     // side
-    Vec3 n{h.local_pt.x * 2.0,
-	   h.local_pt.y * 2.0,
+    Vec3 n{h.local_pt.x * 2.0, h.local_pt.y * 2.0,
 	   (1.0 - h.local_pt.z) * .25};
     normal = _trans.normalLocalToGlobal(n, 0);
 
@@ -263,8 +262,6 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
 
 int Cube::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 {
-  normal = normal_cache[h.side];
-
   switch (h.side) {
     case 0: map.set(-h.local_pt.z,  h.local_pt.y, 0.0); break;
     case 1: map.set( h.local_pt.z,  h.local_pt.y, 0.0); break;
@@ -272,8 +269,10 @@ int Cube::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
     case 3: map.set( h.local_pt.x,  h.local_pt.z, 0.0); break;
     case 4: map.set( h.local_pt.x,  h.local_pt.y, 0.0); break;
     case 5: map.set(-h.local_pt.x,  h.local_pt.y, 0.0); break;
+    default: return -1;
   }
 
+  normal = normal_cache[h.side];
   return 0;
 }
 
@@ -311,24 +310,18 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
   Flt x = Sqr(b) - (a * c);
 
   Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
-  int near_side = 0, far_side = 0;
-
-  if (IsZero(x)) {
-    // ray parallel with cylinder side
-    if ((Sqr(base.x) + Sqr(base.y)) > 1.0) {
-      return 0;  // ray outside cylinder
-    }
-
-  } else if (x > 0) {
+  if (IsPositive(x)) {
     Flt sqrt_x = std::sqrt(x);
     near_hit = (-b - sqrt_x) / a;  // cylinder hit 1
     far_hit  = (-b + sqrt_x) / a;  // cylinder hit 2
-
-  } else {
-    return 0;  // cylinder missed completely
+  } else if (IsNegative(x) || ((Sqr(base.x) + Sqr(base.y)) > 1.0)) {
+    // cylinder missed completely or
+    // ray parallel with cylinder side but outside cylinder
+    return 0;
   }
 
   // Intersect cylinder ends
+  int near_side = 0, far_side = 0;
   if (IsZero(dir.y)) {
     // ray parallel with planes
     if ((base.y < -1.0) || (base.y > 1.0)) {
@@ -385,6 +378,9 @@ int Cylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
       normal = normal_cache[1];
       map.set(h.local_pt.x, h.local_pt.y, 0.0);
       break;
+
+    default:
+      return -1;
   }
 
   return 0;
@@ -411,7 +407,6 @@ int OpenCone::intersect(const Ray& r, HitList& hit_list) const
     (dir.z * (1.0 - base.z) * 0.25);
   Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
   Flt x = Sqr(b) - (a * c);
-
   if (x < VERY_SMALL) {
     return 0;  // Cone missed
   }
@@ -427,13 +422,13 @@ int OpenCone::intersect(const Ray& r, HitList& hit_list) const
   int hits = 0;
 
   pt = CalcHitPoint(base, dir, h1);
-  if ((pt.z > -1.0) && (pt.z <= 1.0)) {
+  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
     hit_list.addHit(this, h1, pt);
     ++hits;
   }
 
   pt = CalcHitPoint(base, dir, h2);
-  if ((pt.z > -1.0) && (pt.z <= 1.0)) {
+  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
     hit_list.addHit(this, h2, pt);
     ++hits;
   }
@@ -493,14 +488,14 @@ int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
   int hits = 0;
 
   pt = CalcHitPoint(base, dir, h);
-  if ((pt.z > -1.0) && (pt.z <= 1.0)) {
+  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
     hit_list.addHit(this, h, pt);
     ++hits;
   }
 
   h = (-b - sqrt_x) / a;  // near hit
   pt = CalcHitPoint(base, dir, h);
-  if ((pt.z > -1.0) && (pt.z <= 1.0)) {
+  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
     hit_list.addHit(this, h, pt);
     ++hits;
   }
@@ -540,7 +535,6 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
   Flt b = (dir.x * base.x) + (dir.y * base.y) + dir.z * .25;
   Flt c = Sqr(base.x) + Sqr(base.y) + (base.z - .5);
   Flt x = Sqr(b) - (a * c);
-
   if (x < VERY_SMALL) {
     return 0;  // paraboloid missed
   }
@@ -556,14 +550,14 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
   int hits = 0;
 
   pt = CalcHitPoint(base, dir, h);
-  if (pt.z > -1.0) {
+  if (pt.z >= -1.0) {
     hit_list.addHit(this, h, pt);
     ++hits;
   }
 
   h = (-b - sqrt_x) / a;  // near hit
   pt = CalcHitPoint(base, dir, h);
-  if (pt.z > -1.0) {
+  if (pt.z >= -1.0) {
     hit_list.addHit(this, h, pt);
     ++hits;
   }
@@ -617,12 +611,12 @@ int Plane::intersect(const Ray& r, HitList& hit_list) const
 
   Vec3 pt;
   pt.x = base.x + (dir.x * h);
-  if ((pt.x < -1.0) || (pt.x >= 1.0)) {
+  if ((pt.x < -1.0) || (pt.x > 1.0)) {
     return 0;
   }
 
   pt.y = base.y + (dir.y * h);
-  if ((pt.y < -1.0) || (pt.y >= 1.0)) {
+  if ((pt.y < -1.0) || (pt.y > 1.0)) {
     return 0;
   }
 
@@ -751,12 +745,10 @@ int Torus::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 {
   Flt x = h.local_pt.x;
   Flt z = h.local_pt.z;
-  Flt d = std::sqrt(Sqr(x) + Sqr(z));
-  if (IsZero(d)) {
-    normal.set(0,0,0);
-    return -1;
-  }
+  Flt d = Sqr(x) + Sqr(z);
+  if (!IsPositive(d)) { return -1; }
 
+  d = std::sqrt(d);
   Vec3 n{x - (x / d), h.local_pt.y, z - (z / d)};
   n.normalize();
   normal = _trans.normalLocalToGlobal(n, 0);
