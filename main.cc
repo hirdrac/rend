@@ -218,7 +218,7 @@ int ShellLoop()
 /**** Main Function ****/
 int main(int argc, char* argv[])
 {
-  std::cout << "Rend v1.0 - Copyright(C) 2019 by Richard Bradley\n";
+  std::cout << "Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley\n";
   if (argc > 1) {
     if (ShellLoad(argv[1])) { return -1; }
     if (ShellRender()) { return -1; }
