@@ -20,26 +20,26 @@ namespace {
     BlockReader(const std::string& file) : _fs(file) { }
     explicit operator bool() const { return _fs.good(); }
 
-    AstNode* nextBlock();
+    [[nodiscard]] AstNode* nextBlock();
 
    private:
     std::ifstream _fs;
     int _line = 1;
     int _nextChar = ' ';
 
-    int nextSymbol(std::string& buffer);
-    int newChar();
+    std::string nextSymbol();
+    int getChar();
   };
 
   AstNode* BlockReader::nextBlock()
   {
     SList<AstNode> nodeList;
     for (;;) {
-      std::string buffer;
-      if (nextSymbol(buffer)) { break; }
+      std::string symbol = nextSymbol();
+      if (symbol.empty()) { break; }
 
       AstNode* e = nullptr;
-      switch (buffer[0]) {
+      switch (symbol[0]) {
 	case '\0':
 	case ')':
 	  break;
@@ -50,7 +50,7 @@ namespace {
 	  break;
 
 	default:
-	  e = new AstNode(_line, buffer);
+	  e = new AstNode(_line, symbol);
 	  break;
       }
 
@@ -61,69 +61,54 @@ namespace {
     return nodeList.extractNodes();
   }
 
-  int BlockReader::nextSymbol(std::string& buffer)
+  std::string BlockReader::nextSymbol()
   {
     bool quote = false;
+    std::string symbol;
 
     for (;;) {
       int c;
-      if (quote) {
-	c = newChar();
-      } else {
-	// Skip initial white-space
-	while (isspace(c = newChar())) { }
-      }
+      do { c = getChar(); } while (!quote && std::isspace(c));
+        // skip initial white-space if not quoted
 
       // Check 1st character
-      switch (c)
-      {
-	case '\0':
-	  return -1;  // end of file
-
-	case '\"':
-	  quote = !quote;  // toggle flag
-	  if (!quote) { return 0; }
-	  continue;
-
-	case '/':
-	  if (!quote) {
-	    // check for 'C++' style comments
-	    if (_nextChar == '/') {
-	      // Skip rest of line
-	      do {
-		c = newChar();
-	      } while ((c != '\0') && (c != '\n'));
-	      continue;
-
-	    } else if (_nextChar == '*') {
-	      // Skip rest of comment
-	      newChar();
-	      do {
-		c = newChar();
-	      } while ((c != '\0') && !((c == '*') && (_nextChar == '/')));
-
-	      newChar();
-	      continue;
-	    }
-	  }
-	  break;
+      if (c == '\0') {
+        return symbol;  // end of file
+      } else if (c == '\"') {
+        quote = !quote;  // toggle flag
+        if (!quote) { return symbol.empty() ? std::string("\"\"") : symbol; }
+        continue;
+      } else if (c == '/' && !quote) {
+        // check for 'C++' style comments
+        if (_nextChar == '/') {
+          // Skip rest of line
+          do { c = getChar(); } while ((c != '\0') && (c != '\n'));
+        } else if (_nextChar == '*') {
+          // Skip rest of comment
+          getChar(); // skip '*'
+          do {
+            c = getChar();
+          } while ((c != '\0') && !((c == '*') && (_nextChar == '/')));
+          getChar(); // skip '/'
+        }
+        continue;
       }
 
-      buffer += char(c); // doesn't support unicode
+      symbol += char(c); // doesn't support unicode
       if (quote) { continue; }
 
       // skip to end of token
-      if (isalnum(c) || (c == '+') || (c == '-') || (c == '.') || (c == '_')) {
-	while (isalnum(_nextChar) || (_nextChar == '.') || (_nextChar == '_')) {
-	  buffer += char(newChar());
+      if (std::isalnum(c) || (c == '+') || (c == '-') || (c == '.') || (c == '_')) {
+	while (std::isalnum(_nextChar) || (_nextChar == '.') || (_nextChar == '_')) {
+	  symbol += char(getChar());
 	}
       }
 
-      return 0;
+      return symbol;
     }
   }
 
-  int BlockReader::newChar()
+  int BlockReader::getChar()
   {
     // One character pipeline used
     // (to make it easy to look ahead one character)
@@ -144,19 +129,15 @@ namespace {
     if (n->child) {
       n->ast_type = AST_LIST;
       for (AstNode* c = n->child; c != nullptr; c = c->next()) {
-	int error = SetNodeType(c);
-	if (error) { return error; }
+	if (int error = SetNodeType(c); error) { return error; }
       }
 
-    } else if (isdigit(n->val[0]) || n->val[0] == '-' || n->val[0] == '.') {
+    } else if (char x = n->val[0]; std::isdigit(x) || x == '-' || x == '.') {
       n->ast_type = AST_NUMBER;
 
-    } else {
-      ItemFn fn = FindItemFn(n->val);
-      if (fn) {
-	n->ast_type = AST_KEYWORD;
-	n->ptr      = (void*) fn;
-      }
+    } else if (ItemFn fn = FindItemFn(n->val); fn) {
+      n->ast_type = AST_KEYWORD;
+      n->ptr      = (void*) fn;
     }
 
     return 0;
@@ -284,7 +265,7 @@ int GetBool(AstNode*& n, bool& val, bool def)
     return 0;
   }
 
-  switch (tolower(d->val[0])) {
+  switch (std::tolower(d->val[0])) {
   case '0':
   case 'f':
     val = false; break;
