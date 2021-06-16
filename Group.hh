@@ -28,9 +28,9 @@ class Group final : public Primitive
   // Object Functions
   int bound(BBox& b) const override { return -1; }
   int intersect(const Ray& r, HitList& hit_list) const override;
-  Object* childList() const override { return child_list.head(); }
+  Object* childList() const override { return _childList.head(); }
 
  protected:
   std::string _name;
-  SList<Object> child_list;
+  SList<Object> _childList;
 };

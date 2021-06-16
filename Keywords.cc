@@ -13,7 +13,6 @@
 #include "CSG.hh"
 #include "Phong.hh"
 #include "Group.hh"
-#include "Color.hh"
 #include "Logger.hh"
 #include <map>
 #include <cctype>

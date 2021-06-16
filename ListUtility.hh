@@ -1,6 +1,6 @@
 //
 // ListUtility.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // linked list node template classes & support functions
 //
@@ -17,7 +17,7 @@
 
 // **** Functions ****
 template<typename type>
-int CountNodes(const type* list)
+[[nodiscard]] int CountNodes(const type* list)
 {
   int count = 0;
   while (list) {
@@ -39,21 +39,21 @@ void KillNodes(type* list)
 }
 
 template<typename type>
-type* LastNode(type* list)
+[[nodiscard]] type* LastNode(type* list)
 {
   if (list) { while (list->next()) { list = list->next(); } }
   return list;
 }
 
 template<typename type>
-const type* LastNode(const type* list)
+[[nodiscard]] const type* LastNode(const type* list)
 {
   if (list) { while (list->next()) { list = list->next(); } }
   return list;
 }
 
 template<typename type>
-type* IndexNodes(type* list, int index)
+[[nodiscard]] type* IndexNodes(type* list, int index)
 {
   if (index < 0) { return nullptr; }
 
@@ -66,7 +66,7 @@ type* IndexNodes(type* list, int index)
 }
 
 template<typename type>
-type* ReverseIndexNodes(type* list, int index)
+[[nodiscard]] type* ReverseIndexNodes(type* list, int index)
 {
   if (index < 0) { return nullptr; }
 
@@ -79,7 +79,7 @@ type* ReverseIndexNodes(type* list, int index)
 }
 
 template<typename type>
-bool NodeInList(const type* list, const type* node)
+[[nodiscard]] bool NodeInList(const type* list, const type* node)
 {
   while (list) {
     if (list == node) { return true; } // found
@@ -90,7 +90,7 @@ bool NodeInList(const type* list, const type* node)
 }
 
 template<typename type>
-int FindNodeIndex(const type* list, const type* node)
+[[nodiscard]] int FindNodeIndex(const type* list, const type* node)
 {
   if (list) {
     int i = 0;

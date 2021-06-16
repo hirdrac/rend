@@ -26,11 +26,11 @@ class CSG : public Primitive
   // Object Functions
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override;
-  Object* childList() const override { return child_list.head(); }
+  Object* childList() const override { return _childList.head(); }
 
  protected:
-  SList<Object> child_list;
-  int o_count = 0;
+  SList<Object> _childList;
+  int _childCount = 0;
 };
 
 

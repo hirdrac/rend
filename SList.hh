@@ -1,6 +1,6 @@
 //
 // SList.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // intrusive single linked list
 //
@@ -22,7 +22,7 @@ class SListNode
 {
  public:
   // Member Functions
-  type* next() const { return _next; }
+  [[nodiscard]] type* next() const { return _next; }
   void setNext(type* x) { _next = x; }
 
  private:
@@ -44,17 +44,17 @@ class SList
   ~SList() { KillNodes(_head); }
 
   // Operators
-  type* operator[](int i) const { return index(i); }
+  [[nodiscard]] type* operator[](int i) const { return index(i); }
 
   // Member Functions
-  type* head()       const { return _head; }
-  type* tail()       const { return _tail; }
-  bool  empty()      const { return !_head; }
-  int   count()      const { return CountNodes(_head); }
-  type* index(int i) const { return IndexNodes(_head, i); }
+  [[nodiscard]] type* head()       const { return _head; }
+  [[nodiscard]] type* tail()       const { return _tail; }
+  [[nodiscard]] bool  empty()      const { return !_head; }
+  [[nodiscard]] int   count()      const { return CountNodes(_head); }
+  [[nodiscard]] type* index(int i) const { return IndexNodes(_head, i); }
 
-  int  findIndex(const type* n) const { return FindNodeIndex(_head, n); }
-  bool isNodeHere(const type* n) const { return NodeInList(_head, n); }
+  [[nodiscard]] int  findIndex(const type* n) const { return FindNodeIndex(_head, n); }
+  [[nodiscard]] bool isNodeHere(const type* n) const { return NodeInList(_head, n); }
   void purge() { KillNodes(_head); _head = nullptr; _tail = nullptr; }
 
   int addToHead(type* item);
