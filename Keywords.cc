@@ -440,7 +440,7 @@ int TorusFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
   return AddObject(s, p, n, flag, new Torus);
 }
 
-int TranslateFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int MoveFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = FindTrans(p);
   if (!t) { return -1; }
@@ -511,6 +511,7 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"maxdepth",      MaxdepthFn},
   {"merge",         MergeFn},
   {"minvalue",      MinValueFn},
+  {"move",          MoveFn},
   {"name",          NameFn},
   {"opencone",      OpenConeFn},
   {"opencylinder",  OpenCylinderFn},
@@ -544,7 +545,6 @@ static const std::map<std::string,ItemFn> KeyWords = {
   //{"texture",       TextureFn}, FIX!!!
   {"transmit",      TransmitFn},
   {"torus",         TorusFn},
-  {"translate",     TranslateFn},
   {"union",         UnionFn},
   {"value",         ValueFn},
   {"vup",           VupFn}
