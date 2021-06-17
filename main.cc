@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cctype>
 #include <sstream>
+#include <string_view>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -214,21 +215,75 @@ int ShellLoop()
   return 1; // don't quit
 }
 
+int Usage(int argc, char** argv)
+{
+  std::cout << "Usage: " << argv[0] << " [options] [<scene file> [<image save>]]\n"
+            << "Options:\n"
+            << "  -j#, --jobs #   Number of render jobs\n"
+            << "  -h, --help      Show usage\n\n";
+  return 0;
+}
+
 
 /**** Main Function ****/
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
-  std::cout << "Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley\n";
-  if (argc > 1) {
-    if (ShellLoad(argv[1])) { return -1; }
+  std::cout << "Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley\n\n";
+
+  std::string fileLoad, imageSave;
+  int jobs = -1;
+  bool optionsDone = false;
+
+  for (int i = 1; i < argc; ++i) {
+    std::string_view arg = argv[i];
+    if (arg[0] == '-' && !optionsDone) {
+      if (arg == "--") {
+        optionsDone = true;
+      } else if (arg == "-h" || arg == "--help") {
+        return Usage(argc, argv);
+      } else if (arg == "-j" || arg == "--jobs") {
+        if (i >= (argc-1)) {
+          std::cout << "Missing job count\n\n";
+          return Usage(argc, argv);
+        }
+        arg = argv[++i];
+        if (!std::isdigit(arg[0])) {
+          std::cout << "Bad job count '" << arg << "'\n\n";
+          return Usage(argc, argv);
+        }
+        jobs = std::atoi(argv[i]);
+      } else if (arg.size() > 2 && arg.substr(0,2) == "-j" && std::isdigit(arg[2])) {
+        jobs = std::atoi(argv[i] + 2);
+      } else if (arg.size() > 7 && arg.substr(0,7) == "--jobs=" && std::isdigit(arg[7])) {
+        jobs = std::atoi(argv[i] + 7);
+      } else {
+        std::cout << "Bad option '" << arg << "'\n\n";
+        return Usage(argc, argv);
+      }
+    } else if (fileLoad.empty()) {
+      fileLoad = arg;
+    } else if (imageSave.empty()) {
+      imageSave = arg;
+    } else {
+      break;
+    }
+  }
+
+  if (jobs >= 0) {
+    std::cout << "Render jobs set to " << jobs << "\n\n";
+    Ren.setJobs(jobs);
+  }
+
+  if (!fileLoad.empty()) {
+    if (ShellLoad(fileLoad)) { return -1; }
     if (ShellRender()) { return -1; }
   }
 
-  if (argc > 2) {
-    return ShellSave(argv[2]);
+  if (!imageSave.empty()) {
+    return ShellSave(imageSave);
   }
 
-  std::cout << "Starting Rend Shell - Enter '?' for help, 'Q' to quit\n";
+  std::cout << "\nStarting Rend Shell - Enter '?' for help, 'Q' to quit\n";
   while (ShellLoop()) { }
   return 0;
 }
