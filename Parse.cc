@@ -63,7 +63,7 @@ namespace {
 
   std::string BlockReader::nextSymbol()
   {
-    bool quote = false;
+    int quote = 0;
     std::string symbol;
 
     for (;;) {
@@ -74,11 +74,14 @@ namespace {
       // Check 1st character
       if (c == '\0') {
         return symbol;  // end of file
-      } else if (c == '\"') {
-        quote = !quote;  // toggle flag
-        if (!quote) { return symbol.empty() ? std::string("\"\"") : symbol; }
-        continue;
-      } else if (c == '/' && !quote) {
+      } else if (quote) {
+        if (c == quote) {
+          return symbol.empty() ? std::string("\"\"") : symbol;
+        } else if (c == '\"' || c == '\'') {
+          quote = c;
+          continue;
+        }
+      } else if (c == '/') {
         // check for 'C++' style comments
         if (_nextChar == '/') {
           // Skip rest of line
