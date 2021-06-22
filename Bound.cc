@@ -11,7 +11,7 @@
 #include "Stats.hh"
 #include "Group.hh"
 #include "Logger.hh"
-#include <iostream>
+#include "Print.hh"
 #include <sstream>
 #include <vector>
 
@@ -178,23 +178,22 @@ void KillTree(OptNode* node_list)
   }
 }
 
-void PrintBoundList(const OptNode* node_list, std::ostream& os,
-		    int indent = 0)
+void PrintBoundList(const OptNode* node_list, int indent = 0)
 {
   if (!node_list) {
-    for (int i = 0; i < indent; ++i) { os << ' '; }
-    os << "EMPTY\n";
+    for (int i = 0; i < indent; ++i) { print(" "); }
+    println("EMPTY");
     return;
   }
 
   while (node_list) {
-    for (int i = 0; i < indent; ++i) { os << ' '; }
+    for (int i = 0; i < indent; ++i) { print(" "); }
 
     if (node_list->object) {
-      os << node_list->object->desc(indent + 2) << '\n';
+      println(node_list->object->desc(indent + 2));
     } else {
-      os << "<Bound>\n";
-      PrintBoundList(node_list->child, os, indent + 2);
+      println("<Bound>");
+      PrintBoundList(node_list->child, indent + 2);
     }
 
     node_list = node_list->next;
@@ -406,15 +405,13 @@ Bound* MakeBoundList(const Object* o_list)
     box.fit(n->box);
   }
 
-  std::cout << "Old tree weight: "
-	    << TreeWeight(node_list, box.weight()) << '\n';
+  println("Old tree weight: ", TreeWeight(node_list, box.weight()));
   if (OptimizeOptNodeList(node_list, box.weight())) {
     return nullptr;
   }
 
-  std::cout << "New tree weight: "
-	    << TreeWeight(node_list, box.weight()) << '\n';
-  PrintBoundList(node_list, std::cout);
+  println("New tree weight: ", TreeWeight(node_list, box.weight()));
+  PrintBoundList(node_list);
 
   Bound* bound_list = ConvertNodeList(node_list);
   bound_list->always_hit = true;

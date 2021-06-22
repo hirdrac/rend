@@ -13,7 +13,7 @@
 #include "Renderer.hh"
 #include "Logger.hh"
 #include "Types.hh"
-#include <iostream>
+#include "Print.hh"
 #include <cctype>
 #include <sstream>
 #include <string_view>
@@ -33,7 +33,7 @@ namespace
 int ShellInfo()
 {
   if (TheScene.object_list.empty()) {
-    std::cout << "No scene loaded yet\n";
+    println("No scene loaded yet");
     return -1;
   }
 
@@ -41,24 +41,24 @@ int ShellInfo()
 
   float min, max;
   Fb.range(min, max);
-  std::cout << "Color ranges: " << min << " to " << max << '\n';
+  println("Color ranges: ", min, " to ", max);
   return 0;
 }
 
 
 int ShellLoad(const std::string& file)
 {
-  std::cout << "Load scene file '" << file << "'\n";
+  println("Load scene file '", file, "'");
   SceneDesc sf;
   if (sf.parseFile(file) < 0) {
-    std::cout << "Error in loading file\n";
+    println("Error in loading file");
     return -1;
   }
 
-  std::cout << "Generating Scene\n";
+  println("Generating Scene");
   TheScene.clear();
   if (TheScene.generate(sf)) {
-    std::cout << "Error in scene generation\n";
+    println("Error in scene generation");
     return -1;
   }
 
@@ -69,7 +69,7 @@ int ShellLoad(const std::string& file)
 int ShellRender()
 {
   if (TheScene.object_list.empty()) {
-    std::cout << "No scene loaded yet\n";
+    println("No scene loaded yet");
     return -1;
   }
 
@@ -78,13 +78,13 @@ int ShellRender()
   t.start();
 
   if (TheScene.init()) {
-    std::cout << "Scene Initialization Failed - can't render\n";
+    println("Scene Initialization Failed - can't render");
     return -1;
   }
 
   // Render image
-  std::cout << "Rendering (" << TheScene.samples_x << " x "
-	    << TheScene.samples_y << " Samples)\n";
+  println("Rendering (", TheScene.samples_x, " x ",
+          TheScene.samples_y, " Samples)");
 
   if (Ren.init(&TheScene, &Fb)) {
     LOG_ERROR("Failed to initialize renderer");
@@ -95,7 +95,7 @@ int ShellRender()
     // single thread
     SList<HitInfo> freeCache;
     for (int y = TheScene.region_min[1]; y <= TheScene.region_max[1]; ++y) {
-      std::cerr << "\rscanline -- " << y+1;
+      print_err("\rscanline -- ", y+1);
       Ren.render(TheScene.region_min[0], y, TheScene.region_max[0], y,
 		 &freeCache, nullptr);
     }
@@ -104,21 +104,21 @@ int ShellRender()
     Ren.startJobs();
     while (1) {
       int tr = Ren.waitForJobs(50);
-      std::cerr << "Jobs: " << j << "   Tasks: " << tr << "   \r";
+      print_err("Jobs: ", j, "   Tasks: ", tr, "   \r");
       if (tr <= 0) { break; }
     }
     Ren.stopJobs();
   }
 
   t.stop();
-  std::cerr << "\rRendering Complete     \n";
-  std::cout << "Rendering Time: " << t.elapsedSec() << '\n';
+  println_err("\rRendering Complete     ");
+  println("Rendering Time: ", t.elapsedSec());
   return 0;
 }
 
 int ShellSave(const std::string& file)
 {
-  std::cout << "Saving image to '" << file << "'\n";
+  println("Saving image to '", file, "'");
   return Fb.saveBMP(file);
 }
 
@@ -126,11 +126,11 @@ int ShellLoop()
 {
   static std::string lastFile;
 
-  std::cout << std::endl;
+  println();
   char* buffer = readline("REND> ");
   if (!buffer) {
     // Control-D pressed
-    std::cout << std::endl;
+    println();
     return 0;
   }
 
@@ -140,19 +140,19 @@ int ShellLoop()
 
   std::string arg;
   if (!(input >> arg)) {
-    std::cerr << "please enter a command or '?' for help\n";
+    println_err("please enter a command or '?' for help");
     return -1; // error
   }
 
   switch (tolower(arg[0])) {
   case '?':
-    std::cout << "I        - Info on scene\n"
-	      << "J <num>  - Set number of render jobs(threads)\n"
-	      << "L <file> - Load scene file\n"
-	      << "O        - Show objects\n"
-	      << "R        - Render scene\n"
-	      << "S <file> - Save image to file\n"
-	      << "Z        - Show render stats\n";
+    println("I        - Info on scene");
+    println("J <num>  - Set number of render jobs(threads)");
+    println("L <file> - Load scene file");
+    println("O        - Show objects");
+    println("R        - Render scene");
+    println("S <file> - Save image to file");
+    println("Z        - Show render stats");
     break;
 
   case 'i':
@@ -161,13 +161,13 @@ int ShellLoop()
 
   case 'j':
     if (!(input >> arg)) {
-      std::cout << "Number of jobs required\n";
+      println("Number of jobs required");
     } else {
       int j = std::atoi(arg.c_str());
       if (j < 0) {
-	std::cout << "Invalid number of jobs '" << arg << "'\n";
+	println("Invalid number of jobs '", arg, "'");
       } else {
-	std::cout << "Jobs set to " << j << '\n';
+	println("Jobs set to ", j);
 	Ren.setJobs(j);
       }
     }
@@ -180,7 +180,7 @@ int ShellLoop()
     } else if (!lastFile.empty()) {
       ShellLoad(lastFile);
     } else {
-      std::cout << "Load requires a file name\n";
+      println("Load requires a file name");
     }
     break;
 
@@ -188,12 +188,12 @@ int ShellLoop()
     if (TheScene.object_list.head()) {
       PrintList(std::cout, TheScene.object_list.head());
     } else {
-      std::cout << "No object list\n";
+      println("No object list");
     }
     break;
 
   case 'q':
-    std::cout << "Quiting\n";
+    println("Quiting");
     return 0; // quit
 
   case 'r':
@@ -215,19 +215,19 @@ int ShellLoop()
     break;
 
   default:
-    std::cout << "Unknown command '" << arg << "' - enter '?' for help\n";
+    println("Unknown command '", arg, "' - enter '?' for help");
     return -1; // error
   }
 
   return 1; // don't quit
 }
 
-int Usage(int argc, char** argv)
+int Usage(const char* argv0)
 {
-  std::cout << "Usage: " << argv[0] << " [options] [<scene file> [<image save>]]\n"
-            << "Options:\n"
-            << "  -j#, --jobs #   Number of render jobs\n"
-            << "  -h, --help      Show usage\n\n";
+  println("Usage: ", argv0, " [options] [<scene file> [<image save>]]");
+  println("Options:");
+  println("  -j#, --jobs #   Number of render jobs");
+  println("  -h, --help      Show usage\n");
   return 0;
 }
 
@@ -235,7 +235,7 @@ int Usage(int argc, char** argv)
 /**** Main Function ****/
 int main(int argc, char** argv)
 {
-  std::cout << "Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley\n\n";
+  println("Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley\n");
 
   std::string fileLoad, imageSave;
   int jobs = -1;
@@ -247,16 +247,16 @@ int main(int argc, char** argv)
       if (arg == "--") {
         optionsDone = true;
       } else if (arg == "-h" || arg == "--help") {
-        return Usage(argc, argv);
+        return Usage(argv[0]);
       } else if (arg == "-j" || arg == "--jobs") {
         if (i >= (argc-1)) {
-          std::cout << "Missing job count\n\n";
-          return Usage(argc, argv);
+          println("Missing job count\n");
+          return Usage(argv[0]);
         }
         arg = argv[++i];
         if (!std::isdigit(arg[0])) {
-          std::cout << "Bad job count '" << arg << "'\n\n";
-          return Usage(argc, argv);
+          println("Bad job count '", arg, "'\n");
+          return Usage(argv[0]);
         }
         jobs = std::atoi(argv[i]);
       } else if (arg.size() > 2 && arg.substr(0,2) == "-j" && std::isdigit(arg[2])) {
@@ -264,8 +264,8 @@ int main(int argc, char** argv)
       } else if (arg.size() > 7 && arg.substr(0,7) == "--jobs=" && std::isdigit(arg[7])) {
         jobs = std::atoi(argv[i] + 7);
       } else {
-        std::cout << "Bad option '" << arg << "'\n\n";
-        return Usage(argc, argv);
+        println("Bad option '", arg, "'\n");
+        return Usage(argv[0]);
       }
     } else if (fileLoad.empty()) {
       fileLoad = arg;
@@ -277,7 +277,7 @@ int main(int argc, char** argv)
   }
 
   if (jobs >= 0) {
-    std::cout << "Render jobs set to " << jobs << "\n\n";
+    println("Render jobs set to ", jobs, "\n");
     Ren.setJobs(jobs);
   }
 
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
     return ShellSave(imageSave);
   }
 
-  std::cout << "\nStarting Rend Shell - Enter '?' for help, 'Q' to quit\n";
+  println("\nStarting Rend Shell - Enter '?' for help, 'Q' to quit");
   while (ShellLoop()) { }
   return 0;
 }

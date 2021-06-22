@@ -186,9 +186,6 @@ int SceneDesc::parseFile(const std::string& file)
     node_list.addToTail(n);
   }
 
-  //PrintList(std::cout, node_list.head());
-  //std::cout << '\n';
-
   // check types
   for (AstNode* n = node_list.head(); n != nullptr; n = n->next()) {
     int err = SetNodeType(n);

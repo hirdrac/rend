@@ -16,7 +16,7 @@
 #include "Stats.hh"
 #include "Color.hh"
 #include "BasicShaders.hh"
-#include <iostream>
+#include "Print.hh"
 #include <vector>
 
 
@@ -67,7 +67,7 @@ int Scene::generate(SceneDesc& sd)
     return 0;
   }
 
-  std::cout << "errors detected: " << errors << '\n';
+  println("errors detected: ", errors);
   return errors;
 }
 
@@ -140,7 +140,7 @@ int Scene::init()
 
   // Init scene items
   if (InitObjectList(*this, object_list.head(), default_obj)) {
-    std::cout << "Error initializing object list\n";
+    println("Error initializing object list");
     return -1;  // error
   }
 
@@ -152,7 +152,7 @@ int Scene::init()
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
   for (Light* lt : lights) {
     if (InitLight(*this, *lt, sFn)) {
-      std::cout << "Error initializing light list\n";
+      println("Error initializing light list");
       return -1;  // error
     }
   }
@@ -160,7 +160,7 @@ int Scene::init()
   // init shaders
   for (Shader* sh : _shaders) {
     if (InitShader(*this, *sh)) {
-      std::cout << "Error initializing shaders\n";
+      println("Error initializing shaders");
       return -1;
     }
   }
@@ -171,20 +171,15 @@ int Scene::init()
 
 void Scene::info(std::ostream& out) const
 {
-  out <<   "    Image size:\t" << image_width << " x " << image_height;
-  out << "\n           Fov:\t" << fov;
-  out << "\n       Eye/Coi:\t" << eye << " / " << coi;
-  out << "\n    VUP vector:\t" << vup;
-  out << "\n Max ray depth:\t" << max_ray_depth;
-  out << "\n Min ray value:\t" << min_ray_value;
-  //out << "\nAmbient shader:\n";
-  //  PrintBranch(ambient, out, 1);
-  //out << "Background shader:\n";
-  //  PrintBranch(background, out, 1);
-
-  out << "\nLight List:\n";
+  println_os(out, "    Image size:\t", image_width, " x ", image_height);
+  println_os(out, "           Fov:\t", fov);
+  println_os(out, "       Eye/Coi:\t", eye, " / ", coi);
+  println_os(out, "    VUP vector:\t", vup);
+  println_os(out, " Max ray depth:\t", max_ray_depth);
+  println_os(out, " Min ray value:\t", min_ray_value);
+  println_os(out, "Light List:");
   PrintList2(out, lights, 1);
-  out << '\n';
+  println_os(out);
 }
 
 int Scene::traceRay(const Ray& r, Color& result) const
@@ -218,7 +213,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
   if (!sh) {
     sh = default_obj;
     if (!sh) {
-      std::cout << "no shader!!\n";
+      println("no shader!!");
       result.clear();
       return 0;
     }

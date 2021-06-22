@@ -9,7 +9,7 @@
 #include "Ray.hh"
 #include "Color.hh"
 #include "Logger.hh"
-#include <iostream>
+#include "Print.hh"
 #include <chrono>
 #include <algorithm>
 
@@ -31,6 +31,14 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
 
   Vec3 vtop = UnitVec(vup - (vnormal * DotProduct(vnormal, vup)));
   Vec3 vside = UnitVec(CrossProduct(vnormal, vtop));
+  //Vec3 vside = UnitVec(CrossProduct(vtop, vnormal)); // right-handed coords
+
+  // Default Left-Handed Coords
+  // +Y
+  //  |  +Z
+  //  | /
+  //  |/
+  //  O--- +X
 
   // Calculate Screen/Pixel vectors
   Flt ss = std::tan((_scene->fov * .5) * math::DEG_TO_RAD<Flt>);
@@ -124,7 +132,7 @@ int Renderer::startJobs()
     int yy = std::min(y + inc_y - 1, max_y);
     _tasks.push_back({0, y, _scene->image_width - 1, yy});
   }
-  std::cout << "tasks: " << _tasks.size() << "   size: " << inc_y << '\n';
+  println("tasks: ", _tasks.size(), "   size: ", inc_y);
 
   // start render jobs
   for (auto& j : _jobs) {
@@ -176,5 +184,4 @@ void Renderer::jobMain(Job* j)
 
     render(t.min_x, t.min_y, t.max_x, t.max_y, &j->hitCache, &j->stats);
   }
-  //std::cerr << "thread halt\n";
 }

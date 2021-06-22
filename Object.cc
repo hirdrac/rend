@@ -10,7 +10,7 @@
 #include "Shader.hh"
 #include "Intersect.hh"
 #include "Stats.hh"
-#include <iostream>
+#include "Print.hh"
 #include <algorithm>
 #include <cstring>
 
@@ -100,13 +100,10 @@ int Primitive::bound(BBox& b) const
 /**** Functions ****/
 int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
 {
-  //std::cout << "InitObjectList()\n";
-  //PrintList(std::cout, list);
-
   for (; list != nullptr; list = list->next()) {
     Transform* trans = list->trans();
     if (!trans) {
-      std::cout << "No Trans ERROR: " << list->desc(0) << '\n';
+      println("No Trans ERROR: ", list->desc(0));
       return -1;
     }
 
@@ -124,7 +121,7 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
     // Init primitive
     int error = list->init(s);
     if (error) {
-      std::cout << "INIT ERROR: " << list->desc(0) << '\n';
+      println("INIT ERROR: ", list->desc(0));
       return error;
     }
   }
