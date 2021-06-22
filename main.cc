@@ -48,7 +48,7 @@ int ShellInfo()
 
 int ShellLoad(const std::string& file)
 {
-  std::cout << "Parsing file '" << file << "'\n";
+  std::cout << "Load scene file '" << file << "'\n";
   SceneDesc sf;
   if (sf.parseFile(file) < 0) {
     std::cout << "Error in loading file\n";
@@ -124,6 +124,8 @@ int ShellSave(const std::string& file)
 
 int ShellLoop()
 {
+  static std::string lastFile;
+
   std::cout << std::endl;
   char* buffer = readline("REND> ");
   if (!buffer) {
@@ -174,6 +176,9 @@ int ShellLoop()
   case 'l':
     if (input >> arg) {
       ShellLoad(arg);
+      lastFile = arg;
+    } else if (!lastFile.empty()) {
+      ShellLoad(lastFile);
     } else {
       std::cout << "Load requires a file name\n";
     }
@@ -199,7 +204,9 @@ int ShellLoop()
     if (input >> arg) {
       ShellSave(arg);
     } else {
-      ShellSave("out.bmp");
+      std::string name = lastFile.substr(0, lastFile.rfind('.'));
+      if (name.empty()) { name = "out"; }
+      ShellSave(name + ".bmp");
     }
     break;
 
