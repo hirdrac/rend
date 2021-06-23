@@ -1,6 +1,6 @@
 //
 // Parse.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Scene description file parser
 //
@@ -36,6 +36,7 @@ class AstNode : public SListNode<AstNode>
 
   // Member Functions
   std::string desc(int indent) const;
+  void setType();
 };
 
 

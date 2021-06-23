@@ -62,13 +62,7 @@ void Scene::clear()
 
 int Scene::generate(SceneDesc& sd)
 {
-  int errors = ProcessList(*this, nullptr, sd.node_list.head());
-  if (!errors) {
-    return 0;
-  }
-
-  println("errors detected: ", errors);
-  return errors;
+  return ProcessList(*this, nullptr, sd.node_list.head());
 }
 
 int Scene::add(SceneItem* i, SceneItemFlag flag)

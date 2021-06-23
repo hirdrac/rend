@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <cctype>
+#include <cassert>
 
 
 namespace {
@@ -36,25 +37,17 @@ namespace {
     SList<AstNode> nodeList;
     for (;;) {
       std::string symbol = nextSymbol();
-      if (symbol.empty()) { break; }
+      if (symbol.empty() || symbol[0] == ')') { break; }
 
-      AstNode* e = nullptr;
-      switch (symbol[0]) {
-	case '\0':
-	case ')':
-	  break;
-
-	case '(':
-	  e = new AstNode(_line);
-	  e->child = nextBlock();
-	  break;
-
-	default:
-	  e = new AstNode(_line, symbol);
-	  break;
+      AstNode* e;
+      if (symbol[0] == '(') {
+        e = new AstNode(_line);
+        e->child = nextBlock();
+      } else {
+        e = new AstNode(_line, symbol);
       }
 
-      if (!e) { break; }
+      e->setType();
       nodeList.addToTail(e);
     }
 
@@ -125,26 +118,6 @@ namespace {
 
     return c;
   }
-
-  // helper functions
-  int SetNodeType(AstNode* n)
-  {
-    if (n->child) {
-      n->ast_type = AST_LIST;
-      for (AstNode* c = n->child; c != nullptr; c = c->next()) {
-	if (int error = SetNodeType(c); error) { return error; }
-      }
-
-    } else if (char x = n->val[0]; std::isdigit(x) || x == '-' || x == '.') {
-      n->ast_type = AST_NUMBER;
-
-    } else if (ItemFn fn = FindItemFn(n->val); fn) {
-      n->ast_type = AST_KEYWORD;
-      n->ptr      = (void*) fn;
-    }
-
-    return 0;
-  }
 }
 
 
@@ -171,6 +144,18 @@ std::string AstNode::desc(int indent) const
   return os.str();
 }
 
+void AstNode::setType()
+{
+  if (child) {
+    ast_type = AST_LIST;
+  } else if (std::isdigit(val[0]) || val[0] == '-' || val[0] == '.') {
+    ast_type = AST_NUMBER;
+  } else if (ItemFn fn = FindItemFn(val); fn) {
+    ast_type = AST_KEYWORD;
+    ptr      = (void*) fn;
+  }
+}
+
 
 /**** SceneDesc Class ****/
 // Member Functions
@@ -186,18 +171,12 @@ int SceneDesc::parseFile(const std::string& file)
     node_list.addToTail(n);
   }
 
-  // check types
-  for (AstNode* n = node_list.head(); n != nullptr; n = n->next()) {
-    int err = SetNodeType(n);
-    if (err) { return err; }
-  }
-
   // everything okay
   return 0;
 }
 
 
-// ---- Function Implementations ----
+// **** Function Implementations ****
 namespace {
   std::ostream& Cerror(int line)
   {
@@ -206,35 +185,16 @@ namespace {
 
   int ProcessItem(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
   {
-    AstNode* d = n;
-
-    switch (d->ast_type) {
-      case AST_KEYWORD:
-	return ItemFn(d->ptr)(s, parent, nullptr, flag);
-
-      case AST_NUMBER:
-	Cerror(d->line) << "Number out of place\n";
-	return -1;
-
-      case AST_LIST:
-	d = d->child;
-	switch (d->ast_type) {
-	  case AST_KEYWORD:
-	    return ItemFn(d->ptr)(s, parent, d->next(), flag);
-
-	  case AST_NUMBER:
-	    Cerror(d->line) << "Number out of place\n";
-	    return -1;
-
-	  default:
-	    break;
-	}
-	// fall through
-
-      default:
-	Cerror(d->line) << "Undefined symbol '" << d->val << "'\n";
-	return -1;
+    if (n->ast_type == AST_LIST) {
+      n = n->child;
+      assert(n != nullptr);
+      if (n->ast_type == AST_KEYWORD) {
+        return ItemFn(n->ptr)(s, parent, n->next(), flag);
+      }
     }
+
+    Cerror(n->line) << "Unexpected value '" << n->val << "'\n";
+    return -1;
   }
 }
 
@@ -265,19 +225,17 @@ int GetBool(AstNode*& n, bool& val, bool def)
     return 0;
   }
 
-  switch (std::tolower(d->val[0])) {
-  case '0':
-  case 'f':
-    val = false; break;
+  switch (d->val[0]) {
+    case '0': case 'f': case 'F': case 'n': case 'N':
+      val = false; break;
 
-  case '1':
-  case 't':
-    val = true; break;
+    case '1': case 't': case 'T': case 'y': case 'Y':
+      val = true; break;
 
-  default:
-    Cerror(d->line) << "Expecting boolean value\n";
-    val = def;
-    return -1;
+    default:
+      Cerror(d->line) << "Expecting boolean value\n";
+      val = def;
+      return -1;
   }
 
   return 0;
@@ -290,10 +248,8 @@ int GetString(AstNode*& n, std::string& val, const std::string& def)
     return 0;
   }
 
-  AstNode* d = n;
+  val = n->val.empty() ? def : n->val;
   n = n->next();
-
-  val = d->val.empty() ? def : d->val;
   return 0;
 }
 
@@ -327,8 +283,7 @@ int GetInt(AstNode*& n, int& val, int def)
   AstNode* d = n;
   n = n->next();
 
-  if (d->ast_type != AST_NUMBER)
-  {
+  if (d->ast_type != AST_NUMBER) {
     Cerror(d->line) << "Expecting integer value\n";
     val = def;
     return -1;

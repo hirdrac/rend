@@ -58,7 +58,7 @@ int ShellLoad(const std::string& file)
   println("Generating Scene");
   TheScene.clear();
   if (TheScene.generate(sf)) {
-    println("Error in scene generation");
+    println("Scene generation failed");
     return -1;
   }
 
