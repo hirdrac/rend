@@ -118,8 +118,25 @@ int ShellRender()
 
 int ShellSave(const std::string& file)
 {
-  println("Saving image to '", file, "'");
-  return Fb.saveBMP(file);
+  if (Fb.width() <= 0 || Fb.height() <= 0) {
+    println("No image to save");
+    return -1;
+  }
+
+  auto x = file.rfind('.');
+  std::string ext;
+  if (x != std::string::npos) { ext = file.substr(x); }
+
+  if (ext.empty()) { ext = ".bmp"; }
+  else if (ext != ".bmp") {
+    println("Invalid image file extension '", ext.substr(1), "'");
+    println("(only 'bmp' currently supported)");
+    return -1;
+  }
+
+  std::string fn = file.substr(0,x) + ext;
+  println("Saving image to '", fn, "'");
+  return Fb.saveBMP(fn);
 }
 
 int ShellLoop()
@@ -206,7 +223,7 @@ int ShellLoop()
     } else {
       std::string name = lastFile.substr(0, lastFile.rfind('.'));
       if (name.empty()) { name = "out"; }
-      ShellSave(name + ".bmp");
+      ShellSave(name);
     }
     break;
 
