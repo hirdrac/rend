@@ -15,7 +15,6 @@
 
 
 // **** Types ****
-class SceneDesc;
 class SceneItem;
 class Color;
 class Ray;
@@ -57,7 +56,6 @@ class Scene
 
   // Member Functions
   void clear();
-  int generate(SceneDesc& sd);
   int add(SceneItem* i, SceneItemFlag flag);
   int init();
   void info(std::ostream& out) const;

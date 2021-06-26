@@ -13,6 +13,8 @@
 
 
 // **** Types ****
+class Scene;
+
 enum AstType {
   AST_UNKNOWN, AST_LIST, AST_NUMBER, AST_KEYWORD
 };
@@ -43,10 +45,12 @@ class AstNode : public SListNode<AstNode>
 class SceneDesc
 {
  public:
-  SList<AstNode> node_list;
-
   // Member Functions
   int parseFile(const std::string& file);
+  int setupScene(Scene& s) const;
+
+ private:
+  SList<AstNode> _astList;
 };
 
 

@@ -165,14 +165,20 @@ int SceneDesc::parseFile(const std::string& file)
   if (!br) { return -1; }
 
   // parse blocks
+  _astList.purge();
   for (;;) {
     AstNode* n = br.nextBlock();
     if (!n) { break; }
-    node_list.addToTail(n);
+    _astList.addToTail(n);
   }
 
   // everything okay
   return 0;
+}
+
+int SceneDesc::setupScene(Scene& s) const
+{
+  return ProcessList(s, nullptr, _astList.head());
 }
 
 

@@ -12,7 +12,6 @@
 #include "Bound.hh"
 #include "Ray.hh"
 #include "Intersect.hh"
-#include "Parse.hh"
 #include "Stats.hh"
 #include "Color.hh"
 #include "BasicShaders.hh"
@@ -58,11 +57,6 @@ void Scene::clear()
   _shaders.clear();
   object_list.purge();
   bound_list.purge();
-}
-
-int Scene::generate(SceneDesc& sd)
-{
-  return ProcessList(*this, nullptr, sd.node_list.head());
 }
 
 int Scene::add(SceneItem* i, SceneItemFlag flag)
