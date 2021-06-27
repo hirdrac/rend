@@ -33,7 +33,7 @@ namespace
 int ShellInfo()
 {
   if (TheScene.object_list.empty()) {
-    println("No scene loaded yet");
+    println("No scene loaded");
     return -1;
   }
 
@@ -180,7 +180,7 @@ int ShellLoop()
     if (!(input >> arg)) {
       println("Number of jobs required");
     } else {
-      int j = std::atoi(arg.c_str());
+      int j = std::stoi(arg);
       if (j < 0) {
 	println("Invalid number of jobs '", arg, "'");
       } else {
@@ -252,7 +252,7 @@ int Usage(const char* argv0)
 /**** Main Function ****/
 int main(int argc, char** argv)
 {
-  println("Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley\n");
+  println("Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley");
 
   std::string fileLoad, imageSave;
   int jobs = -1;
@@ -294,7 +294,7 @@ int main(int argc, char** argv)
   }
 
   if (jobs >= 0) {
-    println("Render jobs set to ", jobs, "\n");
+    println("Render jobs set to ", jobs);
     Ren.setJobs(jobs);
   }
 
@@ -307,7 +307,7 @@ int main(int argc, char** argv)
     return ShellSave(imageSave);
   }
 
-  println("\nStarting Rend Shell - Enter '?' for help, 'Q' to quit");
+  println("Starting Rend Shell - Enter '?' for help, 'Q' to quit");
   while (ShellLoop()) { }
   return 0;
 }
