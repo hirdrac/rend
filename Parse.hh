@@ -16,7 +16,7 @@
 class Scene;
 
 enum AstType {
-  AST_UNKNOWN, AST_LIST, AST_NUMBER, AST_KEYWORD
+  AST_UNKNOWN, AST_LIST, AST_NUMBER, AST_ITEM
 };
 
 
@@ -37,7 +37,7 @@ class AstNode : public SListNode<AstNode>
     : line(fileLine), val(std::move(value)) { }
 
   // Member Functions
-  std::string desc(int indent) const;
+  [[nodiscard]] std::string desc(int indent) const;
   void setType();
 };
 

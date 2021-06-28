@@ -5,8 +5,13 @@
 // Implementation of a parse module
 //
 
+// TODO - remove AST_LIST nodes; AST_ITEM (with args as children) can replace it
+// TODO - add 'include' directive, evaluated in parseFile()
+// TODO - add scene filename to error messages
+
 #include "Parse.hh"
 #include "Keywords.hh"
+#include "Print.hh"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -28,7 +33,7 @@ namespace {
     int _line = 1;
     int _nextChar = ' ';
 
-    std::string nextSymbol();
+    std::string nextToken();
     int getChar();
   };
 
@@ -36,15 +41,15 @@ namespace {
   {
     SList<AstNode> nodeList;
     for (;;) {
-      std::string symbol = nextSymbol();
-      if (symbol.empty() || symbol[0] == ')') { break; }
+      std::string token = nextToken();
+      if (token.empty() || token[0] == ')') { break; }
 
       AstNode* e;
-      if (symbol[0] == '(') {
+      if (token[0] == '(') {
         e = new AstNode(_line);
         e->child = nextBlock();
       } else {
-        e = new AstNode(_line, symbol);
+        e = new AstNode(_line, token);
       }
 
       e->setType();
@@ -54,10 +59,10 @@ namespace {
     return nodeList.extractNodes();
   }
 
-  std::string BlockReader::nextSymbol()
+  std::string BlockReader::nextToken()
   {
     int quote = 0;
-    std::string symbol;
+    std::string token;
 
     for (;;) {
       int c;
@@ -66,10 +71,10 @@ namespace {
 
       // Check 1st character
       if (c == '\0') {
-        return symbol;  // end of file
+        return token;  // end of file
       } else if (quote) {
         if (c == quote) {
-          return symbol.empty() ? std::string("\"\"") : symbol;
+          return token.empty() ? std::string("\"\"") : token;
         } else if (c == '\"' || c == '\'') {
           quote = c;
           continue;
@@ -90,17 +95,17 @@ namespace {
         continue;
       }
 
-      symbol += char(c); // doesn't support unicode
+      token += char(c); // doesn't support unicode
       if (quote) { continue; }
 
       // skip to end of token
       if (std::isalnum(c) || (c == '+') || (c == '-') || (c == '.') || (c == '_')) {
 	while (std::isalnum(_nextChar) || (_nextChar == '.') || (_nextChar == '_')) {
-	  symbol += char(getChar());
+	  token += char(getChar());
 	}
       }
 
-      return symbol;
+      return token;
     }
   }
 
@@ -131,9 +136,9 @@ std::string AstNode::desc(int indent) const
 
   std::ostringstream os;
   switch (ast_type) {
-    case AST_NUMBER:  os << "<Number " << val << '>'; break;
-    case AST_KEYWORD: os << "<Keyword " << val << '>'; break;
-    default:          os << "<Symbol " << val << '>'; break;
+    case AST_NUMBER: os << "<Number " << val << '>'; break;
+    case AST_ITEM:   os << "<Keyword " << val << '>'; break;
+    default:         os << "<Symbol " << val << '>'; break;
   }
 
   if (child) {
@@ -151,7 +156,7 @@ void AstNode::setType()
   } else if (std::isdigit(val[0]) || val[0] == '-' || val[0] == '.') {
     ast_type = AST_NUMBER;
   } else if (ItemFn fn = FindItemFn(val); fn) {
-    ast_type = AST_KEYWORD;
+    ast_type = AST_ITEM;
     ptr      = (void*) fn;
   }
 }
@@ -184,22 +189,23 @@ int SceneDesc::setupScene(Scene& s) const
 
 // **** Function Implementations ****
 namespace {
-  std::ostream& Cerror(int line)
+  template<typename... Args>
+  inline void reportError(int line, const Args&... args)
   {
-    return std::cerr << "Error in line " << line << ": ";
+    println_err("Error in line ", line, ": ", args...);
   }
 
-  int ProcessItem(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
+  int processNode(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
   {
     if (n->ast_type == AST_LIST) {
       n = n->child;
       assert(n != nullptr);
-      if (n->ast_type == AST_KEYWORD) {
+      if (n->ast_type == AST_ITEM) {
         return ItemFn(n->ptr)(s, parent, n->next(), flag);
       }
     }
 
-    Cerror(n->line) << "Unexpected value '" << n->val << "'\n";
+    reportError(n->line, "Unexpected value '", n->val, "'");
     return -1;
   }
 }
@@ -208,7 +214,7 @@ int ProcessList(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   int error = 0;
   while (n) {
-    error = ProcessItem(s, parent, n, flag);
+    error = processNode(s, parent, n, flag);
     if (error) { break; }
     n = n->next();
   }
@@ -239,7 +245,7 @@ int GetBool(AstNode*& n, bool& val, bool def)
       val = true; break;
 
     default:
-      Cerror(d->line) << "Expecting boolean value\n";
+      reportError(d->line, "Expected boolean value");
       val = def;
       return -1;
   }
@@ -270,7 +276,7 @@ int GetFlt(AstNode*& n, Flt& val, Flt def)
   n = n->next();
 
   if (d->ast_type != AST_NUMBER) {
-    Cerror(d->line) << "Expecting foating point value\n";
+    reportError(d->line, "Expected foating point value");
     val = def;
     return -1;
   }
@@ -290,7 +296,7 @@ int GetInt(AstNode*& n, int& val, int def)
   n = n->next();
 
   if (d->ast_type != AST_NUMBER) {
-    Cerror(d->line) << "Expecting integer value\n";
+    reportError(d->line, "Expected integer value");
     val = def;
     return -1;
   }
