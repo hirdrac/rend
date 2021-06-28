@@ -276,7 +276,7 @@ int GetFlt(AstNode*& n, Flt& val, Flt def)
   n = n->next();
 
   if (d->ast_type != AST_NUMBER) {
-    reportError(d->line, "Expected foating point value");
+    reportError(d->line, "Expected floating point value");
     val = def;
     return -1;
   }
@@ -307,17 +307,15 @@ int GetInt(AstNode*& n, int& val, int def)
 
 int GetVec2(AstNode*& n, Vec2& v, const Vec2& def)
 {
-  int error = 0;
-  error += GetFlt(n, v.x, def.x);
-  error += GetFlt(n, v.y, def.y);
-  return error;
+  if (int er = GetFlt(n, v.x, def.x); er != 0) { return er; }
+  if (int er = GetFlt(n, v.y, def.y); er != 0) { return er; }
+  return 0;
 }
 
 int GetVec3(AstNode*& n, Vec3& v, const Vec3& def)
 {
-  int error = 0;
-  error += GetFlt(n, v.x, def.x);
-  error += GetFlt(n, v.y, def.y);
-  error += GetFlt(n, v.z, def.z);
-  return error;
+  if (int er = GetFlt(n, v.x, def.x); er != 0) { return er; }
+  if (int er = GetFlt(n, v.y, def.y); er != 0) { return er; }
+  if (int er = GetFlt(n, v.z, def.z); er != 0) { return er; }
+  return 0;
 }

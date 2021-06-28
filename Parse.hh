@@ -10,6 +10,7 @@
 #include "Types.hh"
 #include "SList.hh"
 #include <string>
+#include <string_view>
 
 
 // **** Types ****
@@ -33,8 +34,8 @@ class AstNode : public SListNode<AstNode>
   // Constructors
   AstNode() = default;
   AstNode(int fileLine) : line(fileLine) { }
-  AstNode(int fileLine, std::string value)
-    : line(fileLine), val(std::move(value)) { }
+  AstNode(int fileLine, std::string_view value)
+    : line(fileLine), val(value) { }
 
   // Member Functions
   [[nodiscard]] std::string desc(int indent) const;
