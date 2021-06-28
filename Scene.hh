@@ -26,7 +26,7 @@ class Scene
 {
  public:
   SList<Object> object_list; // Complete list of objects (including Groups)
-  SList<Object> bound_list;  // Bounding box heiarchy of objects
+  SList<Object> bound_list;  // Bounding box hierarchy of objects
   std::vector<Light*> lights;
 
   // Scene color shaders

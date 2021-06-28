@@ -3,7 +3,7 @@
 // Copyright (C) 2021 Richard Bradley
 //
 // Defintion of Bound object class and
-// bounding box heiarchy function
+// bounding box hierarchy function
 //
 
 #pragma once

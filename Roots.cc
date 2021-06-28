@@ -2,7 +2,7 @@
 // Roots.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of polynominal root finding functions
+// Implementation of polynomial root finding functions
 // Most of SolveQuadric(), SolveCubic(), SolveQuartic() taken from code
 // by Jochen Schwarze (Graphics Gems I)
 //

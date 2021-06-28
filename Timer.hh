@@ -2,7 +2,7 @@
 // Timer.hh
 // Copyright (C) 2021 Richard Bradley
 //
-// Elaplsed time messuring class
+// Elapsed time measuring class
 //
 
 // FIXME - replace linux time system calls with std::chrono

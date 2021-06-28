@@ -1,6 +1,6 @@
 //
 // SceneItem.hh
-// Copyright (C) 2021 Ricahrd Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 
 #pragma once
