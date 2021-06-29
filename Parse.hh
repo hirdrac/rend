@@ -9,8 +9,10 @@
 #include "SceneItem.hh"
 #include "Types.hh"
 #include "SList.hh"
+#include "Print.hh"
 #include <string>
 #include <string_view>
+#include <map>
 
 
 // **** Types ****
@@ -25,17 +27,16 @@ class AstNode : public SListNode<AstNode>
 {
  public:
   AstNode*    child = nullptr;
-  AstType     ast_type = AST_UNKNOWN;
+  int         file_id = 0;
   int         line = 0;
-  std::string val;
   void*       ptr = nullptr;
+  std::string val;
+  AstType     ast_type = AST_UNKNOWN;
   int         flag = 0;
 
   // Constructors
   AstNode() = default;
-  AstNode(int fileLine) : line(fileLine) { }
-  AstNode(int fileLine, std::string_view value)
-    : line(fileLine), val(value) { }
+  AstNode(std::string_view value) : val(value) { }
 
   // Member Functions
   [[nodiscard]] std::string desc(int indent) const;
@@ -48,20 +49,32 @@ class SceneDesc
  public:
   // Member Functions
   int parseFile(const std::string& file);
-  int setupScene(Scene& s) const;
+  int setupScene(Scene& s);
+
+  // parsing helper functions
+  int processList(Scene& s, SceneItem* parent, AstNode* node,
+                  SceneItemFlag flag = NO_FLAG);
+
+  int getBool(AstNode*& n, bool& val) const;
+  int getString(AstNode*& n, std::string& val) const;
+  int getFlt(AstNode*& n, Flt& val) const;
+  int getInt(AstNode*& n, int& val) const;
+  int getVec3(AstNode*& n, Vec3& v) const;
+
+  std::string fileName(int file_id) const {
+    auto itr = _files.find(file_id);
+    return (itr == _files.end()) ? std::string("<unknown>") : itr->second;
+  }
+
+  template<typename... Args>
+  void reportError(const AstNode* n, const Args&... args) const {
+    println_err("[", fileName(n->file_id), ":", n->line, "] ", args...);
+  }
 
  private:
   SList<AstNode> _astList;
+  std::map<int,std::string> _files;
+  int _lastID = 0;
+
+  int processNode(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag);
 };
-
-
-// **** Functions ****
-int ProcessList(Scene& s, SceneItem* parent, AstNode* n,
-		SceneItemFlag flag = NO_FLAG);
-
-int GetString(AstNode*& n, std::string& val, const std::string& def);
-int GetBool(AstNode*& n, bool& val, bool def);
-int GetFlt(AstNode*& n, Flt& val, Flt def);
-int GetInt(AstNode*& n, int& val, int def);
-int GetVec2(AstNode*& n, Vec2& v, const Vec2& def);
-int GetVec3(AstNode*& n, Vec3& v, const Vec3& def);

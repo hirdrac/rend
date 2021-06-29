@@ -18,458 +18,507 @@
 #include <cctype>
 
 
-/**** Functions ****/
-Transform* FindTrans(SceneItem* p)
-{
-  Transform* t = p->trans();
-  if (!t) {
-    LOG_ERROR("SceneItem ", p->desc(0), " cannot be transformed");
-  }
-
-  return t;
-}
-
-int AddShader(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag,
-	      Shader* sh)
-{
-  int error = 0;
-  if (!p) {
-    error = s.add(sh, flag);
-  } else {
-    error = p->add(sh, flag);
-    if (!error && (dynamic_cast<Object*>(p) || dynamic_cast<Light*>(p))) {
-      error = s.add(sh, flag);  // also add to scene
+namespace {
+  /**** Helper Functions ****/
+  Transform* findTrans(SceneItem* p)
+  {
+    Transform* t = p->trans();
+    if (!t) {
+      LOG_ERROR("SceneItem ", p->desc(0), " cannot be transformed");
     }
+
+    return t;
   }
 
-  if (error) {
-    delete sh;
-    return error;
+  int addShader(SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n,
+                SceneItemFlag flag, Shader* sh)
+  {
+    int error = 0;
+    if (!p) {
+      error = s.add(sh, flag);
+    } else {
+      error = p->add(sh, flag);
+      if (!error && (dynamic_cast<Object*>(p) || dynamic_cast<Light*>(p))) {
+        error = s.add(sh, flag);  // also add to scene
+      }
+    }
+
+    if (error) {
+      delete sh;
+      return error;
+    }
+
+    return sd.processList(s, sh, n);
   }
 
-  return ProcessList(s, sh, n);
-}
+  int addObject(SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n,
+                SceneItemFlag flag, Object* ob)
+  {
+    int error = p ? p->add(ob, flag) : s.add(ob, flag);
+    if (error) {
+      delete ob;
+      return error;
+    }
 
-int AddObject(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag,
-	      Object* ob)
-{
-  int error = p ? p->add(ob, flag) : s.add(ob, flag);
-  if (error) {
-    delete ob;
-    return error;
+    return sd.processList(s, ob, n);
   }
 
-  return ProcessList(s, ob, n);
-}
+  int addLight(SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n,
+               SceneItemFlag flag, Light* lt)
+  {
+    int error = p ? p->add(lt, flag) : s.add(lt, flag);
+    if (error) {
+      delete lt;
+      return error;
+    }
 
-int AddLight(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag,
-	     Light* lt)
-{
-  int error = p ? p->add(lt, flag) : s.add(lt, flag);
-  if (error) {
-    delete lt;
-    return error;
+    return sd.processList(s, lt, n);
   }
-
-  return ProcessList(s, lt, n);
 }
 
 
 /**** Item Functions ****/
-int AirFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int AirFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || flag != NO_FLAG) { return -1; }
-  return ProcessList(s, p, n, AIR);
+  return sd.processList(s, p, n, AIR);
 }
 
-int AmbientFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int AmbientFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || flag != NO_FLAG) { return -1; }
-  return ProcessList(s, p, n, AMBIENT);
+  return sd.processList(s, p, n, AMBIENT);
 }
 
-int BackgroundFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int BackgroundFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || flag != NO_FLAG) { return -1; }
-  return ProcessList(s, p, n, BACKGROUND);
+  return sd.processList(s, p, n, BACKGROUND);
 }
 
-int CheckerboardFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int CheckerboardFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new Checkerboard);
+  return addShader(sd, s, p, n, flag, new Checkerboard);
 }
 
-int CoiFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int CoiFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : GetVec3(n, s.coi, {0,0,0});
+  return p ? -1 : sd.getVec3(n, s.coi);
 }
 
-int ColorCubeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ColorCubeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new ColorCube);
+  return addShader(sd, s, p, n, flag, new ColorCube);
 }
 
-int ConeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ConeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Cone);
+  return addObject(sd, s, p, n, flag, new Cone);
 }
 
-int CubeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int CubeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Cube);
+  return addObject(sd, s, p, n, flag, new Cube);
 }
 
-int CylinderFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int CylinderFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Cylinder);
+  return addObject(sd, s, p, n, flag, new Cylinder);
 }
 
-int DefaultLightFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int DefaultLightFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || flag != NO_FLAG) { return -1; }
-  return ProcessList(s, p, n, DEFAULT_LT);
+  return sd.processList(s, p, n, DEFAULT_LT);
 }
 
-int DefaultObjectFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int DefaultObjectFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || flag != NO_FLAG) { return -1; }
-  return ProcessList(s, p, n, DEFAULT_OBJ);
+  return sd.processList(s, p, n, DEFAULT_OBJ);
 }
 
-int DifferenceFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int DifferenceFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Difference);
+  return addObject(sd, s, p, n, flag, new Difference);
 }
 
-int DiffuseFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int DiffuseFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return ProcessList(s, p, n, DIFFUSE);
+  return sd.processList(s, p, n, DIFFUSE);
 }
 
-int DirectionFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int DirectionFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Light* lt = dynamic_cast<Light*>(p);
-  return lt ? GetVec3(n, lt->dir, {0,1,0}) : -1;
+  return lt ? sd.getVec3(n, lt->dir) : -1;
 }
 
-int DiscFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int DiscFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Disc);
+  return addObject(sd, s, p, n, flag, new Disc);
 }
 
-int EnergyFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int EnergyFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return dynamic_cast<Light*>(p) ? ProcessList(s, p, n) : -1;
+  return dynamic_cast<Light*>(p) ? sd.processList(s, p, n) : -1;
 }
 
-int ExpFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ExpFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Phong* sh = dynamic_cast<Phong*>(p);
-  return sh ? GetFlt(n, sh->exp, 5) : -1;
+  return sh ? sd.getFlt(n, sh->exp) : -1;
 }
 
-int EyeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int EyeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : GetVec3(n, s.eye, {0,0,1});
+  return p ? -1 : sd.getVec3(n, s.eye);
 }
 
-int FovFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int FovFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : GetFlt(n, s.fov, 50);
+  return p ? -1 : sd.getFlt(n, s.fov);
 }
 
-int GlobalFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int GlobalFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new ShaderGlobal);
+  return addShader(sd, s, p, n, flag, new ShaderGlobal);
 }
 
-int GroupFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int GroupFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Group);
+  return addObject(sd, s, p, n, flag, new Group);
 }
 
-int IdentityFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int IdentityFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Transform* t = FindTrans(p);
+  Transform* t = findTrans(p);
   if (!t) { return -1; }
 
   t->local.setIdentity();
   return 0;
 }
 
-int IndexFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int IndexFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Primitive* ob = dynamic_cast<Primitive*>(p);
-  if (ob) { return GetFlt(n, ob->index, 1.0); }
+  if (ob) { return sd.getFlt(n, ob->index); }
 
-  return p ? -1 : GetFlt(n, s.index, 1.0);
+  return p ? -1 : sd.getFlt(n, s.index);
 }
 
-int IntersectFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int IntersectFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Intersection);
+  return addObject(sd, s, p, n, flag, new Intersection);
 }
 
-int LocalFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int LocalFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new ShaderLocal);
+  return addShader(sd, s, p, n, flag, new ShaderLocal);
 }
 
-int LocationFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int MaxdepthFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Light* lt = dynamic_cast<Light*>(p);
-  return lt ? GetVec3(n, lt->pos, {0,0,0}) : -1;
+  return p ? -1 : sd.getInt(n, s.max_ray_depth);
 }
 
-int MaxdepthFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int MergeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : GetInt(n, s.max_ray_depth, 64);
+  return addObject(sd, s, p, n, flag, new Merge);
 }
 
-int MergeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int MinValueFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Merge);
+  return p ? -1 : sd.getFlt(n, s.min_ray_value);
 }
 
-int MinValueFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : GetFlt(n, s.min_ray_value, VERY_SMALL);
-}
-
-int NameFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int NameFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   std::string buffer;
-  int error = GetString(n, buffer, "");
-  if (error) { return error; }
+  if (int er = sd.getString(n, buffer); er != 0) { return er; }
   return p->setName(buffer);
 }
 
-int OpenConeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int OpenConeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new OpenCone);
+  return addObject(sd, s, p, n, flag, new OpenCone);
 }
 
-int OpenCylinderFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int OpenCylinderFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new OpenCylinder);
+  return addObject(sd, s, p, n, flag, new OpenCylinder);
 }
 
-int ParaboloidFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ParaboloidFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Paraboloid);
+  return addObject(sd, s, p, n, flag, new Paraboloid);
 }
 
-int PhongFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int PhongFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new Phong);
+  return addShader(sd, s, p, n, flag, new Phong);
 }
 
-int PlaneFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int PlaneFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Plane);
+  return addObject(sd, s, p, n, flag, new Plane);
 }
 
-int PtLightFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int PositionFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddLight(s, p, n, flag, new PointLight);
+  Light* lt = dynamic_cast<Light*>(p);
+  return lt ? sd.getVec3(n, lt->pos) : -1;
 }
 
-int RadiusFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int PointLightFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return addLight(sd, s, p, n, flag, new PointLight);
+}
+
+int RadiusFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Object* ob = dynamic_cast<Object*>(p);
   if (!ob) { return -1; }
 
-  Flt val = 0;
-  int error = GetFlt(n, val, .5);
-  return error || ob->setRadius(val);
+  Flt val;
+  if (int er = sd.getFlt(n, val); er != 0) { return er; }
+  return ob->setRadius(val);
 }
 
-int RegionFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int RegionFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p) { return -1; }
 
-  int error = 0;
-  error = GetInt(n, s.region_min[0], 0);
-  error = GetInt(n, s.region_min[1], 0);
-  error = GetInt(n, s.region_max[0], s.image_width  - 1);
-  error = GetInt(n, s.region_max[1], s.image_height - 1);
-  return error;
-}
-
-int RgbFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Flt r, g, b;
-  int error = 0;
-  error = GetFlt(n, r, 0.0);
-  error = GetFlt(n, g, r);
-  error = GetFlt(n, b, r);
-  if (error) { return error; }
-
-  return AddShader(s, p, n, flag, new ShaderColor(r, g, b));
-}
-
-int RingFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return AddShader(s, p, n, flag, new Ring);
-}
-
-int RotateFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  // Not implemented
+  if (int er = sd.getInt(n, s.region_min[0]); er != 0) { return er; }
+  if (int er = sd.getInt(n, s.region_min[1]); er != 0) { return er; }
+  if (int er = sd.getInt(n, s.region_max[0]); er != 0) { return er; }
+  if (int er = sd.getInt(n, s.region_max[1]); er != 0) { return er; }
   return 0;
 }
 
-int RotateXFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int RgbFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Transform* t = FindTrans(p);
+  Flt r, g, b;
+  if (int er = sd.getFlt(n, r); er != 0) { return er; }
+  if (int er = sd.getFlt(n, g); er != 0) { return er; }
+  if (int er = sd.getFlt(n, b); er != 0) { return er; }
+  return addShader(sd, s, p, n, flag, new ShaderColor(r, g, b));
+}
+
+int RingFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return addShader(sd, s, p, n, flag, new Ring);
+}
+
+int RotateXFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
   if (!t) { return -1; }
 
   Flt angle;
-  int error = GetFlt(n, angle, 0.0);
+  if (int er = sd.getFlt(n, angle); er != 0) { return er; }
   t->local.rotateX(angle * math::DEG_TO_RAD<Flt>);
-  return error;
+  return 0;
 }
 
-int RotateYFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int RotateYFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Transform* t = FindTrans(p);
+  Transform* t = findTrans(p);
   if (!t) { return -1; }
 
   Flt angle;
-  int error = GetFlt(n, angle, 0.0);
+  if (int er = sd.getFlt(n, angle); er != 0) { return er; }
   t->local.rotateY(angle * math::DEG_TO_RAD<Flt>);
-  return error;
+  return 0;
 }
 
-int RotateZFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int RotateZFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Transform* t = FindTrans(p);
+  Transform* t = findTrans(p);
   if (!t) { return -1; }
 
   Flt angle;
-  int error = GetFlt(n, angle, 0.0);
+  if (int er = sd.getFlt(n, angle); er != 0) { return er; }
   t->local.rotateZ(angle * math::DEG_TO_RAD<Flt>);
-  return error;
+  return 0;
 }
 
-int SamplesFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SamplesFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p) { return -1; }
 
-  int error = 0;
-  error = GetInt(n, s.samples_x, 1);
-  error = GetInt(n, s.samples_y, 1);
-  return error;
+  if (int er = sd.getInt(n, s.samples_x); er != 0) { return er; }
+  if (int er = sd.getInt(n, s.samples_y); er != 0) { return er; }
+  return 0;
 }
 
-int ScaleFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ScaleFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Transform* t = FindTrans(p);
+  Transform* t = findTrans(p);
   if (!t) { return -1; }
 
   Vec3 v;
-  int error = GetVec3(n, v, {1,1,1});
+  if (int er = sd.getVec3(n, v); er != 0) { return er; }
   t->local.scale(v.x, v.y, v.z);
-  return error;
+  return 0;
 }
 
-int ShadowBoolFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ShadowBoolFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : GetBool(n, s.shadow, true);
+  return p ? -1 : sd.getBool(n, s.shadow);
 }
 
-int SideFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SideFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new ShaderSide);
+  return addShader(sd, s, p, n, flag, new ShaderSide);
 }
 
-int SizeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SizeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p) { return -1; }
 
-  int error = 0;
-  error = GetInt(n, s.image_width,  256);
-  error = GetInt(n, s.image_height, s.image_width);
+  if (int er = sd.getInt(n, s.image_width); er != 0) { return er; }
+  if (int er = sd.getInt(n, s.image_height); er != 0) { return er; }
+
   s.region_max[0] = s.image_width  - 1;
   s.region_max[1] = s.image_height - 1;
-  return error;
+  return 0;
 }
 
-int SolidFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SolidFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Object* ob = dynamic_cast<Object*>(p);
   if (!ob) { return -1; }
 
   bool val;
-  int error = GetBool(n, val, ob->isSolid());
-  return error || ob->setSolid(val);
+  if (int er = sd.getBool(n, val); er != 0) { return er; }
+  return ob->setSolid(val);
 }
 
-int SpecularFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SpecularFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return ProcessList(s, p, n, SPECULAR);
+  return sd.processList(s, p, n, SPECULAR);
 }
 
-int SphereFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SphereFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Sphere);
+  return addObject(sd, s, p, n, flag, new Sphere);
 }
 
-int SpotlightFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int SpotlightFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddLight(s, p, n, flag, new SpotLight);
+  return addLight(sd, s, p, n, flag, new SpotLight);
 }
 
-int StripeFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int StripeFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddShader(s, p, n, flag, new Stripe);
+  return addShader(sd, s, p, n, flag, new Stripe);
 }
 
 #if 0
-int TextureFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int TextureFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   std::string filename;
-  GetString(n, filename, "texture.rle");
-
-  return AddShader(s, p, n, flag, new TextureMap);
+  sd.getString(n, filename);
+  return addShader(sd, s, p, n, flag, new TextureMap);
 }
 #endif
 
-int TorusFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int TorusFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Torus);
+  return addObject(sd, s, p, n, flag, new Torus);
 }
 
-int MoveFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int MoveFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Transform* t = FindTrans(p);
+  Transform* t = findTrans(p);
   if (!t) { return -1; }
 
   Vec3 v;
-  int error = GetVec3(n, v, {0,0,0});
+  if (int er = sd.getVec3(n, v); er != 0) { return er; }
   t->local.translate(v.x, v.y, v.z);
-  return error;
+  return 0;
 }
 
-int TransmitFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int TransmitFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return ProcessList(s, p, n, TRANSMIT);
+  return sd.processList(s, p, n, TRANSMIT);
 }
 
-int UnionFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int UnionFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return AddObject(s, p, n, flag, new Union);
+  return addObject(sd, s, p, n, flag, new Union);
 }
 
-int ValueFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int ValueFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(p);
-  return sh ? GetFlt(n, sh->value, 1.0) : -1;
+  return sh ? sd.getFlt(n, sh->value) : -1;
 }
 
-int VupFn(Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+int VupFn(
+  SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : GetVec3(n, s.vup, {0,1,0});
+  return p ? -1 : sd.getVec3(n, s.vup);
 }
 
 
@@ -489,7 +538,6 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"default",       DefaultObjectFn},
   {"defaultobject", DefaultObjectFn},
   {"defaultlight",  DefaultLightFn},
-  {"default",       DefaultObjectFn},
   {"difference",    DifferenceFn},
   {"diffuse",       DiffuseFn},
   {"dir",           DirectionFn},
@@ -504,10 +552,8 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"identity",      IdentityFn},
   {"index",         IndexFn},
   {"intersect",     IntersectFn},
-  {"light",         PtLightFn},
-  {"loc",           LocationFn},
+  {"light",         PointLightFn},
   {"local",         LocalFn},
-  {"location",      LocationFn},
   {"maxdepth",      MaxdepthFn},
   {"merge",         MergeFn},
   {"minvalue",      MinValueFn},
@@ -518,17 +564,15 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"paraboloid",    ParaboloidFn},
   {"plane",         PlaneFn},
   {"phong",         PhongFn},
-  {"pos",           LocationFn},
-  {"position",      LocationFn},
+  {"pos",           PositionFn},
+  {"position",      PositionFn},
   {"radius",        RadiusFn},
   {"region",        RegionFn},
   {"rgb",           RgbFn},
   {"ring",          RingFn},
-  {"rotate",        RotateFn},
   {"rotatex",       RotateXFn},
   {"rotatey",       RotateYFn},
   {"rotatez",       RotateZFn},
-  {"rot",           RotateFn},
   {"rotx",          RotateXFn},
   {"roty",          RotateYFn},
   {"rotz",          RotateZFn},

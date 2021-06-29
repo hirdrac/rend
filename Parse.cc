@@ -7,7 +7,6 @@
 
 // TODO - remove AST_LIST nodes; AST_ITEM (with args as children) can replace it
 // TODO - add 'include' directive, evaluated in parseFile()
-// TODO - add scene filename to error messages
 
 #include "Parse.hh"
 #include "Keywords.hh"
@@ -23,13 +22,15 @@ namespace {
   class BlockReader
   {
    public:
-    BlockReader(const std::string& file) : _fs(file) { }
+    BlockReader(const std::string& file, int fileID)
+      : _fs(file), _fileID(fileID) { }
     explicit operator bool() const { return _fs.good(); }
 
     [[nodiscard]] AstNode* nextBlock();
 
    private:
     std::ifstream _fs;
+    int _fileID;
     int _line = 1;
     int _nextChar = ' ';
 
@@ -46,12 +47,14 @@ namespace {
 
       AstNode* e;
       if (token[0] == '(') {
-        e = new AstNode(_line);
+        e = new AstNode();
         e->child = nextBlock();
       } else {
-        e = new AstNode(_line, token);
+        e = new AstNode(token);
       }
 
+      e->file_id = _fileID;
+      e->line = _line;
       e->setType();
       nodeList.addToTail(e);
     }
@@ -137,7 +140,7 @@ std::string AstNode::desc(int indent) const
   std::ostringstream os;
   switch (ast_type) {
     case AST_NUMBER: os << "<Number " << val << '>'; break;
-    case AST_ITEM:   os << "<Keyword " << val << '>'; break;
+    case AST_ITEM:   os << "<Item " << val << '>'; break;
     default:         os << "<Symbol " << val << '>'; break;
   }
 
@@ -166,7 +169,8 @@ void AstNode::setType()
 // Member Functions
 int SceneDesc::parseFile(const std::string& file)
 {
-  BlockReader br(file);
+  _files[++_lastID] = file;
+  BlockReader br(file, _lastID);
   if (!br) { return -1; }
 
   // parse blocks
@@ -181,36 +185,13 @@ int SceneDesc::parseFile(const std::string& file)
   return 0;
 }
 
-int SceneDesc::setupScene(Scene& s) const
+int SceneDesc::setupScene(Scene& s)
 {
-  return ProcessList(s, nullptr, _astList.head());
+  return processList(s, nullptr, _astList.head());
 }
 
-
-// **** Function Implementations ****
-namespace {
-  template<typename... Args>
-  inline void reportError(int line, const Args&... args)
-  {
-    println_err("Error in line ", line, ": ", args...);
-  }
-
-  int processNode(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
-  {
-    if (n->ast_type == AST_LIST) {
-      n = n->child;
-      assert(n != nullptr);
-      if (n->ast_type == AST_ITEM) {
-        return ItemFn(n->ptr)(s, parent, n->next(), flag);
-      }
-    }
-
-    reportError(n->line, "Unexpected value '", n->val, "'");
-    return -1;
-  }
-}
-
-int ProcessList(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
+int SceneDesc::processList(
+  Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   int error = 0;
   while (n) {
@@ -218,24 +199,32 @@ int ProcessList(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
     if (error) { break; }
     n = n->next();
   }
-
   return error;
 }
 
-int GetBool(AstNode*& n, bool& val, bool def)
+int SceneDesc::processNode(
+  Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
-  if (!n) {
-    val = def;
-    return 0;
+  if (n->ast_type == AST_LIST) {
+    n = n->child;
+    assert(n != nullptr);
+    if (n->ast_type == AST_ITEM) {
+      int er = ItemFn(n->ptr)(*this, s, parent, n->next(), flag);
+      if (er) { reportError(n, "Error with ", n->desc(0)); }
+      return er;
+    }
   }
+
+  reportError(n, "Unexpected value '", n->val, "'");
+  return -1;
+}
+
+int SceneDesc::getBool(AstNode*& n, bool& val) const
+{
+  if (!n) { return -1; }
 
   AstNode* d = n;
   n = n->next();
-
-  if (d->val.empty()) {
-    val = def;
-    return 0;
-  }
 
   switch (d->val[0]) {
     case '0': case 'f': case 'F': case 'n': case 'N':
@@ -245,39 +234,30 @@ int GetBool(AstNode*& n, bool& val, bool def)
       val = true; break;
 
     default:
-      reportError(d->line, "Expected boolean value");
-      val = def;
+      reportError(d, "Expected boolean value");
       return -1;
   }
 
   return 0;
 }
 
-int GetString(AstNode*& n, std::string& val, const std::string& def)
+int SceneDesc::getString(AstNode*& n, std::string& val) const
 {
-  if (!n) {
-    val = def;
-    return 0;
-  }
-
-  val = n->val.empty() ? def : n->val;
+  if (!n) { return -1; }
+  val = n->val;
   n = n->next();
   return 0;
 }
 
-int GetFlt(AstNode*& n, Flt& val, Flt def)
+int SceneDesc::getFlt(AstNode*& n, Flt& val) const
 {
-  if (!n)  {
-    val = def;
-    return 0;
-  }
+  if (!n) { return -1; }
 
   AstNode* d = n;
   n = n->next();
 
   if (d->ast_type != AST_NUMBER) {
-    reportError(d->line, "Expected floating point value");
-    val = def;
+    reportError(d, "Expected floating point value");
     return -1;
   }
 
@@ -285,19 +265,15 @@ int GetFlt(AstNode*& n, Flt& val, Flt def)
   return 0;
 }
 
-int GetInt(AstNode*& n, int& val, int def)
+int SceneDesc::getInt(AstNode*& n, int& val) const
 {
-  if (!n) {
-    val = def;
-    return 0;
-  }
+  if (!n) { return -1; }
 
   AstNode* d = n;
   n = n->next();
 
   if (d->ast_type != AST_NUMBER) {
-    reportError(d->line, "Expected integer value");
-    val = def;
+    reportError(d, "Expected integer value");
     return -1;
   }
 
@@ -305,17 +281,10 @@ int GetInt(AstNode*& n, int& val, int def)
   return 0;
 }
 
-int GetVec2(AstNode*& n, Vec2& v, const Vec2& def)
+int SceneDesc::getVec3(AstNode*& n, Vec3& v) const
 {
-  if (int er = GetFlt(n, v.x, def.x); er != 0) { return er; }
-  if (int er = GetFlt(n, v.y, def.y); er != 0) { return er; }
-  return 0;
-}
-
-int GetVec3(AstNode*& n, Vec3& v, const Vec3& def)
-{
-  if (int er = GetFlt(n, v.x, def.x); er != 0) { return er; }
-  if (int er = GetFlt(n, v.y, def.y); er != 0) { return er; }
-  if (int er = GetFlt(n, v.z, def.z); er != 0) { return er; }
+  if (int er = getFlt(n, v.x); er != 0) { return er; }
+  if (int er = getFlt(n, v.y); er != 0) { return er; }
+  if (int er = getFlt(n, v.z); er != 0) { return er; }
   return 0;
 }
