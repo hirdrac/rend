@@ -265,6 +265,7 @@ int NameFn(
 {
   std::string buffer;
   if (int er = sd.getString(n, buffer); er != 0) { return er; }
+  if (buffer == "\"\"") { return -1; }
   return p->setName(buffer);
 }
 

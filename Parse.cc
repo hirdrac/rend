@@ -75,13 +75,11 @@ namespace {
       // Check 1st character
       if (c == '\0') {
         return token;  // end of file
-      } else if (quote) {
-        if (c == quote) {
-          return token.empty() ? std::string("\"\"") : token;
-        } else if (c == '\"' || c == '\'') {
-          quote = c;
-          continue;
-        }
+      } else if (quote && c == quote) {
+        return token.empty() ? std::string("\"\"") : token;
+      } else if (!quote && (c == '\"' || c == '\'')) {
+        quote = c;
+        continue;
       } else if (c == '/') {
         // check for 'C++' style comments
         if (_nextChar == '/') {
