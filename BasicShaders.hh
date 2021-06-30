@@ -7,6 +7,7 @@
 
 #pragma once
 #include "Shader.hh"
+#include <memory>
 
 
 // **** Types ****
@@ -34,8 +35,6 @@ class ShaderColor final : public Shader
 class ShaderGlobal final : public Shader
 {
  public:
-  ~ShaderGlobal();
-
   // SceneItem Functions
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   std::string desc() const override { return "<Global>"; }
@@ -47,15 +46,13 @@ class ShaderGlobal final : public Shader
     const Vec3& map, Color& result) const override;
 
  private:
-  Shader* _child = nullptr;
+  std::unique_ptr<Shader> _child;
 };
 
 
 class ShaderLocal final : public Shader
 {
  public:
-  ~ShaderLocal();
-
   // SceneItem Functions
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   std::string desc() const override { return "<Local>"; }
@@ -67,7 +64,7 @@ class ShaderLocal final : public Shader
     const Vec3& map, Color& result) const override;
 
  private:
-  Shader* _child = nullptr;
+  std::unique_ptr<Shader> _child;
 };
 
 

@@ -25,7 +25,6 @@
 Scene::~Scene()
 {
   for (Light* lt : lights) { delete lt; }
-  for (Shader* sh : _shaders) { delete sh; }
 }
 
 // Member Functions
@@ -54,7 +53,6 @@ void Scene::clear()
   // object clear
   for (Light* lt : lights) { delete lt; }
   lights.clear();
-  for (Shader* sh : _shaders) { delete sh; }
   _shaders.clear();
   object_list.purge();
   _bound.reset();
@@ -97,7 +95,7 @@ int Scene::add(SceneItem* i, SceneItemFlag flag)
         // (which is in charge of initialization & memory)
         break;
     }
-    _shaders.push_back(sh);
+    _shaders.emplace_back(sh);
     return 0;
   }
 
@@ -109,22 +107,22 @@ int Scene::init()
   // Set default scene shaders
   if (!ambient) {
     ambient = new ShaderColor( .1,  .1,  .1);
-    _shaders.push_back(ambient);
+    _shaders.emplace_back(ambient);
   }
 
   if (!background) {
     background = new ShaderColor( .2,  .2,  .5);
-    _shaders.push_back(background);
+    _shaders.emplace_back(background);
   }
 
   if (!default_obj) {
     default_obj = new ShaderColor( .3,  .3,  .3);
-    _shaders.push_back(default_obj);
+    _shaders.emplace_back(default_obj);
   }
 
   if (!default_lt) {
     default_lt = new ShaderColor(1.0, 1.0, 1.0);
-    _shaders.push_back(default_lt);
+    _shaders.emplace_back(default_lt);
   }
 
   // Init scene items
@@ -147,7 +145,7 @@ int Scene::init()
   }
 
   // init shaders
-  for (Shader* sh : _shaders) {
+  for (auto& sh : _shaders) {
     if (InitShader(*this, *sh)) {
       println("Error initializing shaders");
       return -1;

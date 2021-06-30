@@ -25,17 +25,12 @@ Shader::~Shader()
 
 // **** PatternShader Class ****
 // SceneItem Functions
-PatternShader::~PatternShader()
-{
-  for (Shader* sh : _children) { delete sh; }
-}
-
 int PatternShader::add(SceneItem* i, SceneItemFlag flag)
 {
   Shader* sh = dynamic_cast<Shader*>(i);
   if (!sh) { return -1; }
 
-  _children.push_back(sh);
+  _children.emplace_back(sh);
   return 0;
 }
 
@@ -43,7 +38,7 @@ int PatternShader::init(Scene& s)
 {
   if (_children.empty()) { return -1; }
 
-  for (Shader* sh : _children) {
+  for (auto& sh : _children) {
     int err = InitShader(s, *sh, value, &_trans);
     if (err) { return err; }
   }

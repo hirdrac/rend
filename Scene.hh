@@ -64,5 +64,5 @@ class Scene
 
  private:
   std::unique_ptr<Object> _bound; // Bounding box hierarchy of objects
-  std::vector<Shader*> _shaders;
+  std::vector<std::unique_ptr<Shader>> _shaders;
 };

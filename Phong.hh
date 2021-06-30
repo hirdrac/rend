@@ -7,6 +7,7 @@
 
 #pragma once
 #include "Shader.hh"
+#include <memory>
 
 
 // **** Types ****
@@ -14,9 +15,6 @@ class Phong final : public Shader
 {
  public:
   Flt exp = 5.0;
-
-  // Destructor
-  ~Phong();
 
   // SceneItem Functions
   std::string desc() const override { return "<Phong>"; }
@@ -29,7 +27,5 @@ class Phong final : public Shader
     const Vec3& map, Color& result) const override;
 
  private:
-  Shader* _diffuse = nullptr;
-  Shader* _specular = nullptr;
-  Shader* _transmit = nullptr;
+  std::unique_ptr<Shader> _diffuse, _specular, _transmit;
 };

@@ -10,6 +10,7 @@
 #include "Transform.hh"
 #include "Types.hh"
 #include <vector>
+#include <memory>
 
 
 // **** Types ****
@@ -21,9 +22,7 @@ class Shader : public SceneItem
  public:
   Flt value = 1.0;
 
-  // Constructor
   Shader();
-  // Destructor
   ~Shader();
 
   // Member Functions
@@ -35,8 +34,6 @@ class Shader : public SceneItem
 class PatternShader : public Shader
 {
  public:
-  ~PatternShader();
-
   // SceneItem Functions
   Transform*       trans() override       { return &_trans; }
   const Transform* trans() const override { return &_trans; }
@@ -45,7 +42,7 @@ class PatternShader : public Shader
 
  protected:
   Transform _trans;
-  std::vector<Shader*> _children;
+  std::vector<std::unique_ptr<Shader>> _children;
 };
 
 

@@ -14,26 +14,20 @@
 
 
 // **** Phong Class ****
-// Destructor
-Phong::~Phong()
-{
-  delete _diffuse;
-  delete _specular;
-  delete _transmit;
-}
-
 // SceneItem Functions
 int Phong::init(Scene& s)
 {
-  int error = 0;
-  if (!_diffuse) {
-    _diffuse = new ShaderColor(.5, .5, .5);
+  if (!_diffuse) { _diffuse = std::make_unique<ShaderColor>(.5, .5, .5); }
+  if (int er = InitShader(s, *_diffuse, value); er != 0) { return er; }
+
+  if (_specular) {
+    if (int er = InitShader(s, *_specular, value); er != 0) { return er; }
   }
 
-  error += InitShader(s, *_diffuse, value);
-  if (_specular) { error += InitShader(s, *_specular, value); }
-  if (_transmit) { error += InitShader(s, *_transmit, value); }
-  return error;
+  if (_transmit) {
+    if (int er = InitShader(s, *_transmit, value); er != 0) { return er; }
+  }
+  return 0;
 }
 
 int Phong::add(SceneItem* i, SceneItemFlag flag)
@@ -45,17 +39,17 @@ int Phong::add(SceneItem* i, SceneItemFlag flag)
     default:
     case DIFFUSE:
       if (_diffuse) { return -1; }
-      _diffuse = sh;
+      _diffuse.reset(sh);
       break;
 
     case SPECULAR:
       if (_specular) { return -1; }
-      _specular = sh;
+      _specular.reset(sh);
       break;
 
     case TRANSMIT:
       if (_transmit) { return -1; }
-      _transmit = sh;
+      _transmit.reset(sh);
       break;
   }
 
