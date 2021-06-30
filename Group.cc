@@ -33,21 +33,12 @@ int Group::add(SceneItem* i, SceneItemFlag flag)
   }
 }
 
-std::string Group::desc(int indent) const
+std::string Group::desc() const
 {
   std::ostringstream os;
   os << "<Group";
-  if (!_name.empty()) {
-    os << " \"" << _name << '\"';
-  }
-
+  if (!_name.empty()) { os << " \"" << _name << '\"'; }
   os << '>';
-
-  if (!_childList.empty()) {
-    os << '\n';
-    PrintList(os, _childList.head(), indent + 2);
-    os << '\n';
-  }
   return os.str();
 }
 

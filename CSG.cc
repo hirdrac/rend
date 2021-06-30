@@ -70,7 +70,7 @@ Flt CSG::hitCost() const
 int Merge::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     ob->intersect(r, hl);
   }
   hl.csgMerge(this);
@@ -82,23 +82,11 @@ int Merge::intersect(const Ray& r, HitList& hit_list) const
 
 int Merge::bound(BBox& b) const
 {
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     ob->bound(b);
   }
 
   return 0;
-}
-
-std::string Merge::desc(int indent) const
-{
-  std::ostringstream os;
-  os << "<Merge>";
-  if (!_childList.empty()) {
-    os << '\n';
-    PrintList(os, _childList.head(), indent + 2);
-    os << '\n';
-  }
-  return os.str();
 }
 
 
@@ -106,7 +94,7 @@ std::string Merge::desc(int indent) const
 int Union::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     ob->intersect(r, hl);
   }
   hl.csgUnion(this);
@@ -118,23 +106,11 @@ int Union::intersect(const Ray& r, HitList& hit_list) const
 
 int Union::bound(BBox& b) const
 {
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     ob->bound(b);
   }
 
   return 0;
-}
-
-std::string Union::desc(int indent) const
-{
-  std::ostringstream os;
-  os << "<Union>";
-  if (!_childList.empty()) {
-    os << '\n';
-    PrintList(os, _childList.head(), indent + 2);
-    os << '\n';
-  }
-  return os.str();
 }
 
 
@@ -142,7 +118,7 @@ std::string Union::desc(int indent) const
 int Intersection::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     ob->intersect(r, hl);
   }
   hl.csgIntersection(this, _childCount);
@@ -158,7 +134,7 @@ int Intersection::bound(BBox& b) const
   BBox box;
 
   // find smallest bounding box
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     box.reset();
     ob->bound(box);
     Flt weight = box.weight();
@@ -171,24 +147,12 @@ int Intersection::bound(BBox& b) const
   return 0;
 }
 
-std::string Intersection::desc(int indent) const
-{
-  std::ostringstream os;
-  os << "<Intersection>";
-  if (!_childList.empty()) {
-    os << '\n';
-    PrintList(os, _childList.head(), indent + 2);
-    os << '\n';
-  }
-  return os.str();
-}
-
 
 /**** Difference Class ****/
 int Difference::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     ob->intersect(r, hl);
   }
   //hl.csgDifference(this, _childList.head(), _childCount - 1);
@@ -206,16 +170,4 @@ int Difference::bound(BBox& b) const
   }
 
   return _childList.head()->bound(b);
-}
-
-std::string Difference::desc(int indent) const
-{
-  std::ostringstream os;
-  os << "<Difference>";
-  if (!_childList.empty()) {
-    os << '\n';
-    PrintList(os, _childList.head(), indent + 2);
-    os << '\n';
-  }
-  return os.str();
 }

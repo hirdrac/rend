@@ -14,6 +14,7 @@
 #include "Logger.hh"
 #include "Types.hh"
 #include "Print.hh"
+#include "PrintList.hh"
 #include <cctype>
 #include <sstream>
 #include <string_view>
@@ -22,14 +23,14 @@
 
 namespace
 {
-  /**** Module Globals ****/
+  // **** Module Globals ****
   FrameBuffer Fb;
   Scene TheScene;
   Renderer Ren;
 }
 
 
-/**** Functions ****/
+// **** Functions ****
 int ShellInfo()
 {
   if (TheScene.object_list.empty()) {
@@ -203,7 +204,7 @@ int ShellLoop()
 
   case 'o':
     if (TheScene.object_list.head()) {
-      PrintList(std::cout, TheScene.object_list.head());
+      PrintList(TheScene.object_list.head());
     } else {
       println("No object list");
     }
@@ -249,7 +250,7 @@ int Usage(const char* argv0)
 }
 
 
-/**** Main Function ****/
+// **** Main Function ****
 int main(int argc, char** argv)
 {
   println("Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley");

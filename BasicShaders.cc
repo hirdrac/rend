@@ -11,7 +11,7 @@
 
 
 // **** ShaderColor Class ****
-std::string ShaderColor::desc(int) const
+std::string ShaderColor::desc() const
 {
   std::ostringstream os;
   os << "<Color " << color << '>';

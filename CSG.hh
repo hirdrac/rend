@@ -26,7 +26,7 @@ class CSG : public Primitive
   // Object Functions
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override;
-  Object* childList() const override { return _childList.head(); }
+  const Object* childList() const override { return _childList.head(); }
 
  protected:
   SList<Object> _childList;
@@ -39,7 +39,7 @@ class Merge final : public CSG
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override;
+  std::string desc() const override { return "<Merge>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -50,7 +50,7 @@ class Union final : public CSG
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override;
+  std::string desc() const override { return "<Union>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -61,7 +61,7 @@ class Intersection final : public CSG
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override;
+  std::string desc() const override { return "<Intersection>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -72,7 +72,7 @@ class Difference final : public CSG
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override;
+  std::string desc() const override { return "<Difference>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;

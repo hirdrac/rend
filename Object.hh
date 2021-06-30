@@ -57,7 +57,7 @@ class Object : public SceneItem, public SListNode<Object>
   virtual int setSolid(bool s) { return -1; }
   virtual Shader* shader() const { return nullptr; }
   virtual int     setShader(Shader* sh) { return -1; }
-  virtual Object* childList() const { return nullptr; }
+  virtual const Object* childList() const { return nullptr; }
 };
 
 

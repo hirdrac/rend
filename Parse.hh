@@ -39,7 +39,8 @@ class AstNode : public SListNode<AstNode>
   AstNode(std::string_view value) : val(value) { }
 
   // Member Functions
-  [[nodiscard]] std::string desc(int indent) const;
+  [[nodiscard]] std::string desc() const;
+  [[nodiscard]] AstNode* childList() const { return child; }
   void setType();
 };
 

@@ -19,7 +19,7 @@ class Phong final : public Shader
   ~Phong();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Phong>"; }
+  std::string desc() const override { return "<Phong>"; }
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   int init(Scene& s) override;
 

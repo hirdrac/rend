@@ -18,7 +18,7 @@ class Disc final : public Primitive
   Disc();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Disc>"; }
+  std::string desc() const override { return "<Disc>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -38,7 +38,7 @@ class Cone final : public Primitive
   Cone();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Cone>"; }
+  std::string desc() const override { return "<Cone>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -57,7 +57,7 @@ class Cube final : public Primitive
   Cube();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Cube>"; }
+  std::string desc() const override { return "<Cube>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -76,7 +76,7 @@ class Cylinder final : public Primitive
   Cylinder();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Cylinder>"; }
+  std::string desc() const override { return "<Cylinder>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -95,7 +95,7 @@ class OpenCone final : public Primitive
   OpenCone();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<OpenCone>"; }
+  std::string desc() const override { return "<OpenCone>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -110,7 +110,7 @@ class OpenCylinder final : public Primitive
   OpenCylinder();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<OpenCylinder>"; }
+  std::string desc() const override { return "<OpenCylinder>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -125,7 +125,7 @@ class Paraboloid final : public Primitive
   Paraboloid();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Paraboloid>"; }
+  std::string desc() const override { return "<Paraboloid>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -140,7 +140,7 @@ class Plane final : public Primitive
   Plane();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Plane>"; }
+  std::string desc() const override { return "<Plane>"; }
   int init(Scene& s) override;
 
   // Object Functions
@@ -160,7 +160,7 @@ class Sphere final : public Primitive
   Sphere();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Sphere>"; }
+  std::string desc() const override { return "<Sphere>"; }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
@@ -175,7 +175,7 @@ class Torus final : public Primitive
   Torus();
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<Torus>"; }
+  std::string desc() const override { return "<Torus>"; }
   int init(Scene& s) override;
 
   // Object Functions

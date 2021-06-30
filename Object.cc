@@ -103,7 +103,7 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
   for (; list != nullptr; list = list->next()) {
     Transform* trans = list->trans();
     if (!trans) {
-      println("No Trans ERROR: ", list->desc(0));
+      println("No Trans ERROR: ", list->desc());
       return -1;
     }
 
@@ -121,7 +121,7 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
     // Init primitive
     int error = list->init(s);
     if (error) {
-      println("INIT ERROR: ", list->desc(0));
+      println("INIT ERROR: ", list->desc());
       return error;
     }
   }

@@ -24,7 +24,7 @@ namespace {
   {
     Transform* t = p->trans();
     if (!t) {
-      LOG_ERROR("SceneItem ", p->desc(0), " cannot be transformed");
+      LOG_ERROR("SceneItem ", p->desc(), " cannot be transformed");
     }
 
     return t;

@@ -12,6 +12,7 @@
 #include "Group.hh"
 #include "Logger.hh"
 #include "Print.hh"
+#include "PrintList.hh"
 #include <sstream>
 #include <vector>
 
@@ -68,10 +69,10 @@ Bound::~Bound()
 }
 
 // Member Functions
-std::string Bound::desc(int) const
+std::string Bound::desc() const
 {
   std::ostringstream os;
-  os << "<Bound " << object_list.size() << ">\n";
+  os << "<Bound " << object_list.size() << '>';
   return os.str();
 }
 
@@ -144,7 +145,7 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
 
   // bounding box hit - intersect child bounds
   int hits = 0;
-  for (Object* ob = child_list.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = child_list.head(); ob != nullptr; ob = ob->next()) {
     hits += ob->intersect(r, hit_list);
   }
 
@@ -181,16 +182,20 @@ void KillTree(OptNode* node_list)
 void PrintBoundList(const OptNode* node_list, int indent = 0)
 {
   if (!node_list) {
-    for (int i = 0; i < indent; ++i) { print(" "); }
-    println("EMPTY");
+    for (int i = 0; i < indent; ++i) { print(' '); }
+    println("*EMPTY*");
     return;
   }
 
   while (node_list) {
-    for (int i = 0; i < indent; ++i) { print(" "); }
+    for (int i = 0; i < indent; ++i) { print(' '); }
 
-    if (node_list->object) {
-      println(node_list->object->desc(indent + 2));
+    const Object* obj = node_list->object;
+    if (obj) {
+      println(obj->desc());
+      if (obj->childList()) {
+        PrintList(obj->childList(), indent + 2);
+      }
     } else {
       println("<Bound>");
       PrintBoundList(node_list->child, indent + 2);
@@ -259,9 +264,10 @@ OptNode* MakeOptNodeList(const Object* o_list)
   OptNode* node_list = nullptr;
 
   for (const Object* o = o_list; o != nullptr; o = o->next()) {
-    if (dynamic_cast<const Group*>(o)) {
+    const Group* gPtr = dynamic_cast<const Group*>(o);
+    if (gPtr) {
       // Add contents of group
-      OptNode* sub_list = MakeOptNodeList(o->childList());
+      OptNode* sub_list = MakeOptNodeList(gPtr->childList());
       if (sub_list) {
         OptNode* tmp = sub_list;
         while (tmp->next) { tmp = tmp->next; }

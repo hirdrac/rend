@@ -167,7 +167,7 @@ void Scene::info(std::ostream& out) const
   println_os(out, " Max ray depth:\t", max_ray_depth);
   println_os(out, " Min ray value:\t", min_ray_value);
   println_os(out, "Light List:");
-  PrintList2(out, lights, 1);
+  for (const Light* lt : lights) { println_os(out, "  ", lt->desc()); }
   println_os(out);
 }
 

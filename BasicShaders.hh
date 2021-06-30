@@ -21,7 +21,7 @@ class ShaderColor final : public Shader
   ShaderColor(Flt r, Flt g, Flt b) { color.setRGB(r,g,b); }
 
   // SceneItem Functions
-  std::string desc(int) const override;
+  std::string desc() const override;
   int init(Scene& s) override;
 
   // Shader Functions
@@ -38,7 +38,7 @@ class ShaderGlobal final : public Shader
 
   // SceneItem Functions
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
-  std::string desc(int) const override { return "<Global>"; }
+  std::string desc() const override { return "<Global>"; }
   int init(Scene& s) override;
 
   // Shader Functions
@@ -58,7 +58,7 @@ class ShaderLocal final : public Shader
 
   // SceneItem Functions
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
-  std::string desc(int) const override { return "<Local>"; }
+  std::string desc() const override { return "<Local>"; }
   int init(Scene& s) override;
 
   // Shader Functions
@@ -75,7 +75,7 @@ class Checkerboard final : public PatternShader
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<Checkerboard>"; }
+  std::string desc() const override { return "<Checkerboard>"; }
 
   // Shader Functions
   int evaluate(
@@ -88,7 +88,7 @@ class ColorCube final : public PatternShader
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<ColorCube>"; }
+  std::string desc() const override { return "<ColorCube>"; }
 
   // Shader Functions
   int evaluate(
@@ -101,7 +101,7 @@ class Ring final : public PatternShader
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<Ring>"; }
+  std::string desc() const override { return "<Ring>"; }
 
   // Shader Functions
   int evaluate(
@@ -114,7 +114,7 @@ class ShaderSide final : public PatternShader
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<Side>"; }
+  std::string desc() const override { return "<Side>"; }
 
   // Shader Functions
   int evaluate(
@@ -127,7 +127,7 @@ class Stripe final : public PatternShader
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<Stripe>"; }
+  std::string desc() const override { return "<Stripe>"; }
 
   // Shader Functions
   int evaluate(
@@ -143,7 +143,7 @@ class TextureMap final : public PatternShader
   Flt sx, sy;
 
   // SceneItem Functions
-  std::string desc(int) const override { return "<TextureMap>"; }
+  std::string desc() const override { return "<TextureMap>"; }
   int init(Scene& s) override;
 
   // Shader Functions

@@ -14,7 +14,7 @@ class Sun final : public Light
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<Sun>"; }
+  std::string desc() const override { return "<Sun>"; }
 
   // Light Functions
   int luminate(
@@ -26,7 +26,7 @@ class PointLight final : public Light
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<PointLight>"; }
+  std::string desc() const override { return "<PointLight>"; }
 
   // Light Functions
   int luminate(
@@ -38,7 +38,7 @@ class SpotLight final : public Light
 {
  public:
   // SceneItem Functions
-  std::string desc(int) const override { return "<SpotLight>"; }
+  std::string desc() const override { return "<SpotLight>"; }
 
   // Light Functions
   int luminate(

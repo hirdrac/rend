@@ -20,7 +20,7 @@ class Group final : public Primitive
   ~Group();
 
   // SceneItem Functions
-  std::string desc(int indent) const override;
+  std::string desc() const override;
   int setName(const std::string& str) override { _name = str; return 0; }
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   int init(Scene& s) override;
@@ -28,7 +28,7 @@ class Group final : public Primitive
   // Object Functions
   int bound(BBox& b) const override { return -1; }
   int intersect(const Ray& r, HitList& hit_list) const override;
-  Object* childList() const override { return _childList.head(); }
+  const Object* childList() const override { return _childList.head(); }
 
  protected:
   std::string _name;

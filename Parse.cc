@@ -138,7 +138,7 @@ namespace {
 
 /**** AstNode Class ****/
 // Member functions
-std::string AstNode::desc(int indent) const
+std::string AstNode::desc() const
 {
   std::ostringstream os;
   switch (ast_type) {
@@ -153,12 +153,6 @@ std::string AstNode::desc(int indent) const
       }
       break;
   }
-
-  if (child) {
-    os << '\n';
-    PrintList(os, child, indent + 2);
-  }
-
   return os.str();
 }
 
@@ -220,7 +214,7 @@ int SceneDesc::processNode(
     assert(n != nullptr);
     if (n->ast_type == AST_ITEM) {
       int er = ItemFn(n->ptr)(*this, s, parent, n->next(), flag);
-      if (er) { reportError(n, "Error with ", n->desc(0)); }
+      if (er) { reportError(n, "Error with ", n->desc()); }
       return er;
     }
   }

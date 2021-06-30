@@ -27,7 +27,8 @@ class Bound final : public Object
   ~Bound();
 
   // SceneItem Functions
-  std::string desc(int) const override;
+  std::string desc() const override;
+  const Object* childList() const override { return child_list.head(); }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
