@@ -12,6 +12,7 @@
 #include "Types.hh"
 #include "SList.hh"
 #include <vector>
+#include <memory>
 
 
 // **** Types ****
@@ -26,7 +27,6 @@ class Scene
 {
  public:
   SList<Object> object_list; // Complete list of objects (including Groups)
-  SList<Object> bound_list;  // Bounding box hierarchy of objects
   std::vector<Light*> lights;
 
   // Scene color shaders
@@ -63,5 +63,6 @@ class Scene
   int traceShadowRay(const Ray& r, Color& result) const;
 
  private:
+  std::unique_ptr<Object> _bound; // Bounding box hierarchy of objects
   std::vector<Shader*> _shaders;
 };

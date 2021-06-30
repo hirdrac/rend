@@ -17,6 +17,7 @@
 #include "BasicShaders.hh"
 #include "Print.hh"
 #include <vector>
+#include <cassert>
 
 
 /**** Scene Class ****/
@@ -56,7 +57,7 @@ void Scene::clear()
   for (Shader* sh : _shaders) { delete sh; }
   _shaders.clear();
   object_list.purge();
-  bound_list.purge();
+  _bound.reset();
 }
 
 int Scene::add(SceneItem* i, SceneItemFlag flag)
@@ -133,8 +134,8 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  bound_list.purge();
-  bound_list.addToTail(MakeBoundList(object_list.head()));
+  _bound.reset(MakeBoundList(object_list.head()));
+  assert(_bound->next() == nullptr);
 
   // init lights
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
@@ -174,7 +175,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
 {
   ++r.stats->rays_cast;
 
-  const Object* o_list = bound_list.head();
+  const Object* o_list = _bound.get();
   if (!o_list) { o_list = object_list.head(); }
 
   HitList hit_list(r.freeCache);
@@ -216,7 +217,7 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
 {
   ++r.stats->shadow_rays_cast;
 
-  const Object* o_list = bound_list.head();
+  const Object* o_list = _bound.get();
   if (!o_list) { o_list = object_list.head(); }
 
   HitList hit_list(r.freeCache);
