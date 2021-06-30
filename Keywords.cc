@@ -19,7 +19,7 @@
 
 
 namespace {
-  /**** Helper Functions ****/
+  // **** Helper Functions ****
   Transform* findTrans(SceneItem* p)
   {
     Transform* t = p->trans();
@@ -77,7 +77,7 @@ namespace {
 }
 
 
-/**** Item Functions ****/
+// **** Item Functions ****
 int AirFn(
   SceneDesc& sd, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -523,7 +523,7 @@ int VupFn(
 }
 
 
-/**** Data ****/
+// **** Data ****
 static const std::map<std::string,ItemFn> KeyWords = {
   // KeyWord        ItemFn
   {"air",           AirFn},
@@ -596,7 +596,7 @@ static const std::map<std::string,ItemFn> KeyWords = {
 };
 
 
-/**** Functions ****/
+// **** Functions ****
 ItemFn FindItemFn(const std::string& str)
 {
   std::string key = str;

@@ -135,7 +135,7 @@ namespace {
 }
 
 
-/**** AstNode Class ****/
+// **** AstNode Class ****
 // Member functions
 std::string AstNode::desc() const
 {
@@ -168,7 +168,7 @@ void AstNode::setType()
 }
 
 
-/**** SceneDesc Class ****/
+// **** SceneDesc Class ****
 // Member Functions
 int SceneDesc::parseFile(const std::string& file)
 {

@@ -11,7 +11,7 @@
 #include <set>
 
 
-/**** HitList Class ****/
+// **** HitList Class ****
 // Member Functions
 void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
 {

@@ -8,7 +8,7 @@
 #include <sstream>
 
 
-/**** Group Class ****/
+// **** Group Class ****
 // Constructor
 Group::Group()
 {

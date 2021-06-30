@@ -8,7 +8,7 @@
 #include "Stats.hh"
 
 
-/**** Light Class ****/
+// **** Light Class ****
 // Constructor
 Light::Light()
 {

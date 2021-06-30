@@ -12,7 +12,7 @@
 #include <cmath>
 
 
-/**** Inlined Functions ****/
+// **** Inlined Functions ****
 constexpr Flt CBRT(Flt x)
 {
   if (x > 0.0) {
@@ -25,7 +25,7 @@ constexpr Flt CBRT(Flt x)
 }
 
 
-/**** Functions ****/
+// **** Functions ****
 int SolveQuadric(const Flt c[3], Flt s[2])
 {
   // normal form: x^2 + px + q = 0

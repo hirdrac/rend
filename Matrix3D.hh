@@ -283,7 +283,7 @@ constexpr void Matrix4x4<T,MOT>::translate(T tx, T ty, T tz)
 template<typename T, MatrixOrderType MOT>
 void Matrix4x4<T,MOT>::translateOptimized(T tx, T ty, T tz)
 {
-  // Translation futher optimized for non-projection matrix
+  // Translation further optimized for non-projection matrix
   // assumptions: a3,b3,c3 = 0, d3 = 1;
   // [a0 a1 a2 0] [1 0 0 0] [a0   a1   a2   0]
   // [b0 b1 b2 0]*[0 1 0 0]=[b0   b1   b2   0]

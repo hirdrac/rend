@@ -14,7 +14,7 @@
 #include <sstream>
 
 
-/**** CSG Class ****/
+// **** CSG Class ****
 // Constructor
 CSG::CSG()
 {
@@ -66,7 +66,7 @@ Flt CSG::hitCost() const
 }
 
 
-/**** Merge Class ****/
+// **** Merge Class ****
 int Merge::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
@@ -90,7 +90,7 @@ int Merge::bound(BBox& b) const
 }
 
 
-/**** Union Class ****/
+// **** Union Class ****
 int Union::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
@@ -114,7 +114,7 @@ int Union::bound(BBox& b) const
 }
 
 
-/**** Intersection Class ****/
+// **** Intersection Class ****
 int Intersection::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
@@ -148,7 +148,7 @@ int Intersection::bound(BBox& b) const
 }
 
 
-/**** Difference Class ****/
+// **** Difference Class ****
 int Difference::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());

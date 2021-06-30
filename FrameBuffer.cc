@@ -13,7 +13,7 @@
 #include <memory>
 
 
-/**** FrameBuffer Class ****/
+// **** FrameBuffer Class ****
 // Member Functions
 int FrameBuffer::init(int w, int h)
 {

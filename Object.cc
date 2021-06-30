@@ -15,7 +15,7 @@
 #include <cstring>
 
 
-/**** BBox class ****/
+// **** BBox class ****
 // Member Functions
 void BBox::reset()
 {
@@ -54,7 +54,7 @@ void BBox::fit(const BBox& box)
 }
 
 
-/**** Object Class ****/
+// **** Object Class ****
 // Constructor
 Object::Object()
 {
@@ -68,7 +68,7 @@ Object::~Object()
 }
 
 
-/**** Primitive Class ****/
+// **** Primitive Class ****
 // SceneItem Functions
 int Primitive::add(SceneItem* i, SceneItemFlag flag)
 {
@@ -97,7 +97,7 @@ int Primitive::bound(BBox& b) const
 }
 
 
-/**** Functions ****/
+// **** Functions ****
 int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
 {
   for (; list != nullptr; list = list->next()) {

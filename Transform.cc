@@ -8,7 +8,7 @@
 #include "Transform.hh"
 
 
-/**** Transform Class ****/
+// **** Transform Class ****
 // Member Functions
 int Transform::init()
 {
@@ -27,7 +27,7 @@ void Transform::clear()
 }
 
 
-/**** Functions ****/
+// **** Functions ****
 std::ostream& operator<<(std::ostream& out, const Transform& t)
 {
   return out << t.local << "--\n" << t.global << "--\n" << t.global_inv;
