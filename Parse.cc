@@ -126,6 +126,15 @@ namespace {
 
     return c;
   }
+
+  // **** Helper Functions ****
+  bool isNumber(const std::string& val)
+  {
+    const char* p = val.c_str();
+    if (*p == '-') { ++p; }
+    if (*p == '.') { ++p; }
+    return std::isdigit(*p);
+  }
 }
 
 
@@ -133,15 +142,18 @@ namespace {
 // Member functions
 std::string AstNode::desc(int indent) const
 {
-  if (ast_type == AST_LIST) {
-    return "<List>";
-  }
-
   std::ostringstream os;
   switch (ast_type) {
-    case AST_NUMBER: os << "<Number " << val << '>'; break;
-    case AST_ITEM:   os << "<Item " << val << '>'; break;
-    default:         os << "<Symbol " << val << '>'; break;
+    case AST_LIST:   os << "<list>"; break;
+    case AST_ITEM:   os << "<item " << val << '>'; break;
+    case AST_VALUE:  os << "<value " << val << '>'; break;
+    default:
+      if (val.empty()) {
+        os << "<*null*>";
+      } else {
+        os << "<*unknown* " << val << '>';
+      }
+      break;
   }
 
   if (child) {
@@ -156,11 +168,11 @@ void AstNode::setType()
 {
   if (child) {
     ast_type = AST_LIST;
-  } else if (std::isdigit(val[0]) || val[0] == '-' || val[0] == '.') {
-    ast_type = AST_NUMBER;
-  } else if (ItemFn fn = FindItemFn(val); fn) {
+  } else if (ItemFn fn = FindItemFn(val); fn != nullptr) {
     ast_type = AST_ITEM;
     ptr      = (void*) fn;
+  } else {
+    ast_type = AST_VALUE;
   }
 }
 
@@ -234,7 +246,7 @@ int SceneDesc::getBool(AstNode*& n, bool& val) const
       val = true; break;
 
     default:
-      reportError(d, "Expected boolean value");
+      reportError(d, "Expected boolean value, not '", d->val, "'");
       return -1;
   }
 
@@ -256,8 +268,8 @@ int SceneDesc::getFlt(AstNode*& n, Flt& val) const
   AstNode* d = n;
   n = n->next();
 
-  if (d->ast_type != AST_NUMBER) {
-    reportError(d, "Expected floating point value");
+  if (d->ast_type != AST_VALUE || !isNumber(d->val)) {
+    reportError(d, "Expected floating point value, not '", d->val, "'");
     return -1;
   }
 
@@ -272,8 +284,8 @@ int SceneDesc::getInt(AstNode*& n, int& val) const
   AstNode* d = n;
   n = n->next();
 
-  if (d->ast_type != AST_NUMBER) {
-    reportError(d, "Expected integer value");
+  if (d->ast_type != AST_VALUE || !isNumber(d->val)) {
+    reportError(d, "Expected integer value, not '", d->val, "'");
     return -1;
   }
 

@@ -19,7 +19,7 @@
 class Scene;
 
 enum AstType {
-  AST_UNKNOWN, AST_LIST, AST_NUMBER, AST_ITEM
+  AST_UNKNOWN, AST_LIST, AST_ITEM, AST_VALUE,
 };
 
 
