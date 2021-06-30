@@ -27,7 +27,7 @@ class Scene
 {
  public:
   SList<Object> object_list; // Complete list of objects (including Groups)
-  std::vector<Light*> lights;
+  std::vector<std::unique_ptr<Light>> lights;
 
   // Scene color shaders
   Shader* ambient;
@@ -49,10 +49,8 @@ class Scene
   int  max_ray_depth;
   Flt  min_ray_value;
 
-  // Constructor
+
   Scene() { clear(); }
-  // Destructor
-  ~Scene();
 
   // Member Functions
   void clear();

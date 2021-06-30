@@ -95,9 +95,9 @@ int Phong::evaluate(
   s.ambient->evaluate(s, r, h, normal, map, tmp);
   MultColor(tmp, color_d, result);
 
-  for (Light* l : s.lights) {
+  for (auto& lt : s.lights) {
     LightResult lresult;
-    l->luminate(s, r, h, normal, map, lresult);
+    lt->luminate(s, r, h, normal, map, lresult);
     Flt angle = DotProduct(normal, lresult.dir);
     if (!IsPositive(angle)) {
       continue;

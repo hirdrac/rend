@@ -20,13 +20,7 @@
 #include <cassert>
 
 
-/**** Scene Class ****/
-// Destructor
-Scene::~Scene()
-{
-  for (Light* lt : lights) { delete lt; }
-}
-
+// **** Scene Class ****
 // Member Functions
 void Scene::clear()
 {
@@ -51,7 +45,6 @@ void Scene::clear()
   min_ray_value = VERY_SMALL;
 
   // object clear
-  for (Light* lt : lights) { delete lt; }
   lights.clear();
   _shaders.clear();
   object_list.purge();
@@ -60,20 +53,17 @@ void Scene::clear()
 
 int Scene::add(SceneItem* i, SceneItemFlag flag)
 {
-  Object* ob = dynamic_cast<Object*>(i);
-  if (ob) {
+  if (Object* ob = dynamic_cast<Object*>(i); ob != nullptr) {
     object_list.addToTail(ob);
     return 0;
   }
 
-  Light* lt = dynamic_cast<Light*>(i);
-  if (lt) {
-    lights.push_back(lt);
+  if (Light* lt = dynamic_cast<Light*>(i); lt != nullptr) {
+    lights.emplace_back(lt);
     return 0;
   }
 
-  Shader* sh = dynamic_cast<Shader*>(i);
-  if (sh) {
+  if (Shader* sh = dynamic_cast<Shader*>(i); sh != nullptr) {
     switch (flag) {
       case AIR:
         if (air) { return -1; } else { air = sh; }
@@ -137,7 +127,7 @@ int Scene::init()
 
   // init lights
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
-  for (Light* lt : lights) {
+  for (auto& lt : lights) {
     if (InitLight(*this, *lt, sFn)) {
       println("Error initializing light list");
       return -1;  // error
@@ -165,7 +155,7 @@ void Scene::info(std::ostream& out) const
   println_os(out, " Max ray depth:\t", max_ray_depth);
   println_os(out, " Min ray value:\t", min_ray_value);
   println_os(out, "Light List:");
-  for (const Light* lt : lights) { println_os(out, "  ", lt->desc()); }
+  for (auto& lt : lights) { println_os(out, "  ", lt->desc()); }
   println_os(out);
 }
 
