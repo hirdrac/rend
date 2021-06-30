@@ -17,22 +17,24 @@ class Bound final : public Object
 {
  public:
   SList<Object> child_list;
+    // smaller Bound objects only
+
   std::vector<const Object*> object_list;
-  BBox box;
+    // non-Bound objects contained (not owning)
+
+  BBox box; // bound size
   bool always_hit = false;
 
-  // Constructor
   Bound();
-  // Destructor
   ~Bound();
 
   // SceneItem Functions
   std::string desc() const override;
-  const Object* childList() const override { return child_list.head(); }
 
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
   Flt hitCost() const override { return CostTable.bound; }
+  const Object* childList() const override { return child_list.head(); }
 };
 
 

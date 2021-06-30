@@ -80,12 +80,12 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
 {
   if (!always_hit) {
     ++r.stats->bound_tried;
-    Flt h1, h2, near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
+    Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
     // X
     if (!IsZero(r.dir.x)) {
-      h1 = (box.pmin.x - r.base.x) / r.dir.x;
-      h2 = (box.pmax.x - r.base.x) / r.dir.x;
+      Flt h1 = (box.pmin.x - r.base.x) / r.dir.x;
+      Flt h2 = (box.pmax.x - r.base.x) / r.dir.x;
 
       if (h1 > h2)  {
 	near_hit = h2; far_hit = h1;
@@ -98,8 +98,8 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
 
     // Y
     if (!IsZero(r.dir.y)) {
-      h1 = (box.pmin.y - r.base.y) / r.dir.y;
-      h2 = (box.pmax.y - r.base.y) / r.dir.y;
+      Flt h1 = (box.pmin.y - r.base.y) / r.dir.y;
+      Flt h2 = (box.pmax.y - r.base.y) / r.dir.y;
 
       if (h1 > h2)  {
 	if (h2 > near_hit) { near_hit = h2; }
@@ -118,8 +118,8 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
 
     // Z
     if (!IsZero(r.dir.z)) {
-      h1 = (box.pmin.z - r.base.z) / r.dir.z;
-      h2 = (box.pmax.z - r.base.z) / r.dir.z;
+      Flt h1 = (box.pmin.z - r.base.z) / r.dir.z;
+      Flt h2 = (box.pmax.z - r.base.z) / r.dir.z;
 
       if (h1 > h2)  {
 	if (h2 > near_hit) { near_hit = h2; }
@@ -149,7 +149,7 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
     hits += ob->intersect(r, hit_list);
   }
 
-  // Intersect all child objects
+  // Intersect all contained objects
   for (const Object* ob : object_list) {
     hits += ob->intersect(r, hit_list);
   }
