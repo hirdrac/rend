@@ -413,8 +413,8 @@ Bound* MakeBoundList(const Object* o_list)
   println("New tree weight: ", TreeWeight(node_list, box.weight()));
   PrintBoundList(node_list);
 
-  Bound* bound_list = ConvertNodeList(node_list);
-  bound_list->always_hit = true;
+  Bound* bound = ConvertNodeList(node_list);
+  bound->always_hit = true;
   KillTree(node_list);
-  return bound_list;
+  return bound;
 }

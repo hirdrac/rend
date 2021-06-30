@@ -135,7 +135,7 @@ int Scene::init()
 
   // setup bounding boxes
   _bound.reset(MakeBoundList(object_list.head()));
-  assert(_bound->next() == nullptr);
+  assert(!_bound || _bound->next() == nullptr);
 
   // init lights
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
