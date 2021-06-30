@@ -10,6 +10,7 @@
 #include "Logger.hh"
 #include <fstream>
 #include <algorithm>
+#include <memory>
 
 
 /**** FrameBuffer Class ****/
@@ -57,17 +58,24 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
   file.write(reinterpret_cast<char*>(header), sizeof(header));
 
-  uint8_t tmp[4];
-  auto itr = _buffer.begin(), end = _buffer.end();
-  while (itr != end) {
-    float r = *itr++;
-    float g = *itr++;
-    float b = *itr++;
+  int row_pad = (4 - ((_width * 3) % 4)) % 4;
+    // rows must be padded to 4-byte multiple
+  int row_size = (_width * 3) + row_pad;
+  auto row = std::make_unique<uint8_t[]>(std::size_t(row_size));
 
-    tmp[0] = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
-    tmp[1] = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
-    tmp[2] = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
-    file.write(reinterpret_cast<char*>(tmp), 3);
+  auto src = _buffer.begin();
+  for (int y = 0; y < _height; ++y) {
+    uint8_t* out = row.get();
+    for (int x = 0; x < _width; ++x) {
+      float r = *src++;
+      float g = *src++;
+      float b = *src++;
+
+      *out++ = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
+      *out++ = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
+      *out++ = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
+    }
+    file.write(reinterpret_cast<char*>(row.get()), row_size);
   }
 
   return 0;
