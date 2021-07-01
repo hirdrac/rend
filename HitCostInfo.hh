@@ -1,6 +1,6 @@
 //
 // HitCostInfo.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // primitive hit cost values used for bound creation
 //
@@ -26,7 +26,6 @@ class HitCostInfo
   Flt sphere;
   Flt torus;
 
-  // Constructor
   HitCostInfo() { reset(); }
 
   // Member Functions

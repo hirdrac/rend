@@ -25,7 +25,6 @@ class BBox
  public:
   Vec3 pmin, pmax;
 
-  // Constructor
   BBox() { reset(); }
 
   // Member Functions
@@ -40,9 +39,7 @@ class BBox
 class Object : public SceneItem, public SListNode<Object>
 {
  public:
-  // Constructor
   Object();
-  // Destructor
   ~Object();
 
   // Member Functions

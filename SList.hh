@@ -35,12 +35,10 @@ template<typename type>
 class SList
 {
  public:
-  // Constructors
   SList() = default;
   SList(SList<type>&& x) noexcept { swap(x); }
   SList(type* item) : _head(item), _tail(LastNode(item)) { }
 
-  // Destructor
   ~SList() { KillNodes(_head); }
 
   // Operators

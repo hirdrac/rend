@@ -16,7 +16,6 @@
 class TimeStamp
 {
  public:
-  // Constructors
   TimeStamp() { clear(); }
   TimeStamp(timeval& tv) : _val(tv) { }
 

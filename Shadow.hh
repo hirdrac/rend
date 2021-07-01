@@ -1,6 +1,6 @@
 //
 // Shadow.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Shadow calculation functions
 //
@@ -14,9 +14,9 @@ class Scene;
 class Ray;
 class Color;
 
-typedef int (*ShadowFn)
-(const Scene& s, const Ray& r, const Vec3& globalPt,
- const Vec3& lightDir, Flt lightDist, Color& energy);
+using ShadowFn =
+  int(*)(const Scene& s, const Ray& r, const Vec3& globalPt,
+         const Vec3& lightDir, Flt lightDist, Color& energy);
 
 
 // **** Functions ****

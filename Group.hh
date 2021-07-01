@@ -14,9 +14,7 @@
 class Group final : public Primitive
 {
  public:
-  // Constructor
   Group();
-  // Destructor
   ~Group();
 
   // SceneItem Functions

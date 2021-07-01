@@ -15,13 +15,11 @@
 
 
 // **** CSG Class ****
-// Constructor
 CSG::CSG()
 {
   ++Inventory.csgs;
 }
 
-// Destructor
 CSG::~CSG()
 {
   --Inventory.csgs;

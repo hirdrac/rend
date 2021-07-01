@@ -1,6 +1,6 @@
 //
 // Light.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Light base class
 //
@@ -32,9 +32,7 @@ class Light : public SceneItem
   Shader*  energy = nullptr; // not owner
   ShadowFn shadow_fn = nullptr;
 
-  // Constructor
   Light();
-  // Destructor
   ~Light();
 
   // SceneItem Functions

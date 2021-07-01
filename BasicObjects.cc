@@ -15,7 +15,6 @@
 
 
 // **** Disc Class ****
-// Constructor
 Disc::Disc()
 {
   _solid = false;
@@ -73,7 +72,6 @@ int Disc::bound(BBox& b) const
 
 
 // **** Cone Class ****
-// Constructor
 Cone::Cone()
 {
   _solid = true;
@@ -161,7 +159,6 @@ int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Cube Class ****
-// Constructor
 Cube::Cube()
 {
   _solid = true;
@@ -278,7 +275,6 @@ int Cube::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Cylinder Class ****
-// Constructor
 Cylinder::Cylinder()
 {
   _solid = true;
@@ -388,7 +384,6 @@ int Cylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** OpenCone Class ****
-// Constructor
 OpenCone::OpenCone()
 {
   _solid = false;
@@ -455,7 +450,6 @@ int OpenCone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** OpenCylinder Class ****
-// Constructor
 OpenCylinder::OpenCylinder()
 {
   _solid = false;
@@ -517,7 +511,6 @@ int OpenCylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Paraboloid Class ****
-// Constructor
 Paraboloid::Paraboloid()
 {
   _solid = false;
@@ -578,7 +571,6 @@ int Paraboloid::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Plane Class ****
-// Constructor
 Plane::Plane()
 {
   _solid = false;
@@ -642,7 +634,6 @@ int Plane::bound(BBox& b) const
 
 
 // **** Sphere Class ****
-// Constructor
 Sphere::Sphere()
 {
   _solid = true;
@@ -692,7 +683,6 @@ int Sphere::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Torus Class ****
-// Constructor
 Torus::Torus() :
   radius(.5)
 {

@@ -14,7 +14,6 @@
 class Disc final : public Primitive
 {
  public:
-  // Constructor
   Disc();
 
   // SceneItem Functions
@@ -34,7 +33,6 @@ class Disc final : public Primitive
 class Cone final : public Primitive
 {
  public:
-  // Constructor
   Cone();
 
   // SceneItem Functions
@@ -53,7 +51,6 @@ class Cone final : public Primitive
 class Cube final : public Primitive
 {
  public:
-  // Constructor
   Cube();
 
   // SceneItem Functions
@@ -72,7 +69,6 @@ class Cube final : public Primitive
 class Cylinder final : public Primitive
 {
  public:
-  // Constructor
   Cylinder();
 
   // SceneItem Functions
@@ -91,7 +87,6 @@ class Cylinder final : public Primitive
 class OpenCone final : public Primitive
 {
  public:
-  // Constructor
   OpenCone();
 
   // SceneItem Functions
@@ -106,7 +101,6 @@ class OpenCone final : public Primitive
 class OpenCylinder final : public Primitive
 {
  public:
-  // Constructor
   OpenCylinder();
 
   // SceneItem Functions
@@ -121,7 +115,6 @@ class OpenCylinder final : public Primitive
 class Paraboloid final : public Primitive
 {
  public:
-  // Constructor
   Paraboloid();
 
   // SceneItem Functions
@@ -136,7 +129,6 @@ class Paraboloid final : public Primitive
 class Plane final : public Primitive
 {
  public:
-  // Constructor
   Plane();
 
   // SceneItem Functions
@@ -156,7 +148,6 @@ class Plane final : public Primitive
 class Sphere final : public Primitive
 {
  public:
-  // Constructor
   Sphere();
 
   // SceneItem Functions
@@ -171,7 +162,6 @@ class Sphere final : public Primitive
 class Torus final : public Primitive
 {
  public:
-  // Constructor
   Torus();
 
   // SceneItem Functions

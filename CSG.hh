@@ -14,9 +14,7 @@
 class CSG : public Primitive
 {
  public:
-  // Constructor
   CSG();
-  // Destructor
   ~CSG();
 
   // SceneItem Functions

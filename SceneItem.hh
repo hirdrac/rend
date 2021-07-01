@@ -25,7 +25,6 @@ enum SceneItemFlag {
 class SceneItem
 {
  public:
-  // Destructor
   virtual ~SceneItem() = default;
 
   // Member Function

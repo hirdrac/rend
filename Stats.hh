@@ -54,7 +54,6 @@ class StatInfo
   uint64_t torus_tried;
   uint64_t torus_hit;
 
-  // Constructor
   StatInfo() { clear(); }
 
   // Member Functions

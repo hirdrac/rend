@@ -9,13 +9,11 @@
 
 
 // **** Group Class ****
-// Constructor
 Group::Group()
 {
   ++Inventory.groups;
 }
 
-// Destructor
 Group::~Group()
 {
   --Inventory.groups;

@@ -1,6 +1,6 @@
 //
 // Transform.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // definition of motion/tranformation class
 //
@@ -9,8 +9,6 @@
 #include "Types.hh"
 #include <iosfwd>
 
-// ADD - animation
-
 
 // **** Types ****
 class Transform
@@ -18,7 +16,6 @@ class Transform
 public:
   Matrix local, global, global_inv;
 
-  // Constructor
   Transform() { clear(); }
 
   // Member Functions

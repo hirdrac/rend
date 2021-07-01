@@ -31,9 +31,7 @@ class OptNode
   const Object* object; // null if node is bound (has children)
   BBox box;
 
-  // Constructor
-  OptNode(const Object* ob = nullptr) : object(ob)
-  {
+  OptNode(const Object* ob = nullptr) : object(ob) {
     if (ob) { ob->bound(box); }
   }
 
@@ -56,13 +54,11 @@ class OptNode
 
 
 // **** Bound Class ****
-// Constructor
 Bound::Bound()
 {
   ++Inventory.bounds;
 }
 
-// Destructor
 Bound::~Bound()
 {
   --Inventory.bounds;

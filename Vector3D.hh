@@ -33,7 +33,6 @@ class Vector2
   using size_type = unsigned int;
 
 
-  // Constructors
   Vector2() = default;
   constexpr Vector2(T vx, T vy) : x(vx), y(vy) { }
 
@@ -101,7 +100,6 @@ class Vector3
   using size_type = unsigned int;
 
 
-  // Constructors
   Vector3() = default;
   constexpr Vector3(T vx, T vy, T vz) : x(vx), y(vy), z(vz) { }
 
@@ -180,7 +178,6 @@ class Vector4
   using size_type = unsigned int;
 
 
-  // Constructors
   Vector4() = default;
   constexpr Vector4(T vx, T vy, T vz, T vw) : x(vx), y(vy), z(vz), w(vw) { }
   constexpr Vector4(const Vector3<T>& v, T vw)

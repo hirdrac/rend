@@ -18,7 +18,6 @@ class Color
   static constexpr int WAVES_MAX = 3;
   static constexpr int WAVES_DEFAULT = 3;
 
-  // Constructors
   Color() : _waves(WAVES_DEFAULT) { }
   Color(int w) : _waves(w) { }
   Color(Flt r, Flt g, Flt b) : _waves(WAVES_DEFAULT) { setRGB(r, b, g); }

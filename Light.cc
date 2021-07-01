@@ -9,13 +9,11 @@
 
 
 // **** Light Class ****
-// Constructor
 Light::Light()
 {
   ++Inventory.lights;
 }
 
-// Destructor
 Light::~Light()
 {
   --Inventory.lights;

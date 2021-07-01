@@ -1,6 +1,6 @@
 //
 // Types.hh
-// Copyright (C) 2020 Richard Bradley
+// Copyright (C) 2021 Richard Bradley
 //
 // Definition of standard types and constants
 //

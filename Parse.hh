@@ -34,7 +34,6 @@ class AstNode : public SListNode<AstNode>
   AstType     ast_type = AST_UNKNOWN;
   int         flag = 0;
 
-  // Constructors
   AstNode() = default;
   AstNode(std::string_view value) : val(value) { }
 

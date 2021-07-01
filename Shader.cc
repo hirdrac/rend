@@ -10,13 +10,11 @@
 
 
 // **** Shader Class ****
-// Constructor
 Shader::Shader()
 {
   ++Inventory.shaders;
 }
 
-// Destructor
 Shader::~Shader()
 {
   --Inventory.shaders;

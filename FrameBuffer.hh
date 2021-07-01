@@ -17,7 +17,6 @@
 class FrameBuffer
 {
  public:
-  // Constructors
   FrameBuffer() = default;
   FrameBuffer(int w, int h) { init(w, h); }
 

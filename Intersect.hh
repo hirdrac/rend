@@ -25,7 +25,6 @@ class HitInfo : public SListNode<HitInfo>
   Vec3 global_pt; // calculated for shaders
   int side;
 
-  // Constructors
   HitInfo() = default;
   HitInfo(const Object* ob, Flt t, const Vec3& pt)
     : object(ob), child(nullptr), distance(t),
@@ -35,9 +34,7 @@ class HitInfo : public SListNode<HitInfo>
 class HitList
 {
  public:
-  // Constructor
   HitList(SList<HitInfo>* cache = nullptr) : _freeCache(cache) { }
-  // Destructor
   ~HitList() { clear(); }
 
   // Member Functions

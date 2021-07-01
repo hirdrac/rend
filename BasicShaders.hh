@@ -16,7 +16,6 @@ class ShaderColor final : public Shader
  public:
   Color color;
 
-  // Constructors
   ShaderColor() { color.clear(); }
   ShaderColor(const Color& c, Flt v = 1.0) : color(c) { }
   ShaderColor(Flt r, Flt g, Flt b) { color.setRGB(r,g,b); }

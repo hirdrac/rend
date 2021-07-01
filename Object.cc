@@ -55,13 +55,11 @@ void BBox::fit(const BBox& box)
 
 
 // **** Object Class ****
-// Constructor
 Object::Object()
 {
   ++Inventory.objects;
 }
 
-// Destructor
 Object::~Object()
 {
   --Inventory.objects;

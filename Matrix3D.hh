@@ -29,7 +29,6 @@ class Matrix4x4
   using size_type = unsigned int;
 
 
-  // Constructors
   Matrix4x4() = default;
   constexpr Matrix4x4(T a, T b, T c, T d, T e, T f, T g, T h,
                       T i, T j, T k, T l, T m, T n, T o, T p) {
