@@ -6,7 +6,7 @@
 //
 
 // TODO - remove AST_LIST nodes; AST_ITEM (with args as children) can replace it
-// TODO - add 'include' directive, evaluated in parseFile()
+// TODO - add 'include' directive, evaluated in loadFile()
 
 #include "Parse.hh"
 #include "Keywords.hh"
@@ -168,9 +168,9 @@ void AstNode::setType()
 }
 
 
-// **** SceneDesc Class ****
+// **** SceneParser Class ****
 // Member Functions
-int SceneDesc::parseFile(const std::string& file)
+int SceneParser::loadFile(const std::string& file)
 {
   _files[++_lastID] = file;
   BlockReader br(file, _lastID);
@@ -188,12 +188,12 @@ int SceneDesc::parseFile(const std::string& file)
   return 0;
 }
 
-int SceneDesc::setupScene(Scene& s)
+int SceneParser::setupScene(Scene& s)
 {
   return processList(s, nullptr, _astList.head());
 }
 
-int SceneDesc::processList(
+int SceneParser::processList(
   Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   int error = 0;
@@ -205,7 +205,7 @@ int SceneDesc::processList(
   return error;
 }
 
-int SceneDesc::processNode(
+int SceneParser::processNode(
   Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   if (n->ast_type == AST_LIST) {
@@ -222,7 +222,7 @@ int SceneDesc::processNode(
   return -1;
 }
 
-int SceneDesc::getBool(AstNode*& n, bool& val) const
+int SceneParser::getBool(AstNode*& n, bool& val) const
 {
   if (!n) { return -1; }
 
@@ -244,7 +244,7 @@ int SceneDesc::getBool(AstNode*& n, bool& val) const
   return 0;
 }
 
-int SceneDesc::getString(AstNode*& n, std::string& val) const
+int SceneParser::getString(AstNode*& n, std::string& val) const
 {
   if (!n) { return -1; }
   val = n->val;
@@ -252,7 +252,7 @@ int SceneDesc::getString(AstNode*& n, std::string& val) const
   return 0;
 }
 
-int SceneDesc::getFlt(AstNode*& n, Flt& val) const
+int SceneParser::getFlt(AstNode*& n, Flt& val) const
 {
   if (!n) { return -1; }
 
@@ -268,7 +268,7 @@ int SceneDesc::getFlt(AstNode*& n, Flt& val) const
   return 0;
 }
 
-int SceneDesc::getInt(AstNode*& n, int& val) const
+int SceneParser::getInt(AstNode*& n, int& val) const
 {
   if (!n) { return -1; }
 
@@ -284,7 +284,7 @@ int SceneDesc::getInt(AstNode*& n, int& val) const
   return 0;
 }
 
-int SceneDesc::getVec3(AstNode*& n, Vec3& v) const
+int SceneParser::getVec3(AstNode*& n, Vec3& v) const
 {
   if (int er = getFlt(n, v.x); er != 0) { return er; }
   if (int er = getFlt(n, v.y); er != 0) { return er; }

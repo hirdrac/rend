@@ -44,11 +44,11 @@ class AstNode : public SListNode<AstNode>
 };
 
 
-class SceneDesc
+class SceneParser
 {
  public:
   // Member Functions
-  int parseFile(const std::string& file);
+  int loadFile(const std::string& file);
   int setupScene(Scene& s);
 
   // parsing helper functions

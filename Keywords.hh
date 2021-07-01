@@ -10,9 +10,9 @@
 // **** Types ****
 class AstNode;
 class Scene;
-class SceneDesc;
+class SceneParser;
 
-using ItemFn = int(*)(SceneDesc& sd, Scene& s, SceneItem* parent,
+using ItemFn = int(*)(SceneParser& sp, Scene& s, SceneItem* parent,
                       AstNode* n, SceneItemFlag flag);
 
 
