@@ -40,24 +40,30 @@ TokenType Tokenizer::getToken(std::string& value, int& line)
     // check 1st character
     if (c == '\0' || (quote && c == quote)) {
       break; // end of file/end of quoted range
-    } else if (!quote && (c == '\"' || c == '\'')) {
-      quote = c;
-      quoted = true;
-      continue;
-    } else if (c == '/') {
-      // check for 'C++' style comments
-      if (_nextChar == '/') {
-        // Skip rest of line
+    } else if (!quote) {
+      if (c == '\"' || c == '\'') {
+        quote = c;
+        quoted = true;
+        continue;
+      } else if (c == ';' || c == '#') {
+        // lisp/shell style comment - skip to end of line
         do { c = getChar(); } while ((c != '\0') && (c != '\n'));
-      } else if (_nextChar == '*') {
-        // Skip rest of comment
-        getChar(); // skip '*'
-        do {
-          c = getChar();
-        } while ((c != '\0') && !((c == '*') && (_nextChar == '/')));
-        getChar(); // skip '/'
+        continue;
+      } else if (c == '/') {
+        // check for 'C++' style comments
+        if (_nextChar == '/') {
+          // Skip rest of line
+          do { c = getChar(); } while ((c != '\0') && (c != '\n'));
+        } else if (_nextChar == '*') {
+          // Skip rest of comment
+          getChar(); // skip '*'
+          do {
+            c = getChar();
+          } while ((c != '\0') && !((c == '*') && (_nextChar == '/')));
+          getChar(); // skip '/'
+        }
+        continue;
       }
-      continue;
     }
 
     value += char(c); // doesn't support unicode
