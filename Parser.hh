@@ -1,5 +1,5 @@
 //
-// Parse.hh
+// Parser.hh
 // Copyright (C) 2021 Richard Bradley
 //
 // Scene description file parser
@@ -17,9 +17,10 @@
 
 // **** Types ****
 class Scene;
+class Tokenizer;
 
 enum AstType {
-  AST_UNKNOWN, AST_LIST, AST_ITEM, AST_VALUE,
+  AST_UNKNOWN, AST_LIST, AST_ITEM, AST_NUMBER, AST_STRING
 };
 
 
@@ -27,20 +28,19 @@ class AstNode : public SListNode<AstNode>
 {
  public:
   AstNode*    child = nullptr;
-  int         file_id = 0;
-  int         line = 0;
   void*       ptr = nullptr;
   std::string val;
-  AstType     ast_type = AST_UNKNOWN;
-  int         flag = 0;
+  int         file_id = 0;
+  int         line = 0;
+  AstType     type = AST_UNKNOWN;
 
   AstNode() = default;
   AstNode(std::string_view value) : val(value) { }
+  ~AstNode() { KillNodes(child); }
 
   // Member Functions
   [[nodiscard]] std::string desc() const;
   [[nodiscard]] AstNode* childList() const { return child; }
-  void setType();
 };
 
 
@@ -61,7 +61,7 @@ class SceneParser
   int getInt(AstNode*& n, int& val) const;
   int getVec3(AstNode*& n, Vec3& v) const;
 
-  std::string fileName(int file_id) const {
+  [[nodiscard]] std::string fileName(int file_id) const {
     auto itr = _files.find(file_id);
     return (itr == _files.end()) ? std::string("<unknown>") : itr->second;
   }
@@ -76,5 +76,6 @@ class SceneParser
   std::map<int,std::string> _files;
   int _lastID = 0;
 
+  [[nodiscard]] AstNode* nextBlock(Tokenizer& tk, int fileID, int depth);
   int processNode(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag);
 };

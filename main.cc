@@ -6,7 +6,7 @@
 //
 
 #include "Scene.hh"
-#include "Parse.hh"
+#include "Parser.hh"
 #include "FrameBuffer.hh"
 #include "Stats.hh"
 #include "Timer.hh"
