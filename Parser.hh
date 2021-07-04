@@ -13,6 +13,7 @@
 #include <string>
 #include <string_view>
 #include <map>
+#include <set>
 
 
 // **** Types ****
@@ -74,8 +75,13 @@ class SceneParser
  private:
   SList<AstNode> _astList;
   std::map<int,std::string> _files;
+  std::set<std::string> _activeFiles;
   int _lastID = 0;
 
+  int includeFile(
+    const std::string& file, SList<AstNode>& nodeList, const AstNode* srcNode);
   [[nodiscard]] AstNode* nextBlock(Tokenizer& tk, int fileID, int depth);
+  [[nodiscard]] bool evalSpecialOp(
+    const AstNode* n, SList<AstNode>& nodeList, int depth);
   int processNode(Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag);
 };

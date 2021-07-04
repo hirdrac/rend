@@ -3,9 +3,6 @@
 // Copyright (C) 2021 Richard Bradley
 //
 
-// TODO - remove AST_LIST nodes; AST_ITEM (with args as children) can replace it
-// TODO - add 'include' directive, evaluated in loadFile()
-
 #include "Parser.hh"
 #include "Keywords.hh"
 #include "Tokenizer.hh"
@@ -49,32 +46,50 @@ std::string AstNode::desc() const
 // **** SceneParser Class ****
 int SceneParser::loadFile(const std::string& file)
 {
-  std::ifstream fs(file);
-  if (!fs) { return -1; }
+  try {
+    _astList.purge();
+    return includeFile(file, _astList, nullptr);
+  } catch (ParseError& ex) {
+    if (ex.file_id) {
+      print_err("[", fileName(ex.file_id), ":", ex.line, "] ");
+    }
+    println_err(ex.msg);
+    return -1;
+  } catch (std::exception& ex) {
+    println_err("exception: ", ex.what());
+    return -1;
+  }
+}
 
+int SceneParser::includeFile(
+  const std::string& file, SList<AstNode>& nodeList, const AstNode* srcNode)
+{
+  int src_fileID = srcNode ? srcNode->file_id : 0;
+  int src_line = srcNode ? srcNode->line : 0;
+
+  if (_activeFiles.count(file) > 0) {
+    throw ParseError{"Circular include error", src_fileID, src_line};
+  }
+
+  std::ifstream fs(file);
+  if (!fs) {
+    throw ParseError{"Cannot open file '"+file+"'", src_fileID, src_line};
+  }
+
+  _activeFiles.insert(file);
   _files[++_lastID] = file;
   const int baseID = _lastID;
 
   Tokenizer tk;
   tk.init(fs);
 
-  // parse blocks
-  _astList.purge();
-  try {
-    for (;;) {
-      AstNode* n = nextBlock(tk, baseID, 0);
-      if (!n) { break; }
-      _astList.addToTail(n);
-    }
-  } catch (ParseError& ex) {
-    println_err("[", fileName(ex.file_id), ":", ex.line, "] ", ex.msg);
-    return -1;
-  } catch (std::exception& ex) {
-    println_err("exception: ", ex.what());
-    return -1;
+  for (;;) {
+    AstNode* n = nextBlock(tk, baseID, 0);
+    if (!n) { break; }
+    nodeList.addToTail(n);
   }
 
-  // everything okay
+  _activeFiles.erase(file);
   return 0;
 }
 
@@ -112,10 +127,47 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
 
     n->file_id = fileID;
     n->line = line;
-    nodeList.addToTail(n.release());
+
+    if (!evalSpecialOp(n.get(), nodeList, depth)) {
+      nodeList.addToTail(n.release());
+    }
   }
 
   return nodeList.extractNodes();
+}
+
+bool SceneParser::evalSpecialOp(
+  const AstNode* n, SList<AstNode>& nodeList, int depth)
+{
+  if (!n || n->type != AST_LIST) { return false; }
+  const AstNode* n1 = n->child;
+  if (!n1 || n1->type != AST_UNKNOWN) { return false; }
+
+  const AstNode* n2 = n1->next();
+  if (n1->val == "include") {
+    if (!n2 || n2->type != AST_STRING) {
+      throw ParseError{"'include' syntax error", n->file_id, n->line};
+    }
+
+    std::string file = fileName(n->file_id);
+    std::string baseDir;
+    if (auto x = file.rfind('/'); x != std::string::npos) {
+      baseDir = file.substr(0,x+1);
+    }
+
+    includeFile(baseDir + n2->val, nodeList, n);
+    return true;
+  } else if (n1->val == "define") {
+    println("define!");
+    // FIXME - finish 'define'
+    return true;
+  } else if (n1->val == "instance") {
+    println("instance!");
+    // FIXME - finish 'instance'
+    return true;
+  }
+
+  return false;
 }
 
 int SceneParser::setupScene(Scene& s)
