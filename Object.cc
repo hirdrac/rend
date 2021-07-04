@@ -16,7 +16,6 @@
 
 
 // **** BBox class ****
-// Member Functions
 void BBox::reset()
 {
   pmin.set( VERY_LARGE,  VERY_LARGE,  VERY_LARGE);
@@ -53,6 +52,13 @@ void BBox::fit(const BBox& box)
   pmax.z = std::max(pmax.z, box.pmax.z);
 }
 
+void BBox::fit(const Transform& t, const Vec3* pt_list, int pt_count)
+{
+  for (int i = 0; i < pt_count; ++i) {
+    fit(MultPoint(pt_list[i], t.global));
+  }
+}
+
 
 // **** Object Class ****
 Object::Object()
@@ -81,8 +87,7 @@ int Primitive::add(SceneItem* i, SceneItemFlag flag)
 
 int Primitive::init(Scene& s)
 {
-  _trans.init();
-  return Object::init(s);
+  return _trans.init();
 }
 
 // Object Functions
@@ -91,7 +96,8 @@ int Primitive::bound(BBox& b) const
   static constexpr Vec3 pt[8] = {
     { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
     {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
-  return MakeBound(b, _trans, pt, 8);
+  b.fit(_trans, pt, 8);
+  return 0;
 }
 
 
@@ -122,15 +128,6 @@ int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
       println("INIT ERROR: ", list->desc());
       return error;
     }
-  }
-
-  return 0;
-}
-
-int MakeBound(BBox& b, const Transform& t, const Vec3 pt_list[], int pt_count)
-{
-  for (int i = 0; i < pt_count; ++i) {
-    b.fit(MultPoint(pt_list[i], t.global));
   }
 
   return 0;

@@ -67,7 +67,8 @@ int Disc::bound(BBox& b) const
 {
   static constexpr Vec3 pt[4] = {
     { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
-  return MakeBound(b, _trans, pt, 4);
+  b.fit(_trans, pt, 4);
+  return 0;
 }
 
 
@@ -629,7 +630,8 @@ int Plane::bound(BBox& b) const
 {
   static constexpr Vec3 pt[4] = {
     { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
-  return MakeBound(b, _trans, pt, 4);
+  b.fit(_trans, pt, 4);
+  return 0;
 }
 
 
@@ -755,5 +757,6 @@ int Torus::bound(BBox& b) const
     { 1 + radius, -radius,  1 + radius}, { 1 + radius,  radius, -1 - radius},
     {-1 - radius, -radius,  1 + radius}, { 1 + radius, -radius, -1 - radius},
     {-1 - radius,  radius, -1 - radius}, {-1 - radius, -radius, -1 - radius}};
-  return MakeBound(b, _trans, pt, 8);
+  b.fit(_trans, pt, 8);
+  return 0;
 }

@@ -32,6 +32,7 @@ class BBox
   Flt  weight() const;
   void fit(const Vec3& pt);
   void fit(const BBox& box);
+  void fit(const Transform& t, const Vec3* pt_list, int pt_count);
 };
 
 
@@ -72,7 +73,6 @@ class Primitive : public Object
   const Transform* trans() const override { return &_trans; }
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override { return 0; }
   int bound(BBox& b) const override;
   bool isVisible() const override    { return true; }
   bool isSolid() const override      { return _solid; }
@@ -90,4 +90,3 @@ class Primitive : public Object
 // **** Functions ****
 int InitObjectList(
   Scene& s, Object* list, Shader* sh = nullptr, const Transform* t = nullptr);
-int MakeBound(BBox& b, const Transform& t, const Vec3 pt_list[], int pt_count);
