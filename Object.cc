@@ -6,13 +6,10 @@
 //
 
 #include "Object.hh"
-#include "Scene.hh"
 #include "Shader.hh"
-#include "Intersect.hh"
 #include "Stats.hh"
 #include "Print.hh"
 #include <algorithm>
-#include <cstring>
 
 
 // **** BBox class ****
