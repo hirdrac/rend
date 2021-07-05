@@ -189,7 +189,7 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
   r.globalToLocal(_trans, base, dir);
 
   Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
-  int near_side = 0, far_side = 0;
+  int near_side = -1, far_side = -1;
 
   // X
   if (!IsZero(dir.x)) {

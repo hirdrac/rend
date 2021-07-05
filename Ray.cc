@@ -10,7 +10,6 @@
 
 
 // **** Ray Class ****
-// Member Functions
 void Ray::globalToLocal(const Transform& t, Vec3& new_base, Vec3& new_dir) const
 {
   const Matrix& global_inv = t.GlobalInv(time);

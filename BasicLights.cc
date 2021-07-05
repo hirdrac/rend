@@ -17,6 +17,7 @@ int Sun::luminate(
   result.dir = dir;
   result.distance = VERY_LARGE;
   return energy->evaluate(s, r, h, normal, map, result.energy);
+  // FIXME - add shadow support to Sun::luminate()
 }
 
 
