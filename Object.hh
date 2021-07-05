@@ -64,8 +64,6 @@ class Object : public SceneItem, public SListNode<Object>
 class Primitive : public Object
 {
  public:
-  Flt index = 1.0;
-
   // SceneItem Functions
   int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
   int init(Scene& s) override;

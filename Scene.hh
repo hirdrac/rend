@@ -42,7 +42,7 @@ class Scene
   int  region_min[2], region_max[2];  // Render region
 
   Vec3 eye, coi, vup;
-  Flt  fov, index;
+  Flt  fov;
   int  samples_x, samples_y;  // Sample grid (for supersampling)
 
   bool shadow, reflect, transmit;

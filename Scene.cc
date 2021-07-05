@@ -35,7 +35,6 @@ void Scene::clear()
   coi.set(0,0,0);
   vup.set(0,1,0);
   fov = 50.0;
-  index = 1.0;
   samples_x = 1;
   samples_y = 1;
   shadow = true;

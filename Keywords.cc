@@ -221,15 +221,6 @@ int IdentityFn(
   return 0;
 }
 
-int IndexFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Primitive* ob = dynamic_cast<Primitive*>(p);
-  if (ob) { return sp.getFlt(n, ob->index); }
-
-  return p ? -1 : sp.getFlt(n, s.index);
-}
-
 int IntersectFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -551,7 +542,6 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"global",        GlobalFn},
   {"group",         GroupFn},
   {"identity",      IdentityFn},
-  {"index",         IndexFn},
   {"intersect",     IntersectFn},
   {"light",         PointLightFn},
   {"local",         LocalFn},
