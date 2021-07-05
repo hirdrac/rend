@@ -14,6 +14,7 @@
 
 #pragma once
 #include "ListUtility.hh"
+#include <utility>
 
 
 // **** SListNode class ****
@@ -22,7 +23,8 @@ class SListNode
 {
  public:
   // Member Functions
-  [[nodiscard]] type* next() const { return _next; }
+  [[nodiscard]] type* next() { return _next; }
+  [[nodiscard]] const type* next() const { return _next; }
   void setNext(type* x) { _next = x; }
 
  private:
@@ -30,29 +32,44 @@ class SListNode
 };
 
 
-// **** SList Class ****
+// **** SList class ****
 template<typename type>
 class SList
 {
  public:
   SList() = default;
-  SList(SList<type>&& x) noexcept { swap(x); }
   SList(type* item) : _head(item), _tail(LastNode(item)) { }
-
   ~SList() { KillNodes(_head); }
 
-  // Operators
-  [[nodiscard]] type* operator[](int i) const { return index(i); }
+  // prevent copy/assign
+  SList(const SList<type>&) = delete;
+  SList<type>& operator=(const SList<type>&) = delete;
+
+  // allow move/move-assign
+  SList(SList<type>&& x) noexcept :
+    _head(std::exchange(x._head, nullptr)),
+    _tail(std::exchange(x._tail, nullptr)) { }
+
+  SList<type>& operator=(SList<type>&& x) noexcept {
+    if (this != &x) {
+      KillNodes(_head);
+      _head = std::exchange(x._head, nullptr);
+      _tail = std::exchange(x._tail, nullptr);
+    }
+    return *this;
+  }
+
 
   // Member Functions
-  [[nodiscard]] type* head()       const { return _head; }
-  [[nodiscard]] type* tail()       const { return _tail; }
-  [[nodiscard]] bool  empty()      const { return !_head; }
-  [[nodiscard]] int   count()      const { return CountNodes(_head); }
-  [[nodiscard]] type* index(int i) const { return IndexNodes(_head, i); }
+  [[nodiscard]] type* head() { return _head; }
+  [[nodiscard]] const type* head() const { return _head; }
 
-  [[nodiscard]] int  findIndex(const type* n) const { return FindNodeIndex(_head, n); }
-  [[nodiscard]] bool isNodeHere(const type* n) const { return NodeInList(_head, n); }
+  [[nodiscard]] type* tail() { return _tail; }
+  [[nodiscard]] const type* tail() const { return _tail; }
+
+  [[nodiscard]] bool empty() const { return !_head; }
+  [[nodiscard]] int count() const { return CountNodes(_head); }
+
   void purge() { KillNodes(_head); _head = nullptr; _tail = nullptr; }
 
   int addToHead(type* item);
@@ -64,10 +81,7 @@ class SList
   type* removeHead();
   type* removeTail();
   type* removeNext(type* item);
-  int   remove(type* node);
 
-  void  chop(int max, int start = 0);
-  void  reverse();
   type* extractNodes();
 
   void swap(SList<type>& x) noexcept {
@@ -75,18 +89,9 @@ class SList
     std::swap(_tail, x._tail);
   }
 
-  // Template Functions
-  template<typename fn_type>
-  void forEach(fn_type fn) { ForEachNode(_head, fn); }
-
  private:
   type* _head = nullptr;
   type* _tail = nullptr;
-
-  // prevent copy/assign
-  SList(const SList<type>&) = delete;
-  SList<type>& operator=(const SList<type>&) = delete;
-  SList<type>& operator=(SList<type>&&) = delete;
 };
 
 template<typename type>
@@ -211,57 +216,6 @@ type* SList<type>::removeNext(type* item)
   }
 
   return n;
-}
-
-template<typename type>
-int SList<type>::remove(type* node)
-{
-  if (node && _head) {
-    if (_head == node) {
-      _head = _head->next();
-      if (!_head) { _tail = nullptr; }
-      node->setNext(nullptr);
-      return 0;
-    }
-
-    for (type* n = _head; n != nullptr; n = n->next()) {
-      if (n->next() == node) {
-	n->setNext(node->next());
-	if (_tail == node) { _tail = n;	}
-	node->setNext(nullptr);
-	return 0;
-      }
-    }
-  }
-
-  return -1;
-}
-
-template<typename type>
-void SList<type>::chop(int max, int start)
-{
-  while (start > 0) {
-    delete removeHead();
-    --start;
-  }
-
-  type* tmp = index(max - 1);
-  if (tmp && tmp->next()) {
-    KillNodes(tmp->next());
-    tmp->setNext(nullptr);
-    _tail = tmp;
-  }
-}
-
-template<typename type>
-void SList<type>::reverse()
-{
-  SList<type> tmp;
-  while (!empty()) {
-    tmp.addToTail(removeHead());
-  }
-
-  swap(*this, tmp);
 }
 
 template<typename type>
