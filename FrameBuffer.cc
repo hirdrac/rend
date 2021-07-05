@@ -32,7 +32,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   const int row_pad = (4 - ((_width * 3) % 4)) % 4;
     // rows must be padded to 4-byte multiple
   const int row_size = (_width * 3) + row_pad;
-  const uint32_t file_size = 54 + (row_size * _height);
+  const uint32_t file_size = 54 + uint32_t(row_size * _height);
 
   // setup BMP header
   uint8_t header[54] = {};
