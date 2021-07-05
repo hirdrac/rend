@@ -213,7 +213,7 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
     ob->intersect(r, hit_list);
   }
 
-  HitInfo* hit = hit_list.findFirstHit(r);
+  const HitInfo* hit = hit_list.findFirstHit(r);
   if (hit) {
     ++r.stats->shadow_rays_hit;
     result.clear(); // transparency not supported

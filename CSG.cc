@@ -56,7 +56,7 @@ int CSG::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 Flt CSG::hitCost() const
 {
   Flt cost = CostTable.csg;
-  for (Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
     cost += ob->hitCost();
   }
 
