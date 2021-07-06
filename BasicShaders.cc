@@ -14,13 +14,13 @@
 std::string ShaderColor::desc() const
 {
   std::ostringstream os;
-  os << "<Color " << color << '>';
+  os << "<Color " << _color << '>';
   return os.str();
 }
 
 int ShaderColor::init(Scene& s)
 {
-  color *= value;
+  _color *= value;
   value = 1.0;
   return 0;
 }
@@ -29,7 +29,7 @@ int ShaderColor::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
   const Vec3& map, Color& result) const
 {
-  result = color;
+  result = _color;
   return 0;
 }
 

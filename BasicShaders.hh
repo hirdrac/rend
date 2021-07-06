@@ -14,11 +14,9 @@
 class ShaderColor final : public Shader
 {
  public:
-  Color color;
-
-  ShaderColor() { color.clear(); }
-  ShaderColor(const Color& c, Flt v = 1.0) : color(c) { }
-  ShaderColor(Flt r, Flt g, Flt b) { color.setRGB(r,g,b); }
+  ShaderColor() { _color.clear(); }
+  ShaderColor(const Color& c) : _color(c) { }
+  ShaderColor(Flt r, Flt g, Flt b) { _color.setRGB(r,g,b); }
 
   // SceneItem Functions
   std::string desc() const override;
@@ -28,6 +26,9 @@ class ShaderColor final : public Shader
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
     const Vec3& map, Color& result) const override;
+
+ private:
+  Color _color;
 };
 
 
