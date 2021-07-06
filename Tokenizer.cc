@@ -71,8 +71,10 @@ TokenType Tokenizer::getToken(std::string& value, int& line)
 
     // skip to end of token
     if (std::isalnum(c) || (c == '-') || (c == '.') || (c == '_')) {
-      while (std::isalnum(_nextChar) || (_nextChar == '.')
-             || (_nextChar == '_')) { value += char(getChar()); }
+      while (std::isalnum(_nextChar) || (_nextChar == '-')
+             || (_nextChar == '.') || (_nextChar == '_')) {
+        value += char(getChar());
+      }
     }
     break;
   }
