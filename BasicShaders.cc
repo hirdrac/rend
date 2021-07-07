@@ -35,9 +35,8 @@ int ShaderColor::evaluate(
 
 
 // **** ShaderGlobal Class ****
-int ShaderGlobal::add(SceneItem* i, SceneItemFlag flag)
+int ShaderGlobal::addShader(Shader* sh, SceneItemFlag flag)
 {
-  Shader* sh = dynamic_cast<Shader*>(i);
   if (!sh || _child) { return -1; }
 
   _child.reset(sh);
@@ -58,9 +57,8 @@ int ShaderGlobal::evaluate(
 
 
 // **** ShaderLocal Class ****
-int ShaderLocal::add(SceneItem* i, SceneItemFlag flag)
+int ShaderLocal::addShader(Shader* sh, SceneItemFlag flag)
 {
-  Shader* sh = dynamic_cast<Shader*>(i);
   if (!sh || _child) { return -1; }
 
   _child.reset(sh);

@@ -36,7 +36,7 @@ class Light : public SceneItem
   ~Light();
 
   // SceneItem Functions
-  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int addShader(Shader* sh, SceneItemFlag flag) override;
   int init(Scene& s) override final;
 
   // Member Functions

@@ -54,7 +54,9 @@ class Scene
 
   // Member Functions
   void clear();
-  int add(SceneItem* i, SceneItemFlag flag);
+  int addObject(Object* ob);
+  int addLight(Light* lt);
+  int addShader(Shader* sh, SceneItemFlag flag);
   int init();
   void info(std::ostream& out) const;
   int traceRay(const Ray& r, Color& result) const;

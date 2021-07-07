@@ -71,12 +71,9 @@ Object::~Object()
 
 // **** Primitive Class ****
 // SceneItem Functions
-int Primitive::add(SceneItem* i, SceneItemFlag flag)
+int Primitive::addShader(Shader* sh, SceneItemFlag flag)
 {
-  Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh || _shader) {
-    return -1;
-  }
+  if (!sh || _shader) { return -1; }
 
   _shader = sh;
   return 0;

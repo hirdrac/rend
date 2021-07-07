@@ -29,12 +29,9 @@ int Light::init(Scene& s)
   return 0;
 }
 
-int Light::add(SceneItem* i, SceneItemFlag flag)
+int Light::addShader(Shader* sh, SceneItemFlag flag)
 {
-  Shader* sh = dynamic_cast<Shader*>(i);
-  if (!sh || energy) {
-    return -1;
-  }
+  if (!sh || energy || flag != NO_FLAG) { return -1; }
 
   energy = sh;
   return 0;

@@ -23,9 +23,8 @@ Shader::~Shader()
 
 // **** PatternShader Class ****
 // SceneItem Functions
-int PatternShader::add(SceneItem* i, SceneItemFlag flag)
+int PatternShader::addShader(Shader* sh, SceneItemFlag flag)
 {
-  Shader* sh = dynamic_cast<Shader*>(i);
   if (!sh) { return -1; }
 
   _children.emplace_back(sh);

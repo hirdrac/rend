@@ -35,11 +35,11 @@ namespace {
   {
     int error = 0;
     if (!p) {
-      error = s.add(sh, flag);
+      error = s.addShader(sh, flag);
     } else {
-      error = p->add(sh, flag);
+      error = p->addShader(sh, flag);
       if (!error && (dynamic_cast<Object*>(p) || dynamic_cast<Light*>(p))) {
-        error = s.add(sh, flag);  // also add to scene
+        error = s.addShader(sh, flag);  // also add to scene
       }
     }
 
@@ -51,10 +51,9 @@ namespace {
     return sp.processList(s, sh, n);
   }
 
-  int addObject(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
-                SceneItemFlag flag, Object* ob)
+  int addObject(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, Object* ob)
   {
-    int error = p ? p->add(ob, flag) : s.add(ob, flag);
+    int error = p ? p->addObject(ob) : s.addObject(ob);
     if (error) {
       delete ob;
       return error;
@@ -63,10 +62,9 @@ namespace {
     return sp.processList(s, ob, n);
   }
 
-  int addLight(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
-               SceneItemFlag flag, Light* lt)
+  int addLight(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, Light* lt)
   {
-    int error = p ? p->add(lt, flag) : s.add(lt, flag);
+    int error = p ? p->addLight(lt) : s.addLight(lt);
     if (error) {
       delete lt;
       return error;
@@ -120,19 +118,19 @@ int ColorCubeFn(
 int ConeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Cone);
+  return addObject(sp, s, p, n, new Cone);
 }
 
 int CubeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Cube);
+  return addObject(sp, s, p, n, new Cube);
 }
 
 int CylinderFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Cylinder);
+  return addObject(sp, s, p, n, new Cylinder);
 }
 
 int DefaultLightFn(
@@ -152,7 +150,7 @@ int DefaultObjectFn(
 int DifferenceFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Difference);
+  return addObject(sp, s, p, n, new Difference);
 }
 
 int DiffuseFn(
@@ -171,13 +169,7 @@ int DirectionFn(
 int DiscFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Disc);
-}
-
-int EnergyFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return dynamic_cast<Light*>(p) ? sp.processList(s, p, n) : -1;
+  return addObject(sp, s, p, n, new Disc);
 }
 
 int ExpFn(
@@ -208,7 +200,7 @@ int GlobalFn(
 int GroupFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Group);
+  return addObject(sp, s, p, n, new Group);
 }
 
 int IdentityFn(
@@ -224,7 +216,7 @@ int IdentityFn(
 int IntersectFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Intersection);
+  return addObject(sp, s, p, n, new Intersection);
 }
 
 int LocalFn(
@@ -242,7 +234,7 @@ int MaxdepthFn(
 int MergeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Merge);
+  return addObject(sp, s, p, n, new Merge);
 }
 
 int MinValueFn(
@@ -263,19 +255,19 @@ int NameFn(
 int OpenConeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new OpenCone);
+  return addObject(sp, s, p, n, new OpenCone);
 }
 
 int OpenCylinderFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new OpenCylinder);
+  return addObject(sp, s, p, n, new OpenCylinder);
 }
 
 int ParaboloidFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Paraboloid);
+  return addObject(sp, s, p, n, new Paraboloid);
 }
 
 int PhongFn(
@@ -287,7 +279,7 @@ int PhongFn(
 int PlaneFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Plane);
+  return addObject(sp, s, p, n, new Plane);
 }
 
 int PositionFn(
@@ -300,7 +292,7 @@ int PositionFn(
 int PointLightFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addLight(sp, s, p, n, flag, new PointLight);
+  return addLight(sp, s, p, n, new PointLight);
 }
 
 int RadiusFn(
@@ -445,13 +437,13 @@ int SpecularFn(
 int SphereFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Sphere);
+  return addObject(sp, s, p, n, new Sphere);
 }
 
 int SpotlightFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addLight(sp, s, p, n, flag, new SpotLight);
+  return addLight(sp, s, p, n, new SpotLight);
 }
 
 int StripeFn(
@@ -473,7 +465,7 @@ int TextureFn(
 int TorusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Torus);
+  return addObject(sp, s, p, n, new Torus);
 }
 
 int MoveFn(
@@ -497,7 +489,7 @@ int TransmitFn(
 int UnionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, flag, new Union);
+  return addObject(sp, s, p, n, new Union);
 }
 
 int ValueFn(
@@ -535,7 +527,6 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"dir",           DirectionFn},
   {"direction",     DirectionFn},
   {"disc",          DiscFn},
-  {"energy",        EnergyFn},
   {"exp",           ExpFn},
   {"eye",           EyeFn},
   {"fov",           FovFn},

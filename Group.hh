@@ -20,7 +20,7 @@ class Group final : public Primitive
   // SceneItem Functions
   std::string desc() const override;
   int setName(const std::string& str) override { _name = str; return 0; }
-  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int addObject(Object* ob) override;
   int init(Scene& s) override;
 
   // Object Functions

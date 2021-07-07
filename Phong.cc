@@ -30,9 +30,8 @@ int Phong::init(Scene& s)
   return 0;
 }
 
-int Phong::add(SceneItem* i, SceneItemFlag flag)
+int Phong::addShader(Shader* sh, SceneItemFlag flag)
 {
-  Shader* sh = dynamic_cast<Shader*>(i);
   if (!sh) { return -1; }
 
   switch (flag) {

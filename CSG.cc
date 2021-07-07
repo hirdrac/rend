@@ -26,15 +26,9 @@ CSG::~CSG()
 }
 
 // Member Functions
-int CSG::add(SceneItem* i, SceneItemFlag flag)
+int CSG::addObject(Object* ob)
 {
-  Object* ob = dynamic_cast<Object*>(i);
-  if (ob) {
-    _childList.addToTail(ob);
-    return 0;
-  } else {
-    return Primitive::add(i, flag);
-  }
+  return _childList.addToTail(ob);
 }
 
 int CSG::init(Scene& s)

@@ -50,45 +50,46 @@ void Scene::clear()
   _bound.reset();
 }
 
-int Scene::add(SceneItem* i, SceneItemFlag flag)
+int Scene::addObject(Object* ob)
 {
-  if (Object* ob = dynamic_cast<Object*>(i); ob != nullptr) {
-    object_list.addToTail(ob);
-    return 0;
-  }
+  return object_list.addToTail(ob);
+}
 
-  if (Light* lt = dynamic_cast<Light*>(i); lt != nullptr) {
-    lights.emplace_back(lt);
-    return 0;
-  }
+int Scene::addLight(Light* lt)
+{
+  if (!lt) { return -1; }
 
-  if (Shader* sh = dynamic_cast<Shader*>(i); sh != nullptr) {
-    switch (flag) {
-      case AIR:
-        if (air) { return -1; } else { air = sh; }
-        break;
-      case AMBIENT:
-        if (ambient) { return -1; } else { ambient = sh; }
-        break;
-      case BACKGROUND:
-        if (background) { return -1; } else { background = sh; }
-        break;
-      case DEFAULT_LT:
-        if (default_lt) { return -1; } else { default_lt = sh; }
-        break;
-      case DEFAULT_OBJ:
-        if (default_obj) { return -1; } else { default_obj = sh; }
-        break;
-      default:
-        // object/light shaders are added to the scene
-        // (which is in charge of initialization & memory)
-        break;
-    }
-    _shaders.emplace_back(sh);
-    return 0;
-  }
+  lights.emplace_back(lt);
+  return 0;
+}
 
-  return -1; // failed to add
+int Scene::addShader(Shader* sh, SceneItemFlag flag)
+{
+  if (!sh) { return -1; }
+
+  switch (flag) {
+    case AIR:
+      if (air) { return -1; } else { air = sh; }
+      break;
+    case AMBIENT:
+      if (ambient) { return -1; } else { ambient = sh; }
+      break;
+    case BACKGROUND:
+      if (background) { return -1; } else { background = sh; }
+      break;
+    case DEFAULT_LT:
+      if (default_lt) { return -1; } else { default_lt = sh; }
+      break;
+    case DEFAULT_OBJ:
+      if (default_obj) { return -1; } else { default_obj = sh; }
+      break;
+    default:
+      // object/light shaders are added to the scene
+      // (which is in charge of initialization & memory)
+      break;
+  }
+  _shaders.emplace_back(sh);
+  return 0;
 }
 
 int Scene::init()

@@ -20,15 +20,9 @@ Group::~Group()
 }
 
 // SceneItem Functions
-int Group::add(SceneItem* i, SceneItemFlag flag)
+int Group::addObject(Object* ob)
 {
-  Object* ob = dynamic_cast<Object*>(i);
-  if (ob) {
-    _childList.addToTail(ob);
-    return 0;
-  } else {
-    return Primitive::add(i, flag);
-  }
+  return _childList.addToTail(ob);
 }
 
 std::string Group::desc() const

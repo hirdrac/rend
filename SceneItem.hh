@@ -10,6 +10,9 @@
 // **** Types ****
 class Scene;
 class Transform;
+class Object;
+class Light;
+class Shader;
 
 
 enum SceneItemFlag {
@@ -32,7 +35,10 @@ class SceneItem
   virtual const Transform* trans() const { return nullptr; }
   virtual std::string desc() const = 0;
   virtual int setName(const std::string& val) { return -1; }
-  virtual int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) { return -1; }
+
+  virtual int addObject(Object* ob) { return -1; }
+  virtual int addLight(Light* lt) { return -1; }
+  virtual int addShader(Shader* sh, SceneItemFlag flag) { return -1; }
 
   virtual int init(Scene& s) { return 0; }
 };

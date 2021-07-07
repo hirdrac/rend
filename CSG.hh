@@ -18,7 +18,7 @@ class CSG : public Primitive
   ~CSG();
 
   // SceneItem Functions
-  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int addObject(Object* ob) override;
   int init(Scene& s) override;
 
   // Object Functions

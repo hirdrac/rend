@@ -65,7 +65,7 @@ class Primitive : public Object
 {
  public:
   // SceneItem Functions
-  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int addShader(Shader* sh, SceneItemFlag flag) override;
   int init(Scene& s) override;
   Transform*       trans() override       { return &_trans; }
   const Transform* trans() const override { return &_trans; }

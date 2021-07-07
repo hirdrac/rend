@@ -36,7 +36,7 @@ class ShaderGlobal final : public Shader
 {
  public:
   // SceneItem Functions
-  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int addShader(Shader* sh, SceneItemFlag flag) override;
   std::string desc() const override { return "<Global>"; }
   int init(Scene& s) override;
 
@@ -54,7 +54,7 @@ class ShaderLocal final : public Shader
 {
  public:
   // SceneItem Functions
-  int add(SceneItem* i, SceneItemFlag flag = NO_FLAG) override;
+  int addShader(Shader* sh, SceneItemFlag flag) override;
   std::string desc() const override { return "<Local>"; }
   int init(Scene& s) override;
 
