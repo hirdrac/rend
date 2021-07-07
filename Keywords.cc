@@ -248,8 +248,7 @@ int NameFn(
 {
   std::string buffer;
   if (int er = sp.getString(n, buffer); er != 0) { return er; }
-  if (buffer == "\"\"") { return -1; }
-  return p->setName(buffer);
+  return buffer.empty() ? -1 : p->setName(buffer);
 }
 
 int OpenConeFn(
