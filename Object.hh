@@ -87,4 +87,4 @@ class Primitive : public Object
 
 // **** Functions ****
 int InitObjectList(
-  Scene& s, Object* list, Shader* sh = nullptr, const Transform* t = nullptr);
+  Scene& s, Object* list, Shader* sh, const Transform* t = nullptr);
