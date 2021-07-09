@@ -7,6 +7,7 @@
 
 #pragma once
 #include "Shader.hh"
+#include "Color.hh"
 #include <memory>
 
 

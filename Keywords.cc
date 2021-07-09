@@ -7,6 +7,7 @@
 
 #include "Keywords.hh"
 #include "Parser.hh"
+#include "Scene.hh"
 #include "BasicLights.hh"
 #include "BasicObjects.hh"
 #include "BasicShaders.hh"

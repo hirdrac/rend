@@ -6,7 +6,7 @@
 //
 
 #pragma once
-#include "Scene.hh"
+#include "SceneItem.hh"
 #include "Transform.hh"
 #include "Types.hh"
 #include <vector>
@@ -16,6 +16,7 @@
 // **** Types ****
 class HitInfo;
 class Color;
+class Ray;
 
 class Shader : public SceneItem
 {
