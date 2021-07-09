@@ -8,6 +8,7 @@
 #include "Shadow.hh"
 #include "Ray.hh"
 #include "Scene.hh"
+#include "Color.hh"
 
 
 // **** Functions ****

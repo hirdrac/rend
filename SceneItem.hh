@@ -4,6 +4,9 @@
 //
 
 #pragma once
+#include "LightPtr.hh"
+#include "ShaderPtr.hh"
+#include "ObjectPtr.hh"
 #include <string>
 
 
@@ -11,8 +14,6 @@
 class Scene;
 class Transform;
 class Object;
-class Light;
-class Shader;
 
 
 enum SceneItemFlag {
@@ -36,9 +37,9 @@ class SceneItem
   virtual std::string desc() const = 0;
   virtual int setName(const std::string& val) { return -1; }
 
-  virtual int addObject(Object* ob) { return -1; }
-  virtual int addLight(Light* lt) { return -1; }
-  virtual int addShader(Shader* sh, SceneItemFlag flag) { return -1; }
+  virtual int addObject(const ObjectPtr& ob) { return -1; }
+  virtual int addLight(const LightPtr& lt) { return -1; }
+  virtual int addShader(const ShaderPtr& sh, SceneItemFlag flag) { return -1; }
 
   virtual int init(Scene& s) { return 0; }
 };

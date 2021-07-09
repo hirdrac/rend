@@ -28,15 +28,15 @@ struct LightResult {
 class Light : public SceneItem
 {
  public:
-  Vec3     pos, dir;
-  Shader*  energy = nullptr; // not owner
-  ShadowFn shadow_fn = nullptr;
+  Vec3      pos, dir;
+  ShaderPtr energy;
+  ShadowFn  shadow_fn = nullptr;
 
   Light();
   ~Light();
 
   // SceneItem Functions
-  int addShader(Shader* sh, SceneItemFlag flag) override;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   int init(Scene& s) override final;
 
   // Member Functions

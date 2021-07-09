@@ -23,11 +23,11 @@ Shader::~Shader()
 
 // **** PatternShader Class ****
 // SceneItem Functions
-int PatternShader::addShader(Shader* sh, SceneItemFlag flag)
+int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   if (!sh) { return -1; }
 
-  _children.emplace_back(sh);
+  _children.push_back(sh);
   return 0;
 }
 

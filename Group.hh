@@ -5,7 +5,6 @@
 
 #pragma once
 #include "Object.hh"
-#include "SList.hh"
 
 
 // **** Types ****
@@ -20,15 +19,15 @@ class Group final : public Primitive
   // SceneItem Functions
   std::string desc() const override;
   int setName(const std::string& str) override { _name = str; return 0; }
-  int addObject(Object* ob) override;
+  int addObject(const ObjectPtr& ob) override;
   int init(Scene& s) override;
 
   // Object Functions
   int bound(BBox& b) const override { return -1; }
   int intersect(const Ray& r, HitList& hit_list) const override;
-  const Object* childList() const override { return _childList.head(); }
+  const std::vector<ObjectPtr>& children() const override { return _children; }
 
  protected:
   std::string _name;
-  SList<Object> _childList;
+  std::vector<ObjectPtr> _children;
 };

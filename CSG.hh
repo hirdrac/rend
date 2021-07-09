@@ -7,7 +7,7 @@
 
 #pragma once
 #include "Object.hh"
-#include "SList.hh"
+#include <vector>
 
 
 // **** Class Definitions ****
@@ -18,17 +18,16 @@ class CSG : public Primitive
   ~CSG();
 
   // SceneItem Functions
-  int addObject(Object* ob) override;
+  int addObject(const ObjectPtr& ob) override;
   int init(Scene& s) override;
 
   // Object Functions
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override;
-  const Object* childList() const override { return _childList.head(); }
+  const std::vector<ObjectPtr>& children() const override { return _children; }
 
  protected:
-  SList<Object> _childList;
-  int _childCount = 0;
+  std::vector<ObjectPtr> _children;
 };
 
 

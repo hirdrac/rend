@@ -8,9 +8,9 @@
 #pragma once
 #include "SceneItem.hh"
 #include "Transform.hh"
+#include "ShaderPtr.hh"
 #include "Types.hh"
 #include <vector>
-#include <memory>
 
 
 // **** Types ****
@@ -39,14 +39,14 @@ class PatternShader : public Shader
   Transform*       trans() override       { return &_trans; }
   const Transform* trans() const override { return &_trans; }
   int init(Scene& s) override;
-  int addShader(Shader* sh, SceneItemFlag flag) override;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
  protected:
   Transform _trans;
-  std::vector<std::unique_ptr<Shader>> _children;
+  std::vector<ShaderPtr> _children;
 };
 
 
 // **** Functions ****
-int InitShader(
-  Scene& s, Shader& sh, Flt value = 1.0, const Transform* t = nullptr);
+int InitShader(Scene& s, Shader& sh, Flt value = 1.0,
+               const Transform* t = nullptr);

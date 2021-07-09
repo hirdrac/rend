@@ -15,6 +15,7 @@
 #include "Types.hh"
 #include "Print.hh"
 #include "PrintList.hh"
+#include "Object.hh"
 #include <cctype>
 #include <sstream>
 #include <string_view>
@@ -33,7 +34,7 @@ namespace
 // **** Functions ****
 int ShellInfo()
 {
-  if (TheScene.object_list.empty()) {
+  if (TheScene.objects().empty()) {
     println("No scene loaded");
     return -1;
   }
@@ -69,7 +70,7 @@ int ShellLoad(const std::string& file)
 
 int ShellRender()
 {
-  if (TheScene.object_list.empty()) {
+  if (TheScene.objects().empty()) {
     println("No scene loaded yet");
     return -1;
   }
@@ -203,10 +204,10 @@ int ShellLoop()
     break;
 
   case 'o':
-    if (TheScene.object_list.head()) {
-      PrintList(TheScene.object_list.head());
-    } else {
+    if (TheScene.objects().empty()) {
       println("No object list");
+    } else {
+      PrintList(TheScene.objects());
     }
     break;
 

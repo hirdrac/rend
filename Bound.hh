@@ -16,10 +16,10 @@
 class Bound final : public Object
 {
  public:
-  SList<Object> child_list;
+  std::vector<ObjectPtr> bounds;
     // smaller Bound objects only
 
-  std::vector<const Object*> object_list;
+  std::vector<ObjectPtr> objects;
     // non-Bound objects contained (not owning)
 
   BBox box; // bound size
@@ -34,9 +34,9 @@ class Bound final : public Object
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
   Flt hitCost() const override { return CostTable.bound; }
-  const Object* childList() const override { return child_list.head(); }
+  const std::vector<ObjectPtr>& children() const override { return bounds; }
 };
 
 
 // **** Functions ****
-Bound* MakeBoundList(const Object* list);
+ObjectPtr MakeBoundList(const std::vector<ObjectPtr>& o_list);

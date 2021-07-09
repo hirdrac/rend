@@ -7,20 +7,20 @@
 #include "Print.hh"
 
 
-template<class T>
-void PrintList(const T* list, int indent = 0)
+template<class ContainerType>
+void PrintList(const ContainerType& list, int indent = 0)
 {
-  if (!list) {
+  if (list.empty()) {
     for (int i = 0; i < indent; ++i) { print(' '); }
     println("*EMPTY*");
     return;
   }
 
-  for (; list != nullptr; list = list->next()) {
+  for (auto& x : list) {
     for (int i = 0; i < indent; ++i) { print(' '); }
-    println(list->desc());
-    if (list->childList()) {
-      PrintList(list->childList(), indent + 2);
+    println(x->desc());
+    if (!(x->children().empty())) {
+      PrintList(x->children(), indent + 2);
     }
   }
 }

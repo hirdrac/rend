@@ -21,14 +21,15 @@
 
 
 // **** Scene Class ****
-// Member Functions
+Scene::~Scene() = default;
+
 void Scene::clear()
 {
-  ambient = nullptr;
-  background = nullptr;
-  air = nullptr;
-  default_obj = nullptr;
-  default_lt = nullptr;
+  ambient.reset();
+  background.reset();
+  air.reset();
+  default_obj.reset();
+  default_lt.reset();
   image_width = 256;
   image_height = 256;
   eye.set(0,0,1);
@@ -44,26 +45,29 @@ void Scene::clear()
   min_ray_value = VERY_SMALL;
 
   // object clear
-  lights.clear();
-  _shaders.clear();
-  object_list.purge();
+  _objects.clear();
   _bound.reset();
+  _lights.clear();
+  _shaders.clear();
 }
 
-int Scene::addObject(Object* ob)
+int Scene::addObject(const ObjectPtr& ob)
 {
-  return object_list.addToTail(ob);
-}
+  if (!ob) { return -1; }
 
-int Scene::addLight(Light* lt)
-{
-  if (!lt) { return -1; }
-
-  lights.emplace_back(lt);
+  _objects.push_back(ob);
   return 0;
 }
 
-int Scene::addShader(Shader* sh, SceneItemFlag flag)
+int Scene::addLight(const LightPtr& lt)
+{
+  if (!lt) { return -1; }
+
+  _lights.push_back(lt);
+  return 0;
+}
+
+int Scene::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   if (!sh) { return -1; }
 
@@ -88,7 +92,7 @@ int Scene::addShader(Shader* sh, SceneItemFlag flag)
       // (which is in charge of initialization & memory)
       break;
   }
-  _shaders.emplace_back(sh);
+  _shaders.push_back(sh);
   return 0;
 }
 
@@ -96,38 +100,39 @@ int Scene::init()
 {
   // Set default scene shaders
   if (!ambient) {
-    ambient = new ShaderColor( .1,  .1,  .1);
-    _shaders.emplace_back(ambient);
+    ambient = makeShader<ShaderColor>( .1,  .1,  .1);
+    _shaders.push_back(ambient);
   }
 
   if (!background) {
-    background = new ShaderColor( .2,  .2,  .5);
-    _shaders.emplace_back(background);
+    background = makeShader<ShaderColor>( .2,  .2,  .5);
+    _shaders.push_back(background);
   }
 
   if (!default_obj) {
-    default_obj = new ShaderColor( .3,  .3,  .3);
-    _shaders.emplace_back(default_obj);
+    default_obj = makeShader<ShaderColor>( .3,  .3,  .3);
+    _shaders.push_back(default_obj);
   }
 
   if (!default_lt) {
-    default_lt = new ShaderColor(1.0, 1.0, 1.0);
-    _shaders.emplace_back(default_lt);
+    default_lt = makeShader<ShaderColor>(1.0, 1.0, 1.0);
+    _shaders.push_back(default_lt);
   }
 
   // Init scene items
-  if (InitObjectList(*this, object_list.head(), default_obj)) {
-    println("Error initializing object list");
-    return -1;  // error
+  for (auto& ob : _objects) {
+    if (InitObject(*this, *ob, default_obj)) {
+      println("Error initializing object list");
+      return -1;  // error
+    }
   }
 
   // setup bounding boxes
-  _bound.reset(MakeBoundList(object_list.head()));
-  assert(!_bound || _bound->next() == nullptr);
+  _bound = MakeBoundList(_objects);
 
   // init lights
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
-  for (auto& lt : lights) {
+  for (auto& lt : _lights) {
     if (InitLight(*this, *lt, sFn)) {
       println("Error initializing light list");
       return -1;  // error
@@ -155,7 +160,7 @@ void Scene::info(std::ostream& out) const
   println_os(out, " Max ray depth:\t", max_ray_depth);
   println_os(out, " Min ray value:\t", min_ray_value);
   println_os(out, "Light List:");
-  for (auto& lt : lights) { println_os(out, "  ", lt->desc()); }
+  for (auto& lt : _lights) { println_os(out, "  ", lt->desc()); }
   println_os(out);
 }
 
@@ -163,12 +168,11 @@ int Scene::traceRay(const Ray& r, Color& result) const
 {
   ++r.stats->rays_cast;
 
-  const Object* o_list = _bound.get();
-  if (!o_list) { o_list = object_list.head(); }
-
   HitList hit_list(r.freeCache);
-  for (const Object* ob = o_list; ob != nullptr; ob = ob->next()) {
-    ob->intersect(r, hit_list);
+  if (_bound) {
+    _bound->intersect(r, hit_list);
+  } else {
+    for (auto& ob : _objects) { ob->intersect(r, hit_list); }
   }
 
   HitInfo* hit = hit_list.findFirstHit(r);
@@ -186,9 +190,9 @@ int Scene::traceRay(const Ray& r, Color& result) const
   obj->evalHit(*hit, normal, map);
   if (DotProduct(r.dir, normal) > 0.0) { normal.invert(); }
 
-  Shader* sh = obj->shader();
+  Shader* sh = obj->shader().get();
   if (!sh) {
-    sh = default_obj;
+    sh = default_obj.get();
     if (!sh) {
       println("no shader!!");
       result.clear();
@@ -205,12 +209,11 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
 {
   ++r.stats->shadow_rays_cast;
 
-  const Object* o_list = _bound.get();
-  if (!o_list) { o_list = object_list.head(); }
-
   HitList hit_list(r.freeCache);
-  for (const Object* ob = o_list; ob != nullptr; ob = ob->next()) {
-    ob->intersect(r, hit_list);
+  if (_bound) {
+    _bound->intersect(r, hit_list);
+  } else {
+    for (auto& ob : _objects) { ob->intersect(r, hit_list); }
   }
 
   const HitInfo* hit = hit_list.findFirstHit(r);

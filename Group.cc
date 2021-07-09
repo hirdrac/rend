@@ -20,9 +20,12 @@ Group::~Group()
 }
 
 // SceneItem Functions
-int Group::addObject(Object* ob)
+int Group::addObject(const ObjectPtr& ob)
 {
-  return _childList.addToTail(ob);
+  if (!ob) { return -1; }
+
+  _children.push_back(ob);
+  return 0;
 }
 
 std::string Group::desc() const
@@ -36,15 +39,16 @@ std::string Group::desc() const
 
 int Group::init(Scene& s)
 {
-  return InitObjectList(s, _childList.head(), shader(), &_trans);
+  for (auto& ob : _children) {
+    if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
+  }
+  return 0;
 }
 
 // Object Functions
 int Group::intersect(const Ray& r, HitList& hit_list) const
 {
   int hits = 0;
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    hits += ob->intersect(r, hit_list);
-  }
+  for (auto& ob : _children) { hits += ob->intersect(r, hit_list); }
   return hits;
 }

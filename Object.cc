@@ -58,6 +58,9 @@ void BBox::fit(const Transform& t, const Vec3* pt_list, int pt_count)
 
 
 // **** Object Class ****
+const ShaderPtr Object::_nullShader;
+const std::vector<ObjectPtr> Object::_emptyList;
+
 Object::Object()
 {
   ++Inventory.objects;
@@ -71,7 +74,7 @@ Object::~Object()
 
 // **** Primitive Class ****
 // SceneItem Functions
-int Primitive::addShader(Shader* sh, SceneItemFlag flag)
+int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   if (!sh || _shader) { return -1; }
 
@@ -96,32 +99,28 @@ int Primitive::bound(BBox& b) const
 
 
 // **** Functions ****
-int InitObjectList(Scene& s, Object* list, Shader* sh, const Transform* t)
+int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
 {
-  for (; list != nullptr; list = list->next()) {
-    Transform* trans = list->trans();
-    if (!trans) {
-      println("No Trans ERROR: ", list->desc());
-      return -1;
-    }
+  Transform* trans = ob.trans();
+  if (!trans) {
+    println("No Trans ERROR: ", ob.desc());
+    return -1;
+  }
 
-    // Transform by parent trans
-    trans->global = trans->local;
-    if (t) {
-      trans->global *= t->global;
-    }
+  // Transform by parent trans
+  trans->global = trans->local;
+  if (t) {
+    trans->global *= t->global;
+  }
 
-    // Assign default shader if none is set
-    if (!list->shader()) {
-      list->setShader(sh);
-    }
+  // Assign default shader if none is set
+  if (!ob.shader()) { ob.setShader(sh); }
 
-    // Init primitive
-    int error = list->init(s);
-    if (error) {
-      println("INIT ERROR: ", list->desc());
-      return error;
-    }
+  // Init primitive
+  int error = ob.init(s);
+  if (error) {
+    println("INIT ERROR: ", ob.desc());
+    return error;
   }
 
   return 0;

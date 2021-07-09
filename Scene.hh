@@ -6,13 +6,12 @@
 //
 
 #pragma once
-#include "Object.hh"
-#include "Light.hh"
-#include "Shader.hh"
+#include "ObjectPtr.hh"
+#include "LightPtr.hh"
+#include "ShaderPtr.hh"
+#include "SceneItem.hh"
 #include "Types.hh"
-#include "SList.hh"
 #include <vector>
-#include <memory>
 
 
 // **** Types ****
@@ -26,17 +25,14 @@ class Ray;
 class Scene
 {
  public:
-  SList<Object> object_list; // Complete list of objects (including Groups)
-  std::vector<std::unique_ptr<Light>> lights;
-
   // Scene color shaders
-  Shader* ambient;
-  Shader* background;
-  Shader* air;
+  ShaderPtr ambient;
+  ShaderPtr background;
+  ShaderPtr air;
 
   // Default shaders
-  Shader* default_obj;
-  Shader* default_lt;
+  ShaderPtr default_obj;
+  ShaderPtr default_lt;
 
   int  image_width, image_height;     // Image pixel size
   int  region_min[2], region_max[2];  // Render region
@@ -51,18 +47,29 @@ class Scene
 
 
   Scene() { clear(); }
+  ~Scene();
 
   // Member Functions
   void clear();
-  int addObject(Object* ob);
-  int addLight(Light* lt);
-  int addShader(Shader* sh, SceneItemFlag flag);
+  int addObject(const ObjectPtr& ob);
+  int addLight(const LightPtr& lt);
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag);
   int init();
   void info(std::ostream& out) const;
   int traceRay(const Ray& r, Color& result) const;
   int traceShadowRay(const Ray& r, Color& result) const;
 
+  const std::vector<ObjectPtr>& objects() const { return _objects; }
+  const std::vector<LightPtr>& lights() const { return _lights; }
+
  private:
-  std::unique_ptr<Object> _bound; // Bounding box hierarchy of objects
-  std::vector<std::unique_ptr<Shader>> _shaders;
+  std::vector<ObjectPtr> _objects;
+    // Complete list of objects (including Groups but not Bounds)
+
+  ObjectPtr _bound; // Bounding box hierarchy of objects
+
+  std::vector<LightPtr> _lights;
+
+  std::vector<ShaderPtr> _shaders;
+    // all top-level shader objects (for initialization)
 };

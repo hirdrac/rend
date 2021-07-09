@@ -18,38 +18,31 @@
 
 
 // **** Prototypes ****
-class OptNode;
+struct OptNode;
 Flt TreeWeight(const OptNode* node_list, Flt weight);
 
 
-// **** OptNode class ****
-class OptNode
+// **** OptNode struct ****
+struct OptNode
 {
- public:
   OptNode* next = nullptr;
   OptNode* child = nullptr;
-  const Object* object; // null if node is bound (has children)
+  ObjectPtr object; // null if node is bound (has children)
   BBox box;
 
-  OptNode(const Object* ob = nullptr) : object(ob) {
-    if (ob) { ob->bound(box); }
-  }
+  OptNode() = default;
+  OptNode(const ObjectPtr& ob) : object(ob) { ob->bound(box); }
 
   // Member Functions
   Flt cost(Flt weight) const
   {
     if (object) {
-      return (weight * object->hitCost());
+      return weight * object->hitCost();
     } else {
       // node is bound
       return (weight * CostTable.bound) + TreeWeight(child, box.weight());
     }
   }
-
- private:
-  // prevent copy/assign
-  OptNode(const OptNode&) = delete;
-  OptNode& operator=(const OptNode&) = delete;
 };
 
 
@@ -68,7 +61,7 @@ Bound::~Bound()
 std::string Bound::desc() const
 {
   std::ostringstream os;
-  os << "<Bound " << object_list.size() << '>';
+  os << "<Bound " << objects.size() << '>';
   return os.str();
 }
 
@@ -141,12 +134,12 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
 
   // bounding box hit - intersect child bounds
   int hits = 0;
-  for (const Object* ob = child_list.head(); ob != nullptr; ob = ob->next()) {
+  for (auto& ob : bounds) {
     hits += ob->intersect(r, hit_list);
   }
 
   // Intersect all contained objects
-  for (const Object* ob : object_list) {
+  for (auto& ob : objects) {
     hits += ob->intersect(r, hit_list);
   }
 
@@ -186,11 +179,11 @@ void PrintBoundList(const OptNode* node_list, int indent = 0)
   while (node_list) {
     for (int i = 0; i < indent; ++i) { print(' '); }
 
-    const Object* obj = node_list->object;
-    if (obj) {
-      println(obj->desc());
-      if (obj->childList()) {
-        PrintList(obj->childList(), indent + 2);
+    auto& ob = node_list->object;
+    if (ob) {
+      println(ob->desc());
+      if (!(ob->children().empty())) {
+        PrintList(ob->children(), indent + 2);
       }
     } else {
       println("<Bound>");
@@ -242,7 +235,7 @@ OptNode* MergeOptNodes(OptNode* node1, OptNode* node2)
   }
 
   // Create new bounding box
-  OptNode* b = new OptNode;
+  OptNode* b = new OptNode();
   b->box   = box;
   b->child = n1;
   while (n2) {
@@ -255,24 +248,24 @@ OptNode* MergeOptNodes(OptNode* node1, OptNode* node2)
   return b;
 }
 
-OptNode* MakeOptNodeList(const Object* o_list)
+OptNode* MakeOptNodeList(const std::vector<ObjectPtr>& o_list)
 {
   OptNode* node_list = nullptr;
 
-  for (const Object* o = o_list; o != nullptr; o = o->next()) {
-    const Group* gPtr = dynamic_cast<const Group*>(o);
+  for (auto& ob : o_list) {
+    const Group* gPtr = dynamic_cast<const Group*>(ob.get());
     if (gPtr) {
       // Add contents of group
-      OptNode* sub_list = MakeOptNodeList(gPtr->childList());
+      OptNode* sub_list = MakeOptNodeList(gPtr->children());
       if (sub_list) {
         OptNode* tmp = sub_list;
         while (tmp->next) { tmp = tmp->next; }
         tmp->next = node_list;
         node_list = sub_list;
       }
-    } else if (o->isVisible()) {
+    } else if (ob->isVisible()) {
       // Create new node for object
-      OptNode* n = new OptNode(o);
+      OptNode* n = new OptNode(ob);
       n->next = node_list;
       node_list = n;
     }
@@ -306,7 +299,7 @@ int OptimizeOptNodeList(OptNode*& node_list, Flt weight, int depth = 0)
     Flt cost2 = (weight * CostTable.bound) + n->cost(n->box.weight());
     if (cost1 > cost2) {
       // Put object into bound (alone)
-      OptNode* b = new OptNode;
+      OptNode* b = new OptNode();
       b->child = n;
       b->box   = n->box;
 
@@ -370,23 +363,23 @@ int OptimizeOptNodeList(OptNode*& node_list, Flt weight, int depth = 0)
   return 0;
 }
 
-Bound* ConvertNodeList(OptNode* node_list)
+std::shared_ptr<Bound> ConvertNodeList(OptNode* node_list)
 {
   if (!node_list) {
-    return nullptr;
+    return std::shared_ptr<Bound>();
   }
 
-  Bound* b = new Bound;
+  auto b = std::make_shared<Bound>();
 
   // set up bound
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
     if (n->object) {
-      b->object_list.push_back(n->object);
+      b->objects.push_back(n->object);
       b->box.fit(n->box);
     } else {
-      Bound* child_b = ConvertNodeList(n->child);
+      auto child_b = ConvertNodeList(n->child);
       if (child_b) {
-	b->child_list.addToTail(child_b);
+        b->bounds.push_back(child_b);
 	b->box.fit(child_b->box);
       }
     }
@@ -395,7 +388,7 @@ Bound* ConvertNodeList(OptNode* node_list)
   return b;
 }
 
-Bound* MakeBoundList(const Object* o_list)
+ObjectPtr MakeBoundList(const std::vector<ObjectPtr>& o_list)
 {
   OptNode* node_list = MakeOptNodeList(o_list);
   if (!node_list) {
@@ -415,7 +408,7 @@ Bound* MakeBoundList(const Object* o_list)
   println("New tree weight: ", TreeWeight(node_list, box.weight()));
   PrintBoundList(node_list);
 
-  Bound* bound = ConvertNodeList(node_list);
+  auto bound = ConvertNodeList(node_list);
   bound->always_hit = true;
   KillTree(node_list);
   return bound;

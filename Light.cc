@@ -29,7 +29,7 @@ int Light::init(Scene& s)
   return 0;
 }
 
-int Light::addShader(Shader* sh, SceneItemFlag flag)
+int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   if (!sh || energy || flag != NO_FLAG) { return -1; }
 

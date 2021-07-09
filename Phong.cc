@@ -30,7 +30,7 @@ int Phong::init(Scene& s)
   return 0;
 }
 
-int Phong::addShader(Shader* sh, SceneItemFlag flag)
+int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   if (!sh) { return -1; }
 
@@ -38,17 +38,17 @@ int Phong::addShader(Shader* sh, SceneItemFlag flag)
     default:
     case DIFFUSE:
       if (_diffuse) { return -1; }
-      _diffuse.reset(sh);
+      _diffuse = sh;
       break;
 
     case SPECULAR:
       if (_specular) { return -1; }
-      _specular.reset(sh);
+      _specular = sh;
       break;
 
     case TRANSMIT:
       if (_transmit) { return -1; }
-      _transmit.reset(sh);
+      _transmit = sh;
       break;
   }
 
@@ -94,7 +94,7 @@ int Phong::evaluate(
   s.ambient->evaluate(s, r, h, normal, map, tmp);
   MultColor(tmp, color_d, result);
 
-  for (auto& lt : s.lights) {
+  for (auto& lt : s.lights()) {
     LightResult lresult;
     lt->luminate(s, r, h, normal, map, lresult);
     Flt angle = DotProduct(normal, lresult.dir);

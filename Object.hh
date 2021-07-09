@@ -6,10 +6,11 @@
 //
 
 #pragma once
-#include "Transform.hh"
 #include "SceneItem.hh"
+#include "Transform.hh"
+#include "ObjectPtr.hh"
 #include "Types.hh"
-#include "SList.hh"
+#include <vector>
 
 
 // **** Types ****
@@ -37,7 +38,7 @@ class BBox
 
 
 // Object base class
-class Object : public SceneItem, public SListNode<Object>
+class Object : public SceneItem
 {
  public:
   Object();
@@ -53,9 +54,13 @@ class Object : public SceneItem, public SListNode<Object>
   virtual bool isVisible() const { return false; }
   virtual bool isSolid() const { return false; }
   virtual int setSolid(bool s) { return -1; }
-  virtual Shader* shader() const { return nullptr; }
-  virtual int     setShader(Shader* sh) { return -1; }
-  virtual const Object* childList() const { return nullptr; }
+  virtual const ShaderPtr& shader() const { return _nullShader; }
+  virtual int setShader(const ShaderPtr& sh) { return -1; }
+  virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
+
+ private:
+  static const ShaderPtr _nullShader;
+  static const std::vector<ObjectPtr> _emptyList;
 };
 
 
@@ -65,7 +70,7 @@ class Primitive : public Object
 {
  public:
   // SceneItem Functions
-  int addShader(Shader* sh, SceneItemFlag flag) override;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   int init(Scene& s) override;
   Transform*       trans() override       { return &_trans; }
   const Transform* trans() const override { return &_trans; }
@@ -75,16 +80,16 @@ class Primitive : public Object
   bool isVisible() const override    { return true; }
   bool isSolid() const override      { return _solid; }
   int setSolid(bool s) override      { _solid = s; return 0; }
-  Shader* shader() const override    { return _shader; }
-  int setShader(Shader* sh) override { _shader = sh; return 0; }
+  const ShaderPtr& shader() const override { return _shader; }
+  int setShader(const ShaderPtr& sh) override { _shader = sh; return 0; }
 
  protected:
   Transform _trans;
-  Shader* _shader = nullptr; // not owner
+  ShaderPtr _shader;
   bool _solid = false;
 };
 
 
 // **** Functions ****
-int InitObjectList(
-  Scene& s, Object* list, Shader* sh, const Transform* t = nullptr);
+int InitObject(Scene& s, Object& ob, const ShaderPtr& sh,
+               const Transform* t = nullptr);

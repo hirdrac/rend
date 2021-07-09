@@ -26,20 +26,27 @@ CSG::~CSG()
 }
 
 // Member Functions
-int CSG::addObject(Object* ob)
+int CSG::addObject(const ObjectPtr& ob)
 {
-  return _childList.addToTail(ob);
+  if (!ob) { return -1; }
+
+  _children.push_back(ob);
+  return 0;
 }
 
 int CSG::init(Scene& s)
 {
-  _childCount = _childList.count();
-  if (_childCount <= 1) {
-    LOG_ERROR("Too few objects for CSG (", _childCount, ")");
+  auto count = _children.size();
+  if (count <= 1) {
+    LOG_ERROR("Too few objects for CSG (", count, ")");
     return -1;
   }
 
-  return InitObjectList(s, _childList.head(), shader(), &_trans);
+  for (auto& ob : _children) {
+    if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
+  }
+
+  return 0;
 }
 
 int CSG::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
@@ -50,10 +57,7 @@ int CSG::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 Flt CSG::hitCost() const
 {
   Flt cost = CostTable.csg;
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    cost += ob->hitCost();
-  }
-
+  for (auto& ob : _children) { cost += ob->hitCost(); }
   return cost;
 }
 
@@ -62,9 +66,7 @@ Flt CSG::hitCost() const
 int Merge::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    ob->intersect(r, hl);
-  }
+  for (auto& ob : _children) { ob->intersect(r, hl); }
   hl.csgMerge(this);
 
   int hits = hl.count();
@@ -74,10 +76,7 @@ int Merge::intersect(const Ray& r, HitList& hit_list) const
 
 int Merge::bound(BBox& b) const
 {
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    ob->bound(b);
-  }
-
+  for (auto& ob : _children) { ob->bound(b); }
   return 0;
 }
 
@@ -86,9 +85,7 @@ int Merge::bound(BBox& b) const
 int Union::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    ob->intersect(r, hl);
-  }
+  for (auto& ob : _children) { ob->intersect(r, hl); }
   hl.csgUnion(this);
 
   int hits = hl.count();
@@ -98,10 +95,7 @@ int Union::intersect(const Ray& r, HitList& hit_list) const
 
 int Union::bound(BBox& b) const
 {
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    ob->bound(b);
-  }
-
+  for (auto& ob : _children) { ob->bound(b); }
   return 0;
 }
 
@@ -110,10 +104,8 @@ int Union::bound(BBox& b) const
 int Intersection::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    ob->intersect(r, hl);
-  }
-  hl.csgIntersection(this, _childCount);
+  for (auto& ob : _children) { ob->intersect(r, hl); }
+  hl.csgIntersection(this, int(_children.size()));
 
   int hits = hl.count();
   hit_list.mergeList(hl);
@@ -126,7 +118,7 @@ int Intersection::bound(BBox& b) const
   BBox box;
 
   // find smallest bounding box
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
+  for (auto& ob : _children) {
     box.reset();
     ob->bound(box);
     Flt weight = box.weight();
@@ -144,9 +136,7 @@ int Intersection::bound(BBox& b) const
 int Difference::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (const Object* ob = _childList.head(); ob != nullptr; ob = ob->next()) {
-    ob->intersect(r, hl);
-  }
+  for (auto& ob : _children) { ob->intersect(r, hl); }
   //hl.csgDifference(this, _childList.head(), _childCount - 1);
   // FIXME - finish
 
@@ -157,9 +147,5 @@ int Difference::intersect(const Ray& r, HitList& hit_list) const
 
 int Difference::bound(BBox& b) const
 {
-  if (_childList.empty()) {
-    return -1;
-  }
-
-  return _childList.head()->bound(b);
+  return _children.empty() ? -1 : _children.front()->bound(b);
 }

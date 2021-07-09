@@ -32,7 +32,7 @@ namespace {
   }
 
   int addShader(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
-                SceneItemFlag flag, Shader* sh)
+                SceneItemFlag flag, const ShaderPtr& sh)
   {
     int error = 0;
     if (!p) {
@@ -40,38 +40,25 @@ namespace {
     } else {
       error = p->addShader(sh, flag);
       if (!error && (dynamic_cast<Object*>(p) || dynamic_cast<Light*>(p))) {
-        error = s.addShader(sh, flag);  // also add to scene
+        error = s.addShader(sh, NO_FLAG);  // also add to scene
       }
     }
 
-    if (error) {
-      delete sh;
-      return error;
-    }
-
-    return sp.processList(s, sh, n);
+    return error ? error : sp.processList(s, sh.get(), n);
   }
 
-  int addObject(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, Object* ob)
+  int addObject(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
+                const ObjectPtr& ob)
   {
     int error = p ? p->addObject(ob) : s.addObject(ob);
-    if (error) {
-      delete ob;
-      return error;
-    }
-
-    return sp.processList(s, ob, n);
+    return error ? error : sp.processList(s, ob.get(), n);
   }
 
-  int addLight(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, Light* lt)
+  int addLight(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
+               const LightPtr& lt)
   {
     int error = p ? p->addLight(lt) : s.addLight(lt);
-    if (error) {
-      delete lt;
-      return error;
-    }
-
-    return sp.processList(s, lt, n);
+    return error ? error : sp.processList(s, lt.get(), n);
   }
 }
 
@@ -101,7 +88,7 @@ int BackgroundFn(
 int CheckerboardFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new Checkerboard);
+  return addShader(sp, s, p, n, flag, makeShader<Checkerboard>());
 }
 
 int CoiFn(
@@ -113,25 +100,25 @@ int CoiFn(
 int ColorCubeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new ColorCube);
+  return addShader(sp, s, p, n, flag, makeShader<ColorCube>());
 }
 
 int ConeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Cone);
+  return addObject(sp, s, p, n, makeObject<Cone>());
 }
 
 int CubeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Cube);
+  return addObject(sp, s, p, n, makeObject<Cube>());
 }
 
 int CylinderFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Cylinder);
+  return addObject(sp, s, p, n, makeObject<Cylinder>());
 }
 
 int DefaultLightFn(
@@ -151,7 +138,7 @@ int DefaultObjectFn(
 int DifferenceFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Difference);
+  return addObject(sp, s, p, n, makeObject<Difference>());
 }
 
 int DiffuseFn(
@@ -170,7 +157,7 @@ int DirectionFn(
 int DiscFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Disc);
+  return addObject(sp, s, p, n, makeObject<Disc>());
 }
 
 int ExpFn(
@@ -195,13 +182,13 @@ int FovFn(
 int GlobalFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new ShaderGlobal);
+  return addShader(sp, s, p, n, flag, makeShader<ShaderGlobal>());
 }
 
 int GroupFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Group);
+  return addObject(sp, s, p, n, makeObject<Group>());
 }
 
 int IdentityFn(
@@ -217,13 +204,13 @@ int IdentityFn(
 int IntersectFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Intersection);
+  return addObject(sp, s, p, n, makeObject<Intersection>());
 }
 
 int LocalFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new ShaderLocal);
+  return addShader(sp, s, p, n, flag, makeShader<ShaderLocal>());
 }
 
 int MaxdepthFn(
@@ -235,7 +222,7 @@ int MaxdepthFn(
 int MergeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Merge);
+  return addObject(sp, s, p, n, makeObject<Merge>());
 }
 
 int MinValueFn(
@@ -255,31 +242,31 @@ int NameFn(
 int OpenConeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new OpenCone);
+  return addObject(sp, s, p, n, makeObject<OpenCone>());
 }
 
 int OpenCylinderFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new OpenCylinder);
+  return addObject(sp, s, p, n, makeObject<OpenCylinder>());
 }
 
 int ParaboloidFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Paraboloid);
+  return addObject(sp, s, p, n, makeObject<Paraboloid>());
 }
 
 int PhongFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new Phong);
+  return addShader(sp, s, p, n, flag, makeShader<Phong>());
 }
 
 int PlaneFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Plane);
+  return addObject(sp, s, p, n, makeObject<Plane>());
 }
 
 int PositionFn(
@@ -292,7 +279,7 @@ int PositionFn(
 int PointLightFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addLight(sp, s, p, n, new PointLight);
+  return addLight(sp, s, p, n, makeLight<PointLight>());
 }
 
 int RadiusFn(
@@ -325,13 +312,13 @@ int RgbFn(
   if (int er = sp.getFlt(n, r); er != 0) { return er; }
   if (int er = sp.getFlt(n, g); er != 0) { return er; }
   if (int er = sp.getFlt(n, b); er != 0) { return er; }
-  return addShader(sp, s, p, n, flag, new ShaderColor(r, g, b));
+  return addShader(sp, s, p, n, flag, makeShader<ShaderColor>(r, g, b));
 }
 
 int RingFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new Ring);
+  return addShader(sp, s, p, n, flag, makeShader<Ring>());
 }
 
 int RotateXFn(
@@ -401,7 +388,7 @@ int ShadowBoolFn(
 int SideFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new ShaderSide);
+  return addShader(sp, s, p, n, flag, makeShader<ShaderSide>());
 }
 
 int SizeFn(
@@ -437,19 +424,19 @@ int SpecularFn(
 int SphereFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Sphere);
+  return addObject(sp, s, p, n, makeObject<Sphere>());
 }
 
 int SpotlightFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addLight(sp, s, p, n, new SpotLight);
+  return addLight(sp, s, p, n, makeLight<SpotLight>());
 }
 
 int StripeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addShader(sp, s, p, n, flag, new Stripe);
+  return addShader(sp, s, p, n, flag, makeShader<Stripe>());
 }
 
 #if 0
@@ -458,14 +445,14 @@ int TextureFn(
 {
   std::string filename;
   sp.getString(n, filename);
-  return addShader(sp, s, p, n, flag, new TextureMap);
+  return addShader(sp, s, p, n, flag, makeShader<TextureMap>());
 }
 #endif
 
 int TorusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Torus);
+  return addObject(sp, s, p, n, makeObject<Torus>());
 }
 
 int MoveFn(
@@ -489,7 +476,7 @@ int TransmitFn(
 int UnionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return addObject(sp, s, p, n, new Union);
+  return addObject(sp, s, p, n, makeObject<Union>());
 }
 
 int ValueFn(
