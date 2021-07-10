@@ -13,6 +13,17 @@
 
 
 // **** BBox class ****
+BBox::BBox(const BBox& b1, const BBox& b2)
+{
+  pmin.x = std::min(b1.pmin.x, b2.pmin.x);
+  pmin.y = std::min(b1.pmin.y, b2.pmin.y);
+  pmin.z = std::min(b1.pmin.z, b2.pmin.z);
+
+  pmax.x = std::max(b1.pmax.x, b2.pmax.x);
+  pmax.y = std::max(b1.pmax.y, b2.pmax.y);
+  pmax.z = std::max(b1.pmax.z, b2.pmax.z);
+}
+
 void BBox::reset()
 {
   pmin.set( VERY_LARGE,  VERY_LARGE,  VERY_LARGE);

@@ -27,6 +27,7 @@ class BBox
   Vec3 pmin, pmax;
 
   BBox() { reset(); }
+  BBox(const BBox& b1, const BBox& b2);
 
   // Member Functions
   void reset();
