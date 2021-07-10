@@ -132,13 +132,8 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
     ++r.stats->bound_hit;
   }
 
-  // bounding box hit - intersect child bounds
-  int hits = 0;
-  for (auto& ob : bounds) {
-    hits += ob->intersect(r, hit_list);
-  }
-
   // Intersect all contained objects
+  int hits = 0;
   for (auto& ob : objects) {
     hits += ob->intersect(r, hit_list);
   }
@@ -210,8 +205,8 @@ Flt MergeCost(const OptNode* node1, const OptNode* node2, Flt weight)
   box.fit(node2->box);
   Flt w = box.weight();
 
-  Flt cost1 = node1->object ? node1->cost(w) : node1->child->cost(w);
-  Flt cost2 = node2->object ? node2->cost(w) : node2->child->cost(w);
+  Flt cost1 = node1->object ? node1->cost(w) : TreeWeight(node1->child, w);
+  Flt cost2 = node2->object ? node2->cost(w) : TreeWeight(node2->child, w);
   return (weight * CostTable.bound) + cost1 + cost2;
 }
 
@@ -379,7 +374,7 @@ std::shared_ptr<Bound> ConvertNodeList(OptNode* node_list)
     } else {
       auto child_b = ConvertNodeList(n->child);
       if (child_b) {
-        b->bounds.push_back(child_b);
+        b->objects.push_back(child_b);
 	b->box.fit(child_b->box);
       }
     }

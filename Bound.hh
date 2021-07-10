@@ -16,12 +16,7 @@
 class Bound final : public Object
 {
  public:
-  std::vector<ObjectPtr> bounds;
-    // smaller Bound objects only
-
   std::vector<ObjectPtr> objects;
-    // non-Bound objects contained (not owning)
-
   BBox box; // bound size
   bool always_hit = false;
 
@@ -34,7 +29,7 @@ class Bound final : public Object
   // Object Functions
   int intersect(const Ray& r, HitList& hit_list) const override;
   Flt hitCost() const override { return CostTable.bound; }
-  const std::vector<ObjectPtr>& children() const override { return bounds; }
+  const std::vector<ObjectPtr>& children() const override { return objects; }
 };
 
 
