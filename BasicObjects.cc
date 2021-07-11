@@ -104,19 +104,19 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
   int hits = 0;
   if (IsPositive(x)) {
     Flt sqrt_x = std::sqrt(x);
-    Flt h = (-b - sqrt_x) / a;  // near hit
-    Vec3 pt = CalcHitPoint(base, dir, h);
-    if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
+    Flt near_h = (-b - sqrt_x) / a;  // near hit
+    Vec3 near_pt = CalcHitPoint(base, dir, near_h);
+    if ((near_pt.z >= -1.0) && (near_pt.z <= 1.0)) {
       // hit side
-      hit_list.addHit(this, h, pt);
+      hit_list.addHit(this, near_h, near_pt);
       ++hits;
     }
 
-    h = (-b + sqrt_x) / a;  // far hit
-    pt = CalcHitPoint(base, dir, h);
-    if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
+    Flt far_h = (-b + sqrt_x) / a;  // far hit
+    Vec3 far_pt = CalcHitPoint(base, dir, far_h);
+    if ((far_pt.z >= -1.0) && (far_pt.z <= 1.0)) {
       // hit side
-      hit_list.addHit(this, h, pt);
+      hit_list.addHit(this, far_h, far_pt);
       ++hits;
     }
   }
@@ -148,8 +148,7 @@ int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 	   (1.0 - h.local_pt.z) * .25};
     normal = _trans.normalLocalToGlobal(n, 0);
 
-    Vec2 dir = {h.local_pt.x, h.local_pt.y};
-    dir.normalize();
+    Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
     Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
     Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
     map.set((h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0);
@@ -414,18 +413,17 @@ int OpenCone::intersect(const Ray& r, HitList& hit_list) const
     return 0;  // cone completely behind ray origin
   }
 
-  Vec3 pt;
   int hits = 0;
 
-  pt = CalcHitPoint(base, dir, h1);
-  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
-    hit_list.addHit(this, h1, pt);
+  Vec3 pt1 = CalcHitPoint(base, dir, h1);
+  if ((pt1.z >= -1.0) && (pt1.z <= 1.0)) {
+    hit_list.addHit(this, h1, pt1);
     ++hits;
   }
 
-  pt = CalcHitPoint(base, dir, h2);
-  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
-    hit_list.addHit(this, h2, pt);
+  Vec3 pt2 = CalcHitPoint(base, dir, h2);
+  if ((pt2.z >= -1.0) && (pt2.z <= 1.0)) {
+    hit_list.addHit(this, h2, pt2);
     ++hits;
   }
 
@@ -440,8 +438,7 @@ int OpenCone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 	 (1.0 - h.local_pt.z) * .25};
   normal = _trans.normalLocalToGlobal(n, 0);
 
-  Vec2 dir{h.local_pt.x, h.local_pt.y};
-  dir.normalize();
+  Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
   Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
   Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
 
@@ -474,24 +471,23 @@ int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
   }
 
   Flt sqrt_x = std::sqrt(x);
-  Flt h = (-b + sqrt_x) / a;  // far hit
-  if (h < VERY_SMALL) {
+  Flt far_h = (-b + sqrt_x) / a;  // far hit
+  if (far_h < VERY_SMALL) {
     return 0;  // cylinder completely behind ray origin
   }
 
-  Vec3 pt;
   int hits = 0;
 
-  pt = CalcHitPoint(base, dir, h);
-  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
-    hit_list.addHit(this, h, pt);
+  Vec3 far_pt = CalcHitPoint(base, dir, far_h);
+  if ((far_pt.z >= -1.0) && (far_pt.z <= 1.0)) {
+    hit_list.addHit(this, far_h, far_pt);
     ++hits;
   }
 
-  h = (-b - sqrt_x) / a;  // near hit
-  pt = CalcHitPoint(base, dir, h);
-  if ((pt.z >= -1.0) && (pt.z <= 1.0)) {
-    hit_list.addHit(this, h, pt);
+  Flt near_h = (-b - sqrt_x) / a;  // near hit
+  Vec3 near_pt = CalcHitPoint(base, dir, near_h);
+  if ((near_pt.z >= -1.0) && (near_pt.z <= 1.0)) {
+    hit_list.addHit(this, near_h, near_pt);
     ++hits;
   }
 
@@ -535,24 +531,23 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
 
   // Find hit points on paraboloid
   Flt sqrt_x = std::sqrt(x);
-  Flt h = (-b + sqrt_x) / a;  // far hit
-  if (h < 0) {
+  Flt far_h = (-b + sqrt_x) / a;  // far hit
+  if (far_h < 0) {
     return 0;  // paraboloid completely behind ray origin
   }
 
-  Vec3 pt;
   int hits = 0;
 
-  pt = CalcHitPoint(base, dir, h);
-  if (pt.z >= -1.0) {
-    hit_list.addHit(this, h, pt);
+  Vec3 far_pt = CalcHitPoint(base, dir, far_h);
+  if (far_pt.z >= -1.0) {
+    hit_list.addHit(this, far_h, far_pt);
     ++hits;
   }
 
-  h = (-b - sqrt_x) / a;  // near hit
-  pt = CalcHitPoint(base, dir, h);
-  if (pt.z >= -1.0) {
-    hit_list.addHit(this, h, pt);
+  Flt near_h = (-b - sqrt_x) / a;  // near hit
+  Vec3 near_pt = CalcHitPoint(base, dir, near_h);
+  if (near_pt.z >= -1.0) {
+    hit_list.addHit(this, near_h, near_pt);
     ++hits;
   }
 
@@ -660,15 +655,15 @@ int Sphere::intersect(const Ray& r, HitList& hit_list) const
 
   // Find hit points on sphere
   Flt sqrt_x = std::sqrt(x);
-  Flt h = (-b + sqrt_x) / a;  // far hit
-  if (h < VERY_SMALL) {
+  Flt far_h = (-b + sqrt_x) / a;  // far hit
+  if (far_h < VERY_SMALL) {
     return 0;  // sphere completely behind ray origin
   }
 
-  hit_list.addHit(this, h, CalcHitPoint(base, dir, h));
+  hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h));
 
-  h = (-b - sqrt_x) / a;  // near hit
-  hit_list.addHit(this, h, CalcHitPoint(base, dir, h));
+  Flt near_h = (-b - sqrt_x) / a;  // near hit
+  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h));
 
   ++r.stats->sphere_hit;
   return 2;
@@ -740,9 +735,8 @@ int Torus::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
   Flt d = Sqr(x) + Sqr(z);
   if (!IsPositive(d)) { return -1; }
 
-  d = std::sqrt(d);
-  Vec3 n{x - (x / d), h.local_pt.y, z - (z / d)};
-  n.normalize();
+  Flt sqrt_d = std::sqrt(d);
+  Vec3 n = UnitVec(Vec3{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)});
   normal = _trans.normalLocalToGlobal(n, 0);
 
   map.set((h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x,
