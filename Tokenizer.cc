@@ -27,79 +27,68 @@ void Tokenizer::init(std::istream& input)
 
 TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
 {
-  if (!_input) { return TOKEN_EOF; }
-
-  value.clear();
-  bool quoted = false;
-
-  int quote = 0;
   for (;;) {
-    int c;
-    do { c = getChar(); } while (!quote && std::isspace(c));
-      // skip initial white-space if not quoted
+    // start of token read
+    while (std::isspace(_nextChar)) { getChar(); }
+    line = _line;
+    column = _column;
 
-    // check 1st character
-    if (c == '\0' || (quote && c == quote)) {
-      break; // end of file/end of quoted range
-    } else if (!quote) {
-      if (c == '\"' || c == '\'') {
-        quote = c;
-        quoted = true;
-        continue;
-      } else if (c == ';' || c == '#') {
-        // lisp/shell style comment - skip to end of line
-        do { c = getChar(); } while ((c != '\0') && (c != '\n'));
-        continue;
-      } else if (c == '/') {
-        // check for 'C++' style comments
-        if (_nextChar == '/') {
-          // Skip rest of line
-          do { c = getChar(); } while ((c != '\0') && (c != '\n'));
-        } else if (_nextChar == '*') {
-          // Skip rest of comment
-          getChar(); // skip '*'
-          do {
-            c = getChar();
-          } while ((c != '\0') && !((c == '*') && (_nextChar == '/')));
-          getChar(); // skip '/'
+    int c = getChar();
+    if (c == '\0') {
+      return TOKEN_EOF;
+    } else if (c == '\"' || c == '\'') {
+      int quote = c;
+      c = getChar();
+      if (c != quote) {
+        value = char(c);
+        // read rest of string
+        while (_nextChar != quote && _nextChar != '\0') {
+          value += char(getChar());
         }
-        continue;
+        getChar(); // skip ending quote
       }
+      return TOKEN_STRING;
+    } else if (c == ';' || c == '#') {
+      // lisp/shell style comment - skip to end of line
+      do { c = getChar(); } while ((c != '\0') && (c != '\n'));
+      continue; // restart token read
+    } else if (c == '/') {
+      // check for 'C++' style comments
+      if (_nextChar == '/') {
+        // Skip rest of line
+        do { c = getChar(); } while ((c != '\0') && (c != '\n'));
+      } else if (_nextChar == '*') {
+        // Skip rest of comment
+        getChar(); // skip '*'
+        do {
+          c = getChar();
+        } while ((c != '\0') && !((c == '*') && (_nextChar == '/')));
+        getChar(); // skip '/'
+      }
+      continue; // restart token read
     }
 
-    value += char(c); // doesn't support unicode
-    if (quote) { continue; }
+    value = char(c);
+    if (c == '(') { return TOKEN_LPARAN; }
+    else if (c == ')') { return TOKEN_RPARAN; }
 
-    // skip to end of token
+    // read rest of token
     if (std::isalnum(c) || (c == '-') || (c == '.') || (c == '_')) {
       while (std::isalnum(_nextChar) || (_nextChar == '-')
              || (_nextChar == '.') || (_nextChar == '_')) {
         value += char(getChar());
       }
     }
-    break;
+
+    return isNumber(value) ? TOKEN_NUMBER : TOKEN_SYMBOL;
   }
-
-  line = _line;
-  column = _column;
-  if (quoted) { return TOKEN_STRING; }
-  else if (value.empty()) { return TOKEN_EOF; }
-  else if (value[0] == '(') { return TOKEN_LPARAN; }
-  else if (value[0] == ')') { return TOKEN_RPARAN; }
-  else if (isNumber(value)) { return TOKEN_NUMBER; }
-  else { return TOKEN_SYMBOL; }
-}
-
-bool Tokenizer::eof() const
-{
-  return !_input || _input->eof();
 }
 
 int Tokenizer::getChar()
 {
   // One character pipeline used
   // (to make it easy to look ahead one character)
-  if (_input->eof()) {
+  if (!_input || _input->eof()) {
     _nextChar = '\0';
     return _nextChar;
   }

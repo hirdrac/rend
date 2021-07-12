@@ -26,7 +26,6 @@ class Tokenizer
 
   void init(std::istream& input);
   [[nodiscard]] TokenType getToken(std::string& value, int& line, int& column);
-  [[nodiscard]] bool eof() const;
 
  private:
   std::istream* _input = nullptr;
