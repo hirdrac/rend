@@ -25,12 +25,12 @@ class Tokenizer
   Tokenizer(std::istream& input) { init(input); }
 
   void init(std::istream& input);
-  [[nodiscard]] TokenType getToken(std::string& value, int& line);
+  [[nodiscard]] TokenType getToken(std::string& value, int& line, int& column);
   [[nodiscard]] bool eof() const;
 
  private:
   std::istream* _input = nullptr;
-  int _line;
+  int _line, _column;
   int _nextChar;
 
   int getChar();

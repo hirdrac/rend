@@ -97,9 +97,9 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
 {
   SList<AstNode> nodeList;
   for (;;) {
-    int line = 0;
+    int line = 0, column = 0;
     std::string token;
-    TokenType type = tk.getToken(token, line);
+    TokenType type = tk.getToken(token, line, column);
     if (type == TOKEN_EOF) {
       if (depth > 0) {
         throw ParseError{"Unexpected end of file", fileID, line};

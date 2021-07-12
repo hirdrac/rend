@@ -21,10 +21,11 @@ void Tokenizer::init(std::istream& input)
 {
   _input = &input;
   _line = 1;
-  _nextChar = ' ';
+  _column = 1;
+  _nextChar = _input->get();
 }
 
-TokenType Tokenizer::getToken(std::string& value, int& line)
+TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
 {
   if (!_input) { return TOKEN_EOF; }
 
@@ -80,6 +81,7 @@ TokenType Tokenizer::getToken(std::string& value, int& line)
   }
 
   line = _line;
+  column = _column;
   if (quoted) { return TOKEN_STRING; }
   else if (value.empty()) { return TOKEN_EOF; }
   else if (value[0] == '(') { return TOKEN_LPARAN; }
@@ -97,13 +99,17 @@ int Tokenizer::getChar()
 {
   // One character pipeline used
   // (to make it easy to look ahead one character)
-  int c = _nextChar;
-  if (!_input->eof()) {
-    if (c == '\n') { ++_line; }
-    _nextChar = _input->get();
-  } else {
-    c = _nextChar = '\0';
+  if (_input->eof()) {
+    _nextChar = '\0';
+    return _nextChar;
   }
+
+  int c = _nextChar;
+  if (c == '\n') { ++_line; _column = 1; }
+  else if (c != '\0') { ++_column; }
+
+  do { _nextChar = _input->get(); }
+  while ((_nextChar == '\r' || _nextChar == '\0') && !_input->eof());
 
   return c;
 }
