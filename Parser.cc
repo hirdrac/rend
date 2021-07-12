@@ -18,6 +18,7 @@ namespace {
     std::string msg;
     int file_id;
     int line;
+    int column;
   };
 }
 
@@ -51,7 +52,7 @@ int SceneParser::loadFile(const std::string& file)
     return includeFile(file, _astList, nullptr);
   } catch (ParseError& ex) {
     if (ex.file_id) {
-      print_err("[", fileName(ex.file_id), ":", ex.line, "] ");
+      print_err("[", fileName(ex.file_id), ":", ex.line, ":", ex.column, "] ");
     }
     println_err(ex.msg);
     return -1;
@@ -64,16 +65,22 @@ int SceneParser::loadFile(const std::string& file)
 int SceneParser::includeFile(
   const std::string& file, SList<AstNode>& nodeList, const AstNode* srcNode)
 {
-  int src_fileID = srcNode ? srcNode->file_id : 0;
-  int src_line = srcNode ? srcNode->line : 0;
+  int src_fileID = 0, src_line = 0, src_column = 0;
+  if (srcNode) {
+    src_fileID = srcNode->file_id;
+    src_line = srcNode->line;
+    src_column = srcNode->column;
+  }
 
   if (_activeFiles.count(file) > 0) {
-    throw ParseError{"Circular include error", src_fileID, src_line};
+    throw ParseError{
+      "Circular include error", src_fileID, src_line, src_column};
   }
 
   std::ifstream fs(file);
   if (!fs) {
-    throw ParseError{"Cannot open file '"+file+"'", src_fileID, src_line};
+    throw ParseError{
+      "Cannot open file '"+file+"'", src_fileID, src_line, src_column};
   }
 
   _activeFiles.insert(file);
@@ -102,7 +109,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
     TokenType type = tk.getToken(token, line, column);
     if (type == TOKEN_EOF) {
       if (depth > 0) {
-        throw ParseError{"Unexpected end of file", fileID, line};
+        throw ParseError{"Unexpected end of file", fileID, line, column};
       }
       break; // done with parse
     } else if (type == TOKEN_RPARAN) {
@@ -127,6 +134,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
 
     n->file_id = fileID;
     n->line = line;
+    n->column = column;
 
     if (!evalSpecialOp(n.get(), nodeList, depth)) {
       nodeList.addToTail(n.release());
@@ -146,7 +154,7 @@ bool SceneParser::evalSpecialOp(
   const AstNode* n2 = n1->next();
   if (n1->val == "include") {
     if (!n2 || n2->type != AST_STRING) {
-      throw ParseError{"'include' syntax error", n->file_id, n->line};
+      throw ParseError{"'include' syntax error", n->file_id, n->line, n->column};
     }
 
     std::string file = fileName(n->file_id);

@@ -33,6 +33,7 @@ class AstNode : public SListNode<AstNode>
   std::string val;
   int         file_id = 0;
   int         line = 0;
+  int         column = 0;
   AstType     type = AST_UNKNOWN;
 
   AstNode() = default;
@@ -69,7 +70,8 @@ class SceneParser
 
   template<typename... Args>
   void reportError(const AstNode* n, const Args&... args) const {
-    println_err("[", fileName(n->file_id), ":", n->line, "] ", args...);
+    println_err("[", fileName(n->file_id), ":", n->line, ":", n->column, "] ",
+                args...);
   }
 
  private:
