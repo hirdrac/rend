@@ -50,17 +50,15 @@ int ShellInfo()
 
 int ShellLoad(const std::string& file)
 {
-  println("Load scene file '", file, "'");
   SceneParser parser;
   if (parser.loadFile(file) < 0) {
-    println("Error in loading file");
     return -1;
   }
 
-  println("Generating Scene");
+  println("Loading scene file '", file, "'");
   TheScene.clear();
   if (parser.setupScene(TheScene)) {
-    println("Scene generation failed");
+    println("Scene loading failed");
     return -1;
   }
 
