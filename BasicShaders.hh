@@ -24,8 +24,8 @@ class ShaderColor final : public Shader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 
  private:
   Color _color;
@@ -42,8 +42,8 @@ class ShaderGlobal final : public Shader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 
  private:
   ShaderPtr _child;
@@ -60,8 +60,8 @@ class ShaderLocal final : public Shader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 
  private:
   ShaderPtr _child;
@@ -76,8 +76,8 @@ class Checkerboard final : public PatternShader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 };
 
 
@@ -89,8 +89,8 @@ class ColorCube final : public PatternShader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 };
 
 
@@ -102,8 +102,8 @@ class Ring final : public PatternShader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 };
 
 
@@ -115,8 +115,8 @@ class ShaderSide final : public PatternShader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 };
 
 
@@ -128,8 +128,8 @@ class Stripe final : public PatternShader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 };
 
 #if 0
@@ -145,7 +145,7 @@ class TextureMap final : public PatternShader
 
   // Shader Functions
   int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const override;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const override;
 };
 #endif

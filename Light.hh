@@ -15,6 +15,7 @@
 // **** Types ****
 class Shader;
 class HitInfo;
+class EvaluatedHit;
 
 
 struct LightResult {
@@ -41,8 +42,8 @@ class Light : public SceneItem
 
   // Member Functions
   virtual int luminate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, LightResult& result) const = 0;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    LightResult& result) const = 0;
 };
 
 

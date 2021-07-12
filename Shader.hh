@@ -18,6 +18,14 @@ class HitInfo;
 class Color;
 class Ray;
 
+
+struct EvaluatedHit {
+  Vec3 global_pt;
+  Vec3 normal;
+  Vec3 map;
+};
+
+
 class Shader : public SceneItem
 {
  public:
@@ -28,8 +36,8 @@ class Shader : public SceneItem
 
   // Member Functions
   virtual int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-    const Vec3& map, Color& result) const = 0;
+    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+    Color& result) const = 0;
 };
 
 class PatternShader : public Shader

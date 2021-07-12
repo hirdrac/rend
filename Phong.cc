@@ -57,18 +57,18 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 // Shader Functions
 int Phong::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
   // Evaluate Shaders
   Color color_d;
-  _diffuse->evaluate(s, r, h, normal, map, color_d);
+  _diffuse->evaluate(s, r, h, eh, color_d);
   bool is_d = !color_d.isBlack(s.min_ray_value);
 
   Color color_s;
   bool is_s;
   if (_specular) {
-    _specular->evaluate(s, r, h, normal, map, color_s);
+    _specular->evaluate(s, r, h, eh, color_s);
     is_s = !color_s.isBlack(s.min_ray_value);
   } else {
     color_s.clear();
@@ -79,7 +79,7 @@ int Phong::evaluate(
   Color color_t;
   bool is_t;
   if (_transmit) {
-    _transmit->evaluate(s, r, h, normal, map, color_t);
+    _transmit->evaluate(s, r, h, eh, color_t);
     is_t = !color_t.isBlack(s.min_ray_value);
   } else {
     color_t.clear();
@@ -87,17 +87,17 @@ int Phong::evaluate(
   }
 #endif
 
-  Vec3 reflect = CalcReflect(r.dir, normal);
+  Vec3 reflect = CalcReflect(r.dir, eh.normal);
   Color tmp;
 
   // Ambient calculations
-  s.ambient->evaluate(s, r, h, normal, map, tmp);
+  s.ambient->evaluate(s, r, h, eh, tmp);
   MultColor(tmp, color_d, result);
 
   for (auto& lt : s.lights()) {
     LightResult lresult;
-    lt->luminate(s, r, h, normal, map, lresult);
-    Flt angle = DotProduct(normal, lresult.dir);
+    lt->luminate(s, r, h, eh, lresult);
+    Flt angle = DotProduct(eh.normal, lresult.dir);
     if (!IsPositive(angle)) {
       continue;
     }
@@ -124,7 +124,7 @@ int Phong::evaluate(
   if (is_s && r.depth < s.max_ray_depth) {
     // add in reflection
     Ray ray;
-    ray.base = h.global_pt;
+    ray.base = eh.global_pt;
     ray.dir = reflect;
     ray.max_length = VERY_LARGE;
     ray.time = 0.0;

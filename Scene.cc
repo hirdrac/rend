@@ -176,19 +176,21 @@ int Scene::traceRay(const Ray& r, Color& result) const
   }
 
   HitInfo* hit = hit_list.findFirstHit(r);
+  EvaluatedHit eh{};
+
   const Object* obj = hit ? hit->object : nullptr;
   if (!obj) {
     // hit background
     HitInfo h(nullptr, VERY_LARGE, {0,0,0});
-    Vec3 map{(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0};
-    background->evaluate(*this, r, h, {0,0,1}, map, result);
+    eh.normal.set(0,0,1);
+    eh.map.set((r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0);
+    background->evaluate(*this, r, h, eh, result);
     return 0;
   }
 
   ++r.stats->rays_hit;
-  Vec3 normal{}, map{};
-  obj->evalHit(*hit, normal, map);
-  if (DotProduct(r.dir, normal) > 0.0) { normal.invert(); }
+  obj->evalHit(*hit, eh.normal, eh.map);
+  if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal.invert(); }
 
   Shader* sh = obj->shader().get();
   if (!sh) {
@@ -200,8 +202,8 @@ int Scene::traceRay(const Ray& r, Color& result) const
     }
   }
 
-  hit->global_pt = CalcHitPoint(r.base, r.dir, hit->distance);
-  sh->evaluate(*this, r, *hit, normal, map, result);
+  eh.global_pt = CalcHitPoint(r.base, r.dir, hit->distance);
+  sh->evaluate(*this, r, *hit, eh, result);
   return 0;
 }
 

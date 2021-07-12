@@ -26,8 +26,8 @@ int ShaderColor::init(Scene& s)
 }
 
 int ShaderColor::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
   result = _color;
   return 0;
@@ -49,10 +49,11 @@ int ShaderGlobal::init(Scene& s)
 }
 
 int ShaderGlobal::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
-  return _child->evaluate(s, r, h, normal, h.global_pt, result);
+  EvaluatedHit eh2{eh.global_pt, eh.normal, eh.global_pt};
+  return _child->evaluate(s, r, h, eh2, result);
 }
 
 
@@ -71,33 +72,34 @@ int ShaderLocal::init(Scene& s)
 }
 
 int ShaderLocal::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
-  return _child->evaluate(s, r, h, normal, h.local_pt, result);
+  EvaluatedHit eh2{eh.global_pt, eh.normal, h.local_pt};
+  return _child->evaluate(s, r, h, eh2, result);
 }
 
 
 // **** Checkerboard Class ****
 int Checkerboard::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
-  Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
+  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
   int gx = int(std::floor(m.x));
   int gy = int(std::floor(m.y));
   int gz = int(std::floor(m.z));
   int x  = Abs(gx + gy + gz) % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, normal, map, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
 }
 
 
 // **** ColorCube Class ****
 int ColorCube::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
-  Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
+  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
   result.setRGB(Abs(m.x), Abs(m.y), Abs(m.z));
   return 0;
 }
@@ -105,35 +107,35 @@ int ColorCube::evaluate(
 
 // **** Ring Class ****
 int Ring::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
-  Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
+  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
   int d = int(std::sqrt(Sqr(m.x) + Sqr(m.y) + Sqr(m.z)) * 2.0);
   int x = Abs(d) % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, normal, map, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
 }
 
 
 // **** ShaderSide Class ****
 int ShaderSide::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
   int x = h.side % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, normal, map, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
 }
 
 
 // **** Stripe Class ****
 int Stripe::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
-  Vec3 m = MultPoint(map, _trans.GlobalInv(r.time));
+  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
   int gx = int(std::floor(m.x));
   int x  = Abs(gx) % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, normal, map, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
 }
 
 
@@ -148,11 +150,11 @@ int TextureMap::init(Scene& s)
 }
 
 int TextureMap::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const Vec3& normal,
-  const Vec3& map, Color& result) const
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
+  Color& result) const
 {
   Vec3 m;
-  MultOptimizedPoint(map, _trans.GlobalInv(r.time), m);
+  MultOptimizedPoint(eh.map, _trans.GlobalInv(r.time), m);
   int fbw = fb->getWidth();
   int fbh = fb->getHeight();
 

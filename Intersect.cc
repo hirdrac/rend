@@ -22,7 +22,6 @@ void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
   ht->child     = nullptr;
   ht->distance  = t;
   ht->local_pt  = pt;
-  ht->global_pt = {0,0,0};
   ht->side      = s;
   add(ht);
 }

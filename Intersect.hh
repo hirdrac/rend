@@ -22,13 +22,11 @@ class HitInfo : public SListNode<HitInfo>
   const Object* child;
   Flt distance;
   Vec3 local_pt;
-  Vec3 global_pt; // calculated for shaders
   int side;
 
   HitInfo() = default;
   HitInfo(const Object* ob, Flt t, const Vec3& pt)
-    : object(ob), child(nullptr), distance(t),
-      local_pt(pt), global_pt(), side(0) { }
+    : object(ob), child(nullptr), distance(t), local_pt(pt), side(0) { }
 };
 
 class HitList
