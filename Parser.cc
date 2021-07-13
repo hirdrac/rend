@@ -11,7 +11,6 @@
 #include <sstream>
 #include <memory>
 #include <cctype>
-#include <cassert>
 
 namespace {
   struct ParseError {
@@ -199,11 +198,14 @@ int SceneParser::processNode(
   Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   if (n->type == AST_LIST) {
+    AstNode* n0 = n;
     n = n->child;
-    assert(n != nullptr);
-    if (n->type == AST_ITEM) {
+    if (n == nullptr) {
+      reportError(n0, "Empty statement");
+      return -1;
+    } else if (n->type == AST_ITEM) {
       int er = ItemFn(n->ptr)(*this, s, parent, n->next(), flag);
-      if (er) { reportError(n, "Error with ", n->desc()); }
+      if (er) { reportError(n0, "Error with ", n->desc()); }
       return er;
     }
   }
