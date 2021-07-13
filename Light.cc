@@ -22,8 +22,8 @@ Light::~Light()
 // Member Functions
 int Light::init(Scene& s)
 {
-  if (!energy) {
-    energy = s.default_lt;
+  if (!_energy) {
+    _energy = s.default_lt;
   }
 
   return 0;
@@ -31,9 +31,9 @@ int Light::init(Scene& s)
 
 int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh || energy || flag != NO_FLAG) { return -1; }
+  if (!sh || _energy || flag != NO_FLAG) { return -1; }
 
-  energy = sh;
+  _energy = sh;
   return 0;
 }
 

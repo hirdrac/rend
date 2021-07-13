@@ -29,9 +29,8 @@ struct LightResult {
 class Light : public SceneItem
 {
  public:
-  Vec3      pos, dir;
-  ShaderPtr energy;
-  ShadowFn  shadow_fn = nullptr;
+  Vec3     pos, dir;
+  ShadowFn shadow_fn = nullptr;
 
   Light();
   ~Light();
@@ -44,6 +43,9 @@ class Light : public SceneItem
   virtual int luminate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     LightResult& result) const = 0;
+
+ protected:
+  ShaderPtr _energy;
 };
 
 
