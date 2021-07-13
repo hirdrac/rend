@@ -15,7 +15,7 @@
 // **** Types ****
 class Shader;
 class HitInfo;
-class EvaluatedHit;
+struct EvaluatedHit;
 
 
 struct LightResult {
