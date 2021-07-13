@@ -7,7 +7,6 @@
 
 #pragma once
 #include "SceneItem.hh"
-#include "Color.hh"
 #include "Shadow.hh"
 #include "Types.hh"
 
@@ -16,13 +15,6 @@
 class Shader;
 class HitInfo;
 struct EvaluatedHit;
-
-
-struct LightResult {
-  Color energy;
-  Vec3 dir;
-  Flt distance;
-};
 
 
 // Light Base Class

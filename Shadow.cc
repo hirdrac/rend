@@ -13,13 +13,12 @@
 
 // **** Functions ****
 int CastShadow(
-  const Scene& s, const Ray& r, const Vec3& globalPt,
-  const Vec3& lightDir, Flt lightDist, Color& energy)
+  const Scene& s, const Ray& r, const Vec3& globalPt, LightResult& light)
 {
   Ray feeler;
   feeler.base       = globalPt;
-  feeler.dir        = lightDir;
-  feeler.max_length = lightDist;
+  feeler.dir        = light.dir;
+  feeler.max_length = light.distance;
   feeler.time       = r.time;
   feeler.depth      = 1;
   feeler.moveOut();
@@ -29,13 +28,12 @@ int CastShadow(
 
   Color result;
   s.traceShadowRay(feeler, result);
-  energy *= result;
+  light.energy *= result;
   return 0;
 }
 
 int CastNoShadow(
-  const Scene& s, const Ray& r, const Vec3& globalPt,
-  const Vec3& lightDir, Flt lightDist, Color& energy)
+  const Scene& s, const Ray& r, const Vec3& globalPt, LightResult& light)
 {
   return 0;
 }

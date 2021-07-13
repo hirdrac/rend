@@ -17,8 +17,7 @@ int Sun::luminate(
   result.dir = -dir;
   result.distance = VERY_LARGE;
   _energy->evaluate(s, r, h, eh, result.energy);
-  return shadow_fn(
-    s, r, eh.global_pt, result.dir, result.distance, result.energy);
+  return shadow_fn(s, r, eh.global_pt, result);
 }
 
 
@@ -30,8 +29,7 @@ int PointLight::luminate(
   result.dir = UnitVec(pos - eh.global_pt);
   result.distance = PointDistance(pos, eh.global_pt);
   _energy->evaluate(s, r, h, eh, result.energy);
-  return shadow_fn(
-    s, r, eh.global_pt, result.dir, result.distance, result.energy);
+  return shadow_fn(s, r, eh.global_pt, result);
 }
 
 
