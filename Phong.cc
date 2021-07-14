@@ -17,7 +17,7 @@
 // SceneItem Functions
 int Phong::init(Scene& s)
 {
-  if (!_diffuse) { _diffuse = std::make_unique<ShaderColor>(.5, .5, .5); }
+  if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
   if (int er = InitShader(s, *_diffuse, value); er != 0) { return er; }
 
   if (_specular) {
@@ -101,6 +101,8 @@ int Phong::evaluate(
     if (!IsPositive(angle)) {
       continue;
     }
+
+    lt->shadow_fn(s, r, eh.global_pt, lresult);
 
     // Diffuse calculations
     if (is_d) {
