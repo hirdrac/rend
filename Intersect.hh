@@ -19,14 +19,16 @@ class HitInfo : public SListNode<HitInfo>
  public:
   // basic hit information
   const Object* object;
-  const Object* child;
+  const Object* child; // sub-object hit for CSG
   Flt distance;
   Vec3 local_pt;
   int side;
+  bool enter;
 
   HitInfo() = default;
   HitInfo(const Object* ob, Flt t, const Vec3& pt)
-    : object(ob), child(nullptr), distance(t), local_pt(pt), side(0) { }
+    : object(ob), child(nullptr), distance(t), local_pt(pt), side(0),
+      enter(false) { }
 };
 
 class HitList
@@ -36,7 +38,8 @@ class HitList
   ~HitList() { clear(); }
 
   // Member Functions
-  void addHit(const Object* ob, Flt t, const Vec3& local_pt, int side = 0);
+  void addHit(const Object* ob, Flt t, const Vec3& local_pt, int side,
+              bool enter);
   void mergeList(HitList& list);
   void clear();
 

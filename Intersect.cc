@@ -8,12 +8,10 @@
 #include "Intersect.hh"
 #include "Object.hh"
 #include "Ray.hh"
-#include <set>
 
 
 // **** HitList Class ****
-// Member Functions
-void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
+void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s, bool enter)
 {
   HitInfo* ht = _freeCache ? _freeCache->removeHead() : nullptr;
   if (!ht) { ht = new HitInfo; }
@@ -23,6 +21,7 @@ void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s)
   ht->distance  = t;
   ht->local_pt  = pt;
   ht->side      = s;
+  ht->enter     = enter;
   add(ht);
 }
 
@@ -61,7 +60,7 @@ void HitList::csgUnion(const Object* csg)
 {
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;
-  std::set<const void*> insideSet;
+  int insideCount = 0;
 
   while (h) {
     // claim hit as part of csg object
@@ -69,19 +68,16 @@ void HitList::csgUnion(const Object* csg)
     if (!h->child) { h->child = ob; }
     h->object = csg;
 
-    if (ob->isSolid()) {
-      // solid object hit
-      if (insideSet.find(ob) != insideSet.end()) {
-	// leaving object
-	insideSet.erase(ob);
-      } else {
-	// entering object
-	insideSet.insert(ob);
-      }
+    if (h->enter) {
+      // entering solid object
+      ++insideCount;
+    } else if (ob->isSolid()) {
+      // leaving object
+      --insideCount;
     }
 
     HitInfo* next = h->next();
-    if (!insideSet.empty()) { killNext(prev); } else { prev = h; }
+    if (insideCount > 0) { killNext(prev); } else { prev = h; }
     h = next;
   }
 }
@@ -90,7 +86,6 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
 {
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;
-  std::set<const void*> insideSet;
   int count = 0;
 
   while (h) {
@@ -103,15 +98,12 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
     if (!ob->isSolid()) {
       // hollow object
       killNext(prev);
-    } else if (insideSet.find(ob) != insideSet.end()) {
-      // leaving solid object
-      if (count < objectCount) { killNext(prev); } else { prev = h; }
-      insideSet.erase(ob);
-      --count;
-    } else {
+    } else if (h->enter) {
       // entering solid object
-      insideSet.insert(ob);
       if (++count < objectCount) { killNext(prev); } else { prev = h; }
+    } else {
+      // leaving solid object
+      if (count-- < objectCount) { killNext(prev); } else { prev = h; }
     }
 
     h = next;
