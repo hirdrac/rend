@@ -13,7 +13,7 @@
 
 
 // **** Inlined Functions ****
-constexpr Flt CBRT(Flt x)
+static constexpr Flt CBRT(Flt x)
 {
   if (x > 0.0) {
     return std::pow(x, 1.0/3.0);
@@ -39,8 +39,8 @@ int SolveQuadric(const Flt c[3], Flt s[2])
   } else if (IsPositive(d)) {
     // two solutions
     Flt sqrt_d = std::sqrt(d);
-    s[0] = -p + sqrt_d;
-    s[1] = -p - sqrt_d;
+    s[0] = -p - sqrt_d;
+    s[1] = -p + sqrt_d;
     return 2;
   } else {
     // one solution
@@ -59,8 +59,8 @@ int SolveCubic(const Flt c[4], Flt s[3])
 
   // substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0
   Flt sq_A = Sqr(A);
-  Flt third_A = 1.0/3.0 * A;
-  Flt p = 1.0/3.0 * (-1.0/3.0 * sq_A + B);
+  Flt third_A = A / 3.0;
+  Flt p = (-1.0/3.0 * sq_A + B) / 3.0;
   Flt q = .5 * (2.0/27.0 * A * sq_A - third_A * B + C);
 
   // use Cardano's formula
@@ -69,7 +69,7 @@ int SolveCubic(const Flt c[4], Flt s[3])
 
   if (IsNegative(D)) {
     // three real solutions
-    Flt phi = 1.0/3.0 * std::acos(-q / std::sqrt(-cb_p));
+    Flt phi = std::acos(-q / std::sqrt(-cb_p)) / 3.0;
     Flt t = 2 * std::sqrt(-p);
     s[0] = (t * std::cos(phi)) - third_A;
     s[1] = (-t * std::cos(phi + (PI / 3))) - third_A;
@@ -92,6 +92,52 @@ int SolveCubic(const Flt c[4], Flt s[3])
     s[0] = (2 * u)- third_A;
     s[1] = -u - third_A;
     return 2;
+  }
+}
+
+
+static int solveCubic1only(const Flt c[4], Flt* s)
+{
+  // normal form: x^3 + Ax^2 + Bx + C = 0
+  Flt A = c[2] / c[3];
+  Flt B = c[1] / c[3];
+  Flt C = c[0] / c[3];
+
+  // substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0
+  Flt sq_A = Sqr(A);
+  Flt third_A = A / 3.0;
+  Flt p = (-1.0/3.0 * sq_A + B) / 3.0;
+  Flt q = .5 * (2.0/27.0 * A * sq_A - third_A * B + C);
+
+  // use Cardano's formula
+  Flt cb_p = Sqr(p) * p;
+  Flt D = Sqr(q) + cb_p;
+
+  if (IsNegative(D)) {
+    // three real solutions
+    Flt phi = std::acos(-q / std::sqrt(-cb_p)) / 3.0;
+    Flt t = 2 * std::sqrt(-p);
+    s[0] = (t * std::cos(phi)) - third_A;
+    //s[1] = (-t * std::cos(phi + (PI / 3))) - third_A;
+    //s[2] = (-t * std::cos(phi - (PI / 3))) - third_A;
+    return 1; // 3
+  } else if (IsPositive(D)) {
+    // one real solution
+    Flt sqrt_D = std::sqrt(D);
+    Flt u =  CBRT(sqrt_D - q);
+    Flt v = -CBRT(sqrt_D + q);
+    s[0] = (u + v) - third_A;
+    return 1;
+  } else if (IsZero(q)) {
+    // one triple solution
+    s[0] = -third_A;
+    return 1;
+  } else {
+    // one single and one double solution
+    Flt u = CBRT(-q);
+    s[0] = (2 * u) - third_A;
+    //s[1] = -u - third_A;
+    return 1; // 2
   }
 }
 
@@ -129,28 +175,19 @@ int SolveQuartic(const Flt c[5], Flt s[4])
     coeffs[1] = -r;
     coeffs[2] = -.5 * p;
     coeffs[3] = 1;
-    SolveCubic(coeffs, s);
+    if (solveCubic1only(coeffs, s) == 0) { return 0; }
 
     // take the one real solution to build two quadric equations
     Flt z = s[0];
 
     Flt u = Sqr(z) - r;
-    if (IsNegative(u)) {
-      return 0;
-    } else if (IsPositive(u)) {
-      u = std::sqrt(u);
-    } else {
-      u = 0;
-    }
+    if (IsNegative(u)) { return 0; }
 
     Flt v = (2 * z) - p;
-    if (IsNegative(v)) {
-      return 0;
-    } else if (IsPositive(v)) {
-      v = std::sqrt(v);
-    } else {
-      v = 0;
-    }
+    if (IsNegative(v)) { return 0; }
+
+    if (IsPositive(u)) { u = std::sqrt(u); } else { u = 0; }
+    if (IsPositive(v)) { v = std::sqrt(v); } else { v = 0; }
 
     coeffs[0] = z - u;
     coeffs[1] = (q < 0) ? -v : v;
