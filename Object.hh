@@ -58,8 +58,6 @@ class Object : public SceneItem
   virtual Flt hitCost() const { return 1.0; }
   virtual int setRadius(Flt r) { return -1; }
   virtual bool isVisible() const { return false; }
-  virtual bool isSolid() const { return false; }
-  virtual int setSolid(bool s) { return -1; }
   virtual const ShaderPtr& shader() const { return _nullShader; }
   virtual int setShader(const ShaderPtr& sh) { return -1; }
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
@@ -84,15 +82,12 @@ class Primitive : public Object
   // Object Functions
   int bound(BBox& b) const override;
   bool isVisible() const override    { return true; }
-  bool isSolid() const override      { return _solid; }
-  int setSolid(bool s) override      { _solid = s; return 0; }
   const ShaderPtr& shader() const override { return _shader; }
   int setShader(const ShaderPtr& sh) override { _shader = sh; return 0; }
 
  protected:
   Transform _trans;
   ShaderPtr _shader;
-  bool _solid = false;
 };
 
 

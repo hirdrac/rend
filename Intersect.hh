@@ -14,6 +14,12 @@
 class Object;
 class Ray;
 
+enum HitType {
+  HIT_NORMAL, // non-CSG surface hit
+  HIT_ENTER,  // enter CSG solid
+  HIT_EXIT,   // exit CSG solid
+};
+
 class HitInfo : public SListNode<HitInfo>
 {
  public:
@@ -23,12 +29,12 @@ class HitInfo : public SListNode<HitInfo>
   Flt distance;
   Vec3 local_pt;
   int side;
-  bool enter;
+  HitType type;
 
   HitInfo() = default;
   HitInfo(const Object* ob, Flt t, const Vec3& pt)
     : object(ob), child(nullptr), distance(t), local_pt(pt), side(0),
-      enter(false) { }
+      type(HIT_NORMAL) { }
 };
 
 class HitList
@@ -39,7 +45,7 @@ class HitList
 
   // Member Functions
   void addHit(const Object* ob, Flt t, const Vec3& local_pt, int side,
-              bool enter);
+              HitType type);
   void mergeList(HitList& list);
   void clear();
 

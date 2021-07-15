@@ -15,11 +15,6 @@
 
 
 // **** Disc Class ****
-Disc::Disc()
-{
-  _solid = false;
-}
-
 // SceneItem Functions
 int Disc::init(Scene& s)
 {
@@ -51,7 +46,7 @@ int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;
   }
 
-  hit_list.addHit(this, h, pt, 0, false);
+  hit_list.addHit(this, h, pt, 0, HIT_NORMAL);
   ++r.stats->disc_hit;
   return 1;
 }
@@ -73,11 +68,6 @@ int Disc::bound(BBox& b) const
 
 
 // **** Cone Class ****
-Cone::Cone()
-{
-  _solid = true;
-}
-
 // SceneItem Functions
 int Cone::init(Scene& s)
 {
@@ -154,11 +144,11 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
     far_h = h[0]; far_side = side[0];
   }
 
-  hit_list.addHit(
-    this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
+  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side,
+                  csg ? HIT_ENTER : HIT_NORMAL);
   if (csg) {
-    hit_list.addHit(
-      this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), far_side,
+                    HIT_EXIT);
   }
 
   ++r.stats->cone_hit;
@@ -188,11 +178,6 @@ int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Cube Class ****
-Cube::Cube()
-{
-  _solid = true;
-}
-
 // SceneItem Functions
 int Cube::init(Scene& s)
 {
@@ -280,10 +265,11 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cube completely behind ray origin
   }
 
-  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
+  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side,
+                  csg ? HIT_ENTER : HIT_NORMAL);
   if (csg) {
-    hit_list.addHit(
-      this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), far_side,
+                    HIT_EXIT);
   }
 
   ++r.stats->cube_hit;
@@ -308,11 +294,6 @@ int Cube::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Cylinder Class ****
-Cylinder::Cylinder()
-{
-  _solid = true;
-}
-
 // SceneItem Functions
 int Cylinder::init(Scene& s)
 {
@@ -379,10 +360,11 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cylinder completely behind ray origin
   }
 
-  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
+  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side,
+                  csg ? HIT_ENTER : HIT_NORMAL);
   if (csg) {
-    hit_list.addHit(
-      this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), far_side,
+                    HIT_EXIT);
   }
 
   ++r.stats->cylinder_hit;
@@ -421,11 +403,6 @@ int Cylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** OpenCone Class ****
-OpenCone::OpenCone()
-{
-  _solid = false;
-}
-
 // Object Functions
 int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
@@ -454,14 +431,14 @@ int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
   Flt near_h = (-b - sqrt_x) / a;
   Vec3 near_pt = CalcHitPoint(base, dir, near_h);
   if ((near_pt.z >= -1.0) && (near_pt.z <= 1.0)) {
-    hit_list.addHit(this, near_h, near_pt, 0, false);
+    hit_list.addHit(this, near_h, near_pt, 0, HIT_NORMAL);
     ++hits;
   }
 
   if (csg || hits == 0) {
     Vec3 far_pt = CalcHitPoint(base, dir, far_h);
     if ((far_pt.z >= -1.0) && (far_pt.z <= 1.0)) {
-      hit_list.addHit(this, far_h, far_pt, 0, false);
+      hit_list.addHit(this, far_h, far_pt, 0, HIT_NORMAL);
       ++hits;
     }
   }
@@ -485,11 +462,6 @@ int OpenCone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** OpenCylinder Class ****
-OpenCylinder::OpenCylinder()
-{
-  _solid = false;
-}
-
 // Object Functions
 int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
@@ -517,14 +489,14 @@ int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
   Flt near_h = (-b - sqrt_x) / a;
   Vec3 near_pt = CalcHitPoint(base, dir, near_h);
   if ((near_pt.z >= -1.0) && (near_pt.z <= 1.0)) {
-    hit_list.addHit(this, near_h, near_pt, 0, false);
+    hit_list.addHit(this, near_h, near_pt, 0, HIT_NORMAL);
     ++hits;
   }
 
   if (csg || hits == 0) {
     Vec3 far_pt = CalcHitPoint(base, dir, far_h);
     if ((far_pt.z >= -1.0) && (far_pt.z <= 1.0)) {
-      hit_list.addHit(this, far_h, far_pt, 0, false);
+      hit_list.addHit(this, far_h, far_pt, 0, HIT_NORMAL);
       ++hits;
     }
   }
@@ -546,11 +518,6 @@ int OpenCylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Paraboloid Class ****
-Paraboloid::Paraboloid()
-{
-  _solid = false;
-}
-
 // Object Functions
 int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
@@ -579,14 +546,14 @@ int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
   Flt near_h = (-b - sqrt_x) / a;
   Vec3 near_pt = CalcHitPoint(base, dir, near_h);
   if (near_pt.z >= -1.0) {
-    hit_list.addHit(this, near_h, near_pt, 0, false);
+    hit_list.addHit(this, near_h, near_pt, 0, HIT_NORMAL);
     ++hits;
   }
 
-  if (csg || hits == 0) {
+  if (hits == 0) {
     Vec3 far_pt = CalcHitPoint(base, dir, far_h);
     if (far_pt.z >= -1.0) {
-      hit_list.addHit(this, far_h, far_pt, 0, false);
+      hit_list.addHit(this, far_h, far_pt, 0, HIT_NORMAL);
       ++hits;
     }
   }
@@ -607,11 +574,6 @@ int Paraboloid::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Plane Class ****
-Plane::Plane()
-{
-  _solid = false;
-}
-
 // SceneItem Functions
 int Plane::init(Scene& s)
 {
@@ -649,7 +611,7 @@ int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   pt.z = 0.0;
-  hit_list.addHit(this, h, pt, 0, false);
+  hit_list.addHit(this, h, pt, 0, HIT_NORMAL);
   ++r.stats->plane_hit;
   return 1;
 }
@@ -671,11 +633,6 @@ int Plane::bound(BBox& b) const
 
 
 // **** Sphere Class ****
-Sphere::Sphere()
-{
-  _solid = true;
-}
-
 // Object Functions
 int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
@@ -700,9 +657,10 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   Flt near_h = (-b - sqrt_x) / a;
-  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, csg);
+  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0,
+                  csg ? HIT_ENTER : HIT_NORMAL);
   if (csg) {
-    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, false);
+    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, HIT_EXIT);
   }
 
   ++r.stats->sphere_hit;
@@ -720,21 +678,6 @@ int Sphere::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
 
 // **** Torus Class ****
-Torus::Torus() :
-  radius(.5)
-{
-  _solid = true;
-}
-
-// SceneItem Functions
-int Torus::init(Scene& s)
-{
-  if (Primitive::init(s)) { return -1; }
-
-  r_constant = 1.0 - Sqr(radius);
-  return 0;
-}
-
 // Object Functions
 int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
@@ -745,7 +688,7 @@ int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   Flt bd = DotProduct(base, dir);
   Flt dd = DotProduct(dir,  dir);
-  Flt t1 = DotProduct(base, base) + r_constant;
+  Flt t1 = DotProduct(base, base) + (1.0 - Sqr(_radius));
 
   Flt c[5];
   c[4] = Sqr(dd);
@@ -770,12 +713,13 @@ int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
   if (csg) {
     bool enter = true;
     for (int i = 0; i < n; ++i) {
-      hit_list.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0, enter);
+      hit_list.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0,
+                      enter ? HIT_ENTER : HIT_EXIT);
       enter = !enter;
     }
   } else {
     Flt h = (n == 4 && root[2] < root[0]) ? root[2] : root[0];
-    hit_list.addHit(this, h, CalcHitPoint(base, dir, h), 0, false);
+    hit_list.addHit(this, h, CalcHitPoint(base, dir, h), 0, HIT_NORMAL);
   }
 
   ++r.stats->torus_hit;
@@ -790,7 +734,7 @@ int Torus::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
   if (!IsPositive(d)) { return -1; }
 
   Flt sqrt_d = std::sqrt(d);
-  Vec3 n = UnitVec(Vec3{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)});
+  Vec3 n{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)};
   normal = _trans.normalLocalToGlobal(n, 0);
 
   map.set((h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x,
@@ -801,10 +745,14 @@ int Torus::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 int Torus::bound(BBox& b) const
 {
   Vec3 pt[8] = {
-    { 1 + radius,  radius,  1 + radius}, {-1 - radius,  radius,  1 + radius},
-    { 1 + radius, -radius,  1 + radius}, { 1 + radius,  radius, -1 - radius},
-    {-1 - radius, -radius,  1 + radius}, { 1 + radius, -radius, -1 - radius},
-    {-1 - radius,  radius, -1 - radius}, {-1 - radius, -radius, -1 - radius}};
+    { 1 + _radius,  _radius,  1 + _radius},
+    {-1 - _radius,  _radius,  1 + _radius},
+    { 1 + _radius, -_radius,  1 + _radius},
+    { 1 + _radius,  _radius, -1 - _radius},
+    {-1 - _radius, -_radius,  1 + _radius},
+    { 1 + _radius, -_radius, -1 - _radius},
+    {-1 - _radius,  _radius, -1 - _radius},
+    {-1 - _radius, -_radius, -1 - _radius}};
   b.fit(_trans, pt, 8);
   return 0;
 }

@@ -11,7 +11,8 @@
 
 
 // **** HitList Class ****
-void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s, bool enter)
+void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s,
+                     HitType type)
 {
   HitInfo* ht = _freeCache ? _freeCache->removeHead() : nullptr;
   if (!ht) { ht = new HitInfo; }
@@ -21,7 +22,7 @@ void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s, bool enter)
   ht->distance  = t;
   ht->local_pt  = pt;
   ht->side      = s;
-  ht->enter     = enter;
+  ht->type      = type;
   add(ht);
 }
 
@@ -68,10 +69,10 @@ void HitList::csgUnion(const Object* csg)
     if (!h->child) { h->child = ob; }
     h->object = csg;
 
-    if (h->enter) {
+    if (h->type == HIT_ENTER) {
       // entering solid object
       ++insideCount;
-    } else if (ob->isSolid()) {
+    } else if (h->type == HIT_EXIT) {
       // leaving object
       --insideCount;
     }
@@ -95,15 +96,15 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
     h->object = csg;
 
     HitInfo* next = h->next();
-    if (!ob->isSolid()) {
-      // hollow object
-      killNext(prev);
-    } else if (h->enter) {
+    if (h->type == HIT_ENTER) {
       // entering solid object
       if (++count < objectCount) { killNext(prev); } else { prev = h; }
-    } else {
+    } else if (h->type == HIT_EXIT) {
       // leaving solid object
       if (count-- < objectCount) { killNext(prev); } else { prev = h; }
+    } else {
+      // hollow object
+      killNext(prev);
     }
 
     h = next;

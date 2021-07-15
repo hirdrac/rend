@@ -14,8 +14,6 @@
 class Disc final : public Primitive
 {
  public:
-  Disc();
-
   // SceneItem Functions
   std::string desc() const override { return "<Disc>"; }
   int init(Scene& s) override;
@@ -33,8 +31,6 @@ class Disc final : public Primitive
 class Cone final : public Primitive
 {
  public:
-  Cone();
-
   // SceneItem Functions
   std::string desc() const override { return "<Cone>"; }
   int init(Scene& s) override;
@@ -51,8 +47,6 @@ class Cone final : public Primitive
 class Cube final : public Primitive
 {
  public:
-  Cube();
-
   // SceneItem Functions
   std::string desc() const override { return "<Cube>"; }
   int init(Scene& s) override;
@@ -69,8 +63,6 @@ class Cube final : public Primitive
 class Cylinder final : public Primitive
 {
  public:
-  Cylinder();
-
   // SceneItem Functions
   std::string desc() const override { return "<Cylinder>"; }
   int init(Scene& s) override;
@@ -87,8 +79,6 @@ class Cylinder final : public Primitive
 class OpenCone final : public Primitive
 {
  public:
-  OpenCone();
-
   // SceneItem Functions
   std::string desc() const override { return "<OpenCone>"; }
 
@@ -101,8 +91,6 @@ class OpenCone final : public Primitive
 class OpenCylinder final : public Primitive
 {
  public:
-  OpenCylinder();
-
   // SceneItem Functions
   std::string desc() const override { return "<OpenCylinder>"; }
 
@@ -115,8 +103,6 @@ class OpenCylinder final : public Primitive
 class Paraboloid final : public Primitive
 {
  public:
-  Paraboloid();
-
   // SceneItem Functions
   std::string desc() const override { return "<Paraboloid>"; }
 
@@ -129,8 +115,6 @@ class Paraboloid final : public Primitive
 class Plane final : public Primitive
 {
  public:
-  Plane();
-
   // SceneItem Functions
   std::string desc() const override { return "<Plane>"; }
   int init(Scene& s) override;
@@ -148,8 +132,6 @@ class Plane final : public Primitive
 class Sphere final : public Primitive
 {
  public:
-  Sphere();
-
   // SceneItem Functions
   std::string desc() const override { return "<Sphere>"; }
 
@@ -162,19 +144,16 @@ class Sphere final : public Primitive
 class Torus final : public Primitive
 {
  public:
-  Torus();
-
   // SceneItem Functions
   std::string desc() const override { return "<Torus>"; }
-  int init(Scene& s) override;
 
   // Object Functions
   int bound(BBox& b) const override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.torus; }
-  int setRadius(Flt r) override { radius = r; return 0; }
+  int setRadius(Flt r) override { _radius = r; return 0; }
 
  private:
-  Flt radius, r_constant;
+  Flt _radius = .5;
 };
