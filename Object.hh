@@ -52,7 +52,7 @@ class Object : public SceneItem
 
   // Member Functions
   virtual int bound(BBox& b) const { return -1; }
-  virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
+  virtual int intersect(const Ray& r, bool csg, HitList& hit_list) const = 0;
   virtual int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const {
     return -1; }
   virtual Flt hitCost() const { return 1.0; }

@@ -70,10 +70,10 @@ Flt CSG::hitCost() const
 
 
 // **** Merge Class ****
-int Merge::intersect(const Ray& r, HitList& hit_list) const
+int Merge::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (auto& ob : _children) { ob->intersect(r, hl); }
+  for (auto& ob : _children) { ob->intersect(r, true, hl); }
   hl.csgMerge(this);
 
   int hits = hl.count();
@@ -89,10 +89,10 @@ int Merge::bound(BBox& b) const
 
 
 // **** Union Class ****
-int Union::intersect(const Ray& r, HitList& hit_list) const
+int Union::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (auto& ob : _children) { ob->intersect(r, hl); }
+  for (auto& ob : _children) { ob->intersect(r, true, hl); }
   hl.csgUnion(this);
 
   int hits = hl.count();
@@ -108,10 +108,10 @@ int Union::bound(BBox& b) const
 
 
 // **** Intersection Class ****
-int Intersection::intersect(const Ray& r, HitList& hit_list) const
+int Intersection::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (auto& ob : _children) { ob->intersect(r, hl); }
+  for (auto& ob : _children) { ob->intersect(r, true, hl); }
   hl.csgIntersection(this, int(_children.size()));
 
   int hits = hl.count();
@@ -142,10 +142,10 @@ int Intersection::bound(BBox& b) const
 
 
 // **** Difference Class ****
-int Difference::intersect(const Ray& r, HitList& hit_list) const
+int Difference::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
-  for (auto& ob : _children) { ob->intersect(r, hl); }
+  for (auto& ob : _children) { ob->intersect(r, true, hl); }
   //hl.csgDifference(this, _childList.head(), _childCount - 1);
   // FIXME - finish
 

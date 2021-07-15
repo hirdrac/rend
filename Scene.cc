@@ -32,9 +32,9 @@ void Scene::clear()
   default_lt.reset();
   image_width = 256;
   image_height = 256;
-  eye.set(0,0,1);
-  coi.set(0,0,0);
-  vup.set(0,1,0);
+  eye = {0,0,1};
+  coi = {0,0,0};
+  vup = {0,1,0};
   fov = 50.0;
   samples_x = 1;
   samples_y = 1;
@@ -170,9 +170,9 @@ int Scene::traceRay(const Ray& r, Color& result) const
 
   HitList hit_list(r.freeCache);
   if (_bound) {
-    _bound->intersect(r, hit_list);
+    _bound->intersect(r, false, hit_list);
   } else {
-    for (auto& ob : _objects) { ob->intersect(r, hit_list); }
+    for (auto& ob : _objects) { ob->intersect(r, false, hit_list); }
   }
 
   HitInfo* hit = hit_list.findFirstHit(r);
@@ -182,8 +182,8 @@ int Scene::traceRay(const Ray& r, Color& result) const
   if (!obj) {
     // hit background
     HitInfo h(nullptr, VERY_LARGE, {0,0,0});
-    eh.normal.set(0,0,1);
-    eh.map.set((r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0);
+    eh.normal = {0,0,1};
+    eh.map = {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0};
     background->evaluate(*this, r, h, eh, result);
     return 0;
   }
@@ -213,9 +213,9 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
 
   HitList hit_list(r.freeCache);
   if (_bound) {
-    _bound->intersect(r, hit_list);
+    _bound->intersect(r, false, hit_list);
   } else {
-    for (auto& ob : _objects) { ob->intersect(r, hit_list); }
+    for (auto& ob : _objects) { ob->intersect(r, false, hit_list); }
   }
 
   const HitInfo* hit = hit_list.findFirstHit(r);

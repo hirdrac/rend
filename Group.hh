@@ -24,7 +24,7 @@ class Group final : public Primitive
 
   // Object Functions
   int bound(BBox& b) const override { return -1; }
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   const std::vector<ObjectPtr>& children() const override { return _children; }
 
  protected:

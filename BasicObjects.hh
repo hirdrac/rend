@@ -21,7 +21,7 @@ class Disc final : public Primitive
   int init(Scene& s) override;
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   int bound(BBox& b) const override;
   Flt hitCost() const override { return CostTable.disc; }
@@ -40,7 +40,7 @@ class Cone final : public Primitive
   int init(Scene& s) override;
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.cone; }
 
@@ -58,7 +58,7 @@ class Cube final : public Primitive
   int init(Scene& s) override;
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.cube; }
 
@@ -76,7 +76,7 @@ class Cylinder final : public Primitive
   int init(Scene& s) override;
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.cylinder; }
 
@@ -93,7 +93,7 @@ class OpenCone final : public Primitive
   std::string desc() const override { return "<OpenCone>"; }
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.open_cone; }
 };
@@ -107,7 +107,7 @@ class OpenCylinder final : public Primitive
   std::string desc() const override { return "<OpenCylinder>"; }
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.open_cylinder; }
 };
@@ -121,7 +121,7 @@ class Paraboloid final : public Primitive
   std::string desc() const override { return "<Paraboloid>"; }
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.paraboloid; }
 };
@@ -136,7 +136,7 @@ class Plane final : public Primitive
   int init(Scene& s) override;
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   int bound(BBox& b) const override;
   Flt hitCost() const override { return CostTable.plane; }
@@ -154,7 +154,7 @@ class Sphere final : public Primitive
   std::string desc() const override { return "<Sphere>"; }
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.sphere; }
 };
@@ -170,7 +170,7 @@ class Torus final : public Primitive
 
   // Object Functions
   int bound(BBox& b) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.torus; }
   int setRadius(Flt r) override { radius = r; return 0; }
