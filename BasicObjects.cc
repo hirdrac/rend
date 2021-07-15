@@ -256,13 +256,16 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cube completely behind ray origin
   }
 
+  int hits = 1;
   hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
   if (csg) {
-    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    hit_list.addHit(
+      this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    ++hits;
   }
 
   ++r.stats->cube_hit;
-  return 2;
+  return hits;
 }
 
 int Cube::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
@@ -354,12 +357,16 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cylinder completely behind ray origin
   }
 
+  int hits = 1;
   hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
   if (csg) {
-    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    hit_list.addHit(
+      this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+    ++hits;
   }
+
   ++r.stats->cylinder_hit;
-  return 2;
+  return hits;
 }
 
 int Cylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
@@ -663,7 +670,6 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
   Flt b = DotProduct(base, dir);
   Flt c = DotProduct(base, base) - 1.0;
   Flt x = Sqr(b) - (a * c);
-
   if (x < VERY_SMALL) {
     return 0;  // missed (avoid single intersection case)
   }
@@ -675,14 +681,16 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // sphere completely behind ray origin
   }
 
+  int hits = 1;
   Flt near_h = (-b - sqrt_x) / a;
   hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, csg);
   if (csg) {
     hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, false);
+    ++hits;
   }
 
   ++r.stats->sphere_hit;
-  return 2;
+  return hits;
 }
 
 int Sphere::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
