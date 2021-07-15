@@ -91,53 +91,78 @@ int Cone::init(Scene& s)
 int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->cone_tried;
-  // FIXME - implement csg handling
 
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
 
-  Flt a = Sqr(dir.x) + Sqr(dir.y) - (0.25 * Sqr(dir.z));
-  Flt b = (base.x * dir.x) + (base.y * dir.y) +
+  if (IsZero(dir.z) && (base.z < -1.0 || base.z > 1.0)) {
+    // ray parallel with cone bottom & doesn't hit side
+    return 0;
+  }
+
+  const Flt a = Sqr(dir.x) + Sqr(dir.y) - (0.25 * Sqr(dir.z));
+  const Flt b = (base.x * dir.x) + (base.y * dir.y) +
     (dir.z * (1.0 - base.z) * 0.25);
-  Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
-  Flt x = Sqr(b) - (a * c);
+  const Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
+  const Flt x = Sqr(b) - (a * c);
+  if (x < VERY_SMALL || IsZero(a)) {
+    return 0;
+  }
 
+  const Flt sqrt_x = std::sqrt(x);
+  const Flt h1 = (-b - sqrt_x) / a;
+  const Flt h2 = (-b + sqrt_x) / a;
+
+  Flt h[3] = {};
+  int side[3] = {};
   int hits = 0;
-  bool near_hit = false;
 
-  if (IsPositive(x)) {
-    Flt sqrt_x = std::sqrt(x);
+  const Flt h1z = base.z + (dir.z * h1);
+  if (h1z >= -1.0 && h1z <= 1.0) {
+    h[hits] = h1;
+    side[hits] = 0;
+    ++hits;
+  }
 
-    Flt near_h = (-b - sqrt_x) / a;
-    Vec3 near_pt = CalcHitPoint(base, dir, near_h);
-    if ((near_pt.z >= -1.0) && (near_pt.z <= 1.0)) {
-      // hit side
-      hit_list.addHit(this, near_h, near_pt, 0, true);
-      near_hit = true;
-      ++hits;
-    }
+  const Flt h2z = base.z + (dir.z * h2);
+  if (h2z >= -1.0 && h2z <= 1.0) {
+    h[hits] = h2;
+    side[hits] = 0;
+    ++hits;
+  }
 
-    Flt far_h = (-b + sqrt_x) / a;
-    Vec3 far_pt = CalcHitPoint(base, dir, far_h);
-    if ((far_pt.z >= -1.0) && (far_pt.z <= 1.0)) {
-      // hit side
-      hit_list.addHit(this, far_h, far_pt, 0, false);
+  if (!IsZero(dir.z)) {
+    const Flt h0 = -(base.z + 1.0) / dir.z;
+    const Flt h0x = base.x + (dir.x * h0);
+    const Flt h0y = base.y + (dir.y * h0);
+    if ((Sqr(h0x) + Sqr(h0y)) <= 1.0) {
+      h[hits] = h0;
+      side[hits] = 1;
       ++hits;
     }
   }
 
-  if (hits != 2 && !IsZero(dir.z)) {
-    Flt h = -(base.z + 1.0) / dir.z;
-    Vec3 pt = CalcHitPoint(base, dir, h);
-    if ((Sqr(pt.x) + Sqr(pt.y)) <= 1.0) {
-      // hit base
-      hit_list.addHit(this, h, pt, 1, !near_hit);
-      ++hits;
-    }
+  if (hits != 2) { return 0; }
+
+  Flt near_h, far_h;
+  int near_side, far_side;
+  if (h[0] < h[1]) {
+    near_h = h[0]; near_side = side[0];
+    far_h = h[1]; far_side = side[1];
+  } else {
+    near_h = h[1]; near_side = side[1];
+    far_h = h[0]; far_side = side[0];
   }
 
-  if (hits > 0) { ++r.stats->cone_hit; }
-  return hits;
+  hit_list.addHit(
+    this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
+  if (csg) {
+    hit_list.addHit(
+      this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
+  }
+
+  ++r.stats->cone_hit;
+  return 1 + int(csg);
 }
 
 int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
@@ -149,8 +174,7 @@ int Cone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 
   } else {
     // side
-    Vec3 n{h.local_pt.x * 2.0, h.local_pt.y * 2.0,
-	   (1.0 - h.local_pt.z) * .25};
+    Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
     normal = _trans.normalLocalToGlobal(n, 0);
 
     Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
@@ -175,7 +199,7 @@ int Cube::init(Scene& s)
   if (Primitive::init(s)) { return -1; }
 
   static constexpr Vec3 n[6] = {
-    {1, 0, 0}, {-1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, -1}};
+    {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
 
   for (int i = 0; i < 6; ++i) {
     normal_cache[i] = _trans.normalLocalToGlobal(n[i], 0);
@@ -256,16 +280,14 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cube completely behind ray origin
   }
 
-  int hits = 1;
   hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
   if (csg) {
     hit_list.addHit(
       this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
-    ++hits;
   }
 
   ++r.stats->cube_hit;
-  return hits;
+  return 1 + int(csg);
 }
 
 int Cube::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
@@ -357,16 +379,14 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cylinder completely behind ray origin
   }
 
-  int hits = 1;
   hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), near_side, csg);
   if (csg) {
     hit_list.addHit(
       this, far_h, CalcHitPoint(base, dir, far_h), far_side, false);
-    ++hits;
   }
 
   ++r.stats->cylinder_hit;
-  return hits;
+  return 1 + int(csg);
 }
 
 int Cylinder::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
@@ -681,16 +701,14 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // sphere completely behind ray origin
   }
 
-  int hits = 1;
   Flt near_h = (-b - sqrt_x) / a;
   hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, csg);
   if (csg) {
     hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, false);
-    ++hits;
   }
 
   ++r.stats->sphere_hit;
-  return hits;
+  return 1 + int(csg);
 }
 
 int Sphere::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
