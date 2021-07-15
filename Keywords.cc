@@ -404,17 +404,6 @@ int SizeFn(
   return 0;
 }
 
-int SolidFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Object* ob = dynamic_cast<Object*>(p);
-  if (!ob) { return -1; }
-
-  bool val;
-  if (int er = sp.getBool(n, val); er != 0) { return er; }
-  return ob->setSolid(val);
-}
-
 int SpecularFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -550,7 +539,6 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"shadow",        ShadowBoolFn},
   {"side",          SideFn},
   {"size",          SizeFn},
-  {"solid",         SolidFn},
   {"specular",      SpecularFn},
   {"sphere",        SphereFn},
   {"spotlight",     SpotlightFn},
