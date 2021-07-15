@@ -411,40 +411,38 @@ int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
   Vec3 base, dir;
   r.globalToLocal(_trans, base, dir);
 
-  Flt a = Sqr(dir.x) + Sqr(dir.y) - (0.25 * Sqr(dir.z));
-  Flt b = (base.x * dir.x) + (base.y * dir.y) +
+  const Flt a = Sqr(dir.x) + Sqr(dir.y) - (0.25 * Sqr(dir.z));
+  const Flt b = (base.x * dir.x) + (base.y * dir.y) +
     (dir.z * (1.0 - base.z) * 0.25);
-  Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
-  Flt x = Sqr(b) - (a * c);
+  const Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
+  const Flt x = Sqr(b) - (a * c);
   if (x < VERY_SMALL) {
-    return 0;  // cone missed (avoid single intersection case)
+    return 0;  // cone missed
   }
 
-  Flt sqrt_x = std::sqrt(x);
-  Flt far_h = (-b + sqrt_x) / a;
-  if (far_h < 0) {
-    return 0;  // cone completely behind ray origin
+  const Flt sqrt_x = std::sqrt(x);
+
+  const Flt h1 = (-b - sqrt_x) / a;
+  const Flt h1z = base.z + (dir.z * h1);
+  const bool h1_hit = (h1z >= -1.0 && h1z <= 1.0);
+
+  const Flt h2 = (-b + sqrt_x) / a;
+  const Flt h2z = base.z + (dir.z * h2);
+  const bool h2_hit = (h2z >= -1.0 && h2z <= 1.0);
+
+  const int hits = int(h1_hit) + int(h2_hit);
+  if (hits == 0) { return 0; }
+
+  Flt near_h;
+  if (hits == 2) {
+    near_h = std::min(h1, h2);
+  } else {
+    near_h = h1_hit ? h1 : h2;
   }
 
-  int hits = 0;
-
-  Flt near_h = (-b - sqrt_x) / a;
-  Vec3 near_pt = CalcHitPoint(base, dir, near_h);
-  if ((near_pt.z >= -1.0) && (near_pt.z <= 1.0)) {
-    hit_list.addHit(this, near_h, near_pt, 0, HIT_NORMAL);
-    ++hits;
-  }
-
-  if (csg || hits == 0) {
-    Vec3 far_pt = CalcHitPoint(base, dir, far_h);
-    if ((far_pt.z >= -1.0) && (far_pt.z <= 1.0)) {
-      hit_list.addHit(this, far_h, far_pt, 0, HIT_NORMAL);
-      ++hits;
-    }
-  }
-
-  if (hits > 0) { ++r.stats->open_cone_hit; }
-  return hits;
+  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_NORMAL);
+  ++r.stats->open_cone_hit;
+  return 1;
 }
 
 int OpenCone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
