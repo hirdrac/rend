@@ -472,9 +472,7 @@ int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
 int OpenCone::evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const
 {
-  Vec3 n{h.local_pt.x * 2.0,
-	 h.local_pt.y * 2.0,
-	 (1.0 - h.local_pt.z) * .25};
+  Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
   normal = _trans.normalLocalToGlobal(n, 0);
 
   Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
