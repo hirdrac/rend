@@ -38,12 +38,19 @@ int CSG::init(Scene& s)
 {
   auto count = _children.size();
   if (count <= 1) {
-    LOG_ERROR("Too few objects for CSG (", count, ")");
+    LOG_ERROR("Too few objects for ", desc());
     return -1;
   }
 
   for (auto& ob : _children) {
     if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
+  }
+
+  BBox b;
+  bound(b);
+  if (b.empty()) {
+    LOG_WARN("Empty bound for ", desc());
+    return -1;
   }
 
   return 0;
@@ -114,18 +121,20 @@ int Intersection::intersect(const Ray& r, HitList& hit_list) const
 
 int Intersection::bound(BBox& b) const
 {
-  Flt best_weight = VERY_LARGE;
-  BBox box;
+  if (_children.empty()) { return -1; }
 
-  // find smallest bounding box
-  for (auto& ob : _children) {
-    box.reset();
-    ob->bound(box);
-    Flt weight = box.weight();
-    if (weight < best_weight) {
-      best_weight = weight;
-      b = box;
-    }
+  _children[0]->bound(b);
+  for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
+    BBox b2;
+    _children[i]->bound(b2);
+
+    if (b2.pmin.x > b.pmin.x) { b.pmin.x = b2.pmin.x; }
+    if (b2.pmin.y > b.pmin.y) { b.pmin.y = b2.pmin.y; }
+    if (b2.pmin.z > b.pmin.z) { b.pmin.z = b2.pmin.z; }
+
+    if (b2.pmax.x < b.pmax.x) { b.pmax.x = b2.pmax.x; }
+    if (b2.pmax.y < b.pmax.y) { b.pmax.y = b2.pmax.y; }
+    if (b2.pmax.z < b.pmax.z) { b.pmax.z = b2.pmax.z; }
   }
 
   return 0;
