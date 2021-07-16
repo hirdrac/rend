@@ -27,7 +27,6 @@ class Ray
   StatInfo* stats = nullptr;
 
   // Member Functions
-  void globalToLocal(const Transform& t, Vec3& base, Vec3& dir) const;
   void moveOut(Flt amount = .0001) { base += dir * amount; }
 };
 

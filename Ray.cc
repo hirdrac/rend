@@ -6,16 +6,6 @@
 //
 
 #include "Ray.hh"
-#include "Transform.hh"
-
-
-// **** Ray Class ****
-void Ray::globalToLocal(const Transform& t, Vec3& new_base, Vec3& new_dir) const
-{
-  const Matrix& global_inv = t.GlobalInv(time);
-  new_dir = MultVector(dir, global_inv);
-  new_base = MultPoint(base, global_inv);
-}
 
 
 // **** Functions ****
