@@ -20,9 +20,9 @@ class Group final : public Primitive
   std::string desc() const override;
   int setName(const std::string& str) override { _name = str; return 0; }
   int addObject(const ObjectPtr& ob) override;
-  int init(Scene& s) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int bound(BBox& b) const override { return -1; }
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   const std::vector<ObjectPtr>& children() const override { return _children; }

@@ -20,9 +20,9 @@ class ShaderColor final : public Shader
 
   // SceneItem Functions
   std::string desc() const override;
-  int init(Scene& s) override;
 
   // Shader Functions
+  int init(Scene& s) override;
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const override;
@@ -38,9 +38,9 @@ class ShaderGlobal final : public Shader
   // SceneItem Functions
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   std::string desc() const override { return "<Global>"; }
-  int init(Scene& s) override;
 
   // Shader Functions
+  int init(Scene& s) override;
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const override;
@@ -56,9 +56,9 @@ class ShaderLocal final : public Shader
   // SceneItem Functions
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   std::string desc() const override { return "<Local>"; }
-  int init(Scene& s) override;
 
   // Shader Functions
+  int init(Scene& s) override;
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const override;
@@ -141,9 +141,9 @@ class TextureMap final : public PatternShader
 
   // SceneItem Functions
   std::string desc() const override { return "<TextureMap>"; }
-  int init(Scene& s) override;
 
   // Shader Functions
+  int init(Scene& s) override;
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const override;

@@ -14,7 +14,6 @@
 class Scene;
 class Transform;
 
-
 enum SceneItemFlag {
   NO_FLAG, AIR, AMBIENT, BACKGROUND, DEFAULT_LT, DEFAULT_OBJ,
   DIFFUSE, SPECULAR, TRANSMIT
@@ -22,9 +21,8 @@ enum SceneItemFlag {
 
 
 // SceneItem class definition
-//  base class for scene elements - provides a standard set of
-//  functions for printing, list management, copying, and transforming
-//  elements
+//  provides interface for parser to modify scene elements
+//
 class SceneItem
 {
  public:
