@@ -77,8 +77,7 @@ class Primitive : public Object
   // SceneItem Functions
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   int init(Scene& s) override;
-  Transform*       trans() override       { return &_trans; }
-  const Transform* trans() const override { return &_trans; }
+  Transform* trans() override { return &_trans; }
 
   // Object Functions
   int bound(BBox& b) const override;

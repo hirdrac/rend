@@ -29,8 +29,7 @@ class SceneItem
   virtual ~SceneItem() = default;
 
   // Member Function
-  virtual Transform*       trans()       { return nullptr; }
-  virtual const Transform* trans() const { return nullptr; }
+  virtual Transform* trans() { return nullptr; }
   virtual std::string desc() const = 0;
   virtual int setName(const std::string& val) { return -1; }
 
