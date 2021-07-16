@@ -16,9 +16,9 @@ class Disc final : public Primitive
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Disc>"; }
-  int init(Scene& s) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   int bound(BBox& b) const override;
@@ -33,9 +33,9 @@ class Cone final : public Primitive
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Cone>"; }
-  int init(Scene& s) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.cone; }
@@ -49,9 +49,9 @@ class Cube final : public Primitive
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Cube>"; }
-  int init(Scene& s) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.cube; }
@@ -65,9 +65,9 @@ class Cylinder final : public Primitive
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Cylinder>"; }
-  int init(Scene& s) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.cylinder; }
@@ -117,9 +117,9 @@ class Plane final : public Primitive
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Plane>"; }
-  int init(Scene& s) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   int bound(BBox& b) const override;
@@ -146,13 +146,13 @@ class Torus final : public Primitive
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Torus>"; }
+  int setRadius(Flt r) override { _radius = r; return 0; }
 
   // Object Functions
   int bound(BBox& b) const override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
   Flt hitCost() const override { return CostTable.torus; }
-  int setRadius(Flt r) override { _radius = r; return 0; }
 
  private:
   Flt _radius = .5;

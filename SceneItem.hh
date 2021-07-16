@@ -7,6 +7,7 @@
 #include "LightPtr.hh"
 #include "ShaderPtr.hh"
 #include "ObjectPtr.hh"
+#include "Types.hh"
 #include <string>
 
 
@@ -29,9 +30,11 @@ class SceneItem
   virtual ~SceneItem() = default;
 
   // Member Function
-  virtual Transform* trans() { return nullptr; }
   virtual std::string desc() const = 0;
+  virtual Transform* trans() { return nullptr; }
+
   virtual int setName(const std::string& val) { return -1; }
+  virtual int setRadius(Flt r) { return -1; }
 
   virtual int addObject(const ObjectPtr& ob) { return -1; }
   virtual int addLight(const LightPtr& lt) { return -1; }

@@ -285,12 +285,9 @@ int PointLightFn(
 int RadiusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Object* ob = dynamic_cast<Object*>(p);
-  if (!ob) { return -1; }
-
   Flt val;
   if (int er = sp.getFlt(n, val); er != 0) { return er; }
-  return ob->setRadius(val);
+  return p->setRadius(val);
 }
 
 int RegionFn(

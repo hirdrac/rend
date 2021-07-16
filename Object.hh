@@ -57,7 +57,6 @@ class Object : public SceneItem
   virtual int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const {
     return -1; }
   virtual Flt hitCost() const { return 1.0; }
-  virtual int setRadius(Flt r) { return -1; }
   virtual bool isVisible() const { return false; }
   virtual const ShaderPtr& shader() const { return _nullShader; }
   virtual int setShader(const ShaderPtr& sh) { return -1; }
