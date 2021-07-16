@@ -29,9 +29,9 @@ class Light : public SceneItem
 
   // SceneItem Functions
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
-  int init(Scene& s) override final;
 
   // Member Functions
+  int init(Scene& s);
   virtual int luminate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     LightResult& result) const = 0;

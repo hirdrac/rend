@@ -13,12 +13,11 @@
 // **** Types ****
 class Scene;
 class Transform;
-class Object;
 
 
 enum SceneItemFlag {
-  NO_FLAG, AIR, AMBIENT, BACKGROUND, BUMPMAP, DEFAULT_LT, DEFAULT_OBJ,
-  DIFFUSE, INTERIOR, SPECULAR, SURFACE, TRANSMIT
+  NO_FLAG, AIR, AMBIENT, BACKGROUND, DEFAULT_LT, DEFAULT_OBJ,
+  DIFFUSE, SPECULAR, TRANSMIT
 };
 
 
@@ -40,6 +39,4 @@ class SceneItem
   virtual int addObject(const ObjectPtr& ob) { return -1; }
   virtual int addLight(const LightPtr& lt) { return -1; }
   virtual int addShader(const ShaderPtr& sh, SceneItemFlag flag) { return -1; }
-
-  virtual int init(Scene& s) { return 0; }
 };

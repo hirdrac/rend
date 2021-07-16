@@ -35,6 +35,7 @@ class Shader : public SceneItem
   ~Shader();
 
   // Member Functions
+  virtual int init(Scene& s) { return 0; }
   virtual int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const = 0;

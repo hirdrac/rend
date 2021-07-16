@@ -51,6 +51,7 @@ class Object : public SceneItem
   ~Object();
 
   // Member Functions
+  virtual int init(Scene& s) { return 0; }
   virtual int bound(BBox& b) const { return -1; }
   virtual int intersect(const Ray& r, bool csg, HitList& hit_list) const = 0;
   virtual int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const {
