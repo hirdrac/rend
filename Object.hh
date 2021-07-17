@@ -35,7 +35,6 @@ class Object : public SceneItem
   virtual int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const {
     return -1; }
   virtual Flt hitCost() const { return 1.0; }
-  virtual bool isVisible() const { return false; }
   virtual const ShaderPtr& shader() const { return _nullShader; }
   virtual int setShader(const ShaderPtr& sh) { return -1; }
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
@@ -58,7 +57,6 @@ class Primitive : public Object
   // Object Functions
   int init(Scene& s) override;
   int bound(BBox& b) const override;
-  bool isVisible() const override    { return true; }
   const ShaderPtr& shader() const override { return _shader; }
   int setShader(const ShaderPtr& sh) override { _shader = sh; return 0; }
 
