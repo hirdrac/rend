@@ -46,8 +46,10 @@ class PatternShader : public Shader
  public:
   // SceneItem Functions
   Transform* trans() override { return &_trans; }
-  int init(Scene& s) override;
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
+
+  // Shader Functions
+  int init(Scene& s) override;
 
  protected:
   Transform _trans;

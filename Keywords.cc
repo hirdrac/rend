@@ -425,16 +425,6 @@ int StripeFn(
   return addShader(sp, s, p, n, flag, makeShader<Stripe>());
 }
 
-#if 0
-int TextureFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  std::string filename;
-  sp.getString(n, filename);
-  return addShader(sp, s, p, n, flag, makeShader<TextureMap>());
-}
-#endif
-
 int TorusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -540,7 +530,6 @@ static const std::map<std::string,ItemFn> KeyWords = {
   {"sphere",        SphereFn},
   {"spotlight",     SpotlightFn},
   {"stripe",        StripeFn},
-  //{"texture",       TextureFn}, FIX!!!
   {"transmit",      TransmitFn},
   {"torus",         TorusFn},
   {"union",         UnionFn},

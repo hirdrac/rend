@@ -36,8 +36,8 @@ class ShaderGlobal final : public Shader
 {
  public:
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   std::string desc() const override { return "<Global>"; }
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Shader Functions
   int init(Scene& s) override;
@@ -54,8 +54,8 @@ class ShaderLocal final : public Shader
 {
  public:
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
   std::string desc() const override { return "<Local>"; }
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Shader Functions
   int init(Scene& s) override;
@@ -131,21 +131,3 @@ class Stripe final : public PatternShader
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const override;
 };
-
-#if 0
-class TextureMap final : public PatternShader
-{
- public:
-  FrameBuffer* fb;
-  Flt sx, sy;
-
-  // SceneItem Functions
-  std::string desc() const override { return "<TextureMap>"; }
-
-  // Shader Functions
-  int init(Scene& s) override;
-  int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-    Color& result) const override;
-};
-#endif
