@@ -10,6 +10,7 @@
 #include "Stats.hh"
 #include "HitCostInfo.hh"
 #include "Logger.hh"
+#include "BBox.hh"
 #include <algorithm>
 #include <sstream>
 

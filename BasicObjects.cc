@@ -10,6 +10,7 @@
 #include "Ray.hh"
 #include "Roots.hh"
 #include "Stats.hh"
+#include "BBox.hh"
 #include <algorithm>
 #include <cmath>
 

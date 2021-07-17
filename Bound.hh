@@ -9,6 +9,7 @@
 #pragma once
 #include "Object.hh"
 #include "HitCostInfo.hh"
+#include "BBox.hh"
 #include <vector>
 
 
