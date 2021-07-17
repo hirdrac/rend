@@ -52,11 +52,11 @@ class Primitive : public Object
 {
  public:
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
-  int init(Scene& s) override;
   Transform* trans() override { return &_trans; }
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Object Functions
+  int init(Scene& s) override;
   int bound(BBox& b) const override;
   bool isVisible() const override    { return true; }
   const ShaderPtr& shader() const override { return _shader; }

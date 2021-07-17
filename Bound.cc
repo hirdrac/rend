@@ -197,8 +197,8 @@ static OptNode* mergeOptNodes(OptNode* node1, OptNode* node2)
 
   // Create new bounding box
   OptNode* b = new OptNode();
-  b->box   = BBox(node1->box, node2->box);
   b->child = n1;
+  b->box   = BBox(node1->box, node2->box);
   while (n1->next) { n1 = n1->next; }
   n1->next = n2;
 
