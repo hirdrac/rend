@@ -36,7 +36,6 @@ class Object : public SceneItem
     return -1; }
   virtual Flt hitCost() const { return 1.0; }
   virtual const ShaderPtr& shader() const { return _nullShader; }
-  virtual int setShader(const ShaderPtr& sh) { return -1; }
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
 
  private:
@@ -58,7 +57,6 @@ class Primitive : public Object
   int init(Scene& s) override;
   int bound(BBox& b) const override;
   const ShaderPtr& shader() const override { return _shader; }
-  int setShader(const ShaderPtr& sh) override { _shader = sh; return 0; }
 
  protected:
   Transform _trans;

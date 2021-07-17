@@ -68,8 +68,8 @@ int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
     trans->global *= t->global;
   }
 
-  // Assign default shader if none is set
-  if (!ob.shader()) { ob.setShader(sh); }
+  // Assign provided shader if none is set
+  if (sh && !ob.shader()) { ob.addShader(sh, NO_FLAG); }
 
   // Init primitive
   int error = ob.init(s);
