@@ -15,16 +15,9 @@
 
 // **** Types ****
 class HitInfo;
+struct EvaluatedHit;
 class Color;
 class Ray;
-
-
-struct EvaluatedHit {
-  Vec3 global_pt;
-  Vec3 normal;
-  Vec3 map;
-};
-
 
 class Shader : public SceneItem
 {

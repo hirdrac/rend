@@ -20,7 +20,7 @@ class Disc final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   int bound(BBox& b) const override;
   Flt hitCost() const override { return CostTable.disc; }
 
@@ -37,7 +37,7 @@ class Cone final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.cone; }
 
  private:
@@ -53,7 +53,7 @@ class Cube final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.cube; }
 
  private:
@@ -69,7 +69,7 @@ class Cylinder final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.cylinder; }
 
  private:
@@ -84,7 +84,7 @@ class OpenCone final : public Primitive
 
   // Object Functions
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.open_cone; }
 };
 
@@ -96,7 +96,7 @@ class OpenCylinder final : public Primitive
 
   // Object Functions
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.open_cylinder; }
 };
 
@@ -108,7 +108,7 @@ class Paraboloid final : public Primitive
 
   // Object Functions
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.paraboloid; }
 };
 
@@ -121,7 +121,7 @@ class Plane final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   int bound(BBox& b) const override;
   Flt hitCost() const override { return CostTable.plane; }
 
@@ -137,7 +137,7 @@ class Sphere final : public Primitive
 
   // Object Functions
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.sphere; }
 };
 
@@ -151,7 +151,7 @@ class Torus final : public Primitive
   // Object Functions
   int bound(BBox& b) const override;
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  int evalHit(const HitInfo& h, Vec3& normal, Vec3& map) const override;
+  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override { return CostTable.torus; }
 
  private:

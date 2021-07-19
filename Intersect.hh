@@ -14,6 +14,12 @@
 class Object;
 class Ray;
 
+struct EvaluatedHit {
+  Vec3 global_pt;
+  Vec3 normal;
+  Vec3 map;
+};
+
 enum HitType {
   HIT_NORMAL, // non-CSG surface hit
   HIT_ENTER,  // enter CSG solid
