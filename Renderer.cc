@@ -19,7 +19,7 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
 {
   _scene = s;
   _fb = fb;
-  _stats.clear();
+  _stats = {};
 
   // Set up view vectors
   Vec3 vnormal = UnitVec(_scene->coi - _scene->eye);
@@ -136,7 +136,7 @@ int Renderer::startJobs()
 
   // start render jobs
   for (auto& j : _jobs) {
-    j->stats.clear();
+    j->stats = {};
     j->halt = false;
     j->jobThread = std::thread(&Renderer::jobMain, this, j.get());
   }

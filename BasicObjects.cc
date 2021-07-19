@@ -26,7 +26,7 @@ int Disc::init(Scene& s)
 
 int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->disc_tried;
+  ++r.stats->disc.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -46,7 +46,7 @@ int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   hit_list.addHit(this, h, pt, 0, HIT_NORMAL);
-  ++r.stats->disc_hit;
+  ++r.stats->disc.hit;
   return 1;
 }
 
@@ -77,7 +77,7 @@ int Cone::init(Scene& s)
 
 int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->cone_tried;
+  ++r.stats->cone.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -146,7 +146,7 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;
   }
 
-  ++r.stats->cone_hit;
+  ++r.stats->cone.hit;
   if (csg) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -200,7 +200,7 @@ int Cube::init(Scene& s)
 
 int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->cube_tried;
+  ++r.stats->cube.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -266,7 +266,7 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cube completely behind ray origin
   }
 
-  ++r.stats->cube_hit;
+  ++r.stats->cube.hit;
   if (csg) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -311,7 +311,7 @@ int Cylinder::init(Scene& s)
 
 int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->cylinder_tried;
+  ++r.stats->cylinder.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -364,7 +364,7 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // cylinder completely behind ray origin
   }
 
-  ++r.stats->cylinder_hit;
+  ++r.stats->cylinder.hit;
   if (csg) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -414,7 +414,7 @@ int Cylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 // **** OpenCone Class ****
 int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->open_cone_tried;
+  ++r.stats->open_cone.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -440,7 +440,7 @@ int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
       const Flt px = base.x + (dir.x * near_h);
       const Flt py = base.y + (dir.y * near_h);
       hit_list.addHit(this, near_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->open_cone_hit;
+      ++r.stats->open_cone.hit;
       return 1;
     }
   }
@@ -452,7 +452,7 @@ int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
       const Flt px = base.x + (dir.x * far_h);
       const Flt py = base.y + (dir.y * far_h);
       hit_list.addHit(this, far_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->open_cone_hit;
+      ++r.stats->open_cone.hit;
       return 1;
     }
   }
@@ -477,7 +477,7 @@ int OpenCone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 // **** OpenCylinder Class ****
 int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->open_cylinder_tried;
+  ++r.stats->open_cylinder.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -500,7 +500,7 @@ int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
       const Flt px = base.x + (dir.x * near_h);
       const Flt py = base.y + (dir.y * near_h);
       hit_list.addHit(this, near_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->open_cylinder_hit;
+      ++r.stats->open_cylinder.hit;
       return 1;
     }
   }
@@ -512,7 +512,7 @@ int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
       const Flt px = base.x + (dir.x * far_h);
       const Flt py = base.y + (dir.y * far_h);
       hit_list.addHit(this, far_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->open_cylinder_hit;
+      ++r.stats->open_cylinder.hit;
       return 1;
     }
   }
@@ -535,7 +535,7 @@ int OpenCylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 // **** Paraboloid Class ****
 int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->paraboloid_tried;
+  ++r.stats->paraboloid.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -558,7 +558,7 @@ int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
       const Flt px = base.x + (dir.x * near_h);
       const Flt py = base.y + (dir.y * near_h);
       hit_list.addHit(this, near_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->paraboloid_hit;
+      ++r.stats->paraboloid.hit;
       return 1;
     }
   }
@@ -570,7 +570,7 @@ int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
       const Flt px = base.x + (dir.x * far_h);
       const Flt py = base.y + (dir.y * far_h);
       hit_list.addHit(this, far_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->paraboloid_hit;
+      ++r.stats->paraboloid.hit;
       return 1;
     }
   }
@@ -600,7 +600,7 @@ int Plane::init(Scene& s)
 
 int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->plane_tried;
+  ++r.stats->plane.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -625,7 +625,7 @@ int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   hit_list.addHit(this, h, {px,py,0.0}, 0, HIT_NORMAL);
-  ++r.stats->plane_hit;
+  ++r.stats->plane.hit;
   return 1;
 }
 
@@ -648,7 +648,7 @@ int Plane::bound(BBox& b) const
 // **** Sphere Class ****
 int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->sphere_tried;
+  ++r.stats->sphere.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -671,7 +671,7 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   Flt near_h = (-b - sqrt_x) / a;
 
-  ++r.stats->sphere_hit;
+  ++r.stats->sphere.hit;
   if (csg) {
     hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_ENTER);
     hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, HIT_EXIT);
@@ -696,7 +696,7 @@ int Sphere::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 // **** Torus Class ****
 int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  ++r.stats->torus_tried;
+  ++r.stats->torus.tried;
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
@@ -731,7 +731,7 @@ int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;
   }
 
-  ++r.stats->torus_hit;
+  ++r.stats->torus.hit;
   if (csg) {
     for (int i = 0; i < n; ++i) {
       hit_list.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0,

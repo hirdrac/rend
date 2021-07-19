@@ -13,9 +13,8 @@
 // **** Types ****
 class Scene;
 
-class InventoryInfo
+struct InventoryInfo
 {
- public:
   uint32_t bounds = 0;
   uint32_t csgs = 0;
   uint32_t groups = 0;
@@ -27,37 +26,28 @@ class InventoryInfo
 class StatInfo
 {
  public:
-  uint64_t rays_cast;
-  uint64_t rays_hit;
-  uint64_t shadow_rays_cast;
-  uint64_t shadow_rays_hit;
-  uint64_t bound_tried;
-  uint64_t bound_hit;
-  uint64_t disc_tried;
-  uint64_t disc_hit;
-  uint64_t cone_tried;
-  uint64_t cone_hit;
-  uint64_t cube_tried;
-  uint64_t cube_hit;
-  uint64_t cylinder_tried;
-  uint64_t cylinder_hit;
-  uint64_t open_cone_tried;
-  uint64_t open_cone_hit;
-  uint64_t open_cylinder_tried;
-  uint64_t open_cylinder_hit;
-  uint64_t paraboloid_tried;
-  uint64_t paraboloid_hit;
-  uint64_t plane_tried;
-  uint64_t plane_hit;
-  uint64_t sphere_tried;
-  uint64_t sphere_hit;
-  uint64_t torus_tried;
-  uint64_t torus_hit;
+  struct RayStats {
+    uint64_t tried= 0, hit = 0;
 
-  StatInfo() { clear(); }
+    RayStats& operator+=(const RayStats& x) {
+      tried += x.tried; hit += x.hit; return *this; }
+  };
+
+  RayStats rays;
+  RayStats shadow_rays;
+  RayStats bound;
+  RayStats disc;
+  RayStats cone;
+  RayStats cube;
+  RayStats cylinder;
+  RayStats open_cone;
+  RayStats open_cylinder;
+  RayStats paraboloid;
+  RayStats plane;
+  RayStats sphere;
+  RayStats torus;
 
   // Member Functions
-  void clear();
   void print(const Scene& s, std::ostream& out) const;
 
   StatInfo& operator+=(const StatInfo& stats);
