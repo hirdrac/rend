@@ -228,7 +228,7 @@ int ShellLoop()
     break;
 
   case 'z':
-    Ren.stats().print(TheScene, std::cout);
+    Ren.stats().print(std::cout);
     break;
 
   default:

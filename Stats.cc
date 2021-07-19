@@ -6,7 +6,6 @@
 //
 
 #include "Stats.hh"
-#include "Scene.hh"
 
 
 // **** Globals ****
@@ -14,7 +13,7 @@ InventoryInfo Inventory;
 
 
 // **** StatInfo Class ****
-void StatInfo::print(const Scene& s, std::ostream& out) const
+void StatInfo::print(std::ostream& out) const
 {
   uint64_t object_tried = disc.tried + cone.tried + cube.tried + cylinder.tried
     + open_cone.tried + open_cylinder.tried + paraboloid.tried + plane.tried
@@ -49,7 +48,8 @@ void StatInfo::print(const Scene& s, std::ostream& out) const
   out << "\n  Dumb Hit Tries  " << dumb_tries;
   if (dumb_tries > 0) {
     out << "\n       Reduction  "
-	<< (Flt(dumb_tries - total_tries) / Flt(dumb_tries)) * 100.0 << '%';
+	<< (double(dumb_tries - total_tries) / double(dumb_tries)) * 100.0
+        << '%';
   }
 
   out << '\n';

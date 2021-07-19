@@ -6,13 +6,11 @@
 //
 
 #pragma once
-#include "Types.hh"
-#include <iosfwd>
+#include <cstdint>
+#include <ostream>
 
 
 // **** Types ****
-class Scene;
-
 struct InventoryInfo
 {
   uint32_t bounds = 0;
@@ -27,7 +25,7 @@ class StatInfo
 {
  public:
   struct RayStats {
-    uint64_t tried= 0, hit = 0;
+    uint64_t tried = 0, hit = 0;
 
     RayStats& operator+=(const RayStats& x) {
       tried += x.tried; hit += x.hit; return *this; }
@@ -48,7 +46,7 @@ class StatInfo
   RayStats torus;
 
   // Member Functions
-  void print(const Scene& s, std::ostream& out) const;
+  void print(std::ostream& out) const;
 
   StatInfo& operator+=(const StatInfo& stats);
 };
