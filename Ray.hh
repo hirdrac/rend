@@ -27,7 +27,7 @@ class Ray
   StatInfo* stats = nullptr;
 
   // Member Functions
-  void moveOut(Flt amount = .0001) { base += dir * amount; }
+  void moveOut(Flt amount) { base += dir * amount; }
 };
 
 

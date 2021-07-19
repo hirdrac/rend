@@ -131,7 +131,7 @@ int Phong::evaluate(
     ray.max_length = VERY_LARGE;
     ray.time = 0.0;
     ray.depth = r.depth + 1;
-    ray.moveOut();
+    ray.moveOut(s.ray_moveout);
 
     ray.freeCache = r.freeCache;
     ray.stats = r.stats;

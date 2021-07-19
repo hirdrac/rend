@@ -44,6 +44,7 @@ class Scene
   bool shadow, reflect, transmit;
   int  max_ray_depth;
   Flt  min_ray_value;
+  Flt  ray_moveout;
 
 
   Scene() { clear(); }

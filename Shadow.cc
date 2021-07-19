@@ -21,7 +21,7 @@ int CastShadow(
   feeler.max_length = light.distance;
   feeler.time       = r.time;
   feeler.depth      = 1;
-  feeler.moveOut();
+  feeler.moveOut(s.ray_moveout);
 
   feeler.freeCache  = r.freeCache;
   feeler.stats      = r.stats;
