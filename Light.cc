@@ -24,6 +24,10 @@ int Light::init(Scene& s)
 {
   if (!_energy) {
     _energy = s.default_lt;
+    if (!_energy) {
+      // FIXME - add error message here for missing shader
+      return -1;
+    }
   }
 
   return 0;

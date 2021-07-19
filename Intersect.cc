@@ -6,7 +6,6 @@
 //
 
 #include "Intersect.hh"
-#include "Object.hh"
 #include "Ray.hh"
 
 
