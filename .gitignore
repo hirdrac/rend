@@ -1,3 +1,6 @@
 build/
 rend
 rend.exe
+rend-g
+rend-pg
+gmon.out
