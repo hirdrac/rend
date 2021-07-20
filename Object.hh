@@ -9,6 +9,7 @@
 #include "SceneItem.hh"
 #include "Transform.hh"
 #include "ObjectPtr.hh"
+#include "ShaderPtr.hh"
 #include "Types.hh"
 #include <vector>
 
@@ -17,7 +18,6 @@
 class HitInfo;
 class HitList;
 struct EvaluatedHit;
-class Shader;
 class Ray;
 class BBox;
 
