@@ -2,10 +2,9 @@
 // Keywords.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of keywords module
-//
 
 #include "Keywords.hh"
+#include "RegisterKeyword.hh"
 #include "Parser.hh"
 #include "Scene.hh"
 #include "BasicLights.hh"
@@ -15,51 +14,18 @@
 #include "Phong.hh"
 #include "Group.hh"
 #include "Logger.hh"
+#include "Print.hh"
 #include <map>
+#include <memory>
 #include <cctype>
 
 
-namespace {
-  // **** Helper Functions ****
-  Transform* findTrans(SceneItem* p)
-  {
-    Transform* t = p->trans();
-    if (!t) {
-      LOG_ERROR("SceneItem ", p->desc(), " cannot be transformed");
-    }
-
-    return t;
-  }
-
-  int addShader(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
-                SceneItemFlag flag, const ShaderPtr& sh)
-  {
-    int error = 0;
-    if (!p) {
-      error = s.addShader(sh, flag);
-    } else {
-      error = p->addShader(sh, flag);
-      if (!error && (dynamic_cast<Object*>(p) || dynamic_cast<Light*>(p))) {
-        error = s.addShader(sh, NO_FLAG);  // also add to scene
-      }
-    }
-
-    return error ? error : sp.processList(s, sh.get(), n);
-  }
-
-  int addObject(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
-                const ObjectPtr& ob)
-  {
-    int error = p ? p->addObject(ob) : s.addObject(ob);
-    return error ? error : sp.processList(s, ob.get(), n);
-  }
-
-  int addLight(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
-               const LightPtr& lt)
-  {
-    int error = p ? p->addLight(lt) : s.addLight(lt);
-    return error ? error : sp.processList(s, lt.get(), n);
-  }
+// **** Helper Functions ****
+static Transform* findTrans(SceneItem* p)
+{
+  Transform* t = p->trans();
+  if (!t) { println_err("ERROR: ", p->desc(), " cannot be transformed"); }
+  return t;
 }
 
 
@@ -85,40 +51,10 @@ int BackgroundFn(
   return sp.processList(s, p, n, BACKGROUND);
 }
 
-int CheckerboardFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<Checkerboard>());
-}
-
 int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   return p ? -1 : sp.getVec3(n, s.coi);
-}
-
-int ColorCubeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<ColorCube>());
-}
-
-int ConeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Cone>());
-}
-
-int CubeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Cube>());
-}
-
-int CylinderFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Cylinder>());
 }
 
 int DefaultLightFn(
@@ -135,12 +71,6 @@ int DefaultObjectFn(
   return sp.processList(s, p, n, DEFAULT_OBJ);
 }
 
-int DifferenceFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Difference>());
-}
-
 int DiffuseFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -152,12 +82,6 @@ int DirectionFn(
 {
   Light* lt = dynamic_cast<Light*>(p);
   return lt ? sp.getVec3(n, lt->dir) : -1;
-}
-
-int DiscFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Disc>());
 }
 
 int ExpFn(
@@ -179,18 +103,6 @@ int FovFn(
   return p ? -1 : sp.getFlt(n, s.fov);
 }
 
-int GlobalFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<ShaderGlobal>());
-}
-
-int GroupFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Group>());
-}
-
 int IdentityFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -201,28 +113,10 @@ int IdentityFn(
   return 0;
 }
 
-int IntersectFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Intersection>());
-}
-
-int LocalFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<ShaderLocal>());
-}
-
 int MaxdepthFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   return p ? -1 : sp.getInt(n, s.max_ray_depth);
-}
-
-int MergeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Merge>());
 }
 
 int MinValueFn(
@@ -239,47 +133,11 @@ int NameFn(
   return buffer.empty() ? -1 : p->setName(buffer);
 }
 
-int OpenConeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<OpenCone>());
-}
-
-int OpenCylinderFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<OpenCylinder>());
-}
-
-int ParaboloidFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Paraboloid>());
-}
-
-int PhongFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<Phong>());
-}
-
-int PlaneFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Plane>());
-}
-
 int PositionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Light* lt = dynamic_cast<Light*>(p);
   return lt ? sp.getVec3(n, lt->pos) : -1;
-}
-
-int PointLightFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addLight(sp, s, p, n, makeLight<PointLight>());
 }
 
 int RadiusFn(
@@ -309,13 +167,10 @@ int RgbFn(
   if (int er = sp.getFlt(n, r); er != 0) { return er; }
   if (int er = sp.getFlt(n, g); er != 0) { return er; }
   if (int er = sp.getFlt(n, b); er != 0) { return er; }
-  return addShader(sp, s, p, n, flag, makeShader<ShaderColor>(r, g, b));
-}
 
-int RingFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<Ring>());
+  auto sh = makeShader<ShaderColor>(r, g, b);
+  int error = p ? p->addShader(sh, flag) : s.addShader(sh, flag);
+  return error ? error : sp.processList(s, sh.get(), n);
 }
 
 int RotateXFn(
@@ -382,12 +237,6 @@ int ShadowBoolFn(
   return p ? -1 : sp.getBool(n, s.shadow);
 }
 
-int SideFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<ShaderSide>());
-}
-
 int SizeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -405,30 +254,6 @@ int SpecularFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   return sp.processList(s, p, n, SPECULAR);
-}
-
-int SphereFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Sphere>());
-}
-
-int SpotlightFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addLight(sp, s, p, n, makeLight<SpotLight>());
-}
-
-int StripeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addShader(sp, s, p, n, flag, makeShader<Stripe>());
-}
-
-int TorusFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Torus>());
 }
 
 int MoveFn(
@@ -449,12 +274,6 @@ int TransmitFn(
   return sp.processList(s, p, n, TRANSMIT);
 }
 
-int UnionFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return addObject(sp, s, p, n, makeObject<Union>());
-}
-
 int ValueFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -470,80 +289,109 @@ int VupFn(
 
 
 // **** Data ****
-static const std::map<std::string,ItemFn> KeyWords = {
-  // KeyWord        ItemFn
-  {"air",           AirFn},
-  {"ambient",       AmbientFn},
-  {"background",    BackgroundFn},
-  {"checker",       CheckerboardFn},
-  {"checkerboard",  CheckerboardFn},
-  {"coi",           CoiFn},
-  {"colorcube",     ColorCubeFn},
-  {"cone",          ConeFn},
-  {"cube",          CubeFn},
-  {"cylinder",      CylinderFn},
-  {"default",       DefaultObjectFn},
-  {"defaultobject", DefaultObjectFn},
-  {"defaultlight",  DefaultLightFn},
-  {"difference",    DifferenceFn},
-  {"diffuse",       DiffuseFn},
-  {"dir",           DirectionFn},
-  {"direction",     DirectionFn},
-  {"disc",          DiscFn},
-  {"exp",           ExpFn},
-  {"eye",           EyeFn},
-  {"fov",           FovFn},
-  {"global",        GlobalFn},
-  {"group",         GroupFn},
-  {"identity",      IdentityFn},
-  {"intersect",     IntersectFn},
-  {"light",         PointLightFn},
-  {"local",         LocalFn},
-  {"maxdepth",      MaxdepthFn},
-  {"merge",         MergeFn},
-  {"minvalue",      MinValueFn},
-  {"move",          MoveFn},
-  {"name",          NameFn},
-  {"opencone",      OpenConeFn},
-  {"opencylinder",  OpenCylinderFn},
-  {"paraboloid",    ParaboloidFn},
-  {"plane",         PlaneFn},
-  {"phong",         PhongFn},
-  {"pos",           PositionFn},
-  {"position",      PositionFn},
-  {"radius",        RadiusFn},
-  {"region",        RegionFn},
-  {"rgb",           RgbFn},
-  {"ring",          RingFn},
-  {"rotatex",       RotateXFn},
-  {"rotatey",       RotateYFn},
-  {"rotatez",       RotateZFn},
-  {"rotx",          RotateXFn},
-  {"roty",          RotateYFn},
-  {"rotz",          RotateZFn},
-  {"samples",       SamplesFn},
-  {"scale",         ScaleFn},
-  {"shadow",        ShadowBoolFn},
-  {"side",          SideFn},
-  {"size",          SizeFn},
-  {"specular",      SpecularFn},
-  {"sphere",        SphereFn},
-  {"spotlight",     SpotlightFn},
-  {"stripe",        StripeFn},
-  {"transmit",      TransmitFn},
-  {"torus",         TorusFn},
-  {"union",         UnionFn},
-  {"value",         ValueFn},
-  {"vup",           VupFn}
-};
+using KeywordMap = std::map<std::string,ItemFn,std::less<>>;
+static std::unique_ptr<KeywordMap> Keywords;
+
+static void initKeywords()
+{
+  Keywords = std::make_unique<KeywordMap>();
+  *Keywords = {
+    // keyword        ItemFn
+    {"air",           AirFn},
+    {"ambient",       AmbientFn},
+    {"background",    BackgroundFn},
+    {"coi",           CoiFn},
+    {"default",       DefaultObjectFn},
+    {"defaultobject", DefaultObjectFn},
+    {"defaultlight",  DefaultLightFn},
+    {"diffuse",       DiffuseFn},
+    {"dir",           DirectionFn},
+    {"direction",     DirectionFn},
+    {"exp",           ExpFn},
+    {"eye",           EyeFn},
+    {"fov",           FovFn},
+    {"identity",      IdentityFn},
+    {"maxdepth",      MaxdepthFn},
+    {"minvalue",      MinValueFn},
+    {"move",          MoveFn},
+    {"name",          NameFn},
+    {"pos",           PositionFn},
+    {"position",      PositionFn},
+    {"radius",        RadiusFn},
+    {"region",        RegionFn},
+    {"rgb",           RgbFn},
+    {"rotatex",       RotateXFn},
+    {"rotatey",       RotateYFn},
+    {"rotatez",       RotateZFn},
+    {"rotx",          RotateXFn},
+    {"roty",          RotateYFn},
+    {"rotz",          RotateZFn},
+    {"samples",       SamplesFn},
+    {"scale",         ScaleFn},
+    {"shadow",        ShadowBoolFn},
+    {"size",          SizeFn},
+    {"specular",      SpecularFn},
+    {"transmit",      TransmitFn},
+    {"value",         ValueFn},
+    {"vup",           VupFn}
+  };
+}
+
+
+REGISTER_OBJECT_KEYWORD(Cone,"cone");
+REGISTER_OBJECT_KEYWORD(Cube,"cube");
+REGISTER_OBJECT_KEYWORD(Cylinder,"cylinder");
+REGISTER_OBJECT_KEYWORD(Difference,"difference");
+REGISTER_OBJECT_KEYWORD(Disc,"disc");
+REGISTER_OBJECT_KEYWORD(Group,"group");
+REGISTER_OBJECT_KEYWORD(Intersection,"intersect");
+REGISTER_OBJECT_KEYWORD(Merge,"merge");
+REGISTER_OBJECT_KEYWORD(OpenCone,"opencone");
+REGISTER_OBJECT_KEYWORD(OpenCylinder,"opencylinder");
+REGISTER_OBJECT_KEYWORD(Paraboloid,"paraboloid");
+REGISTER_OBJECT_KEYWORD(Plane,"plane");
+REGISTER_OBJECT_KEYWORD(Sphere,"sphere");
+REGISTER_OBJECT_KEYWORD(Torus,"torus");
+REGISTER_OBJECT_KEYWORD(Union,"union");
+
+REGISTER_LIGHT_KEYWORD(PointLight,"light");
+REGISTER_LIGHT_KEYWORD(SpotLight,"spotlight");
+
+REGISTER_SHADER_KEYWORD(Checkerboard,"checker");
+REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
+REGISTER_SHADER_KEYWORD(ShaderGlobal,"global");
+REGISTER_SHADER_KEYWORD(ShaderLocal,"local");
+REGISTER_SHADER_KEYWORD(Phong,"phong");
+REGISTER_SHADER_KEYWORD(Ring,"ring");
+REGISTER_SHADER_KEYWORD(ShaderSide,"side");
+REGISTER_SHADER_KEYWORD(Stripe,"stripe");
 
 
 // **** Functions ****
-ItemFn FindItemFn(const std::string& str)
+static std::string makeKey(std::string_view keyword)
 {
-  std::string key = str;
+  std::string key{keyword};
   for (char& ch : key) { ch = char(std::tolower(ch)); }
+  return key;
+}
 
-  auto i = KeyWords.find(key);
-  return (i != KeyWords.end()) ? i->second : nullptr;
+ItemFn FindItemFn(std::string_view keyword)
+{
+  auto i = Keywords->find(makeKey(keyword));
+  return (i != Keywords->end()) ? i->second : nullptr;
+}
+
+bool AddItemFn(std::string_view keyword, ItemFn fn)
+{
+  if (!Keywords) { initKeywords(); }
+
+  std::string key = makeKey(keyword);
+  auto i = Keywords->find(key);
+  if (i != Keywords->end()) {
+    LOG_ERROR("duplicate keyword '", key, "'");
+    return false;
+  }
+
+  (*Keywords)[key] = fn;
+  return true;
 }

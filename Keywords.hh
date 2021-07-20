@@ -5,6 +5,7 @@
 
 #pragma once
 #include "SceneItem.hh"
+#include <string_view>
 
 
 // **** Types ****
@@ -17,4 +18,5 @@ using ItemFn = int(*)(SceneParser& sp, Scene& s, SceneItem* parent,
 
 
 // **** Functions ****
-[[nodiscard]] ItemFn FindItemFn(const std::string& str);
+[[nodiscard]] ItemFn FindItemFn(std::string_view keyword);
+bool AddItemFn(std::string_view keyword, ItemFn fn);
