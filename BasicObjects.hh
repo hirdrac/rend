@@ -25,7 +25,7 @@ class Disc final : public Primitive
   Flt hitCost() const override { return CostTable.disc; }
 
  private:
-  Vec3 normal_cache;
+  Vec3 _normal;
 };
 
 class Cone final : public Primitive
@@ -41,7 +41,7 @@ class Cone final : public Primitive
   Flt hitCost() const override { return CostTable.cone; }
 
  private:
-  Vec3 normal_cache;
+  Vec3 _baseNormal;
 };
 
 class Cube final : public Primitive
@@ -57,7 +57,7 @@ class Cube final : public Primitive
   Flt hitCost() const override { return CostTable.cube; }
 
  private:
-  Vec3 normal_cache[6];
+  Vec3 _sideNormal[6];
 };
 
 class Cylinder final : public Primitive
@@ -73,7 +73,7 @@ class Cylinder final : public Primitive
   Flt hitCost() const override { return CostTable.cylinder; }
 
  private:
-  Vec3 normal_cache[2];
+  Vec3 _endNormal[2];
 };
 
 class OpenCone final : public Primitive
@@ -126,7 +126,7 @@ class Plane final : public Primitive
   Flt hitCost() const override { return CostTable.plane; }
 
  private:
-  Vec3 normal_cache;
+  Vec3 _normal;
 };
 
 class Sphere final : public Primitive

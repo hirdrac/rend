@@ -20,7 +20,7 @@ int Disc::init(Scene& s)
 {
   if (Primitive::init(s)) { return -1; }
 
-  normal_cache = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
+  _normal = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
   return 0;
 }
 
@@ -52,7 +52,7 @@ int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
 int Disc::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 {
-  eh.normal = normal_cache;
+  eh.normal = _normal;
   eh.map = h.local_pt;
   return 0;
 }
@@ -71,7 +71,7 @@ int Cone::init(Scene& s)
 {
   if (Primitive::init(s)) { return -1; }
 
-  normal_cache = _trans.normalLocalToGlobal({0,0,-1}, 0);
+  _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
   return 0;
 }
 
@@ -165,7 +165,7 @@ int Cone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 {
   if (h.side == 1) {
     // base
-    eh.normal = normal_cache;
+    eh.normal = _baseNormal;
     eh.map.set(-(h.local_pt.x), h.local_pt.y, -1.0);
 
   } else {
@@ -192,7 +192,7 @@ int Cube::init(Scene& s)
     {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
 
   for (int i = 0; i < 6; ++i) {
-    normal_cache[i] = _trans.normalLocalToGlobal(n[i], 0);
+    _sideNormal[i] = _trans.normalLocalToGlobal(n[i], 0);
   }
 
   return 0;
@@ -293,7 +293,7 @@ int Cube::evalHit(const HitInfo& h, EvaluatedHit& eh) const
     default: return -1;
   }
 
-  eh.normal = normal_cache[h.side];
+  eh.normal = _sideNormal[h.side];
   return 0;
 }
 
@@ -303,9 +303,8 @@ int Cylinder::init(Scene& s)
 {
   if (Primitive::init(s)) { return -1; }
 
-  static constexpr Vec3 n0{0, 0, 1}, n1{0, 0, -1};
-  normal_cache[0] = _trans.normalLocalToGlobal(n0, 0);
-  normal_cache[1] = _trans.normalLocalToGlobal(n1, 0);
+  _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1}, 0);
+  _endNormal[1] = _trans.normalLocalToGlobal({0, 0, -1}, 0);
   return 0;
 }
 
@@ -394,12 +393,12 @@ int Cylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
     }
 
     case 1:  // end 1
-      eh.normal = normal_cache[0];
+      eh.normal = _endNormal[0];
       eh.map.set(h.local_pt.x, h.local_pt.y, 0.0);
       break;
 
     case 2:  // end 2
-      eh.normal = normal_cache[1];
+      eh.normal = _endNormal[1];
       eh.map.set(h.local_pt.x, h.local_pt.y, 0.0);
       break;
 
@@ -594,7 +593,7 @@ int Plane::init(Scene& s)
 {
   if (Primitive::init(s)) { return -1; }
 
-  normal_cache = _trans.normalLocalToGlobal({0,0,1}, 0); // cache plane normal
+  _normal = _trans.normalLocalToGlobal({0,0,1}, 0); // cache plane normal
   return 0;
 }
 
@@ -631,7 +630,7 @@ int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
 int Plane::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 {
-  eh.normal = normal_cache;
+  eh.normal = _normal;
   eh.map = h.local_pt;
   return 0;
 }
