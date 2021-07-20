@@ -37,7 +37,7 @@ int ShaderColor::evaluate(
 // **** ShaderGlobal Class ****
 int ShaderGlobal::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh || _child) { return -1; }
+  if (!sh || _child || flag != FLAG_NONE) { return -1; }
 
   _child = sh;
   return 0;
@@ -60,7 +60,7 @@ int ShaderGlobal::evaluate(
 // **** ShaderLocal Class ****
 int ShaderLocal::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh || _child) { return -1; }
+  if (!sh || _child || flag != FLAG_NONE) { return -1; }
 
   _child = sh;
   return 0;

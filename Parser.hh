@@ -42,7 +42,6 @@ class AstNode : public SListNode<AstNode>
 
   // Member Functions
   [[nodiscard]] std::string desc() const;
-  [[nodiscard]] AstNode* childList() const { return child; }
 };
 
 
@@ -55,7 +54,7 @@ class SceneParser
 
   // parsing helper functions
   int processList(Scene& s, SceneItem* parent, AstNode* node,
-                  SceneItemFlag flag = NO_FLAG);
+                  SceneItemFlag flag = FLAG_NONE);
 
   int getBool(AstNode*& n, bool& val) const;
   int getString(AstNode*& n, std::string& val) const;
@@ -76,8 +75,8 @@ class SceneParser
 
  private:
   SList<AstNode> _astList;
-  std::map<int,std::string> _files;
-  std::set<std::string> _activeFiles;
+  std::map<int,std::string,std::less<>> _files;
+  std::set<std::string,std::less<>> _activeFiles;
   int _lastID = 0;
 
   int includeFile(

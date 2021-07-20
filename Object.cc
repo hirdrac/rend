@@ -69,7 +69,7 @@ int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
   }
 
   // Assign provided shader if none is set
-  if (sh && !ob.shader()) { ob.addShader(sh, NO_FLAG); }
+  if (sh && !ob.shader()) { ob.addShader(sh, FLAG_NONE); }
 
   // Init primitive
   int error = ob.init(s);

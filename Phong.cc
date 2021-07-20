@@ -35,21 +35,24 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   if (!sh) { return -1; }
 
   switch (flag) {
-    default:
-    case DIFFUSE:
+    case FLAG_NONE:
+    case FLAG_DIFFUSE:
       if (_diffuse) { return -1; }
       _diffuse = sh;
       break;
 
-    case SPECULAR:
+    case FLAG_SPECULAR:
       if (_specular) { return -1; }
       _specular = sh;
       break;
 
-    case TRANSMIT:
+    case FLAG_TRANSMIT:
       if (_transmit) { return -1; }
       _transmit = sh;
       break;
+
+    default:
+      return -1;
   }
 
   return 0;

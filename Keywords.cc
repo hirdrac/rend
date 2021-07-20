@@ -30,51 +30,10 @@ static Transform* findTrans(SceneItem* p)
 
 
 // **** Item Functions ****
-int AirFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p || flag != NO_FLAG) { return -1; }
-  return sp.processList(s, p, n, AIR);
-}
-
-int AmbientFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p || flag != NO_FLAG) { return -1; }
-  return sp.processList(s, p, n, AMBIENT);
-}
-
-int BackgroundFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p || flag != NO_FLAG) { return -1; }
-  return sp.processList(s, p, n, BACKGROUND);
-}
-
 int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   return p ? -1 : sp.getVec3(n, s.coi);
-}
-
-int DefaultLightFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p || flag != NO_FLAG) { return -1; }
-  return sp.processList(s, p, n, DEFAULT_LT);
-}
-
-int DefaultObjectFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p || flag != NO_FLAG) { return -1; }
-  return sp.processList(s, p, n, DEFAULT_OBJ);
-}
-
-int DiffuseFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return sp.processList(s, p, n, DIFFUSE);
 }
 
 int DirectionFn(
@@ -250,12 +209,6 @@ int SizeFn(
   return 0;
 }
 
-int SpecularFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return sp.processList(s, p, n, SPECULAR);
-}
-
 int MoveFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -266,12 +219,6 @@ int MoveFn(
   if (int er = sp.getVec3(n, v); er != 0) { return er; }
   t->local.translate(v.x, v.y, v.z);
   return 0;
-}
-
-int TransmitFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return sp.processList(s, p, n, TRANSMIT);
 }
 
 int ValueFn(
@@ -297,14 +244,7 @@ static void initKeywords()
   Keywords = std::make_unique<KeywordMap>();
   *Keywords = {
     // keyword        ItemFn
-    {"air",           AirFn},
-    {"ambient",       AmbientFn},
-    {"background",    BackgroundFn},
     {"coi",           CoiFn},
-    {"default",       DefaultObjectFn},
-    {"defaultobject", DefaultObjectFn},
-    {"defaultlight",  DefaultLightFn},
-    {"diffuse",       DiffuseFn},
     {"dir",           DirectionFn},
     {"direction",     DirectionFn},
     {"exp",           ExpFn},
@@ -330,8 +270,6 @@ static void initKeywords()
     {"scale",         ScaleFn},
     {"shadow",        ShadowBoolFn},
     {"size",          SizeFn},
-    {"specular",      SpecularFn},
-    {"transmit",      TransmitFn},
     {"value",         ValueFn},
     {"vup",           VupFn}
   };
@@ -365,6 +303,15 @@ REGISTER_SHADER_KEYWORD(Phong,"phong");
 REGISTER_SHADER_KEYWORD(Ring,"ring");
 REGISTER_SHADER_KEYWORD(ShaderSide,"side");
 REGISTER_SHADER_KEYWORD(Stripe,"stripe");
+
+REGISTER_FLAG_KEYWORD(FLAG_AIR,"air");
+REGISTER_FLAG_KEYWORD(FLAG_AMBIENT,"ambient");
+REGISTER_FLAG_KEYWORD(FLAG_BACKGROUND,"background");
+REGISTER_FLAG_KEYWORD(FLAG_DEFAULT_LT,"defaultlight");
+REGISTER_FLAG_KEYWORD(FLAG_DEFAULT_OBJ,"default");
+REGISTER_FLAG_KEYWORD(FLAG_DIFFUSE,"diffuse");
+REGISTER_FLAG_KEYWORD(FLAG_SPECULAR,"specular");
+REGISTER_FLAG_KEYWORD(FLAG_TRANSMIT,"transmit");
 
 
 // **** Functions ****

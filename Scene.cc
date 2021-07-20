@@ -73,25 +73,27 @@ int Scene::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   if (!sh) { return -1; }
 
   switch (flag) {
-    case AIR:
+    case FLAG_AIR:
       if (air) { return -1; } else { air = sh; }
       break;
-    case AMBIENT:
+    case FLAG_AMBIENT:
       if (ambient) { return -1; } else { ambient = sh; }
       break;
-    case BACKGROUND:
+    case FLAG_BACKGROUND:
       if (background) { return -1; } else { background = sh; }
       break;
-    case DEFAULT_LT:
+    case FLAG_DEFAULT_LT:
       if (default_lt) { return -1; } else { default_lt = sh; }
       break;
-    case DEFAULT_OBJ:
+    case FLAG_DEFAULT_OBJ:
       if (default_obj) { return -1; } else { default_obj = sh; }
       break;
-    default:
-      // object/light shaders are added to the scene
-      // (which is in charge of initialization & memory)
+    case FLAG_INIT_ONLY:
       break;
+      // object/light shaders are added to the scene
+      // (which is in charge of initialization)
+    default:
+      return -1;
   }
   _shaders.push_back(sh);
   return 0;

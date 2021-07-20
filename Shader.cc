@@ -25,7 +25,7 @@ Shader::~Shader()
 // SceneItem Functions
 int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh) { return -1; }
+  if (!sh || flag != FLAG_NONE) { return -1; }
 
   _children.push_back(sh);
   return 0;

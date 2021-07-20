@@ -37,10 +37,17 @@ int ShaderItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
   if (!p) { error = s.addShader(sh, flag); } else {
     error = p->addShader(sh, flag);
     if (!error && !dynamic_cast<Shader*>(p)) {
-      error = s.addShader(sh, NO_FLAG);  // add to scene for init
+      error = s.addShader(sh, FLAG_INIT_ONLY); // add to scene for init
     }
   }
   return error ? error : sp.processList(s, sh.get(), n);
+}
+
+template<SceneItemFlag FLAG_VAL>
+int FlagItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
+               SceneItemFlag flag) {
+  if (flag != FLAG_NONE) { return -1; }
+  return sp.processList(s, p, n, FLAG_VAL);
 }
 
 
@@ -50,3 +57,5 @@ int ShaderItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
   static bool _light_keyword_##type = AddItemFn(keyword,&LightItemFn<type>)
 #define REGISTER_SHADER_KEYWORD(type,keyword)\
   static bool _shader_keyword_##type = AddItemFn(keyword,&ShaderItemFn<type>)
+#define REGISTER_FLAG_KEYWORD(flag,keyword)\
+  static bool _flag_keyword_##flag = AddItemFn(keyword,&FlagItemFn<flag>)
