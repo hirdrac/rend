@@ -25,9 +25,10 @@ enum AstType {
 };
 
 
-class AstNode : public SListNode<AstNode>
+class AstNode
 {
  public:
+  AstNode*    next = nullptr;
   AstNode*    child = nullptr;
   void*       ptr = nullptr;
   std::string val;

@@ -42,14 +42,14 @@ void HitList::clear()
 HitInfo* HitList::findFirstHit(const Ray& r)
 {
   HitInfo* h = _hitList.head();
-  while (h && (h->distance < VERY_SMALL)) { h = h->next(); }
+  while (h && (h->distance < VERY_SMALL)) { h = h->next; }
 
   return (h && (h->distance < r.max_length)) ? h : nullptr;
 }
 
 void HitList::csgMerge(const Object* csg)
 {
-  for (HitInfo* h = _hitList.head(); h != nullptr; h = h->next()) {
+  for (HitInfo* h = _hitList.head(); h != nullptr; h = h->next) {
     // claim hit as part of csg object
     if (!h->child) { h->child = h->object; }
     h->object = csg;
@@ -76,7 +76,7 @@ void HitList::csgUnion(const Object* csg)
       --insideCount;
     }
 
-    HitInfo* next = h->next();
+    HitInfo* next = h->next;
     if (insideCount > 0) { killNext(prev); } else { prev = h; }
     h = next;
   }
@@ -94,7 +94,7 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
     if (!h->child) { h->child = ob; }
     h->object = csg;
 
-    HitInfo* next = h->next();
+    HitInfo* next = h->next;
     if (h->type == HIT_ENTER) {
       // entering solid object
       if (++count < objectCount) { killNext(prev); } else { prev = h; }
@@ -117,7 +117,7 @@ void HitList::add(HitInfo* ht)
 
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;
-  while (h && h->distance < ht->distance) { prev = h; h = h->next(); }
+  while (h && h->distance < ht->distance) { prev = h; h = h->next; }
   _hitList.addAfterNode(prev, ht);
 }
 

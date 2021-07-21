@@ -6,7 +6,7 @@
 //
 // Example Usage:
 // ~~~~~~~~~~~~~
-// class Node : public SListNode<Node> { ... };
+// class Node { public: Node* next = nullptr;  ... };
 // SList<Node> list;
 // list.addToTail(new Node);
 // Node* n = list.removeHead();
@@ -15,21 +15,6 @@
 #pragma once
 #include "ListUtility.hh"
 #include <utility>
-
-
-// **** SListNode class ****
-template<typename type>
-class SListNode
-{
- public:
-  // Member Functions
-  [[nodiscard]] type* next() { return _next; }
-  [[nodiscard]] const type* next() const { return _next; }
-  void setNext(type* x) { _next = x; }
-
- private:
-  type* _next = nullptr;
-};
 
 
 // **** SList class ****
@@ -100,7 +85,7 @@ int SList<type>::addToHead(type* item)
   if (!item) { return -1; }
 
   type* end = LastNode(item);
-  end->setNext(_head);
+  end->next = _head;
   if (!_tail) { _tail = end; }
 
   _head = item;
@@ -114,7 +99,7 @@ int SList<type>::addToHead(SList<type>& list)
 
   type* end = list.tail();
   type* start = list.extractNodes();
-  end->setNext(_head);
+  end->next = _head;
   if (!_tail) { _tail = end; }
 
   _head = start;
@@ -127,7 +112,7 @@ int SList<type>::addToTail(type* item)
   if (!item) { return -1; }
 
   if (_tail) {
-    _tail->setNext(item);
+    _tail->next = item;
   } else {
     _head = item;
   }
@@ -145,7 +130,7 @@ int SList<type>::addToTail(SList<type>& list)
   type* start = list.extractNodes();
 
   if (_tail) {
-    _tail->setNext(start);
+    _tail->next = start;
   } else {
     _head = start;
   }
@@ -164,8 +149,8 @@ int SList<type>::addAfterNode(type* node, type* item)
   }
 
   type* end = LastNode(item);
-  end->setNext(node->next());
-  node->setNext(item);
+  end->next = node->next;
+  node->next = item;
   return 0;
 }
 
@@ -175,10 +160,10 @@ type* SList<type>::removeHead()
   if (!_head) { return nullptr; }
 
   type* n = _head;
-  _head = _head->next();
+  _head = _head->next;
   if (!_head) { _tail = nullptr; }
 
-  n->setNext(nullptr);
+  n->next = nullptr;
   return n;
 }
 
@@ -195,9 +180,9 @@ type* SList<type>::removeTail()
   }
 
   type* p = _head;
-  while (p->next() != n) { p = p->next(); }
+  while (p->next != n) { p = p->next; }
 
-  p->setNext(nullptr);
+  p->next = nullptr;
   _tail = p;
   return n;
 }
@@ -207,12 +192,12 @@ type* SList<type>::removeNext(type* item)
 {
   if (!item) { return removeHead(); }
 
-  type* n = item->next();
+  type* n = item->next;
   if (n) {
-    item->setNext(n->next());
+    item->next = n->next;
     if (_tail == n) { _tail = item; }
 
-    n->setNext(nullptr);
+    n->next = nullptr;
   }
 
   return n;

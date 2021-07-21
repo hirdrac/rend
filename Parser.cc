@@ -150,7 +150,7 @@ bool SceneParser::evalSpecialOp(
   const AstNode* n1 = n->child;
   if (!n1 || n1->type != AST_UNKNOWN) { return false; }
 
-  const AstNode* n2 = n1->next();
+  const AstNode* n2 = n1->next;
   if (n1->val == "include") {
     if (!n2 || n2->type != AST_STRING) {
       throw ParseError{"'include' syntax error", n->file_id, n->line, n->column};
@@ -189,7 +189,7 @@ int SceneParser::processList(
   while (n) {
     error = processNode(s, parent, n, flag);
     if (error) { break; }
-    n = n->next();
+    n = n->next;
   }
   return error;
 }
@@ -204,7 +204,7 @@ int SceneParser::processNode(
       reportError(n0, "Empty statement");
       return -1;
     } else if (n->type == AST_ITEM) {
-      int er = ItemFn(n->ptr)(*this, s, parent, n->next(), flag);
+      int er = ItemFn(n->ptr)(*this, s, parent, n->next, flag);
       if (er) { reportError(n0, "Error with ", n->desc()); }
       return er;
     }
@@ -219,7 +219,7 @@ int SceneParser::getBool(AstNode*& n, bool& val) const
   if (!n) { return -1; }
 
   AstNode* d = n;
-  n = n->next();
+  n = n->next;
 
   switch (d->val[0]) {
     case '0': case 'f': case 'F': case 'n': case 'N':
@@ -240,7 +240,7 @@ int SceneParser::getString(AstNode*& n, std::string& val) const
 {
   if (!n) { return -1; }
   val = n->val;
-  n = n->next();
+  n = n->next;
   return 0;
 }
 
@@ -249,7 +249,7 @@ int SceneParser::getFlt(AstNode*& n, Flt& val) const
   if (!n) { return -1; }
 
   AstNode* d = n;
-  n = n->next();
+  n = n->next;
 
   if (d->type != AST_NUMBER) {
     reportError(d, "Expected floating point value, not '", d->val, "'");
@@ -265,7 +265,7 @@ int SceneParser::getInt(AstNode*& n, int& val) const
   if (!n) { return -1; }
 
   AstNode* d = n;
-  n = n->next();
+  n = n->next;
 
   if (d->type != AST_NUMBER) {
     reportError(d, "Expected integer value, not '", d->val, "'");

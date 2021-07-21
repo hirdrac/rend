@@ -26,10 +26,11 @@ enum HitType {
   HIT_EXIT,   // exit CSG solid
 };
 
-class HitInfo : public SListNode<HitInfo>
+class HitInfo
 {
  public:
   // basic hit information
+  HitInfo* next = nullptr;
   const Object* object;
   const Object* child; // sub-object hit for CSG
   Flt distance;

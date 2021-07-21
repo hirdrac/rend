@@ -4,9 +4,8 @@
 //
 // linked list node template classes & support functions
 //
-// Node classes must implement:
-//  type* next() const    - returns node following this one
-//  void setNext(type* n) - set pointer to node following current node
+// Node structs/classes must have in their public section:
+//  type* next = nullptr;
 //
 
 #pragma once
@@ -18,7 +17,7 @@ template<typename type>
 {
   int count = 0;
   while (list) {
-    list = list->next();
+    list = list->next;
     ++count;
   }
 
@@ -30,7 +29,7 @@ void KillNodes(type* list)
 {
   while (list) {
     type* tmp = list;
-    list = list->next();
+    list = list->next;
     delete tmp;
   }
 }
@@ -38,6 +37,6 @@ void KillNodes(type* list)
 template<typename type>
 [[nodiscard]] type* LastNode(type* list)
 {
-  if (list) { while (list->next()) { list = list->next(); } }
+  if (list) { while (list->next) { list = list->next; } }
   return list;
 }
