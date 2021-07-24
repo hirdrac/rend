@@ -15,6 +15,17 @@
 #include <cstdlib>
 
 
+// **** helper functions ****
+static inline double rnd_jitter()
+{
+#if defined(__MINGW32__) || defined(__MINGW64__)
+  return (double(rand()) / double(RAND_MAX)) - .5;
+#else
+  return drand48() - .5; // range [-.5,+.5)
+#endif
+}
+
+
 // **** Renderer class ****
 int Renderer::init(Scene* s, FrameBuffer* fb)
 {
@@ -97,8 +108,8 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
         Flt sx = xx + pt.x;
         Flt sy = yy + pt.y;
         if (use_jitter) {
-          sx += (drand48() - .5) * jitterX;
-          sy += (drand48() - .5) * jitterY;
+          sx += rnd_jitter() * jitterX;
+          sy += rnd_jitter() * jitterY;
         }
         sx /= halfWidth;
         sy /= halfHeight;
