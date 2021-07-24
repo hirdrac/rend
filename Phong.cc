@@ -76,7 +76,7 @@ int Phong::evaluate(
     _specular->evaluate(s, r, h, eh, color_s);
     is_s = !color_s.isBlack(black_val);
   } else {
-    color_s.clear();
+    color_s = colors::black;
     is_s = false;
   }
 

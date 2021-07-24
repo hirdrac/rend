@@ -201,7 +201,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
     sh = default_obj.get();
     if (!sh) {
       println("no shader!!");
-      result.clear();
+      result = colors::black;
       return 0;
     }
   }
@@ -225,9 +225,9 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
   const HitInfo* hit = hit_list.findFirstHit(r);
   if (hit) {
     ++r.stats->shadow_rays.hit;
-    result.clear(); // transparency not supported
+    result = colors::black; // transparency not supported
   } else {
-    result.full();
+    result = colors::white;
   }
 
   return 0;

@@ -103,7 +103,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
     for (int x = min_x; x <= max_x; ++x) {
       const Flt xx = Flt(x) - halfWidth;
 
-      Color c = Color::black;
+      Color c{colors::black};
       for (const Vec2& pt : _samples) {
         Flt sx = xx + pt.x;
         Flt sy = yy + pt.y;
@@ -121,10 +121,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
       }
 
       c /= samples;
-      Color::value_type cr = 0, cg = 0, cb = 0;
-      c.getRGB(cr, cg, cb);
-      _fb->plot(x, y, static_cast<float>(cr), static_cast<float>(cg),
-                static_cast<float>(cb));
+      _fb->plot(x, y, c);
     }
   }
 

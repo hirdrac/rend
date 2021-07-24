@@ -2,8 +2,8 @@
 # Copyright (C) 2021 Richard Bradley
 
 raytracer_src :=\
-  BasicLights.cc BasicObjects.cc BasicShaders.cc BBox.cc Bound.cc Color.cc\
-  CSG.cc FrameBuffer.cc Group.cc HitCostInfo.cc Intersect.cc Light.cc Logger.cc\
+  BasicLights.cc BasicObjects.cc BasicShaders.cc BBox.cc Bound.cc CSG.cc\
+  FrameBuffer.cc Group.cc HitCostInfo.cc Intersect.cc Light.cc Logger.cc\
   Object.cc Phong.cc Ray.cc Renderer.cc Roots.cc Scene.cc Shader.cc Shadow.cc\
   Stats.cc Transform.cc Timer.cc
 parser_src :=\
