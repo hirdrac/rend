@@ -72,6 +72,15 @@ int IdentityFn(
   return 0;
 }
 
+int JitterFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p) { return -1; }
+
+  if (int er = sp.getFlt(n, s.jitter); er != 0) { return er; }
+  return 0;
+}
+
 int MaxdepthFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -251,6 +260,7 @@ static void initKeywords()
     {"eye",           EyeFn},
     {"fov",           FovFn},
     {"identity",      IdentityFn},
+    {"jitter",        JitterFn},
     {"maxdepth",      MaxdepthFn},
     {"minvalue",      MinValueFn},
     {"move",          MoveFn},

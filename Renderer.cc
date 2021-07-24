@@ -12,6 +12,7 @@
 #include "Print.hh"
 #include <chrono>
 #include <algorithm>
+#include <cstdlib>
 
 
 // **** Renderer class ****
@@ -73,6 +74,10 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const Flt halfHeight = Flt(_scene->image_height) * .5;
   const Flt samples    = Flt(_samples.size());
 
+  const Flt jitterX = (1.0 / Flt(_scene->samples_x)) * _scene->jitter;
+  const Flt jitterY = (1.0 / Flt(_scene->samples_y)) * _scene->jitter;
+  const bool use_jitter = IsPositive(_scene->jitter);
+
   Ray initRay;
   initRay.base = _scene->eye;
   initRay.max_length = VERY_LARGE;
@@ -83,15 +88,21 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 
   // start rendering
   for (int y = min_y; y <= max_y; ++y) {
-    Flt yy = Flt(y) - halfHeight;
+    const Flt yy = Flt(y) - halfHeight;
     for (int x = min_x; x <= max_x; ++x) {
-      Flt xx = Flt(x) - halfWidth;
+      const Flt xx = Flt(x) - halfWidth;
 
       Color c = Color::black;
       for (const Vec2& pt : _samples) {
-        Vec3 tx = px * ((xx + pt.x) / halfWidth);
-        Vec3 ty = py * ((yy + pt.y) / halfHeight);
-        initRay.dir = UnitVec(rd + tx + ty);
+        Flt sx = xx + pt.x;
+        Flt sy = yy + pt.y;
+        if (use_jitter) {
+          sx += (drand48() - .5) * jitterX;
+          sy += (drand48() - .5) * jitterY;
+        }
+        sx /= halfWidth;
+        sy /= halfHeight;
+        initRay.dir = UnitVec(rd + (px * sx) + (py * sy));
 
 	Color result;
 	_scene->traceRay(initRay, result);

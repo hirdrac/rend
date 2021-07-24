@@ -38,6 +38,7 @@ void Scene::clear()
   fov = 50.0;
   samples_x = 1;
   samples_y = 1;
+  jitter = 0.0;
   shadow = true;
   reflect = true;
   transmit = true;

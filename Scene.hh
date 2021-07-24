@@ -40,6 +40,7 @@ class Scene
   Vec3 eye, coi, vup;
   Flt  fov;
   int  samples_x, samples_y;  // Sample grid (for supersampling)
+  Flt  jitter;
 
   bool shadow, reflect, transmit;
   int  max_ray_depth;
