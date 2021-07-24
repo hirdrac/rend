@@ -83,7 +83,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
   const Flt halfWidth  = Flt(_scene->image_width)  * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
-  const Flt samples    = Flt(_samples.size());
+  const auto samples   = static_cast<Color::value_type>(_samples.size());
 
   const Flt jitterX = (1.0 / Flt(_scene->samples_x)) * _scene->jitter;
   const Flt jitterY = (1.0 / Flt(_scene->samples_y)) * _scene->jitter;
@@ -121,9 +121,10 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
       }
 
       c /= samples;
-      Flt cr = 0, cg = 0, cb = 0;
+      Color::value_type cr = 0, cg = 0, cb = 0;
       c.getRGB(cr, cg, cb);
-      _fb->plot(x, y, float(cr), float(cg), float(cb));
+      _fb->plot(x, y, static_cast<float>(cr), static_cast<float>(cg),
+                static_cast<float>(cb));
     }
   }
 

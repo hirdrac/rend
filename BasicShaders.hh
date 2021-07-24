@@ -16,7 +16,8 @@ class ShaderColor final : public Shader
  public:
   ShaderColor() { _color.clear(); }
   ShaderColor(const Color& c) : _color(c) { }
-  ShaderColor(Flt r, Flt g, Flt b) { _color.setRGB(r,g,b); }
+  ShaderColor(Color::value_type r, Color::value_type g, Color::value_type b) {
+    _color.setRGB(r,g,b); }
 
   // SceneItem Functions
   std::string desc() const override;

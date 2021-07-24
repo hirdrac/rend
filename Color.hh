@@ -6,8 +6,7 @@
 //
 
 #pragma once
-#include "Types.hh"
-#include <iosfwd>
+#include <ostream>
 
 
 // **** Types ****
@@ -18,64 +17,119 @@ class Color
   static constexpr int WAVES_MAX = 3;
   static constexpr int WAVES_DEFAULT = 3;
 
-  Color() : _waves(WAVES_DEFAULT) { }
-  Color(int w) : _waves(w) { }
-  Color(Flt r, Flt g, Flt b) : _waves(WAVES_DEFAULT) { setRGB(r, b, g); }
+  using value_type = float;
 
-  //Color(int number, const Flt* values) : _waves(number) {
-  //  for (int i = 0; i < _waves; ++i) { _val[i] = values[i]; }
-  //}
+  Color() = default;
+  Color(int w) : _waves{w} { }
+  constexpr Color(value_type r, value_type g, value_type b)
+    : _val{r,g,b}, _waves{3} { }
 
   // Member Functions
-  void clear();
-  void full();
+  constexpr void clear();
+  constexpr void full();
 
-  int setRGB(Flt r, Flt g, Flt b);
-  int setRGB(const Flt* array) {
-    return setRGB(array[0], array[1], array[2]); }
+  int setRGB(value_type r, value_type g, value_type b);
+  int getRGB(value_type& r, value_type& g, value_type& b) const;
+  [[nodiscard]] constexpr bool isBlack(value_type v) const;
 
-  int getRGB(Flt& r, Flt& g, Flt& b) const;
-  [[nodiscard]] bool isBlack(Flt v = 1.0e-6) const;
-
-  [[nodiscard]] int waves() const { return _waves; }
+  [[nodiscard]] constexpr int waves() const { return _waves; }
 
   // Operators
-  Color& operator+=(const Color& c);
-  Color& operator-=(const Color& c);
-  Color& operator*=(const Color& c);
+  constexpr Color& operator+=(const Color& c);
+  constexpr Color& operator-=(const Color& c);
+  constexpr Color& operator*=(const Color& c);
 
-  Color& operator*=(Flt s);
-  Color& operator/=(Flt s);
+  template <class T>
+  constexpr Color& operator*=(T s);
 
-  [[nodiscard]] Flt& operator[](int i)       { return _val[i]; }
-  [[nodiscard]] Flt  operator[](int i) const { return _val[i]; }
+  template <class T>
+  constexpr Color& operator/=(T s);
+
+  [[nodiscard]] constexpr value_type& operator[](int i) {
+    return _val[i]; }
+  [[nodiscard]] constexpr value_type operator[](int i) const {
+    return _val[i]; }
 
   // Static Members
   static const Color black; // 0 for all values
   static const Color white; // 1 for all values
 
  private:
-  Flt _val[WAVES_MAX];
-  int _waves;
+  value_type _val[WAVES_MAX];
+  int _waves = WAVES_DEFAULT;
 };
 
 
-// **** Functions ****
+// **** Inline implementation ****
+constexpr void Color::clear()
+{
+  for (int i = 0; i < _waves; ++i) { _val[i] = {}; }
+}
+
+constexpr void Color::full()
+{
+  for (int i = 0; i < _waves; ++i) { _val[i] = static_cast<value_type>(1); }
+}
+
+constexpr bool Color::isBlack(Color::value_type v) const
+{
+  for (int i = 0; i < _waves; ++i) {
+    if (_val[i] >= v) { return false; }
+  }
+
+  return true;
+}
+
+constexpr Color& Color::operator+=(const Color& c)
+{
+  for (int i = 0; i < _waves; ++i) { _val[i] += c._val[i]; }
+  return *this;
+}
+
+constexpr Color& Color::operator-=(const Color& c)
+{
+  for (int i = 0; i < _waves; ++i) { _val[i] -= c._val[i]; }
+  return *this;
+}
+
+constexpr Color& Color::operator*=(const Color& c)
+{
+  for (int i = 0; i < _waves; ++i) { _val[i] *= c._val[i]; }
+  return *this;
+}
+
+template <class T>
+constexpr Color& Color::operator*=(T s)
+{
+  const auto v = static_cast<value_type>(s);
+  for (int i = 0; i < _waves; ++i) { _val[i] *= v; }
+  return *this;
+}
+
+template <class T>
+constexpr Color& Color::operator/=(T s)
+{
+  const auto v = static_cast<value_type>(s);
+  for (int i = 0; i < _waves; ++i) { _val[i] /= v; }
+  return *this;
+}
+
+
+// **** Non-member operators/functions ****
 std::ostream& operator<<(std::ostream& os, const Color& c);
 
-[[nodiscard]] inline Color operator*(Color& c, Flt s) {
-  Color result(c.waves());
-  for (int w = 0; w < c.waves(); ++w) { result[w] = c[w] * s; }
-  return result;
+template <class T>
+[[nodiscard]] constexpr Color operator*(Color& c, T s) {
+  Color result{c};
+  return result *= s;
 }
 
-[[nodiscard]] inline Color operator/(Color& c, Flt s) {
-  Color result(c.waves());
-  for (int w = 0; w < c.waves(); ++w) { result[w] = c[w] / s; }
-  return result;
+template <class T>
+[[nodiscard]] constexpr Color operator/(Color& c, T s) {
+  Color result{c};
+  return result /= s;
 }
 
-// multiply 2 colors together
 inline void MultColor(const Color& a, const Color& b, Color& result) {
   for (int i = 0; i < result.waves(); ++i) { result[i] = a[i] * b[i]; }
 }

@@ -63,16 +63,18 @@ int Phong::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
   Color& result) const
 {
+  const auto black_val = static_cast<Color::value_type>(s.min_ray_value);
+
   // Evaluate Shaders
   Color color_d;
   _diffuse->evaluate(s, r, h, eh, color_d);
-  bool is_d = !color_d.isBlack(s.min_ray_value);
+  bool is_d = !color_d.isBlack(black_val);
 
   Color color_s;
   bool is_s;
   if (_specular) {
     _specular->evaluate(s, r, h, eh, color_s);
-    is_s = !color_s.isBlack(s.min_ray_value);
+    is_s = !color_s.isBlack(black_val);
   } else {
     color_s.clear();
     is_s = false;
@@ -83,7 +85,7 @@ int Phong::evaluate(
   bool is_t;
   if (_transmit) {
     _transmit->evaluate(s, r, h, eh, color_t);
-    is_t = !color_t.isBlack(s.min_ray_value);
+    is_t = !color_t.isBlack(black_val);
   } else {
     color_t.clear();
     is_t = false;

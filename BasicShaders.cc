@@ -100,7 +100,9 @@ int ColorCube::evaluate(
   Color& result) const
 {
   Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
-  result.setRGB(Abs(m.x), Abs(m.y), Abs(m.z));
+  result.setRGB(static_cast<Color::value_type>(Abs(m.x)),
+                static_cast<Color::value_type>(Abs(m.y)),
+                static_cast<Color::value_type>(Abs(m.z)));
   return 0;
 }
 

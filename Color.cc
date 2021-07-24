@@ -17,7 +17,8 @@ const Color Color::black(0,0,0);
 const Color Color::white(1,1,1);
 
 // Member functions
-int Color::getRGB(Flt& r, Flt& g, Flt& b) const
+int Color::getRGB(
+  Color::value_type& r, Color::value_type& g, Color::value_type& b) const
 {
   switch (_waves) {
     case 3:
@@ -39,7 +40,7 @@ int Color::getRGB(Flt& r, Flt& g, Flt& b) const
   return 0;
 }
 
-int Color::setRGB(Flt r, Flt g, Flt b)
+int Color::setRGB(Color::value_type r, Color::value_type g, Color::value_type b)
 {
   switch (_waves) {
     case 3:
@@ -53,7 +54,9 @@ int Color::setRGB(Flt r, Flt g, Flt b)
       //_val[0] = (r * .2126) + (g * .7152) + (b * .0722);
 
       // nonlinear video luma from nonlinear red, green, blue
-      _val[0] = (r * .299) + (g * .587) + (b * .114);
+      _val[0] = (r * static_cast<value_type>(.299))
+        + (g * static_cast<value_type>(.587))
+        + (b * static_cast<value_type>(.114));
       break;
 
     default:
@@ -61,55 +64,6 @@ int Color::setRGB(Flt r, Flt g, Flt b)
   }
 
   return 0;
-}
-
-void Color::clear()
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] = 0.0; }
-}
-
-void Color::full()
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] = 1.0; }
-}
-
-Color& Color::operator+=(const Color& c)
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] += c._val[i]; }
-  return *this;
-}
-
-Color& Color::operator-=(const Color& c)
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] -= c._val[i]; }
-  return *this;
-}
-
-Color& Color::operator*=(const Color& c)
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] *= c._val[i]; }
-  return *this;
-}
-
-Color& Color::operator*=(Flt s)
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] *= s; }
-  return *this;
-}
-
-Color& Color::operator/=(Flt s)
-{
-  for (int i = 0; i < _waves; ++i) { _val[i] /= s; }
-  return *this;
-}
-
-bool Color::isBlack(Flt v) const
-{
-  for (int i = 0; i < _waves; ++i) {
-    if (_val[i] >= v) { return false; }
-  }
-
-  return true;
 }
 
 
