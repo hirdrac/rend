@@ -2,8 +2,6 @@
 // FrameBuffer.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of FrameBuffer module
-//
 
 #include "FrameBuffer.hh"
 #include "MathUtility.hh"
@@ -14,14 +12,13 @@
 
 
 // **** FrameBuffer Class ****
-// Member Functions
 int FrameBuffer::init(int w, int h)
 {
   if (w <= 0 || h <= 0) { return -1; }
 
   _width = w;
   _height = h;
-  _buffer.resize(std::size_t(w * h * 3));
+  _buffer.resize(std::size_t(w * h * CHANNELS));
   return 0;
 }
 
@@ -29,9 +26,9 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 {
   if (_buffer.empty()) { return -1; }
 
-  const int row_pad = (4 - ((_width * 3) % 4)) % 4;
+  const int row_pad = (4 - ((_width * CHANNELS) % 4)) % 4;
     // rows must be padded to 4-byte multiple
-  const int row_size = (_width * 3) + row_pad;
+  const int row_size = (_width * CHANNELS) + row_pad;
   const uint32_t file_size = 54 + uint32_t(row_size * _height);
 
   // setup BMP header
@@ -83,8 +80,12 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   return 0;
 }
 
-void FrameBuffer::clear(float r, float g, float b)
+void FrameBuffer::clear(const Color& c)
 {
+  const float r = static_cast<float>(c.red());
+  const float g = static_cast<float>(c.green());
+  const float b = static_cast<float>(c.blue());
+
   auto itr = _buffer.begin(), end = _buffer.end();
   while (itr != end) {
     *itr++ = r;
@@ -93,27 +94,28 @@ void FrameBuffer::clear(float r, float g, float b)
   }
 }
 
-int FrameBuffer::plot(int x, int y, float r, float g, float b)
+int FrameBuffer::plot(int x, int y, const Color& c)
 {
   if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) { return -1; }
 
-  float* ptr = &_buffer[std::size_t(((y * _width) + x) * 3)];
-  *ptr++ = r;
-  *ptr++ = g;
-  *ptr++ = b;
+  float* ptr = &_buffer[std::size_t(((y * _width) + x) * CHANNELS)];
+  *ptr++ = static_cast<float>(c.red());
+  *ptr++ = static_cast<float>(c.green());
+  *ptr++ = static_cast<float>(c.blue());
   return 0;
 }
 
-int FrameBuffer::line(int x0, int y0, int x1, int y1,
-		      float r, float g, float b)
+int FrameBuffer::line(int x0, int y0, int x1, int y1, const Color& c)
 {
-  int dir_x   = Sgn(x1 - x0), dir_y   = Sgn(y1 - y0);
-  int delta_x = Abs(x1 - x0), delta_y = Abs(y1 - y0);
-  int step    = 0;
+  const int dir_x = Sgn(x1 - x0);
+  const int dir_y = Sgn(y1 - y0);
+  const int delta_x = Abs(x1 - x0);
+  const int delta_y = Abs(y1 - y0);
+  int step = 0;
 
   if (delta_x < delta_y) {
     while (y0 != y1) {
-      plot(x0, y0, r, g, b);
+      plot(x0, y0, c);
       y0   += dir_y;
       step += delta_x;
 
@@ -124,7 +126,7 @@ int FrameBuffer::line(int x0, int y0, int x1, int y1,
     }
   } else if (delta_y < delta_x) {
     while (x0 != x1) {
-      plot(x0, y0, r, g, b);
+      plot(x0, y0, c);
       x0   += dir_x;
       step += delta_y;
 
@@ -135,7 +137,7 @@ int FrameBuffer::line(int x0, int y0, int x1, int y1,
     }
   } else {
     while (x0 != x1) {
-      plot(x0, y0, r, g, b);
+      plot(x0, y0, c);
       x0 += dir_x;
       y0 += dir_y;
     }
@@ -148,7 +150,7 @@ int FrameBuffer::value(int x, int y, float& r, float& g, float& b) const
 {
   if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) { return -1; }
 
-  const float* ptr = &_buffer[std::size_t(((y * _width) + x) * 3)];
+  const float* ptr = &_buffer[std::size_t(((y * _width) + x) * CHANNELS)];
   r = *ptr++;
   g = *ptr++;
   b = *ptr++;
@@ -159,13 +161,10 @@ int FrameBuffer::range(float& min_val, float& max_val) const
 {
   if (_buffer.empty()) { return -1; }
 
-  auto itr = _buffer.begin(), end = _buffer.end();
-  float low  = *itr;
-  float high = *itr++;
-
-  for (; itr != end; ++itr) {
-    low  = std::min(low,  *itr);
-    high = std::max(high, *itr);
+  float low = 3.4e38f, high = 0.0f;
+  for (auto& v : _buffer) {
+    if (v < low)  { low = v; }
+    if (v > high) { high = v; }
   }
 
   min_val = low;
