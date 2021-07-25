@@ -132,7 +132,7 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  _bound = MakeBoundList(_objects);
+  _bound = MakeBoundList(eye, _objects);
 
   // init lights
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;

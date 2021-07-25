@@ -35,4 +35,4 @@ class Bound final : public Object
 
 
 // **** Functions ****
-ObjectPtr MakeBoundList(const std::vector<ObjectPtr>& o_list);
+ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list);

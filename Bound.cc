@@ -332,7 +332,7 @@ static std::shared_ptr<Bound> convertNodeList(OptNode* node_list)
   return b;
 }
 
-ObjectPtr MakeBoundList(const std::vector<ObjectPtr>& o_list)
+ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
 {
   OptNode* node_list = makeOptNodeList(o_list);
   if (!node_list) {
@@ -340,6 +340,7 @@ ObjectPtr MakeBoundList(const std::vector<ObjectPtr>& o_list)
   }
 
   BBox box;
+  box.fit(eye);
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
     box.fit(n->box);
   }
