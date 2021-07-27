@@ -11,15 +11,14 @@ HitCostInfo CostTable;
 
 
 // **** HitCostInfo Class ****
-// Member Functions
 void HitCostInfo::reset()
 {
-  bound         = .5;
+  bound         = .4;
   disc          = .75;
   cone          = 1.6;
   csg           = 1.0;
   cube          = 1.2;
-  cylinder      = 1.8;
+  cylinder      = 2;
   open_cone     = 1.3;
   open_cylinder = 1.3;
   paraboloid    = 1.3;
