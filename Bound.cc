@@ -72,22 +72,22 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
     // X
     if (!IsZero(r.dir.x)) {
-      const Flt h1 = (box.pmin.x - r.base.x) / r.dir.x;
-      const Flt h2 = (box.pmax.x - r.base.x) / r.dir.x;
+      const Flt h1 = (box.min().x - r.base.x) / r.dir.x;
+      const Flt h2 = (box.max().x - r.base.x) / r.dir.x;
 
       if (h1 > h2)  {
 	near_hit = h2; far_hit = h1;
       } else  {
 	near_hit = h1; far_hit = h2;
       }
-    } else if ((r.base.x < box.pmin.x) || (r.base.x > box.pmax.x)) {
+    } else if ((r.base.x < box.min().x) || (r.base.x > box.max().x)) {
       return 0;  // Miss
     }
 
     // Y
     if (!IsZero(r.dir.y)) {
-      const Flt h1 = (box.pmin.y - r.base.y) / r.dir.y;
-      const Flt h2 = (box.pmax.y - r.base.y) / r.dir.y;
+      const Flt h1 = (box.min().y - r.base.y) / r.dir.y;
+      const Flt h2 = (box.max().y - r.base.y) / r.dir.y;
 
       if (h1 > h2)  {
 	if (h2 > near_hit) { near_hit = h2; }
@@ -100,14 +100,14 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
       if (near_hit > far_hit) {
 	return 0;  // Miss
       }
-    } else if ((r.base.y < box.pmin.y) || (r.base.y > box.pmax.y)) {
+    } else if ((r.base.y < box.min().y) || (r.base.y > box.max().y)) {
       return 0;  // Miss
     }
 
     // Z
     if (!IsZero(r.dir.z)) {
-      const Flt h1 = (box.pmin.z - r.base.z) / r.dir.z;
-      const Flt h2 = (box.pmax.z - r.base.z) / r.dir.z;
+      const Flt h1 = (box.min().z - r.base.z) / r.dir.z;
+      const Flt h2 = (box.max().z - r.base.z) / r.dir.z;
 
       if (h1 > h2)  {
 	if (h2 > near_hit) { near_hit = h2; }
@@ -120,7 +120,7 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
       if (near_hit > far_hit) {
 	return 0;  // Miss
       }
-    } else if ((r.base.z < box.pmin.z) || (r.base.z > box.pmax.z)) {
+    } else if ((r.base.z < box.min().z) || (r.base.z > box.max().z)) {
       return 0;  // Miss
     }
 
@@ -195,7 +195,7 @@ static OptNode* mergeOptNodes(OptNode* node1, OptNode* node2)
   }
 
   // Create new bounding box
-  OptNode* b = new OptNode();
+  OptNode* b = new OptNode;
   b->child = n1;
   b->box   = BBox(node1->box, node2->box);
   while (n1->next) { n1 = n1->next; }
@@ -214,7 +214,7 @@ static OptNode* makeOptNodeList(const std::vector<ObjectPtr>& o_list)
       list = makeOptNodeList(gPtr->children());
       if (!list) { continue; }
     } else {
-      list = new OptNode(ob);
+      list = new OptNode{ob};
     }
 
     if (tail) { tail->next = list; } else { node_list = tail = list; }
@@ -242,7 +242,7 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
     const Flt cost2 = (weight * CostTable.bound) + n->cost(n->box.weight());
     if (cost1 > cost2) {
       // Put object into bound (alone)
-      OptNode* b = new OptNode();
+      OptNode* b = new OptNode;
       b->child = n;
       b->box   = n->box;
       node_array.push_back(b);
@@ -338,8 +338,7 @@ ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
     return nullptr;
   }
 
-  BBox box;
-  box.fit(eye);
+  BBox box{eye};
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
     box.fit(n->box);
   }

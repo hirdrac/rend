@@ -128,14 +128,7 @@ int Intersection::bound(BBox& b) const
   for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
     BBox b2;
     _children[i]->bound(b2);
-
-    if (b2.pmin.x > b.pmin.x) { b.pmin.x = b2.pmin.x; }
-    if (b2.pmin.y > b.pmin.y) { b.pmin.y = b2.pmin.y; }
-    if (b2.pmin.z > b.pmin.z) { b.pmin.z = b2.pmin.z; }
-
-    if (b2.pmax.x < b.pmax.x) { b.pmax.x = b2.pmax.x; }
-    if (b2.pmax.y < b.pmax.y) { b.pmax.y = b2.pmax.y; }
-    if (b2.pmax.z < b.pmax.z) { b.pmax.z = b2.pmax.z; }
+    b.intersect(b2);
   }
 
   return 0;
