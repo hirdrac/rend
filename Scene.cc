@@ -44,7 +44,7 @@ void Scene::clear()
   transmit = true;
   max_ray_depth = 99;
   min_ray_value = VERY_SMALL;
-  ray_moveout = .00001;
+  ray_moveout = .0001;
 
   // object clear
   _objects.clear();
