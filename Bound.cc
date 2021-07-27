@@ -74,31 +74,22 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
     if (!IsZero(r.dir.x)) {
       const Flt h1 = (box.min().x - r.base.x) / r.dir.x;
       const Flt h2 = (box.max().x - r.base.x) / r.dir.x;
+      near_hit = std::min(h1, h2);
+      far_hit = std::max(h1, h2);
 
-      if (h1 > h2)  {
-	near_hit = h2; far_hit = h1;
-      } else  {
-	near_hit = h1; far_hit = h2;
-      }
     } else if ((r.base.x < box.min().x) || (r.base.x > box.max().x)) {
       return 0;  // Miss
     }
 
     // Y
     if (!IsZero(r.dir.y)) {
-      const Flt h1 = (box.min().y - r.base.y) / r.dir.y;
-      const Flt h2 = (box.max().y - r.base.y) / r.dir.y;
-
-      if (h1 > h2)  {
-	if (h2 > near_hit) { near_hit = h2; }
-	if (h1 < far_hit)  { far_hit  = h1; }
-      } else  {
-	if (h1 > near_hit) { near_hit = h1; }
-	if (h2 < far_hit)  { far_hit  = h2; }
-      }
-
+      Flt h1 = (box.min().y - r.base.y) / r.dir.y;
+      Flt h2 = (box.max().y - r.base.y) / r.dir.y;
+      if (h1 > h2) { std::swap(h1, h2); }
+      if (h1 > near_hit) { near_hit = h1; }
+      if (h2 < far_hit) { far_hit = h2; }
       if (near_hit > far_hit) {
-	return 0;  // Miss
+        return 0;  // Miss
       }
     } else if ((r.base.y < box.min().y) || (r.base.y > box.max().y)) {
       return 0;  // Miss
@@ -106,19 +97,13 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
     // Z
     if (!IsZero(r.dir.z)) {
-      const Flt h1 = (box.min().z - r.base.z) / r.dir.z;
-      const Flt h2 = (box.max().z - r.base.z) / r.dir.z;
-
-      if (h1 > h2)  {
-	if (h2 > near_hit) { near_hit = h2; }
-	if (h1 < far_hit)  { far_hit  = h1; }
-      } else  {
-	if (h1 > near_hit) { near_hit = h1; }
-	if (h2 < far_hit)  { far_hit  = h2; }
-      }
-
+      Flt h1 = (box.min().z - r.base.z) / r.dir.z;
+      Flt h2 = (box.max().z - r.base.z) / r.dir.z;
+      if (h1 > h2) { std::swap(h1, h2); }
+      if (h1 > near_hit) { near_hit = h1; }
+      if (h2 < far_hit) { far_hit = h2; }
       if (near_hit > far_hit) {
-	return 0;  // Miss
+        return 0;  // Miss
       }
     } else if ((r.base.z < box.min().z) || (r.base.z > box.max().z)) {
       return 0;  // Miss
