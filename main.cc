@@ -82,6 +82,11 @@ int ShellRender()
     return -1;
   }
 
+  if (TheScene.bound()) {
+    // TODO - limit output to verbose mode
+    PrintList(TheScene.bound()->children());
+  }
+
   // Render image
   println("Rendering (", TheScene.samples_x, " x ",
           TheScene.samples_y, " Samples)");

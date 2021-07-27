@@ -63,6 +63,7 @@ class Scene
 
   const std::vector<ObjectPtr>& objects() const { return _objects; }
   const std::vector<LightPtr>& lights() const { return _lights; }
+  const ObjectPtr& bound() const { return _bound; }
 
  private:
   std::vector<ObjectPtr> _objects;

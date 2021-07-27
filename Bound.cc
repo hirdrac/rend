@@ -12,7 +12,6 @@
 #include "Group.hh"
 #include "Logger.hh"
 #include "Print.hh"
-#include "PrintList.hh"
 #include <sstream>
 #include <vector>
 
@@ -356,6 +355,5 @@ ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
   bound->always_hit = true;
   killTree(node_list);
 
-  PrintList(bound->children());
   return bound;
 }
