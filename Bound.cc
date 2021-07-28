@@ -71,42 +71,29 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
     Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
     // X
-    if (!IsZero(r.dir.x)) {
-      const Flt h1 = (box.min().x - r.base.x) / r.dir.x;
-      const Flt h2 = (box.max().x - r.base.x) / r.dir.x;
+    if (r.dir.x != 0.0) {
+      const Flt h1 = (box.pmin.x - r.base.x) / r.dir.x;
+      const Flt h2 = (box.pmax.x - r.base.x) / r.dir.x;
       near_hit = std::min(h1, h2);
       far_hit = std::max(h1, h2);
-
-    } else if ((r.base.x < box.min().x) || (r.base.x > box.max().x)) {
+    } else if ((r.base.x < box.pmin.x) || (r.base.x > box.pmax.x)) {
       return 0;  // Miss
     }
 
-    // Y
-    if (!IsZero(r.dir.y)) {
-      Flt h1 = (box.min().y - r.base.y) / r.dir.y;
-      Flt h2 = (box.max().y - r.base.y) / r.dir.y;
-      if (h1 > h2) { std::swap(h1, h2); }
-      if (h1 > near_hit) { near_hit = h1; }
-      if (h2 < far_hit) { far_hit = h2; }
-      if (near_hit > far_hit) {
+    // Y & Z
+    for (unsigned int i = 1; i < 3; ++i) {
+      if (r.dir[i] != 0.0) {
+        Flt h1 = (box.pmin[i] - r.base[i]) / r.dir[i];
+        Flt h2 = (box.pmax[i] - r.base[i]) / r.dir[i];
+        if (h1 > h2) { std::swap(h1, h2); }
+        if (h1 > near_hit) { near_hit = h1; }
+        if (h2 < far_hit) { far_hit = h2; }
+        if (near_hit > far_hit) {
+          return 0;  // Miss
+        }
+      } else if ((r.base[i] < box.pmin[i]) || (r.base[i] > box.pmax[i])) {
         return 0;  // Miss
       }
-    } else if ((r.base.y < box.min().y) || (r.base.y > box.max().y)) {
-      return 0;  // Miss
-    }
-
-    // Z
-    if (!IsZero(r.dir.z)) {
-      Flt h1 = (box.min().z - r.base.z) / r.dir.z;
-      Flt h2 = (box.max().z - r.base.z) / r.dir.z;
-      if (h1 > h2) { std::swap(h1, h2); }
-      if (h1 > near_hit) { near_hit = h1; }
-      if (h2 < far_hit) { far_hit = h2; }
-      if (near_hit > far_hit) {
-        return 0;  // Miss
-      }
-    } else if ((r.base.z < box.min().z) || (r.base.z > box.max().z)) {
-      return 0;  // Miss
     }
 
     if (far_hit < 0) {

@@ -14,16 +14,15 @@ class Transform;
 class BBox
 {
  public:
+  Vec3 pmin, pmax;
+
   BBox() { reset(); }
-  BBox(const Vec3& pt) : _min(pt), _max(pt) { }
+  BBox(const Vec3& pt) : pmin(pt), pmax(pt) { }
   BBox(const BBox& b1, const BBox& b2);
 
   // Member Functions
   void reset();
   [[nodiscard]] Flt weight() const;
-
-  [[nodiscard]] const Vec3& min() const { return _min; }
-  [[nodiscard]] const Vec3& max() const { return _max; }
 
   void fit(const Vec3& pt);
   void fit(const BBox& box);
@@ -32,9 +31,6 @@ class BBox
   void intersect(const BBox& box);
 
   [[nodiscard]] bool empty() const {
-    return IsGreater(_min.x, _max.x) || IsGreater(_min.y, _max.y)
-      || IsGreater(_min.z, _max.z); }
-
- private:
-  Vec3 _min, _max;
+    return IsGreater(pmin.x, pmax.x) || IsGreater(pmin.y, pmax.y)
+      || IsGreater(pmin.z, pmax.z); }
 };
