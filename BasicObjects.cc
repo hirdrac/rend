@@ -335,28 +335,18 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   // Intersect cylinder ends
   int near_side = 0, far_side = 0;
-  if (IsZero(dir.y)) {
-    // ray parallel with planes
-    if ((base.y < -1.0) || (base.y > 1.0)) {
-      return 0;  // ray not between planes
-    }
-
-  } else {
-    const Flt h1 = -(base.z - 1.0) / dir.z;  // plane hit 1
-    const Flt h2 = -(base.z + 1.0) / dir.z;  // plane hit 2
-
-    if (h1 > h2) {
-      if (h2 > near_h) { near_h = h2; near_side = 2; }
-      if (h1 < far_h)  { far_h  = h1; far_side  = 1; }
-
-    } else {
-      if (h1 > near_h) { near_h = h1; near_side = 1; }
-      if (h2 < far_h)  { far_h  = h2; far_side  = 2; }
-    }
+  if (!IsZero(dir.z)) {
+    Flt h1 = -(base.z - 1.0) / dir.z;  // plane hit 1
+    Flt h2 = -(base.z + 1.0) / dir.z;  // plane hit 2
+    if (h1 > h2) { std::swap(h1, h2); }
+    if (h1 > near_h) { near_h = h1; near_side = 1; }
+    if (h2 < far_h)  { far_h  = h2; far_side  = 2; }
 
     if (near_h > far_h) {
       return 0;  // cylinder missed
     }
+  } else if ((base.z < -1.0) || (base.z > 1.0)) {
+    return 0; // ray parallel with planes but not between planes
   }
 
   if (far_h < 0) {
