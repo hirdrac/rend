@@ -71,7 +71,7 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
     Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
     // X
-    if (r.dir.x != 0.0) {
+    if (LIKELY(r.dir.x != 0.0)) {
       const Flt h1 = (box.pmin.x - r.base.x) / r.dir.x;
       const Flt h2 = (box.pmax.x - r.base.x) / r.dir.x;
       near_hit = std::min(h1, h2);
@@ -82,7 +82,7 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
     // Y & Z
     for (unsigned int i = 1; i < 3; ++i) {
-      if (r.dir[i] != 0.0) {
+      if (LIKELY(r.dir[i] != 0.0)) {
         Flt h1 = (box.pmin[i] - r.base[i]) / r.dir[i];
         Flt h2 = (box.pmax[i] - r.base[i]) / r.dir[i];
         if (h1 > h2) { std::swap(h1, h2); }

@@ -23,3 +23,19 @@ constexpr Flt VERY_SMALL = 1.0e-12;
 constexpr Flt VERY_LARGE = 1.0e99;
 
 constexpr Flt PI = math::PI<Flt>;
+
+
+// **** Macros ****
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+#if !__has_builtin(__builtin_expect)
+#error "__builtin_expect() required"
+#endif
+
+#define LIKELY(x) __builtin_expect(!!(x), 1)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
+
+// disable with
+//#define LIKELY(x) (x)
+//#define UNLIKELY(x) (x)

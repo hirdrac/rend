@@ -30,7 +30,7 @@ int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
-  if (IsZero(dir.z)) {
+  if (UNLIKELY(dir.z == 0.0)) {
     return 0;  // parallel with disc plane
   }
 
@@ -83,7 +83,7 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
   const Vec3 dir = MultVector(r.dir, global_inv);
   const Vec3 base = MultPoint(r.base, global_inv);
 
-  if (IsZero(dir.z) && (base.z < -1.0 || base.z > 1.0)) {
+  if (UNLIKELY(dir.z == 0.0) && (base.z < -1.0 || base.z > 1.0)) {
     // ray parallel with cone bottom & doesn't hit side
     return 0;
   }
@@ -93,7 +93,7 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
     (dir.z * (1.0 - base.z) * 0.25);
   const Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
   const Flt x = Sqr(b) - (a * c);
-  if (x < VERY_SMALL || IsZero(a)) {
+  if (x < VERY_SMALL) {
     return 0;
   }
 
@@ -119,7 +119,7 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
     ++hits;
   }
 
-  if (!IsZero(dir.z)) {
+  if (LIKELY(dir.z != 0.0)) {
     const Flt h0 = -(base.z + 1.0) / dir.z;
     const Flt h0x = base.x + (dir.x * h0);
     const Flt h0y = base.y + (dir.y * h0);
@@ -210,32 +210,24 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
   int near_side = -1, far_side = -1;
 
   // X
-  if (!IsZero(dir.x)) {
-    const Flt h1 = (-1.0 - base.x) / dir.x;
-    const Flt h2 = (1.0 - base.x) / dir.x;
-    if (h1 > h2) {
-      near_h = h2; near_side = 0;
-      far_h = h1; far_side = 1;
-    } else {
-      near_h = h1; near_side = 1;
-      far_h = h2; far_side = 0;
-    }
+  if (LIKELY(dir.x != 0.0)) {
+    Flt h1 = (-1.0 - base.x) / dir.x;
+    Flt h2 = ( 1.0 - base.x) / dir.x;
+    if (h1 > h2) { std::swap(h1, h2); }
+    near_h = h1; near_side = 1;
+    far_h = h2; far_side = 0;
+
   } else if ((base.x < -1.0) || (base.x > 1.0)) {
     return 0;  // Miss
   }
 
   // Y
-  if (!IsZero(dir.y)) {
-    const Flt h1 = (-1.0 - base.y) / dir.y;
-    const Flt h2 = (1.0 - base.y) / dir.y;
-    if (h1 > h2) {
-      if (h2 > near_h) { near_h = h2; near_side = 2; }
-      if (h1 < far_h)  { far_h  = h1; far_side  = 3; }
-    } else {
-      if (h1 > near_h) { near_h = h1; near_side = 3; }
-      if (h2 < far_h)  { far_h  = h2; far_side  = 2; }
-    }
-
+  if (LIKELY(dir.y != 0.0)) {
+    Flt h1 = (-1.0 - base.y) / dir.y;
+    Flt h2 = ( 1.0 - base.y) / dir.y;
+    if (h1 > h2) { std::swap(h1, h2); }
+    if (h1 > near_h) { near_h = h1; near_side = 3; }
+    if (h2 < far_h)  { far_h  = h2; far_side  = 2; }
     if (near_h > far_h) {
       return 0;  // Miss
     }
@@ -244,17 +236,12 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   // Z
-  if (!IsZero(dir.z)) {
-    const Flt h1 = (-1.0 - base.z) / dir.z;
-    const Flt h2 = ( 1.0 - base.z) / dir.z;
-    if (h1 > h2) {
-      if (h2 > near_h) { near_h = h2; near_side = 4; }
-      if (h1 < far_h)  { far_h  = h1; far_side  = 5; }
-    } else {
-      if (h1 > near_h) { near_h = h1; near_side = 5; }
-      if (h2 < far_h)  { far_h  = h2; far_side  = 4; }
-    }
-
+  if (LIKELY(dir.z != 0.0)) {
+    Flt h1 = (-1.0 - base.z) / dir.z;
+    Flt h2 = ( 1.0 - base.z) / dir.z;
+    if (h1 > h2) { std::swap(h1, h2); }
+    if (h1 > near_h) { near_h = h1; near_side = 5; }
+    if (h2 < far_h)  { far_h  = h2; far_side  = 4; }
     if (near_h > far_h) {
       return 0;  // Miss
     }
@@ -335,7 +322,7 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   // Intersect cylinder ends
   int near_side = 0, far_side = 0;
-  if (!IsZero(dir.z)) {
+  if (LIKELY(dir.z != 0.0)) {
     Flt h1 = -(base.z - 1.0) / dir.z;  // plane hit 1
     Flt h2 = -(base.z + 1.0) / dir.z;  // plane hit 2
     if (h1 > h2) { std::swap(h1, h2); }
@@ -593,7 +580,7 @@ int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   const Matrix& global_inv = _trans.GlobalInv(r.time);
   const Vec3 dir = MultVector(r.dir, global_inv);
-  if (IsZero(dir.z)) {
+  if (UNLIKELY(dir.z == 0.0)) {
     return 0;  // parallel with plane
   }
 
