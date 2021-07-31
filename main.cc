@@ -16,9 +16,10 @@
 #include "Print.hh"
 #include "PrintList.hh"
 #include "Object.hh"
-#include <cctype>
 #include <sstream>
 #include <string_view>
+#include <thread>
+#include <cctype>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -82,10 +83,12 @@ int ShellRender()
     return -1;
   }
 
+#if 1
   if (TheScene.bound()) {
     // TODO - limit output to verbose mode
     PrintList(TheScene.bound()->children());
   }
+#endif
 
   // Render image
   println("Rendering (", TheScene.samples_x, " x ",
@@ -248,8 +251,10 @@ int Usage(const char* argv0)
 {
   println("Usage: ", argv0, " [options] [<scene file> [<image save>]]");
   println("Options:");
-  println("  -j#, --jobs #   Number of render jobs");
-  println("  -h, --help      Show usage\n");
+  println("  -j[#], --jobs [#]  Use multiple render jobs");
+  println("                     (uses ", std::thread::hardware_concurrency(),
+          " jobs if # is unspecified)");
+  println("  -h, --help         Show usage\n");
   return 0;
 }
 
@@ -271,16 +276,16 @@ int main(int argc, char** argv)
       } else if (arg == "-h" || arg == "--help") {
         return Usage(argv[0]);
       } else if (arg == "-j" || arg == "--jobs") {
-        if (i >= (argc-1)) {
-          println("Missing job count\n");
-          return Usage(argv[0]);
+        if (i >= (argc-1) || *argv[i+1] == '-') {
+          jobs = int(std::thread::hardware_concurrency());
+        } else {
+          arg = argv[++i];
+          if (!std::isdigit(arg[0])) {
+            println("Bad job count '", arg, "'\n");
+            return Usage(argv[0]);
+          }
+          jobs = std::atoi(argv[i]);
         }
-        arg = argv[++i];
-        if (!std::isdigit(arg[0])) {
-          println("Bad job count '", arg, "'\n");
-          return Usage(argv[0]);
-        }
-        jobs = std::atoi(argv[i]);
       } else if (arg.size() > 2 && arg.substr(0,2) == "-j" && std::isdigit(arg[2])) {
         jobs = std::atoi(argv[i] + 2);
       } else if (arg.size() > 7 && arg.substr(0,7) == "--jobs=" && std::isdigit(arg[7])) {
