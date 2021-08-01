@@ -2,8 +2,6 @@
 // Phong.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of the phong illumination class
-//
 
 #include "Phong.hh"
 #include "Scene.hh"
@@ -14,18 +12,17 @@
 
 
 // **** Phong Class ****
-// SceneItem Functions
 int Phong::init(Scene& s)
 {
   if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
-  if (int er = InitShader(s, *_diffuse, value); er != 0) { return er; }
+  if (int er = InitShader(s, *_diffuse); er != 0) { return er; }
 
   if (_specular) {
-    if (int er = InitShader(s, *_specular, value); er != 0) { return er; }
+    if (int er = InitShader(s, *_specular); er != 0) { return er; }
   }
 
   if (_transmit) {
-    if (int er = InitShader(s, *_transmit, value); er != 0) { return er; }
+    if (int er = InitShader(s, *_transmit); er != 0) { return er; }
   }
   return 0;
 }

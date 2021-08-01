@@ -23,7 +23,6 @@ class ShaderColor final : public Shader
   std::string desc() const override;
 
   // Shader Functions
-  int init(Scene& s) override;
   int evaluate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     Color& result) const override;

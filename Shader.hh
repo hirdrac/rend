@@ -22,8 +22,6 @@ class Ray;
 class Shader : public SceneItem
 {
  public:
-  Flt value = 1.0;
-
   Shader();
   ~Shader();
 
@@ -51,5 +49,4 @@ class PatternShader : public Shader
 
 
 // **** Functions ****
-int InitShader(Scene& s, Shader& sh, Flt value = 1.0,
-               const Transform* t = nullptr);
+int InitShader(Scene& s, Shader& sh, const Transform* t = nullptr);

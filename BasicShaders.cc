@@ -18,13 +18,6 @@ std::string ShaderColor::desc() const
   return os.str();
 }
 
-int ShaderColor::init(Scene& s)
-{
-  _color *= value;
-  value = 1.0;
-  return 0;
-}
-
 int ShaderColor::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
   Color& result) const
@@ -45,7 +38,7 @@ int ShaderGlobal::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 int ShaderGlobal::init(Scene& s)
 {
-  return _child ? InitShader(s, *_child, value) : -1;
+  return _child ? InitShader(s, *_child) : -1;
 }
 
 int ShaderGlobal::evaluate(
@@ -68,7 +61,7 @@ int ShaderLocal::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 int ShaderLocal::init(Scene& s)
 {
-  return _child ? InitShader(s, *_child, value) : -1;
+  return _child ? InitShader(s, *_child) : -1;
 }
 
 int ShaderLocal::evaluate(

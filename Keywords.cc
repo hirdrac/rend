@@ -230,13 +230,6 @@ int MoveFn(
   return 0;
 }
 
-int ValueFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Shader* sh = dynamic_cast<Shader*>(p);
-  return sh ? sp.getFlt(n, sh->value) : -1;
-}
-
 int VupFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -280,7 +273,6 @@ static void initKeywords()
     {"scale",         ScaleFn},
     {"shadow",        ShadowBoolFn},
     {"size",          SizeFn},
-    {"value",         ValueFn},
     {"vup",           VupFn}
   };
 }

@@ -2,8 +2,6 @@
 // Shader.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of shader module
-//
 
 #include "Shader.hh"
 #include "Stats.hh"
@@ -22,7 +20,6 @@ Shader::~Shader()
 
 
 // **** PatternShader Class ****
-// SceneItem Functions
 int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   if (!sh || flag != FLAG_NONE) { return -1; }
@@ -36,7 +33,7 @@ int PatternShader::init(Scene& s)
   if (_children.empty()) { return -1; }
 
   for (auto& sh : _children) {
-    int err = InitShader(s, *sh, value, &_trans);
+    int err = InitShader(s, *sh, &_trans);
     if (err) { return err; }
   }
 
@@ -46,7 +43,7 @@ int PatternShader::init(Scene& s)
 
 
 // **** Functions ****
-int InitShader(Scene& s, Shader& sh, Flt value, const Transform* t)
+int InitShader(Scene& s, Shader& sh, const Transform* t)
 {
   // Transform by parent trans
   Transform* trans = sh.trans();
@@ -55,13 +52,5 @@ int InitShader(Scene& s, Shader& sh, Flt value, const Transform* t)
     if (t) { trans->global *= t->global; }
   }
 
-  // Scale value by parent value
-  sh.value *= value;
-  int error = sh.init(s);
-  if (error) {
-    return error;
-  }
-
-  sh.value = 1.0;
-  return 0;
+  return sh.init(s);
 }
