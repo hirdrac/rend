@@ -195,7 +195,7 @@ int ScaleFn(
 
   Vec3 v;
   if (int er = sp.getVec3(n, v); er != 0) { return er; }
-  t->local.scale(v.x, v.y, v.z);
+  t->local.scale(v);
   return 0;
 }
 
@@ -226,7 +226,7 @@ int MoveFn(
 
   Vec3 v;
   if (int er = sp.getVec3(n, v); er != 0) { return er; }
-  t->local.translate(v.x, v.y, v.z);
+  t->local.translate(v);
   return 0;
 }
 
@@ -245,35 +245,35 @@ static void initKeywords()
 {
   Keywords = std::make_unique<KeywordMap>();
   *Keywords = {
-    // keyword        ItemFn
-    {"coi",           CoiFn},
-    {"dir",           DirectionFn},
-    {"direction",     DirectionFn},
-    {"exp",           ExpFn},
-    {"eye",           EyeFn},
-    {"fov",           FovFn},
-    {"identity",      IdentityFn},
-    {"jitter",        JitterFn},
-    {"maxdepth",      MaxdepthFn},
-    {"minvalue",      MinValueFn},
-    {"move",          MoveFn},
-    {"name",          NameFn},
-    {"pos",           PositionFn},
-    {"position",      PositionFn},
-    {"radius",        RadiusFn},
-    {"region",        RegionFn},
-    {"rgb",           RgbFn},
-    {"rotatex",       RotateXFn},
-    {"rotatey",       RotateYFn},
-    {"rotatez",       RotateZFn},
-    {"rotx",          RotateXFn},
-    {"roty",          RotateYFn},
-    {"rotz",          RotateZFn},
-    {"samples",       SamplesFn},
-    {"scale",         ScaleFn},
-    {"shadow",        ShadowBoolFn},
-    {"size",          SizeFn},
-    {"vup",           VupFn}
+    // keyword      ItemFn
+    {"coi",         CoiFn},
+    {"dir",         DirectionFn},
+    {"direction",   DirectionFn},
+    {"exp",         ExpFn},
+    {"eye",         EyeFn},
+    {"fov",         FovFn},
+    {"identity",    IdentityFn},
+    {"jitter",      JitterFn},
+    {"maxdepth",    MaxdepthFn},
+    {"minvalue",    MinValueFn},
+    {"move",        MoveFn},
+    {"name",        NameFn},
+    {"pos",         PositionFn},
+    {"position",    PositionFn},
+    {"radius",      RadiusFn},
+    {"region",      RegionFn},
+    {"rgb",         RgbFn},
+    {"rotatex",     RotateXFn},
+    {"rotatey",     RotateYFn},
+    {"rotatez",     RotateZFn},
+    {"rotx",        RotateXFn},
+    {"roty",        RotateYFn},
+    {"rotz",        RotateZFn},
+    {"samples",     SamplesFn},
+    {"scale",       ScaleFn},
+    {"shadow",      ShadowBoolFn},
+    {"size",        SizeFn},
+    {"vup",         VupFn}
   };
 }
 
