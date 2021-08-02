@@ -194,7 +194,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
 
   ++r.stats->rays.hit;
   obj->evalHit(*hit, eh);
-  if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal.invert(); }
+  if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
   Shader* sh = obj->shader().get();
   if (!sh) {
