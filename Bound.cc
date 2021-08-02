@@ -16,35 +16,6 @@
 #include <vector>
 
 
-// **** Prototypes ****
-struct OptNode;
-static Flt treeCost(const OptNode* node_list, Flt bound_weight);
-
-
-// **** OptNode struct ****
-struct OptNode
-{
-  OptNode* next = nullptr;
-  OptNode* child = nullptr;
-  ObjectPtr object; // null if node is bound (has children)
-  BBox box;
-
-  OptNode() = default;
-  OptNode(const ObjectPtr& ob) : object(ob) { ob->bound(box); }
-
-  // Member Functions
-  Flt cost(Flt weight) const
-  {
-    if (object) {
-      return weight * object->hitCost();
-    } else {
-      // node is bound
-      return (weight * CostTable.bound) + treeCost(child, box.weight());
-    }
-  }
-};
-
-
 // **** Bound Class ****
 Bound::Bound()
 {
@@ -111,6 +82,35 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
 
   return hits;
 }
+
+
+// **** Prototypes ****
+struct OptNode;
+static Flt treeCost(const OptNode* node_list, Flt bound_weight);
+
+
+// **** OptNode struct ****
+struct OptNode
+{
+  OptNode* next = nullptr;
+  OptNode* child = nullptr;
+  ObjectPtr object; // null if node is bound (has children)
+  BBox box;
+
+  OptNode() = default;
+  OptNode(const ObjectPtr& ob) : object(ob) { ob->bound(box); }
+
+  // Member Functions
+  Flt cost(Flt weight) const
+  {
+    if (object) {
+      return weight * object->hitCost();
+    } else {
+      // node is bound
+      return (weight * CostTable.bound) + treeCost(child, box.weight());
+    }
+  }
+};
 
 
 // **** Functions ****
@@ -281,7 +281,7 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
 static std::shared_ptr<Bound> convertNodeList(OptNode* node_list)
 {
   if (!node_list) {
-    return std::shared_ptr<Bound>();
+    return nullptr;
   }
 
   auto b = std::make_shared<Bound>();
