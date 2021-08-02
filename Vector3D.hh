@@ -76,12 +76,13 @@ class Vector2
 
   [[nodiscard]] constexpr T lengthSqr() const { return Sqr(x)+Sqr(y); }
   [[nodiscard]] T length() const { return std::sqrt(lengthSqr()); }
+  [[nodiscard]] T lengthInv() const { return static_cast<T>(1) / length(); }
   [[nodiscard]] constexpr bool isUnit() const { return IsOne(lengthSqr()); }
 
   constexpr void set(T vx, T vy) { x = vx; y = vy; }
   constexpr void set(const T* v) { set(v[0], v[1]); }
   constexpr void invert() { x = -x; y = -y; }
-  void normalize() { operator*=(static_cast<T>(1) / length()); }
+  void normalize() { operator*=(lengthInv()); }
 };
 
 
@@ -143,12 +144,13 @@ class Vector3
 
   [[nodiscard]] constexpr T lengthSqr() const { return Sqr(x)+Sqr(y)+Sqr(z); }
   [[nodiscard]] T length() const { return std::sqrt(lengthSqr()); }
+  [[nodiscard]] T lengthInv() const { return static_cast<T>(1) / length(); }
   [[nodiscard]] constexpr bool isUnit() const { return IsOne(lengthSqr()); }
 
   constexpr void set(T vx, T vy, T vz) { x = vx; y = vy; z = vz; }
   constexpr void set(const T* v) { set(v[0], v[1], v[2]); }
   constexpr void invert() { x = -x; y = -y; z = -z; }
-  void normalize() { operator*=(static_cast<T>(1) / length()); }
+  void normalize() { operator*=(lengthInv()); }
 
   // Vector2 swizzle
   [[nodiscard]] constexpr Vector2<T>& xy() {
@@ -377,8 +379,8 @@ template<typename T>
 
 template<typename T>
 [[nodiscard]] inline Vector2<T> UnitVec(const Vector2<T>& v) {
-  return v * (static_cast<T>(1) / v.length()); }
+  return v * v.lengthInv(); }
 
 template<typename T>
 [[nodiscard]] inline Vector3<T> UnitVec(const Vector3<T>& v) {
-  return v * (static_cast<T>(1) / v.length()); }
+  return v * v.lengthInv(); }
