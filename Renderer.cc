@@ -34,15 +34,15 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
   _stats = {};
 
   // Set up view vectors
-  Vec3 vnormal = UnitVec(_scene->coi - _scene->eye);
-  Vec3 vup = UnitVec(_scene->vup);
+  const Vec3 vnormal = UnitVec(_scene->coi - _scene->eye);
+  const Vec3 vup = UnitVec(_scene->vup);
   if (IsZero(DotProduct(vnormal, vup) - 1.0)) {
     LOG_ERROR("Bad VUP vector");
     return -1;
   }
 
-  Vec3 vtop = UnitVec(vup - (vnormal * DotProduct(vnormal, vup)));
-  Vec3 vside = UnitVec(CrossProduct(vnormal, vtop));
+  const Vec3 vtop = UnitVec(vup - (vnormal * DotProduct(vnormal, vup)));
+  const Vec3 vside = UnitVec(CrossProduct(vnormal, vtop));
   //Vec3 vside = UnitVec(CrossProduct(vtop, vnormal)); // right-handed coords
 
   // Default Left-Handed Coords
@@ -53,12 +53,14 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
   //  O--- +X
 
   // Calculate Screen/Pixel vectors
-  Flt ss = std::tan((_scene->fov * .5) * math::DEG_TO_RAD<Flt>);
-  Flt screenHeight = ss;
-  Flt screenWidth = ss * (Flt(_scene->image_width) / Flt(_scene->image_height));
-  Flt screenDistance = 1.0;
-  _pixelX = vside * screenWidth;
-  _pixelY = vtop * screenHeight;
+  const Flt imgW = Flt(_scene->image_width);
+  const Flt imgH = Flt(_scene->image_height);
+  const Flt ss = std::tan((_scene->fov * .5) * math::DEG_TO_RAD<Flt>);
+  const Flt screenHeight = ss;
+  const Flt screenWidth = ss * (imgW / imgH);
+  const Flt screenDistance = 1.0;
+  _pixelX = (vside * screenWidth) / (imgW * .5);
+  _pixelY = (vtop * screenHeight) / (imgH * .5);
   _rayDir = vnormal * screenDistance;
 
   // init frame buffer
@@ -81,12 +83,13 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 		     SList<HitInfo>* freeCache, StatInfo* stats)
 {
   const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
-  const Flt halfWidth  = Flt(_scene->image_width)  * .5;
+  const Flt halfWidth = Flt(_scene->image_width) * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
-  const auto samples   = static_cast<Color::value_type>(_samples.size());
+  const auto samples_inv =
+    static_cast<Color::value_type>(1.0 / double(_samples.size()));
 
-  const Flt jitterX = (1.0 / Flt(_scene->samples_x)) * _scene->jitter;
-  const Flt jitterY = (1.0 / Flt(_scene->samples_y)) * _scene->jitter;
+  const Flt jitterX = _scene->jitter / Flt(_scene->samples_x);
+  const Flt jitterY = _scene->jitter / Flt(_scene->samples_y);
   const bool use_jitter = IsPositive(_scene->jitter);
 
   Ray initRay;
@@ -111,8 +114,6 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
           sx += rnd_jitter() * jitterX;
           sy += rnd_jitter() * jitterY;
         }
-        sx /= halfWidth;
-        sy /= halfHeight;
         initRay.dir = UnitVec(rd + (px * sx) + (py * sy));
 
 	Color result;
@@ -120,7 +121,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
         c += result;
       }
 
-      c /= samples;
+      c *= samples_inv;
       _fb->plot(x, y, c);
     }
   }
