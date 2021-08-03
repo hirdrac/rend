@@ -40,7 +40,7 @@ std::string Group::desc() const
 int Group::init(Scene& s)
 {
   for (auto& ob : _children) {
-    if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
+    if (InitObject(s, *ob, _shader, &_trans)) { return -1; }
   }
   return 0;
 }
