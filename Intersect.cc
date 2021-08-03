@@ -86,27 +86,33 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
 {
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;
-  int count = 0;
+  int count = 0; // inside count of objects
 
   while (h) {
-    // claim hit as part of csg object
-    const Object* ob = h->object;
-    if (!h->child) { h->child = ob; }
-    h->object = csg;
-
-    HitInfo* next = h->next;
+    bool remove;
     if (h->type == HIT_ENTER) {
       // entering solid object
-      if (++count < objectCount) { killNext(prev); } else { prev = h; }
+      remove = (++count < objectCount);
     } else if (h->type == HIT_EXIT) {
       // leaving solid object
-      if (count-- < objectCount) { killNext(prev); } else { prev = h; }
+      remove = (count-- < objectCount);
     } else {
-      // hollow object
-      killNext(prev);
+      // hollow object hit
+      // (allow intersection if it's inside all other objects)
+      remove = (count < (objectCount-1));
     }
 
-    h = next;
+    if (remove) {
+      h = h->next;
+      killNext(prev);
+    } else {
+      // claim hit as part of csg object
+      if (!h->child) { h->child = h->object; }
+      h->object = csg;
+
+      prev = h;
+      h = h->next;
+    }
   }
 }
 
