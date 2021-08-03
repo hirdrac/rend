@@ -29,14 +29,20 @@ class Object : public SceneItem
   Object();
   ~Object();
 
+  // SceneItem Functions
+  virtual int setCost(Flt c) override { _cost = c; return 0; }
+
   // Member Functions
   virtual int init(Scene& s) { return 0; }
   virtual int bound(BBox& b) const { return -1; }
   virtual int intersect(const Ray& r, bool csg, HitList& hit_list) const = 0;
   virtual int evalHit(const HitInfo& h, EvaluatedHit& eh) const { return -1; }
-  virtual Flt hitCost() const { return 1.0; }
+  virtual Flt hitCost() const { return 0.0; }
   virtual const ShaderPtr& shader() const { return _nullShader; }
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
+
+ protected:
+  Flt _cost = -1.0; // non-negative to override default cost
 
  private:
   static const ShaderPtr _nullShader;

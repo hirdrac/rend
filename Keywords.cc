@@ -38,6 +38,16 @@ int CoiFn(
   return p ? -1 : sp.getVec3(n, s.coi);
 }
 
+int CostFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  Flt val;
+  if (int er = sp.getFlt(n, val); er != 0) { return er; }
+  return p->setCost(val);
+}
+
 int DirectionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -265,6 +275,7 @@ static void initKeywords()
   *Keywords = {
     // keyword      ItemFn
     {"coi",         CoiFn},
+    {"cost",        CostFn},
     {"dir",         DirectionFn},
     {"direction",   DirectionFn},
     {"exp",         ExpFn},

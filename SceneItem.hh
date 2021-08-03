@@ -39,6 +39,7 @@ class SceneItem
 
   virtual int setName(const std::string& val) { return -1; }
   virtual int setRadius(Flt r) { return -1; }
+  virtual int setCost(Flt c) { return -1; }
 
   virtual int addObject(const ObjectPtr& ob) { return -1; }
   virtual int addLight(const LightPtr& lt) { return -1; }

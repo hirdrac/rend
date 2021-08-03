@@ -11,6 +11,7 @@
 #include "Roots.hh"
 #include "Stats.hh"
 #include "BBox.hh"
+#include "HitCostInfo.hh"
 #include <algorithm>
 #include <cmath>
 
@@ -63,6 +64,11 @@ int Disc::bound(BBox& b) const
     { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
   b.fit(_trans, pt, 4);
   return 0;
+}
+
+Flt Disc::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.disc;
 }
 
 
@@ -182,6 +188,11 @@ int Cone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   return 0;
 }
 
+Flt Cone::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.cone;
+}
+
 
 // **** Cube Class ****
 int Cube::init(Scene& s)
@@ -282,6 +293,11 @@ int Cube::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 
   eh.normal = _sideNormal[h.side];
   return 0;
+}
+
+Flt Cube::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.cube;
 }
 
 
@@ -386,6 +402,11 @@ int Cylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   return 0;
 }
 
+Flt Cylinder::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.cylinder;
+}
+
 
 // **** OpenCone Class ****
 int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
@@ -449,6 +470,11 @@ int OpenCone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   return 0;
 }
 
+Flt OpenCone::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.open_cone;
+}
+
 
 // **** OpenCylinder Class ****
 int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
@@ -505,6 +531,11 @@ int OpenCylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
   eh.map.set((h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0);
   return 0;
+}
+
+Flt OpenCylinder::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.open_cylinder;
 }
 
 
@@ -564,6 +595,11 @@ int Paraboloid::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   return 0;
 }
 
+Flt Paraboloid::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.paraboloid;
+}
+
 
 // **** Plane Class ****
 int Plane::init(Scene& s)
@@ -620,6 +656,11 @@ int Plane::bound(BBox& b) const
   return 0;
 }
 
+Flt Plane::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.plane;
+}
+
 
 // **** Sphere Class ****
 int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
@@ -666,6 +707,11 @@ int Sphere::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   eh.map.set((h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
              h.local_pt.y, 0.0);
   return 0;
+}
+
+Flt Sphere::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.sphere;
 }
 
 
@@ -754,4 +800,9 @@ int Torus::bound(BBox& b) const
     {-1 - _radius, -_radius, -1 - _radius}};
   b.fit(_trans, pt, 8);
   return 0;
+}
+
+Flt Torus::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.torus;
 }

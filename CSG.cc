@@ -64,7 +64,7 @@ int CSG::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 
 Flt CSG::hitCost() const
 {
-  Flt cost = CostTable.csg;
+  Flt cost = (_cost >= 0.0) ? _cost : CostTable.csg;
   for (auto& ob : _children) { cost += ob->hitCost(); }
   return cost;
 }
