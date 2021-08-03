@@ -18,11 +18,13 @@
 #include <map>
 #include <memory>
 #include <cctype>
+#include <cassert>
 
 
 // **** Helper Functions ****
 static Transform* findTrans(SceneItem* p)
 {
+  assert(p != nullptr);
   Transform* t = p->trans();
   if (!t) { println_err("ERROR: ", p->desc(), " cannot be transformed"); }
   return t;
@@ -65,6 +67,8 @@ int FovFn(
 int IdentityFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
@@ -96,6 +100,8 @@ int MinValueFn(
 int NameFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   std::string buffer;
   if (int er = sp.getString(n, buffer); er != 0) { return er; }
   return buffer.empty() ? -1 : p->setName(buffer);
@@ -111,6 +117,8 @@ int PositionFn(
 int RadiusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Flt val;
   if (int er = sp.getFlt(n, val); er != 0) { return er; }
   return p->setRadius(val);
@@ -144,6 +152,8 @@ int RgbFn(
 int RotateXFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
@@ -156,6 +166,8 @@ int RotateXFn(
 int RotateYFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
@@ -168,6 +180,8 @@ int RotateYFn(
 int RotateZFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
@@ -190,6 +204,8 @@ int SamplesFn(
 int ScaleFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
@@ -221,6 +237,8 @@ int SizeFn(
 int MoveFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
+  if (!p) { return -1; }
+
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
