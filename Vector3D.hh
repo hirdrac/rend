@@ -76,7 +76,7 @@ class Vector2
 
   [[nodiscard]] constexpr T lengthSqr() const { return Sqr(x)+Sqr(y); }
   [[nodiscard]] T length() const { return std::sqrt(lengthSqr()); }
-  [[nodiscard]] T lengthInv() const { return static_cast<T>(1) / length(); }
+  [[nodiscard]] T lengthInv() const { return T{1} / length(); }
   [[nodiscard]] constexpr bool isUnit() const { return IsOne(lengthSqr()); }
 
   constexpr void set(T vx, T vy) { x = vx; y = vy; }
@@ -142,7 +142,7 @@ class Vector3
 
   [[nodiscard]] constexpr T lengthSqr() const { return Sqr(x)+Sqr(y)+Sqr(z); }
   [[nodiscard]] T length() const { return std::sqrt(lengthSqr()); }
-  [[nodiscard]] T lengthInv() const { return static_cast<T>(1) / length(); }
+  [[nodiscard]] T lengthInv() const { return T{1} / length(); }
   [[nodiscard]] constexpr bool isUnit() const { return IsOne(lengthSqr()); }
 
   constexpr void set(T vx, T vy, T vz) { x = vx; y = vy; z = vz; }

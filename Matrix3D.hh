@@ -76,7 +76,6 @@ class Matrix4x4
   [[nodiscard]] constexpr T* data() noexcept { return _val; }
   [[nodiscard]] constexpr const T* data() const noexcept { return _val; }
 
-  constexpr void setZero();
   constexpr void setIdentity();
 
   constexpr void setTranslation(T tx, T ty, T tz);
@@ -170,22 +169,22 @@ template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(
   const Vector4<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
-  return Vector4<T>(
+  return Vector4<T>{
     (v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + (v.w*m[12]),
     (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9])  + (v.w*m[13]),
     (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + (v.w*m[14]),
-    (v.x*m[3]) + (v.y*m[7]) + (v.z*m[11]) + (v.w*m[15]));
+    (v.x*m[3]) + (v.y*m[7]) + (v.z*m[11]) + (v.w*m[15])};
 }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector4<T>& v)
 {
-  return Vector4<T>(
+  return Vector4<T>{
     (m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + (m[12]*v.w),
     (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z)  + (m[13]*v.w),
     (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + (m[14]*v.w),
-    (m[3]*v.x) + (m[7]*v.y) + (m[11]*v.z) + (m[15]*v.w));
+    (m[3]*v.x) + (m[7]*v.y) + (m[11]*v.z) + (m[15]*v.w)};
 }
 
 
@@ -216,15 +215,6 @@ inline std::ostream& operator<<(
 
 
 // **** Inline Implementations ****
-template<typename T, MatrixOrderType MOT>
-constexpr void Matrix4x4<T,MOT>::setZero()
-{
-  _val[ 0] = 0; _val[ 1] = 0; _val[ 2] = 0; _val[ 3] = 0;
-  _val[ 4] = 0; _val[ 5] = 0; _val[ 6] = 0; _val[ 7] = 0;
-  _val[ 8] = 0; _val[ 9] = 0; _val[10] = 0; _val[11] = 0;
-  _val[12] = 0; _val[13] = 0; _val[14] = 0; _val[15] = 0;
-}
-
 template<typename T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setIdentity()
 {
@@ -394,7 +384,7 @@ template<typename T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setRotation_sc(
   const Vector3<T>& axis, T sinVal, T cosVal)
 {
-  const T cinv = static_cast<T>(1) - cosVal;
+  const T cinv = T{1} - cosVal;
   const T xyc = axis.x * axis.y * cinv;
   const T xzc = axis.x * axis.z * cinv;
   const T yzc = axis.y * axis.z * cinv;
@@ -434,7 +424,7 @@ constexpr void Matrix4x4<T,MOT>::rotate_sc(
   // [(xz)(1-c)+ys  (yz)(1-c)-xs  (z^2)(1-c)+c  0]
   // [      0             0             0       1]
 
-  const T cinv = static_cast<T>(1) - cosVal;
+  const T cinv = T{1} - cosVal;
   const T xxc = (Sqr(axis.x) * cinv) + cosVal;
   const T yyc = (Sqr(axis.y) * cinv) + cosVal;
   const T zzc = (Sqr(axis.z) * cinv) + cosVal;
@@ -520,9 +510,9 @@ template<typename T>
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 1, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>((v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + m[12],
+  return Vector3<T>{(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + m[12],
 		    (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9])  + m[13],
-		    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + m[14]);
+		    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + m[14]};
 }
 
 // MultPoint() - column major matrix * column vector
@@ -531,9 +521,9 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 1, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>((m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + m[12],
+  return Vector3<T>{(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + m[12],
 		    (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z)  + m[13],
-		    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + m[14]);
+		    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + m[14]};
 }
 
 // MultVector() - row vector * row major matrix
@@ -542,9 +532,9 @@ template<typename T>
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 0, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>((v.x*m[0]) + (v.y*m[4]) + (v.z*m[8]),
+  return Vector3<T>{(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8]),
 		    (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9]),
-		    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]));
+		    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10])};
 }
 
 // MultVector() - column major matrix * column vector
@@ -553,9 +543,9 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 0, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>((m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z),
+  return Vector3<T>{(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z),
 		    (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z),
-		    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z));
+		    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z)};
 }
 
 // MultVectorTrans - row vector * transpose(row major matrix)
@@ -564,9 +554,9 @@ template<typename T>
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 0, m[12,13,14] = 0, m[15] = 1
-  return Vector3<T>((v.x*m[0]) + (v.y*m[1]) + (v.z*m[2]),
+  return Vector3<T>{(v.x*m[0]) + (v.y*m[1]) + (v.z*m[2]),
 		    (v.x*m[4]) + (v.y*m[5]) + (v.z*m[6]),
-		    (v.x*m[8]) + (v.y*m[9]) + (v.z*m[10]));
+		    (v.x*m[8]) + (v.y*m[9]) + (v.z*m[10])};
 }
 
 // MultVectorTrans() - transpose(column major matrix) * column vector
@@ -575,9 +565,9 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 0, m[12,13,14] = 0, m[15] = 1
-  return Vector3<T>((m[0]*v.x) + (m[1]*v.y) + (m[2]*v.z),
+  return Vector3<T>{(m[0]*v.x) + (m[1]*v.y) + (m[2]*v.z),
 		    (m[4]*v.x) + (m[5]*v.y) + (m[6]*v.z),
-		    (m[8]*v.x) + (m[9]*v.y) + (m[10]*v.z));
+		    (m[8]*v.x) + (m[9]*v.y) + (m[10]*v.z)};
 }
 
 // Matrix Inversion
@@ -650,7 +640,7 @@ int InvertMatrix(const Matrix4x4<T,MOT>& m, Matrix4x4<T,MOT>& dst)
   dst[15] = (t10*m[10] + t4*m[2] + t9*m[6]) - (t8*m[6] + t11*m[10] + t5*m[2]);
 
   // calculate inverse matrix
-  const T inv = static_cast<T>(1) / det;
+  const T inv = T{1} / det;
   for (auto& v : dst) { v *= inv; }
 
   // no errors
