@@ -125,7 +125,7 @@ int Scene::init()
 
   // Init scene items
   for (auto& ob : _objects) {
-    if (InitObject(*this, *ob, default_obj)) {
+    if (InitObject(*this, *ob, nullptr)) {
       println("Error initializing object list");
       return -1;  // error
     }
@@ -198,9 +198,9 @@ int Scene::traceRay(const Ray& r, Color& result) const
 
   Shader* sh = obj->shader().get();
   if (!sh) {
-    sh = default_obj.get();
+    if (hit->child) { sh = hit->child->shader().get(); }
+    if (!sh) { sh = default_obj.get(); }
     if (!sh) {
-      println("no shader!!");
       result = colors::black;
       return 0;
     }
