@@ -64,6 +64,7 @@ class HitList
   void csgMerge(const Object* csg);
   void csgUnion(const Object* csg);
   void csgIntersection(const Object* csg, int objectCount);
+  void csgDifference(const Object* csg, const Object* primary);
 
   [[nodiscard]] SList<HitInfo>* freeCache() { return _freeCache; }
 

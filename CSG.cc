@@ -140,8 +140,7 @@ int Difference::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache());
   for (auto& ob : _children) { ob->intersect(r, true, hl); }
-  //hl.csgDifference(this, _childList.head(), _childCount - 1);
-  // FIXME - finish
+  hl.csgDifference(this, _children.front().get());
 
   int hits = hl.count();
   hit_list.mergeList(hl);

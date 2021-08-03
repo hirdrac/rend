@@ -116,6 +116,42 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
   }
 }
 
+void HitList::csgDifference(const Object* csg, const Object* primary)
+{
+  HitInfo* h = _hitList.head();
+  HitInfo* prev = nullptr;
+  int count = 0; // inside count of non-primary objects
+  bool insidePrimary = false;
+
+  while (h) {
+    bool remove = true;
+    if (h->object == primary) {
+      insidePrimary = (h->type == HIT_ENTER);
+      remove = (count > 0);
+    } else if (h->type == HIT_ENTER) {
+      ++count;
+      h->type = HIT_EXIT;
+      remove = !insidePrimary || (count != 1);
+    } else if (h->type == HIT_EXIT) {
+      --count;
+      h->type = HIT_ENTER;
+      remove = !insidePrimary || (count != 0);
+    }
+
+    if (remove) {
+      h = h->next;
+      killNext(prev);
+    } else {
+      // claim hit as part of csg object
+      if (!h->child) { h->child = h->object; }
+      h->object = csg;
+
+      prev = h;
+      h = h->next;
+    }
+  }
+}
+
 void HitList::add(HitInfo* ht)
 {
   // sort hit into current hit list
