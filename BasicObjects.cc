@@ -232,36 +232,20 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
     return 0;  // Miss
   }
 
-  // Y
-  if (LIKELY(dir.y != 0.0)) {
-    Flt h1 = (-1.0 - base.y) / dir.y;
-    Flt h2 = ( 1.0 - base.y) / dir.y;
-    if (h1 > h2) { std::swap(h1, h2); }
-    if (h1 > near_h) { near_h = h1; near_side = 3; }
-    if (h2 < far_h)  { far_h  = h2; far_side  = 2; }
-    if (near_h > far_h) {
+  // Y & Z
+  for (unsigned int i = 1; i < 3; ++i) {
+    if (LIKELY(dir[i] != 0.0)) {
+      Flt h1 = (-1.0 - base[i]) / dir[i];
+      Flt h2 = ( 1.0 - base[i]) / dir[i];
+      if (h1 > h2) { std::swap(h1, h2); }
+      if (h1 > near_h) { near_h = h1; near_side = (i*2)+1; }
+      if (h2 < far_h)  { far_h  = h2; far_side  = (i*2); }
+      if (near_h > far_h) {
+        return 0;  // Miss
+      }
+    } else if ((base[i] < -1.0) || (base[i] > 1.0)) {
       return 0;  // Miss
     }
-  } else if ((base.y < -1.0) || (base.y > 1.0)) {
-    return 0;  // Miss
-  }
-
-  // Z
-  if (LIKELY(dir.z != 0.0)) {
-    Flt h1 = (-1.0 - base.z) / dir.z;
-    Flt h2 = ( 1.0 - base.z) / dir.z;
-    if (h1 > h2) { std::swap(h1, h2); }
-    if (h1 > near_h) { near_h = h1; near_side = 5; }
-    if (h2 < far_h)  { far_h  = h2; far_side  = 4; }
-    if (near_h > far_h) {
-      return 0;  // Miss
-    }
-  } else if ((base.z < -1.0) || (base.z > 1.0)) {
-    return 0;  // Miss
-  }
-
-  if (far_h < VERY_SMALL) {
-    return 0;  // cube completely behind ray origin
   }
 
   ++r.stats->cube.hit;
@@ -729,11 +713,11 @@ int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
   const Flt t1 = DotProduct(base, base) + (1.0 - Sqr(_radius));
 
   Flt c[5];
-  c[4] = Sqr(dd);
-  c[3] = 4 * bd * dd;
-  c[2] = 4 * Sqr(bd) + 2 * t1 * dd - 4 * (Sqr(dir.x) + Sqr(dir.z));
-  c[1] = 4 * bd * t1 - 8 * (base.x * dir.x + base.z * dir.z);
   c[0] = Sqr(t1) - 4 * (Sqr(base.x) + Sqr(base.z));
+  c[1] = 4 * bd * t1 - 8 * (base.x * dir.x + base.z * dir.z);
+  c[2] = 4 * Sqr(bd) + 2 * t1 * dd - 4 * (Sqr(dir.x) + Sqr(dir.z));
+  c[3] = 4 * bd * dd;
+  c[4] = Sqr(dd);
 
   Flt root[4];
   const int n = SolveQuartic(c, root);
