@@ -8,7 +8,6 @@
 
 #pragma once
 #include "Object.hh"
-#include "HitCostInfo.hh"
 #include "BBox.hh"
 #include <vector>
 
@@ -29,7 +28,6 @@ class Bound final : public Object
 
   // Object Functions
   int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
-  Flt hitCost() const override { return CostTable.bound; }
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };
 

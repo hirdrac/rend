@@ -12,6 +12,7 @@
 #include "Group.hh"
 #include "Logger.hh"
 #include "Print.hh"
+#include "HitCostInfo.hh"
 #include <sstream>
 #include <vector>
 
