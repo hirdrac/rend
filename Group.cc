@@ -37,6 +37,7 @@ std::string Group::desc() const
   return os.str();
 }
 
+// Object Functions
 int Group::init(Scene& s)
 {
   for (auto& ob : _children) {
@@ -45,7 +46,6 @@ int Group::init(Scene& s)
   return 0;
 }
 
-// Object Functions
 int Group::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   int hits = 0;

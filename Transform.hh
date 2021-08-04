@@ -22,11 +22,11 @@ class Transform
   int init();
   void clear();
 
-  inline Vec3 normalLocalToGlobal(const Vec3& normal, Flt time) const;
-  inline Vec3 pointLocalToGlobal(const Vec3& pt, Flt time) const;
+  [[nodiscard]] inline Vec3 normalLocalToGlobal(const Vec3& normal, Flt time) const;
+  [[nodiscard]] inline Vec3 pointLocalToGlobal(const Vec3& pt, Flt time) const;
 
-  inline Vec3 rayLocalDir(const Ray& r) const;
-  inline Vec3 rayLocalBase(const Ray& r) const;
+  [[nodiscard]] inline Vec3 rayLocalDir(const Ray& r) const;
+  [[nodiscard]] inline Vec3 rayLocalBase(const Ray& r) const;
 
     // FIXME - time/r.time ignored for now.
     //   eventually time parameter will allow for motion blur

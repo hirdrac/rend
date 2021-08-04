@@ -24,7 +24,7 @@ class Vector2
 {
  public:
   union {
-    struct { T x, y; };
+    struct { T x, y; }; // only use x,y for constexpr access
     T _val[2];
   };
 
@@ -89,7 +89,7 @@ class Vector3
 {
  public:
   union {
-    struct { T x, y, z; };
+    struct { T x, y, z; }; // only use x,y,z for constexpr access
     struct { T r, g, b; };
     T _val[3];
   };
@@ -166,7 +166,7 @@ class Vector4
 {
  public:
   union {
-    struct { T x, y, z, w; };
+    struct { T x, y, z, w; }; // only use x,y,z,w for constexpr access
     struct { T r, g, b, a; };
     T _val[4];
   };

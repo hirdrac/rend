@@ -747,11 +747,16 @@ int Torus::evalHit(const HitInfo& h, EvaluatedHit& eh) const
 {
   const Flt x = h.local_pt.x;
   const Flt z = h.local_pt.z;
-  const Flt d = Sqr(x) + Sqr(z);
-  if (!IsPositive(d)) { return -1; }
-
-  const Flt sqrt_d = std::sqrt(d);
+  const Flt sqrt_d = std::sqrt(Sqr(x) + Sqr(z));
   const Vec3 n{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)};
+
+  // alternate normal calc
+  //const Flt a = DotProduct(h.local_pt, h.local_pt) - 1.0 - Sqr(_radius);
+  //const Vec3 n{
+  //  4.0 * h.local_pt.x * a,
+  //  4.0 * h.local_pt.y * (a + 2.0),
+  //  4.0 * h.local_pt.z * a};
+
   eh.normal = _trans.normalLocalToGlobal(n, 0);
 
   eh.map.set((h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x,
