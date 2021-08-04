@@ -33,19 +33,16 @@ int SolveQuadric(const Flt c[3], Flt s[2])
   const Flt q = c[0] / c[2];
   const Flt d = Sqr(p) - q;
 
-  if (IsNegative(d)) {
-    // no solutions
-    return 0;
-  } else if (IsPositive(d)) {
+  if (IsPositive(d)) {
     // two solutions
     const Flt sqrt_d = std::sqrt(d);
     s[0] = -p - sqrt_d;
     s[1] = -p + sqrt_d;
     return 2;
   } else {
-    // one solution
-    s[0] = -p;
-    return 1;
+    // 1 or 0 solutions
+    // ignore d == 0.0 case (1 solution) to simplify intersections
+    return 0;
   }
 }
 
