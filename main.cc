@@ -101,7 +101,7 @@ int ShellRender()
 
   if (Ren.jobs() <= 0) {
     // single thread
-    SList<HitInfo> freeCache;
+    HitCache freeCache;
     for (int y = TheScene.region_min[1]; y <= TheScene.region_max[1]; ++y) {
       print_err("\rscanline -- ", y+1);
       Ren.render(TheScene.region_min[0], y, TheScene.region_max[0], y,
