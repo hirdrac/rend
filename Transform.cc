@@ -2,17 +2,14 @@
 // Transform.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of motion module
-//
 
 #include "Transform.hh"
 
 
 // **** Transform Class ****
-// Member Functions
 int Transform::init()
 {
-  if (InvertMatrix(global, global_inv)) {
+  if (InvertMatrix(global, _globalInv)) {
     return -1;
   }
 
@@ -23,12 +20,5 @@ void Transform::clear()
 {
   local.setIdentity();
   global.setIdentity();
-  global_inv.setIdentity();
-}
-
-
-// **** Functions ****
-std::ostream& operator<<(std::ostream& out, const Transform& t)
-{
-  return out << t.local << "--\n" << t.global << "--\n" << t.global_inv;
+  _globalInv.setIdentity();
 }

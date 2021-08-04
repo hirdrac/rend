@@ -78,7 +78,7 @@ int Checkerboard::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
   Color& result) const
 {
-  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
+  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   int gx = int(std::floor(m.x));
   int gy = int(std::floor(m.y));
   int gz = int(std::floor(m.z));
@@ -92,7 +92,7 @@ int ColorCube::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
   Color& result) const
 {
-  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
+  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   result = {
     static_cast<Color::value_type>(Abs(m.x)),
     static_cast<Color::value_type>(Abs(m.y)),
@@ -107,7 +107,7 @@ int Ring::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
   Color& result) const
 {
-  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
+  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   int d = int(std::sqrt(Sqr(m.x) + Sqr(m.y) + Sqr(m.z)) * 2.0);
   int x = Abs(d) % int(_children.size());
   return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
@@ -129,7 +129,7 @@ int Stripe::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
   Color& result) const
 {
-  Vec3 m = MultPoint(eh.map, _trans.GlobalInv(r.time));
+  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   int gx = int(std::floor(m.x));
   int x  = Abs(gx) % int(_children.size());
   return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);

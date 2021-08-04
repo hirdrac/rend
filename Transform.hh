@@ -2,19 +2,19 @@
 // Transform.hh
 // Copyright (C) 2021 Richard Bradley
 //
-// definition of motion/tranformation class
+// object/shader transformation state
 //
 
 #pragma once
 #include "Types.hh"
-#include <iosfwd>
+#include "Ray.hh"
 
 
 // **** Types ****
 class Transform
 {
-public:
-  Matrix local, global, global_inv;
+ public:
+  Matrix local, global;
 
   Transform() { clear(); }
 
@@ -22,23 +22,38 @@ public:
   int init();
   void clear();
 
-  const Matrix& Local(Flt time) const { return local; }
-  const Matrix& Global(Flt time) const { return global; }
-  const Matrix& GlobalInv(Flt time) const { return global_inv; }
-    // FIXME - time ignored for now, eventually time parameter
-    // will allow for animation support
-
   inline Vec3 normalLocalToGlobal(const Vec3& normal, Flt time) const;
+  inline Vec3 pointLocalToGlobal(const Vec3& pt, Flt time) const;
+
+  inline Vec3 rayLocalDir(const Ray& r) const;
+  inline Vec3 rayLocalBase(const Ray& r) const;
+
+    // FIXME - time/r.time ignored for now.
+    //   eventually time parameter will allow for motion blur
+
+ private:
+  Matrix _globalInv;
 };
 
 
-// **** Functions ****
-std::ostream& operator<<(std::ostream& out, const Transform& t);
-
-
 // **** Inline Implementation ****
-inline Vec3 Transform::normalLocalToGlobal(const Vec3& normal, Flt time) const
+Vec3 Transform::normalLocalToGlobal(const Vec3& normal, Flt time) const
 {
   // global normal = local normal * transpose(inverse(global transform))
-  return UnitVec(MultVectorTrans(normal, GlobalInv(time)));
+  return UnitVec(MultVectorTrans(normal, _globalInv));
+}
+
+Vec3 Transform::pointLocalToGlobal(const Vec3& pt, Flt time) const
+{
+  return MultPoint(pt, global);
+}
+
+Vec3 Transform::rayLocalDir(const Ray& r) const
+{
+  return MultVector(r.dir, _globalInv);
+}
+
+Vec3 Transform::rayLocalBase(const Ray& r) const
+{
+  return MultPoint(r.base, _globalInv);
 }

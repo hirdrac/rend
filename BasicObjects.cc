@@ -2,8 +2,6 @@
 // BasicObjects.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of primitive module
-//
 
 #include "BasicObjects.hh"
 #include "Intersect.hh"
@@ -29,13 +27,12 @@ int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->disc.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
   if (UNLIKELY(dir.z == 0.0)) {
     return 0;  // parallel with disc plane
   }
 
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 base = _trans.rayLocalBase(r);
   const Flt h = -base.z / dir.z;
   if (h < VERY_SMALL) {
     return 0;  // disc behind ray origin
@@ -85,9 +82,8 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->cone.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   if (UNLIKELY(dir.z == 0.0) && (base.z < -1.0 || base.z > 1.0)) {
     // ray parallel with cone bottom & doesn't hit side
@@ -213,9 +209,8 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->cube.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   Flt near_h = -VERY_LARGE, far_h = VERY_LARGE;
   int near_side = -1, far_side = -1;
@@ -299,9 +294,8 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->cylinder.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   // Intersect cylinder side
   const Flt a = Sqr(dir.x) + Sqr(dir.y);
@@ -397,9 +391,8 @@ int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->open_cone.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   const Flt a = Sqr(dir.x) + Sqr(dir.y) - (0.25 * Sqr(dir.z));
   const Flt b = (base.x * dir.x) + (base.y * dir.y) +
@@ -465,9 +458,8 @@ int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->open_cylinder.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   const Flt a = Sqr(dir.x) + Sqr(dir.y);
   const Flt b = (dir.x * base.x) + (dir.y * base.y);
@@ -528,9 +520,8 @@ int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->paraboloid.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   const Flt a = Sqr(dir.x) + Sqr(dir.y);
   const Flt b = (dir.x * base.x) + (dir.y * base.y) + dir.z * .25;
@@ -598,13 +589,12 @@ int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->plane.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
   if (UNLIKELY(dir.z == 0.0)) {
     return 0;  // parallel with plane
   }
 
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 base = _trans.rayLocalBase(r);
   const Flt h = -base.z / dir.z;
   if (h < VERY_SMALL) {
     return 0;  // plane behind ray origin
@@ -651,9 +641,8 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->sphere.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   const Flt a = DotProduct(dir,  dir);
   const Flt b = DotProduct(base, dir);
@@ -704,9 +693,8 @@ int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
   ++r.stats->torus.tried;
 
-  const Matrix& global_inv = _trans.GlobalInv(r.time);
-  const Vec3 dir = MultVector(r.dir, global_inv);
-  const Vec3 base = MultPoint(r.base, global_inv);
+  const Vec3 dir = _trans.rayLocalDir(r);
+  const Vec3 base = _trans.rayLocalBase(r);
 
   const Flt bd = DotProduct(base, dir);
   const Flt dd = DotProduct(dir,  dir);
