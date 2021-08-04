@@ -13,7 +13,7 @@
 void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s,
                      HitType type)
 {
-  HitInfo* ht = _freeCache ? _freeCache->removeHead() : nullptr;
+  HitInfo* ht = _freeCache ? _freeCache->fetch() : nullptr;
   if (!ht) { ht = new HitInfo; }
 
   ht->object    = ob;
@@ -33,7 +33,7 @@ void HitList::mergeList(HitList& list)
 void HitList::clear()
 {
   if (_freeCache) {
-    _freeCache->addToTail(_hitList);
+    _freeCache->store(_hitList);
   } else {
     _hitList.purge();
   }
@@ -167,7 +167,7 @@ void HitList::killNext(HitInfo* prev)
 {
   HitInfo* h = _hitList.removeNext(prev);
   if (_freeCache) {
-    _freeCache->addToTail(h);
+    _freeCache->store(h);
   } else {
     delete h;
   }

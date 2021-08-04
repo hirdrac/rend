@@ -6,12 +6,12 @@
 //
 
 #pragma once
-#include "Intersect.hh"
 #include "Types.hh"
 
 
 // **** Types ****
 class Transform;
+class HitCache;
 class StatInfo;
 
 class Ray
@@ -23,7 +23,7 @@ class Ray
   int  depth;
 
   // job specific buffers
-  SList<HitInfo>* freeCache = nullptr;
+  HitCache* freeCache = nullptr;
   StatInfo* stats = nullptr;
 
   // Member Functions

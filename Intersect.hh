@@ -44,10 +44,21 @@ class HitInfo
       type(HIT_NORMAL) { }
 };
 
+class HitCache
+{
+ public:
+  HitInfo* fetch() { return _cache.removeHead(); }
+  void store(HitInfo* h) { _cache.addToHead(h); }
+  void store(SList<HitInfo>& c) { _cache.addToHead(c); }
+
+ private:
+  SList<HitInfo> _cache;
+};
+
 class HitList
 {
  public:
-  HitList(SList<HitInfo>* cache = nullptr) : _freeCache(cache) { }
+  HitList(HitCache* cache = nullptr) : _freeCache(cache) { }
   ~HitList() { clear(); }
 
   // Member Functions
@@ -66,11 +77,11 @@ class HitList
   void csgIntersection(const Object* csg, int objectCount);
   void csgDifference(const Object* csg, const Object* primary);
 
-  [[nodiscard]] SList<HitInfo>* freeCache() { return _freeCache; }
+  [[nodiscard]] HitCache* freeCache() { return _freeCache; }
 
  private:
   SList<HitInfo> _hitList;
-  SList<HitInfo>* _freeCache;
+  HitCache* _freeCache;
 
   void add(HitInfo* ht);
   void killNext(HitInfo* ht);
