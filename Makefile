@@ -16,7 +16,8 @@ STANDARD = c++17
 PACKAGES = readline
 OPTIONS = pthread lto modern_c++
 WARN_EXTRA = extra-semi fatal-errors conversion cast-align cast-qual
-FLAGS = -march=native
+FLAGS = -march=native -ffast-math
+#FLAGS_RELEASE = -DNDEBUG
 
 include Makefile.mk
 
