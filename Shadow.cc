@@ -18,10 +18,10 @@ int CastShadow(
   Ray feeler;
   feeler.base       = globalPt;
   feeler.dir        = light.dir;
+  feeler.min_length = s.ray_moveout;
   feeler.max_length = light.distance;
   feeler.time       = r.time;
   feeler.depth      = 1;
-  feeler.moveOut(s.ray_moveout);
 
   feeler.freeCache  = r.freeCache;
   feeler.stats      = r.stats;

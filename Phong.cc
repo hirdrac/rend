@@ -128,12 +128,12 @@ int Phong::evaluate(
   if (is_s && r.depth < s.max_ray_depth) {
     // add in reflection
     Ray ray;
-    ray.base = eh.global_pt;
-    ray.dir = reflect;
+    ray.base       = eh.global_pt;
+    ray.dir        = reflect;
+    ray.min_length = s.ray_moveout;
     ray.max_length = VERY_LARGE;
-    ray.time = 0.0;
-    ray.depth = r.depth + 1;
-    ray.moveOut(s.ray_moveout);
+    ray.time       = 0.0;
+    ray.depth      = r.depth + 1;
 
     ray.freeCache = r.freeCache;
     ray.stats = r.stats;

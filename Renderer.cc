@@ -94,9 +94,10 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 
   Ray initRay;
   initRay.base = _scene->eye;
+  initRay.min_length = 0;
   initRay.max_length = VERY_LARGE;
-  initRay.depth = 0;
   initRay.time = 0.0;
+  initRay.depth = 0;
   initRay.freeCache = freeCache;
   initRay.stats = stats ? stats : &_stats;
 

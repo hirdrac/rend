@@ -18,8 +18,11 @@ class Ray
 {
  public:
   // base ray properties
-  Vec3 base, dir;
-  Flt  max_length, time;
+  Vec3 base;
+  Vec3 dir;
+  Flt  min_length;
+  Flt  max_length;
+  Flt  time;
   int  depth;
 
   // job specific buffers

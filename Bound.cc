@@ -68,7 +68,7 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
       }
     }
 
-    if (far_hit < 0) {
+    if (far_hit < r.min_length) {
       return 0;  // cube completely behind ray origin
     }
 
