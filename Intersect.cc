@@ -42,7 +42,7 @@ void HitList::clear()
 HitInfo* HitList::findFirstHit(const Ray& r)
 {
   HitInfo* h = _hitList.head();
-  while (h && (h->distance < VERY_SMALL)) { h = h->next; }
+  while (h && (h->distance < r.min_length)) { h = h->next; }
 
   return (h && (h->distance < r.max_length)) ? h : nullptr;
 }
