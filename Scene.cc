@@ -2,8 +2,6 @@
 // Scene.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of scene class
-//
 
 #include "Scene.hh"
 #include "Light.hh"
@@ -17,7 +15,6 @@
 #include "BasicShaders.hh"
 #include "Print.hh"
 #include <vector>
-#include <cassert>
 
 
 // **** Scene Class ****
@@ -193,20 +190,23 @@ int Scene::traceRay(const Ray& r, Color& result) const
   }
 
   ++r.stats->rays.hit;
-  obj->evalHit(*hit, eh);
-  if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
   Shader* sh = obj->shader().get();
   if (!sh) {
     if (hit->child) { sh = hit->child->shader().get(); }
-    if (!sh) { sh = default_obj.get(); }
     if (!sh) {
-      result = colors::black;
-      return 0;
+      sh = default_obj.get();
+      if (!sh) {
+        result = colors::black;
+        return 0;
+      }
     }
   }
 
   eh.global_pt = CalcHitPoint(r.base, r.dir, hit->distance);
+  obj->evalHit(*hit, eh);
+  if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
+
   sh->evaluate(*this, r, *hit, eh, result);
   return 0;
 }
