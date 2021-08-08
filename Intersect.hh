@@ -47,7 +47,7 @@ class HitInfo
 class HitCache
 {
  public:
-  HitInfo* fetch() { return _cache.removeHead(); }
+  [[nodiscard]] HitInfo* fetch() { return _cache.removeHead(); }
   void store(HitInfo* h) { _cache.addToHead(h); }
   void store(SList<HitInfo>& c) { _cache.addToHead(c); }
 
@@ -83,6 +83,5 @@ class HitList
   SList<HitInfo> _hitList;
   HitCache* _freeCache;
 
-  void add(HitInfo* ht);
   void killNext(HitInfo* ht);
 };

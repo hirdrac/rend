@@ -2,8 +2,6 @@
 // Intersect.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of intersect module
-//
 
 #include "Intersect.hh"
 #include "Ray.hh"
@@ -22,12 +20,26 @@ void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s,
   ht->local_pt  = pt;
   ht->side      = s;
   ht->type      = type;
-  add(ht);
+
+  // sort hit into current hit list
+  // (keep hit list sorted at all times)
+  HitInfo* prev = nullptr;
+  HitInfo* h = _hitList.head();
+  while (h && h->distance < t) { prev = h; h = h->next; }
+  _hitList.addAfterNode(prev, ht);
 }
 
 void HitList::mergeList(HitList& list)
 {
-  while (!list.empty()) { add(list.extractFirst()); }
+  HitInfo* prev = nullptr;
+  HitInfo* h = _hitList.head();
+  while (!list.empty()) {
+    HitInfo* ht = list.extractFirst();
+    while (h && h->distance < ht->distance) { prev = h; h = h->next; }
+    _hitList.addAfterNode(prev, ht);
+    prev = ht;
+    h = ht->next;
+  }
 }
 
 void HitList::clear()
@@ -150,17 +162,6 @@ void HitList::csgDifference(const Object* csg, const Object* primary)
       h = h->next;
     }
   }
-}
-
-void HitList::add(HitInfo* ht)
-{
-  // sort hit into current hit list
-  // (keep hit list sorted at all times)
-
-  HitInfo* h = _hitList.head();
-  HitInfo* prev = nullptr;
-  while (h && h->distance < ht->distance) { prev = h; h = h->next; }
-  _hitList.addAfterNode(prev, ht);
 }
 
 void HitList::killNext(HitInfo* prev)
