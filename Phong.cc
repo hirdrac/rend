@@ -94,7 +94,7 @@ int Phong::evaluate(
 
   // Ambient calculations
   s.ambient->evaluate(s, r, h, eh, tmp);
-  MultColor(tmp, color_d, result);
+  result = tmp * color_d;
 
   for (auto& lt : s.lights()) {
     LightResult lresult;
@@ -108,9 +108,7 @@ int Phong::evaluate(
 
     // Diffuse calculations
     if (is_d) {
-      MultColor(lresult.energy, color_d, tmp);
-      tmp *= angle;
-      result += tmp;
+      result += (lresult.energy * color_d) * angle;
     }
 
     // Specular calculations
@@ -118,9 +116,7 @@ int Phong::evaluate(
       angle = DotProduct(reflect, lresult.dir);
       if (angle > 0.0) {
 	Flt p = std::pow(angle, exp);  // specular hi-light
-	MultColor(lresult.energy, color_s, tmp);
-	tmp *= p;
-	result += tmp;
+	result += (lresult.energy * color_s) * p;
       }
     }
   }
@@ -140,8 +136,7 @@ int Phong::evaluate(
 
     Color c;
     s.traceRay(ray, c);
-    c *= color_s;
-    result += c;
+    result += c * color_s;
   }
 
   return 0;

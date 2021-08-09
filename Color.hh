@@ -120,23 +120,15 @@ inline std::ostream& operator<<(std::ostream& os, const Color& c) {
 }
 
 template <class T>
-[[nodiscard]] constexpr Color operator*(Color& c, T s) {
-  Color result{c};
-  return result *= s;
+[[nodiscard]] constexpr Color operator*(const Color& c, T s) {
+  return Color{c} *= s;
 }
 
 template <class T>
-[[nodiscard]] constexpr Color operator/(Color& c, T s) {
-  Color result{c};
-  return result /= s;
+[[nodiscard]] constexpr Color operator/(const Color& c, T s) {
+  return Color{c} /= s;
 }
 
-inline void MultColor(const Color& a, const Color& b, Color& result) {
-  for (int i = 0; i < Color::CHANNELS; ++i) { result[i] = a[i] * b[i]; }
-}
-
-[[nodiscard]] inline Color MultColor(const Color& a, const Color& b) {
-  Color result;
-  for (int i = 0; i < Color::CHANNELS; ++i) { result[i] = a[i] * b[i]; }
-  return result;
+[[nodiscard]] constexpr Color operator*(const Color& a, const Color& b) {
+  return Color{a[0] * b[0], a[1] * b[1], a[2] * b[2]};
 }
