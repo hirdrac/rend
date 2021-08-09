@@ -254,6 +254,7 @@ int Usage(const char* argv0)
   println("  -j[#], --jobs [#]  Use multiple render jobs");
   println("                     (uses ", std::thread::hardware_concurrency(),
           " jobs if # is unspecified)");
+  println("  -i, --interactive  Start interactive shell");
   println("  -h, --help         Show usage\n");
   return 0;
 }
@@ -267,12 +268,15 @@ int main(int argc, char** argv)
   std::string fileLoad, imageSave;
   int jobs = -1;
   bool optionsDone = false;
+  bool interactive = false;
 
   for (int i = 1; i < argc; ++i) {
     std::string_view arg = argv[i];
     if (arg[0] == '-' && !optionsDone) {
       if (arg == "--") {
         optionsDone = true;
+      } else if (arg == "-i" || arg == "--interactive") {
+        interactive = true;
       } else if (arg == "-h" || arg == "--help") {
         return Usage(argv[0]);
       } else if (arg == "-j" || arg == "--jobs") {
@@ -303,6 +307,10 @@ int main(int argc, char** argv)
     }
   }
 
+  if (!interactive && (fileLoad.empty() || imageSave.empty())) {
+    return Usage(argv[0]);
+  }
+
   if (jobs >= 0) {
     println("Render jobs set to ", jobs);
     Ren.setJobs(jobs);
@@ -314,10 +322,13 @@ int main(int argc, char** argv)
   }
 
   if (!imageSave.empty()) {
-    return ShellSave(imageSave);
+    ShellSave(imageSave);
   }
 
-  println("Starting Rend Shell - Enter '?' for help, 'Q' to quit");
-  while (ShellLoop()) { }
+  if (interactive) {
+    println("Starting Rend Shell - Enter '?' for help, 'Q' to quit");
+    while (ShellLoop()) { }
+  }
+
   return 0;
 }
