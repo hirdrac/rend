@@ -233,8 +233,8 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
       Flt h1 = (-1.0 - base[i]) / dir[i];
       Flt h2 = ( 1.0 - base[i]) / dir[i];
       if (h1 > h2) { std::swap(h1, h2); }
-      if (h1 > near_h) { near_h = h1; near_side = (i*2)+1; }
-      if (h2 < far_h)  { far_h  = h2; far_side  = (i*2); }
+      if (h1 > near_h) { near_h = h1; near_side = (int(i)*2)+1; }
+      if (h2 < far_h)  { far_h  = h2; far_side  = (int(i)*2); }
       if (near_h > far_h) {
         return 0;  // Miss
       }
