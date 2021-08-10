@@ -10,6 +10,7 @@
 #include "Object.hh"
 #include "BBox.hh"
 #include <vector>
+#include <memory>
 
 
 // **** Types ****
@@ -18,7 +19,6 @@ class Bound final : public Object
  public:
   std::vector<ObjectPtr> objects;
   BBox box; // bound size
-  bool always_hit = false;
 
   Bound();
   ~Bound();
@@ -31,6 +31,8 @@ class Bound final : public Object
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };
 
+using BoundPtr = std::shared_ptr<Bound>;
+
 
 // **** Functions ****
-ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list);
+BoundPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list);

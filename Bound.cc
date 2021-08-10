@@ -38,28 +38,26 @@ std::string Bound::desc() const
 
 int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
 {
-  if (!always_hit) {
-    ++r.stats->bound.tried;
-    Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
+  ++r.stats->bound.tried;
+  Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
-    for (unsigned int i = 0; i < 3; ++i) {
-      Flt h1 = (box.pmin[i] - r.base[i]) / r.dir[i];
-      Flt h2 = (box.pmax[i] - r.base[i]) / r.dir[i];
-      // NOTE: can generate false hits when r.dir[i] == 0 since
-      //   r.base[i] isn't checked
+  for (unsigned int i = 0; i < 3; ++i) {
+    Flt h1 = (box.pmin[i] - r.base[i]) / r.dir[i];
+    Flt h2 = (box.pmax[i] - r.base[i]) / r.dir[i];
+    // NOTE: can generate false hits when r.dir[i] == 0 since
+    //   r.base[i] isn't checked
 
-      // comparison with 'NaN' will always be false
-      if (h1 > h2) { std::swap(h1, h2); }
-      if (h1 > near_hit) { near_hit = h1; }
-      if (h2 < far_hit) { far_hit = h2; }
-    }
-
-    if (near_hit > far_hit || far_hit < r.min_length) {
-      return 0;  // miss
-    }
-
-    ++r.stats->bound.hit;
+    // comparison with 'NaN' will always be false
+    if (h1 > h2) { std::swap(h1, h2); }
+    if (h1 > near_hit) { near_hit = h1; }
+    if (h2 < far_hit) { far_hit = h2; }
   }
+
+  if (near_hit > far_hit || far_hit < r.min_length) {
+    return 0;  // miss
+  }
+
+  ++r.stats->bound.hit;
 
   // Intersect all contained objects
   int hits = 0;
@@ -265,7 +263,7 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
   return 0;
 }
 
-static std::shared_ptr<Bound> convertNodeList(OptNode* node_list)
+static BoundPtr convertNodeList(OptNode* node_list)
 {
   if (!node_list) {
     return nullptr;
@@ -290,7 +288,7 @@ static std::shared_ptr<Bound> convertNodeList(OptNode* node_list)
   return b;
 }
 
-ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
+BoundPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
 {
   OptNode* node_list = makeOptNodeList(o_list);
   if (!node_list) {
@@ -310,7 +308,6 @@ ObjectPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
   println("New tree cost: ", treeCost(node_list, box.weight()));
 
   auto bound = convertNodeList(node_list);
-  bound->always_hit = true;
   killTree(node_list);
 
   return bound;

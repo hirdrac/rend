@@ -62,14 +62,15 @@ class Scene
   int traceShadowRay(const Ray& r, Color& result) const;
 
   const std::vector<ObjectPtr>& objects() const { return _objects; }
+  const std::vector<ObjectPtr>& optObjects() const { return _optObjects; }
   const std::vector<LightPtr>& lights() const { return _lights; }
-  const ObjectPtr& bound() const { return _bound; }
 
  private:
   std::vector<ObjectPtr> _objects;
     // Complete list of objects (including Groups but not Bounds)
 
-  ObjectPtr _bound; // Bounding box hierarchy of objects
+  std::vector<ObjectPtr> _optObjects;
+    // bounding box optimized objects
 
   std::vector<LightPtr> _lights;
 

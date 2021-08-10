@@ -45,7 +45,7 @@ void Scene::clear()
 
   // object clear
   _objects.clear();
-  _bound.reset();
+  _optObjects.clear();
   _lights.clear();
   _shaders.clear();
 }
@@ -129,7 +129,8 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  _bound = MakeBoundList(eye, _objects);
+  BoundPtr bound = MakeBoundList(eye, _objects);
+  _optObjects = bound->children();
 
   // init lights
   ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
@@ -170,17 +171,12 @@ int Scene::traceRay(const Ray& r, Color& result) const
   ++r.stats->rays.tried;
 
   HitList hit_list(r.freeCache);
-  if (_bound) {
-    _bound->intersect(r, false, hit_list);
-  } else {
-    for (auto& ob : _objects) { ob->intersect(r, false, hit_list); }
-  }
+  for (auto& ob : _optObjects) { ob->intersect(r, false, hit_list); }
 
   HitInfo* hit = hit_list.findFirstHit(r);
   EvaluatedHit eh{};
 
-  const Object* obj = hit ? hit->object : nullptr;
-  if (!obj) {
+  if (!hit) {
     // hit background
     HitInfo h(nullptr, VERY_LARGE, {0,0,0});
     eh.normal = {0,0,1};
@@ -191,7 +187,8 @@ int Scene::traceRay(const Ray& r, Color& result) const
 
   ++r.stats->rays.hit;
 
-  Shader* sh = obj->shader().get();
+  const Object* obj = hit->object;
+  const Shader* sh = obj->shader().get();
   if (!sh) {
     if (hit->child) { sh = hit->child->shader().get(); }
     if (!sh) {
@@ -216,11 +213,7 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
   ++r.stats->shadow_rays.tried;
 
   HitList hit_list(r.freeCache);
-  if (_bound) {
-    _bound->intersect(r, false, hit_list);
-  } else {
-    for (auto& ob : _objects) { ob->intersect(r, false, hit_list); }
-  }
+  for (auto& ob : _optObjects) { ob->intersect(r, false, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
   if (hit) {

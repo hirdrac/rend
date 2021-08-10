@@ -84,9 +84,9 @@ int ShellRender()
   }
 
 #if 1
-  if (TheScene.bound()) {
+  if (!TheScene.optObjects().empty()) {
     // TODO - limit output to verbose mode
-    PrintList(TheScene.bound()->children());
+    PrintList(TheScene.optObjects());
   }
 #endif
 
