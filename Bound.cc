@@ -42,34 +42,20 @@ int Bound::intersect(const Ray& r, bool csg, HitList& hit_list) const
     ++r.stats->bound.tried;
     Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
-    // X
-    if (LIKELY(r.dir.x != 0.0)) {
-      const Flt h1 = (box.pmin.x - r.base.x) / r.dir.x;
-      const Flt h2 = (box.pmax.x - r.base.x) / r.dir.x;
-      near_hit = std::min(h1, h2);
-      far_hit = std::max(h1, h2);
-    } else if ((r.base.x < box.pmin.x) || (r.base.x > box.pmax.x)) {
-      return 0;  // Miss
+    for (unsigned int i = 0; i < 3; ++i) {
+      Flt h1 = (box.pmin[i] - r.base[i]) / r.dir[i];
+      Flt h2 = (box.pmax[i] - r.base[i]) / r.dir[i];
+      // NOTE: can generate false hits when r.dir[i] == 0 since
+      //   r.base[i] isn't checked
+
+      // comparison with 'NaN' will always be false
+      if (h1 > h2) { std::swap(h1, h2); }
+      if (h1 > near_hit) { near_hit = h1; }
+      if (h2 < far_hit) { far_hit = h2; }
     }
 
-    // Y & Z
-    for (unsigned int i = 1; i < 3; ++i) {
-      if (LIKELY(r.dir[i] != 0.0)) {
-        Flt h1 = (box.pmin[i] - r.base[i]) / r.dir[i];
-        Flt h2 = (box.pmax[i] - r.base[i]) / r.dir[i];
-        if (h1 > h2) { std::swap(h1, h2); }
-        if (h1 > near_hit) { near_hit = h1; }
-        if (h2 < far_hit) { far_hit = h2; }
-        if (near_hit > far_hit) {
-          return 0;  // Miss
-        }
-      } else if ((r.base[i] < box.pmin[i]) || (r.base[i] > box.pmax[i])) {
-        return 0;  // Miss
-      }
-    }
-
-    if (far_hit < r.min_length) {
-      return 0;  // cube completely behind ray origin
+    if (near_hit > far_hit || far_hit < r.min_length) {
+      return 0;  // miss
     }
 
     ++r.stats->bound.hit;
