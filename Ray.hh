@@ -19,7 +19,8 @@ class Ray
  public:
   // base ray properties
   Vec3 base;
-  Vec3 dir;
+  Vec3 dir; // NOTE: dir should be normalized.  While not required for object
+            //   intersections, lighting & reflection calculations require it.
   Flt  min_length;
   Flt  max_length;
   Flt  time;
@@ -44,7 +45,11 @@ int CalcTransmitResult(
 [[nodiscard]] constexpr Vec3 CalcReflect(
   const Vec3& incident, const Vec3& normal)
 {
+  // NOTE: output is normalized if both inputs are
   return (normal * (2.0 * DotProduct(-incident, normal))) + incident;
+
+  // alternate version
+  //return incident - (normal * (2.0 * DotProduct(incident, normal)));
 }
 
 [[nodiscard]] constexpr Vec3 CalcHitPoint(
