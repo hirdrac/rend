@@ -6,7 +6,6 @@
 #include "BasicLights.hh"
 #include "Intersect.hh"
 #include "Shader.hh"
-#include "Ray.hh"
 
 
 // **** Sun Class ****
