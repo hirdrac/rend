@@ -7,22 +7,28 @@
 
 #pragma once
 #include "SceneItem.hh"
-#include "Shadow.hh"
+#include "Color.hh"
 #include "Types.hh"
 
 
 // **** Types ****
+class Scene;
 class Shader;
 class HitInfo;
+class Ray;
 struct EvaluatedHit;
 
+struct LightResult {
+  Color energy;
+  Vec3 dir;
+  Flt distance;
+};
 
 // Light Base Class
 class Light : public SceneItem
 {
  public:
-  Vec3     pos, dir;
-  ShadowFn shadow_fn = nullptr;
+  Vec3 pos, dir;
 
   Light();
   ~Light();
@@ -42,4 +48,4 @@ class Light : public SceneItem
 
 
 // **** Functions ****
-int InitLight(Scene& s, Light& lt, ShadowFn shadow_fn);
+int InitLight(Scene& s, Light& lt);

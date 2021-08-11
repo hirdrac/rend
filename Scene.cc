@@ -133,9 +133,8 @@ int Scene::init()
   _optObjects = bound->children();
 
   // init lights
-  ShadowFn sFn = shadow ? CastShadow : CastNoShadow;
   for (auto& lt : _lights) {
-    if (InitLight(*this, *lt, sFn)) {
+    if (InitLight(*this, *lt)) {
       println("Error initializing light list");
       return -1;  // error
     }
@@ -208,7 +207,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
   return 0;
 }
 
-int Scene::traceShadowRay(const Ray& r, Color& result) const
+Color Scene::traceShadowRay(const Ray& r) const
 {
   ++r.stats->shadow_rays.tried;
 
@@ -216,12 +215,8 @@ int Scene::traceShadowRay(const Ray& r, Color& result) const
   for (auto& ob : _optObjects) { ob->intersect(r, false, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
-  if (hit) {
-    ++r.stats->shadow_rays.hit;
-    result = colors::black; // transparency not supported
-  } else {
-    result = colors::white;
-  }
+  if (!hit) { return colors::white; }
 
-  return 0;
+  ++r.stats->shadow_rays.hit;
+  return colors::black; // transparency not supported
 }

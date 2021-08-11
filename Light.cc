@@ -43,12 +43,8 @@ int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 
 // **** Functions ****
-int InitLight(Scene& s, Light& lt, ShadowFn shadow_fn)
+int InitLight(Scene& s, Light& lt)
 {
-  if (!lt.shadow_fn) {
-    lt.shadow_fn = shadow_fn;
-  }
-
   int error = lt.init(s);
   if (error) {
     return error;

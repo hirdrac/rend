@@ -65,7 +65,7 @@ int Phong::evaluate(
   // Evaluate Shaders
   Color color_d;
   _diffuse->evaluate(s, r, h, eh, color_d);
-  bool is_d = !color_d.isBlack(black_val);
+  const bool is_d = !color_d.isBlack(black_val);
 
   Color color_s;
   bool is_s;
@@ -84,35 +84,49 @@ int Phong::evaluate(
     _transmit->evaluate(s, r, h, eh, color_t);
     is_t = !color_t.isBlack(black_val);
   } else {
-    color_t.clear();
+    color_t = colors::black;
     is_t = false;
   }
 #endif
 
-  Vec3 reflect = CalcReflect(r.dir, eh.normal);
-  Color tmp;
+  const Vec3 reflect = CalcReflect(r.dir, eh.normal);
 
   // Ambient calculations
-  s.ambient->evaluate(s, r, h, eh, tmp);
-  result = tmp * color_d;
+  {
+    Color tmp;
+    s.ambient->evaluate(s, r, h, eh, tmp);
+    result = tmp * color_d;
+  }
+
+  Ray ray;
+  ray.base       = eh.global_pt;
+  ray.min_length = s.ray_moveout;
+  ray.time       = r.time;
+  ray.depth      = r.depth + 1;
+  ray.freeCache  = r.freeCache;
+  ray.stats      = r.stats;
 
   for (auto& lt : s.lights()) {
     LightResult lresult;
     lt->luminate(s, r, h, eh, lresult);
     Flt angle = DotProduct(eh.normal, lresult.dir);
-    if (!IsPositive(angle)) {
-      continue;
+    if (!IsPositive(angle)) { continue; }
+
+    if (s.shadow) {
+      // shadow check
+      ray.dir        = lresult.dir;
+      ray.max_length = lresult.distance;
+
+      lresult.energy *= s.traceShadowRay(ray);
     }
 
-    lt->shadow_fn(s, r, eh.global_pt, lresult);
-
-    // Diffuse calculations
     if (is_d) {
+      // diffuse calculation
       result += (lresult.energy * color_d) * angle;
     }
 
-    // Specular calculations
     if (is_s) {
+      // specular calculation
       angle = DotProduct(reflect, lresult.dir);
       if (angle > 0.0) {
 	Flt p = std::pow(angle, exp);  // specular hi-light
@@ -123,20 +137,12 @@ int Phong::evaluate(
 
   if (is_s && r.depth < s.max_ray_depth) {
     // add in reflection
-    Ray ray;
-    ray.base       = eh.global_pt;
     ray.dir        = reflect;
-    ray.min_length = s.ray_moveout;
     ray.max_length = VERY_LARGE;
-    ray.time       = 0.0;
-    ray.depth      = r.depth + 1;
 
-    ray.freeCache = r.freeCache;
-    ray.stats = r.stats;
-
-    Color c;
-    s.traceRay(ray, c);
-    result += c * color_s;
+    Color tmp;
+    s.traceRay(ray, tmp);
+    result += tmp * color_s;
   }
 
   return 0;

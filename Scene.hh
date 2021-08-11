@@ -58,8 +58,9 @@ class Scene
   int addShader(const ShaderPtr& sh, SceneItemFlag flag);
   int init();
   void info(std::ostream& out) const;
+
   int traceRay(const Ray& r, Color& result) const;
-  int traceShadowRay(const Ray& r, Color& result) const;
+  Color traceShadowRay(const Ray& r) const;
 
   const std::vector<ObjectPtr>& objects() const { return _objects; }
   const std::vector<ObjectPtr>& optObjects() const { return _optObjects; }
