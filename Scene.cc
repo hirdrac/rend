@@ -173,13 +173,11 @@ int Scene::traceRay(const Ray& r, Color& result) const
   for (auto& ob : _optObjects) { ob->intersect(r, false, hit_list); }
 
   HitInfo* hit = hit_list.findFirstHit(r);
-  EvaluatedHit eh{};
-
   if (!hit) {
     // hit background
-    HitInfo h(nullptr, VERY_LARGE, {0,0,0});
-    eh.normal = {0,0,1};
-    eh.map = {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0};
+    const HitInfo h{nullptr, VERY_LARGE, {}};
+    const EvaluatedHit eh{
+      {}, {0,0,1}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}};
     background->evaluate(*this, r, h, eh, result);
     return 0;
   }
@@ -199,6 +197,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
     }
   }
 
+  EvaluatedHit eh{};
   eh.global_pt = CalcHitPoint(r.base, r.dir, hit->distance);
   obj->evalHit(*hit, eh);
   if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
