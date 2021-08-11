@@ -63,7 +63,7 @@ class Color
   }
 
  private:
-  value_type _val[CHANNELS];
+  value_type _val[4];  // 4 performs better than 3
 };
 
 namespace colors {
@@ -73,27 +73,32 @@ namespace colors {
 
 
 // **** Inline implementation ****
-constexpr bool Color::isBlack(Color::value_type min) const
+constexpr bool Color::isBlack(value_type min) const
 {
-  for (auto v : _val) { if (v >= min) { return false; } }
-  return true;
+  return !((_val[0] > min) || (_val[1] > min) || (_val[2] > min));
 }
 
 constexpr Color& Color::operator+=(const Color& c)
 {
-  for (int i = 0; i < CHANNELS; ++i) { _val[i] += c._val[i]; }
+  _val[0] += c._val[0];
+  _val[1] += c._val[1];
+  _val[2] += c._val[2];
   return *this;
 }
 
 constexpr Color& Color::operator-=(const Color& c)
 {
-  for (int i = 0; i < CHANNELS; ++i) { _val[i] -= c._val[i]; }
+  _val[0] -= c._val[0];
+  _val[1] -= c._val[1];
+  _val[2] -= c._val[2];
   return *this;
 }
 
 constexpr Color& Color::operator*=(const Color& c)
 {
-  for (int i = 0; i < CHANNELS; ++i) { _val[i] *= c._val[i]; }
+  _val[0] *= c._val[0];
+  _val[1] *= c._val[1];
+  _val[2] *= c._val[2];
   return *this;
 }
 
@@ -101,7 +106,9 @@ template <class T>
 constexpr Color& Color::operator*=(T s)
 {
   const auto x = static_cast<value_type>(s);
-  for (auto& v : _val) { v *= x; }
+  _val[0] *= x;
+  _val[1] *= x;
+  _val[2] *= x;
   return *this;
 }
 
@@ -109,7 +116,9 @@ template <class T>
 constexpr Color& Color::operator/=(T s)
 {
   const auto x = static_cast<value_type>(s);
-  for (auto& v : _val) { v /= x; }
+  _val[0] /= x;
+  _val[1] /= x;
+  _val[2] /= x;
   return *this;
 }
 
