@@ -36,7 +36,7 @@ std::string Bound::desc() const
   return os.str();
 }
 
-int Bound::intersect(const Ray& r,HitList& hit_list) const
+int Bound::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->bound.tried;
   Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
@@ -47,7 +47,6 @@ int Bound::intersect(const Ray& r,HitList& hit_list) const
     // NOTE: can generate false hits when r.dir[i] == 0 since
     //   r.base[i] isn't checked
 
-    // comparison with 'NaN' will always be false
     if (h1 > h2) { std::swap(h1, h2); }
     if (h1 > near_hit) { near_hit = h1; }
     if (h2 < far_hit) { far_hit = h2; }
