@@ -22,7 +22,7 @@ class CSG : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
+  int evalHit(const Ray& r, const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
   const std::vector<ObjectPtr>& children() const override { return _children; }
 

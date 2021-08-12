@@ -57,9 +57,9 @@ int CSG::init(Scene& s)
   return 0;
 }
 
-int CSG::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int CSG::evalHit(const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
-  return h.child->evalHit(h, eh);
+  return h.child->evalHit(r, h, eh);
 }
 
 Flt CSG::hitCost() const

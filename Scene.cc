@@ -197,7 +197,7 @@ Color Scene::traceRay(const Ray& r) const
 
   EvaluatedHit eh{};
   eh.global_pt = CalcHitPoint(r.base, r.dir, hit->distance);
-  obj->evalHit(*hit, eh);
+  obj->evalHit(r, *hit, eh);
   if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
   return sh->evaluate(*this, r, *hit, eh);

@@ -48,7 +48,8 @@ int Disc::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Disc::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Disc::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   eh.normal = _normal;
   eh.map = h.local_pt;
@@ -163,7 +164,8 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Cone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Cone::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   if (h.side == 1) {
     // base
@@ -173,7 +175,7 @@ int Cone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   } else {
     // side
     const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
-    eh.normal = _trans.normalLocalToGlobal(n, 0);
+    eh.normal = _trans.normalLocalToGlobal(n, r.time);
 
     const Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
     const Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
@@ -262,7 +264,8 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Cube::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Cube::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   switch (h.side) {
     case 0: eh.map.set(-h.local_pt.z,  h.local_pt.y, 0.0); break;
@@ -353,12 +356,13 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Cylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Cylinder::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   switch (h.side) {
     case 0: {  // side
       const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
-      eh.normal = _trans.normalLocalToGlobal(n, 0);
+      eh.normal = _trans.normalLocalToGlobal(n, r.time);
 
       const Flt x =
         std::clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
@@ -438,10 +442,11 @@ int OpenCone::intersect(const Ray& r, HitList& hit_list) const
   return 0;
 }
 
-int OpenCone::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int OpenCone::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
-  eh.normal = _trans.normalLocalToGlobal(n, 0);
+  eh.normal = _trans.normalLocalToGlobal(n, r.time);
 
   const Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
   const Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
@@ -502,10 +507,11 @@ int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
   return 0;
 }
 
-int OpenCylinder::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int OpenCylinder::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
-  eh.normal = _trans.normalLocalToGlobal(n, 0);
+  eh.normal = _trans.normalLocalToGlobal(n, r.time);
 
   const Flt x = std::clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
   const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
@@ -564,10 +570,11 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
   return 0;
 }
 
-int Paraboloid::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Paraboloid::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, .125};
-  eh.normal = _trans.normalLocalToGlobal(n, 0);
+  eh.normal = _trans.normalLocalToGlobal(n, r.time);
 
   eh.map.set((h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
              h.local_pt.y, 0.0);
@@ -619,7 +626,8 @@ int Plane::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Plane::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Plane::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   eh.normal = _normal;
   eh.map = h.local_pt;
@@ -677,9 +685,10 @@ int Sphere::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Sphere::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Sphere::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
-  eh.normal = _trans.normalLocalToGlobal(h.local_pt, 0);
+  eh.normal = _trans.normalLocalToGlobal(h.local_pt, r.time);
 
   eh.map.set((h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
              h.local_pt.y, 0.0);
@@ -747,7 +756,8 @@ int Torus::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Torus::evalHit(const HitInfo& h, EvaluatedHit& eh) const
+int Torus::evalHit(
+  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   const Flt x = h.local_pt.x;
   const Flt z = h.local_pt.z;
@@ -761,7 +771,7 @@ int Torus::evalHit(const HitInfo& h, EvaluatedHit& eh) const
   //  4.0 * h.local_pt.y * (a + 2.0),
   //  4.0 * h.local_pt.z * a};
 
-  eh.normal = _trans.normalLocalToGlobal(n, 0);
+  eh.normal = _trans.normalLocalToGlobal(n, r.time);
 
   eh.map.set((h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x,
              -h.local_pt.z, 0.0);
