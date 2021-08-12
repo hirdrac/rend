@@ -19,8 +19,7 @@ class Ray
  public:
   // base ray properties
   Vec3 base;
-  Vec3 dir; // NOTE: dir should be normalized.  While not required for object
-            //   intersections, lighting & reflection calculations require it.
+  Vec3 dir;
   Flt  min_length;
   Flt  max_length;
   Flt  time;
