@@ -70,17 +70,21 @@ int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
   const bool is_s = !color_s.isBlack(black_val);
 
 #if 0
-  const Color color_t = _transmit->evaluate(s, r, h, eh);
+  const Color color_t;
+  _transmit->evaluate(s, r, h, eh, color_t);
   const bool is_t = !color_t.isBlack(black_val);
 #endif
 
-  const Vec3 reflect = CalcReflect(r.dir, eh.normal);
+  Vec3 reflect;
+  if (is_s) {
+    Vec3 dir = r.dir;
+    // init ray not normalized
+    if (r.depth == 0) { dir *= dir.lengthInv(); }
+ 
+    //const Flt len_sqr = dir.lengthSqr();
+    //if (!IsOne(len_sqr)) { dir *= 1.0 / std::sqrt(len_sqr); }
 
-  {
-    // ambient calculation
-    Color tmp;
-    s.ambient->evaluate(s, r, h, eh, tmp);
-    result = tmp * color_d;
+    reflect = CalcReflect(dir, eh.normal);
   }
 
   Ray ray;
@@ -90,6 +94,13 @@ int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
   ray.depth      = r.depth + 1;
   ray.freeCache  = r.freeCache;
   ray.stats      = r.stats;
+
+  {
+    // ambient calculation
+    Color tmp;
+    s.ambient->evaluate(s, r, h, eh, tmp);
+    result = tmp * color_d;
+  }
 
   for (auto& lt : s.lights()) {
     LightResult lresult;

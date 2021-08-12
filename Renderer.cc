@@ -115,7 +115,8 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
           sx += rnd_jitter() * jitterX;
           sy += rnd_jitter() * jitterY;
         }
-        initRay.dir = UnitVec(rd + (px * sx) + (py * sy));
+        initRay.dir = rd + (px * sx) + (py * sy);
+          // dir not normalized for performance
 
         c += _scene->traceRay(initRay);
       }
