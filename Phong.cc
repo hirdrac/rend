@@ -17,13 +17,12 @@ int Phong::init(Scene& s)
   if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
   if (int er = InitShader(s, *_diffuse); er != 0) { return er; }
 
-  if (_specular) {
-    if (int er = InitShader(s, *_specular); er != 0) { return er; }
-  }
+  if (!_specular) { _specular = makeShader<ShaderColor>(0, 0, 0); }
+  if (int er = InitShader(s, *_specular); er != 0) { return er; }
 
-  if (_transmit) {
-    if (int er = InitShader(s, *_transmit); er != 0) { return er; }
-  }
+  if (!_transmit) { _transmit = makeShader<ShaderColor>(0, 0, 0); }
+  if (int er = InitShader(s, *_transmit); er != 0) { return er; }
+
   return 0;
 }
 
@@ -56,9 +55,8 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 }
 
 // Shader Functions
-int Phong::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
+                    const EvaluatedHit& eh, Color& result) const
 {
   const auto black_val = static_cast<Color::value_type>(s.min_ray_value);
 
@@ -68,31 +66,18 @@ int Phong::evaluate(
   const bool is_d = !color_d.isBlack(black_val);
 
   Color color_s;
-  bool is_s;
-  if (_specular) {
-    _specular->evaluate(s, r, h, eh, color_s);
-    is_s = !color_s.isBlack(black_val);
-  } else {
-    color_s = colors::black;
-    is_s = false;
-  }
+  _specular->evaluate(s, r, h, eh, color_s);
+  const bool is_s = !color_s.isBlack(black_val);
 
 #if 0
-  Color color_t;
-  bool is_t;
-  if (_transmit) {
-    _transmit->evaluate(s, r, h, eh, color_t);
-    is_t = !color_t.isBlack(black_val);
-  } else {
-    color_t = colors::black;
-    is_t = false;
-  }
+  const Color color_t = _transmit->evaluate(s, r, h, eh);
+  const bool is_t = !color_t.isBlack(black_val);
 #endif
 
   const Vec3 reflect = CalcReflect(r.dir, eh.normal);
 
-  // Ambient calculations
   {
+    // ambient calculation
     Color tmp;
     s.ambient->evaluate(s, r, h, eh, tmp);
     result = tmp * color_d;
@@ -126,11 +111,10 @@ int Phong::evaluate(
     }
 
     if (is_s) {
-      // specular calculation
+      // specular hi-light calculation
       angle = DotProduct(reflect, lresult.dir);
       if (angle > 0.0) {
-	Flt p = std::pow(angle, exp);  // specular hi-light
-	result += (lresult.energy * color_s) * p;
+	result += (lresult.energy * color_s) * std::pow(angle, exp);
       }
     }
   }
