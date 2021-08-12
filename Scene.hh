@@ -59,7 +59,7 @@ class Scene
   int init();
   void info(std::ostream& out) const;
 
-  int traceRay(const Ray& r, Color& result) const;
+  Color traceRay(const Ray& r) const;
   Color traceShadowRay(const Ray& r) const;
 
   const std::vector<ObjectPtr>& objects() const { return _objects; }

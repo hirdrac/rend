@@ -165,7 +165,7 @@ void Scene::info(std::ostream& out) const
   println_os(out);
 }
 
-int Scene::traceRay(const Ray& r, Color& result) const
+Color Scene::traceRay(const Ray& r) const
 {
   ++r.stats->rays.tried;
 
@@ -178,8 +178,9 @@ int Scene::traceRay(const Ray& r, Color& result) const
     const HitInfo h{nullptr, VERY_LARGE, {}};
     const EvaluatedHit eh{
       {}, {0,0,1}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}};
+    Color result;
     background->evaluate(*this, r, h, eh, result);
-    return 0;
+    return result;
   }
 
   ++r.stats->rays.hit;
@@ -191,8 +192,7 @@ int Scene::traceRay(const Ray& r, Color& result) const
     if (!sh) {
       sh = default_obj.get();
       if (!sh) {
-        result = colors::black;
-        return 0;
+        return colors::black;
       }
     }
   }
@@ -202,8 +202,9 @@ int Scene::traceRay(const Ray& r, Color& result) const
   obj->evalHit(*hit, eh);
   if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
+  Color result;
   sh->evaluate(*this, r, *hit, eh, result);
-  return 0;
+  return result;
 }
 
 Color Scene::traceShadowRay(const Ray& r) const

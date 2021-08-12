@@ -140,9 +140,7 @@ int Phong::evaluate(
     ray.dir        = reflect;
     ray.max_length = VERY_LARGE;
 
-    Color tmp;
-    s.traceRay(ray, tmp);
-    result += tmp * color_s;
+    result += s.traceRay(ray) * color_s;
   }
 
   return 0;

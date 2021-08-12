@@ -117,9 +117,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
         }
         initRay.dir = UnitVec(rd + (px * sx) + (py * sy));
 
-	Color result;
-	_scene->traceRay(initRay, result);
-        c += result;
+        c += _scene->traceRay(initRay);
       }
 
       c *= samples_inv;
