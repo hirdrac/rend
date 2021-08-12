@@ -18,7 +18,7 @@ class Disc final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   int bound(BBox& b) const override;
   Flt hitCost() const override;
@@ -35,7 +35,7 @@ class Cone final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 
@@ -51,7 +51,7 @@ class Cube final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 
@@ -67,7 +67,7 @@ class Cylinder final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 
@@ -82,7 +82,7 @@ class OpenCone final : public Primitive
   std::string desc() const override { return "<OpenCone>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 };
@@ -94,7 +94,7 @@ class OpenCylinder final : public Primitive
   std::string desc() const override { return "<OpenCylinder>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 };
@@ -106,7 +106,7 @@ class Paraboloid final : public Primitive
   std::string desc() const override { return "<Paraboloid>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 };
@@ -119,7 +119,7 @@ class Plane final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   int bound(BBox& b) const override;
   Flt hitCost() const override;
@@ -135,7 +135,7 @@ class Sphere final : public Primitive
   std::string desc() const override { return "<Sphere>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 };
@@ -149,7 +149,7 @@ class Torus final : public Primitive
 
   // Object Functions
   int bound(BBox& b) const override;
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int evalHit(const HitInfo& h, EvaluatedHit& eh) const override;
   Flt hitCost() const override;
 

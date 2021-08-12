@@ -169,8 +169,8 @@ Color Scene::traceRay(const Ray& r) const
 {
   ++r.stats->rays.tried;
 
-  HitList hit_list(r.freeCache);
-  for (auto& ob : _optObjects) { ob->intersect(r, false, hit_list); }
+  HitList hit_list(r.freeCache, false);
+  for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   HitInfo* hit = hit_list.findFirstHit(r);
   if (!hit) {
@@ -211,8 +211,8 @@ Color Scene::traceShadowRay(const Ray& r) const
 {
   ++r.stats->shadow_rays.tried;
 
-  HitList hit_list(r.freeCache);
-  for (auto& ob : _optObjects) { ob->intersect(r, false, hit_list); }
+  HitList hit_list(r.freeCache, false);
+  for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
   if (!hit) { return colors::white; }

@@ -39,7 +39,7 @@ class Merge final : public CSG
   std::string desc() const override { return "<Merge>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int bound(BBox& b) const override;
 };
 
@@ -50,7 +50,7 @@ class Union final : public CSG
   std::string desc() const override { return "<Union>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int bound(BBox& b) const override;
 };
 
@@ -61,7 +61,7 @@ class Intersection final : public CSG
   std::string desc() const override { return "<Intersection>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int bound(BBox& b) const override;
 };
 
@@ -72,6 +72,6 @@ class Difference final : public CSG
   std::string desc() const override { return "<Difference>"; }
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   int bound(BBox& b) const override;
 };

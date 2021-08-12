@@ -23,7 +23,7 @@ int Disc::init(Scene& s)
   return 0;
 }
 
-int Disc::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Disc::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->disc.tried;
 
@@ -78,7 +78,7 @@ int Cone::init(Scene& s)
   return 0;
 }
 
-int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Cone::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->cone.tried;
 
@@ -149,7 +149,7 @@ int Cone::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   ++r.stats->cone.hit;
-  if (csg) {
+  if (hit_list.csg()) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
     hit_list.addHit(
@@ -205,7 +205,7 @@ int Cube::init(Scene& s)
   return 0;
 }
 
-int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Cube::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->cube.tried;
 
@@ -248,7 +248,7 @@ int Cube::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   ++r.stats->cube.hit;
-  if (csg) {
+  if (hit_list.csg()) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
     hit_list.addHit(
@@ -294,7 +294,7 @@ int Cylinder::init(Scene& s)
   return 0;
 }
 
-int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Cylinder::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->cylinder.tried;
 
@@ -339,7 +339,7 @@ int Cylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   ++r.stats->cylinder.hit;
-  if (csg) {
+  if (hit_list.csg()) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
     hit_list.addHit(
@@ -391,7 +391,7 @@ Flt Cylinder::hitCost() const
 
 
 // **** OpenCone Class ****
-int OpenCone::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int OpenCone::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->open_cone.tried;
 
@@ -458,7 +458,7 @@ Flt OpenCone::hitCost() const
 
 
 // **** OpenCylinder Class ****
-int OpenCylinder::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->open_cylinder.tried;
 
@@ -520,7 +520,7 @@ Flt OpenCylinder::hitCost() const
 
 
 // **** Paraboloid Class ****
-int Paraboloid::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->paraboloid.tried;
 
@@ -589,7 +589,7 @@ int Plane::init(Scene& s)
   return 0;
 }
 
-int Plane::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Plane::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->plane.tried;
 
@@ -641,7 +641,7 @@ Flt Plane::hitCost() const
 
 
 // **** Sphere Class ****
-int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Sphere::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->sphere.tried;
 
@@ -666,7 +666,7 @@ int Sphere::intersect(const Ray& r, bool csg, HitList& hit_list) const
   Flt near_h = (-b - sqrt_x) / a;
 
   ++r.stats->sphere.hit;
-  if (csg) {
+  if (hit_list.csg()) {
     hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_ENTER);
     hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, HIT_EXIT);
     return 2;
@@ -693,7 +693,7 @@ Flt Sphere::hitCost() const
 
 
 // **** Torus Class ****
-int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Torus::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->torus.tried;
 
@@ -730,7 +730,7 @@ int Torus::intersect(const Ray& r, bool csg, HitList& hit_list) const
   }
 
   ++r.stats->torus.hit;
-  if (csg) {
+  if (hit_list.csg()) {
     for (int i = 0; i < n; ++i) {
       hit_list.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0,
                       (i&1) ? HIT_EXIT : HIT_ENTER);

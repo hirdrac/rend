@@ -27,7 +27,7 @@ class Bound final : public Object
   std::string desc() const override;
 
   // Object Functions
-  int intersect(const Ray& r, bool csg, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hit_list) const override;
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };
 

@@ -58,7 +58,7 @@ class HitCache
 class HitList
 {
  public:
-  HitList(HitCache* cache = nullptr) : _freeCache(cache) { }
+  HitList(HitCache* cache, bool csg) : _freeCache(cache), _csg(csg) { }
   ~HitList() { clear(); }
 
   // Member Functions
@@ -71,6 +71,7 @@ class HitList
   [[nodiscard]] HitInfo* extractFirst() { return _hitList.removeHead(); }
   [[nodiscard]] bool empty() const { return _hitList.empty(); }
   [[nodiscard]] int  count() const { return _hitList.count(); }
+  [[nodiscard]] bool csg() const { return _csg; }
 
   void csgMerge(const Object* csg);
   void csgUnion(const Object* csg);
@@ -82,6 +83,7 @@ class HitList
  private:
   SList<HitInfo> _hitList;
   HitCache* _freeCache;
+  bool _csg;
 
   void killNext(HitInfo* ht);
 };

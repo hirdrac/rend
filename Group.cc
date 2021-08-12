@@ -46,9 +46,9 @@ int Group::init(Scene& s)
   return 0;
 }
 
-int Group::intersect(const Ray& r, bool csg, HitList& hit_list) const
+int Group::intersect(const Ray& r, HitList& hit_list) const
 {
   int hits = 0;
-  for (auto& ob : _children) { hits += ob->intersect(r, csg, hit_list); }
+  for (auto& ob : _children) { hits += ob->intersect(r, hit_list); }
   return hits;
 }
