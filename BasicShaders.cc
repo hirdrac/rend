@@ -18,12 +18,10 @@ std::string ShaderColor::desc() const
   return os.str();
 }
 
-int ShaderColor::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color ShaderColor::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  result = _color;
-  return 0;
+  return _color;
 }
 
 
@@ -41,12 +39,11 @@ int ShaderGlobal::init(Scene& s)
   return _child ? InitShader(s, *_child) : -1;
 }
 
-int ShaderGlobal::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color ShaderGlobal::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2{eh.global_pt, eh.normal, eh.global_pt};
-  return _child->evaluate(s, r, h, eh2, result);
+  return _child->evaluate(s, r, h, eh2);
 }
 
 
@@ -64,73 +61,66 @@ int ShaderLocal::init(Scene& s)
   return _child ? InitShader(s, *_child) : -1;
 }
 
-int ShaderLocal::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color ShaderLocal::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2{eh.global_pt, eh.normal, h.local_pt};
-  return _child->evaluate(s, r, h, eh2, result);
+  return _child->evaluate(s, r, h, eh2);
 }
 
 
 // **** Checkerboard Class ****
-int Checkerboard::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color Checkerboard::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   int gx = int(std::floor(m.x));
   int gy = int(std::floor(m.y));
   int gz = int(std::floor(m.z));
   int x  = Abs(gx + gy + gz) % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh);
 }
 
 
 // **** ColorCube Class ****
-int ColorCube::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color ColorCube::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
-  result = {
+  return {
     static_cast<Color::value_type>(Abs(m.x)),
     static_cast<Color::value_type>(Abs(m.y)),
     static_cast<Color::value_type>(Abs(m.z))
   };
-  return 0;
 }
 
 
 // **** Ring Class ****
-int Ring::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color Ring::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   int d = int(std::sqrt(Sqr(m.x) + Sqr(m.y) + Sqr(m.z)) * 2.0);
   int x = Abs(d) % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh);
 }
 
 
 // **** ShaderSide Class ****
-int ShaderSide::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color ShaderSide::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   int x = h.side % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh);
 }
 
 
 // **** Stripe Class ****
-int Stripe::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  Color& result) const
+Color Stripe::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   int gx = int(std::floor(m.x));
   int x  = Abs(gx) % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, h, eh, result);
+  return _children[std::size_t(x)]->evaluate(s, r, h, eh);
 }

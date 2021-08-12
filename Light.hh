@@ -19,9 +19,9 @@ class Ray;
 struct EvaluatedHit;
 
 struct LightResult {
-  Color energy;
   Vec3 dir;
   Flt distance;
+  Color energy;
 };
 
 // Light Base Class

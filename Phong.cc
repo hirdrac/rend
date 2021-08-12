@@ -55,23 +55,20 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 }
 
 // Shader Functions
-int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                    const EvaluatedHit& eh, Color& result) const
+Color Phong::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
   const auto black_val = static_cast<Color::value_type>(s.min_ray_value);
 
   // Evaluate Shaders
-  Color color_d;
-  _diffuse->evaluate(s, r, h, eh, color_d);
+  const Color color_d = _diffuse->evaluate(s, r, h, eh);
   const bool is_d = !color_d.isBlack(black_val);
 
-  Color color_s;
-  _specular->evaluate(s, r, h, eh, color_s);
+  const Color color_s = _specular->evaluate(s, r, h, eh);
   const bool is_s = !color_s.isBlack(black_val);
 
 #if 0
-  const Color color_t;
-  _transmit->evaluate(s, r, h, eh, color_t);
+  const Color color_t = _transmit->evaluate(s, r, h, eh);
   const bool is_t = !color_t.isBlack(black_val);
 #endif
 
@@ -80,7 +77,7 @@ int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
     Vec3 dir = r.dir;
     // init ray not normalized
     if (r.depth == 0) { dir *= dir.lengthInv(); }
- 
+
     //const Flt len_sqr = dir.lengthSqr();
     //if (!IsOne(len_sqr)) { dir *= 1.0 / std::sqrt(len_sqr); }
 
@@ -95,12 +92,8 @@ int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
   ray.freeCache  = r.freeCache;
   ray.stats      = r.stats;
 
-  {
-    // ambient calculation
-    Color tmp;
-    s.ambient->evaluate(s, r, h, eh, tmp);
-    result = tmp * color_d;
-  }
+  // ambient calculation
+  Color result = s.ambient->evaluate(s, r, h, eh) * color_d;
 
   for (auto& lt : s.lights()) {
     LightResult lresult;
@@ -138,5 +131,5 @@ int Phong::evaluate(const Scene& s, const Ray& r, const HitInfo& h,
     result += s.traceRay(ray) * color_s;
   }
 
-  return 0;
+  return result;
 }

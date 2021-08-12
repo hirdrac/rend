@@ -27,9 +27,8 @@ class Shader : public SceneItem
 
   // Member Functions
   virtual int init(Scene& s) { return 0; }
-  virtual int evaluate(
-    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-    Color& result) const = 0;
+  virtual Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
+                         const EvaluatedHit& eh) const = 0;
 };
 
 class PatternShader : public Shader

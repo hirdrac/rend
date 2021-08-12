@@ -15,7 +15,8 @@ int Sun::luminate(
 {
   result.dir = -dir;
   result.distance = VERY_LARGE;
-  return _energy->evaluate(s, r, h, eh, result.energy);
+  result.energy = _energy->evaluate(s, r, h, eh);
+  return 0;
 }
 
 
@@ -26,7 +27,8 @@ int PointLight::luminate(
 {
   result.dir = UnitVec(pos - eh.global_pt);
   result.distance = PointDistance(pos, eh.global_pt);
-  return _energy->evaluate(s, r, h, eh, result.energy);
+  result.energy = _energy->evaluate(s, r, h, eh);
+  return 0;
 }
 
 
