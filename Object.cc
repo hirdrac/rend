@@ -13,7 +13,6 @@
 
 
 // **** Object Class ****
-const ShaderPtr Object::_nullShader;
 const std::vector<ObjectPtr> Object::_emptyList;
 
 Object::Object()

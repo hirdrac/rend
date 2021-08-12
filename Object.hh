@@ -38,14 +38,15 @@ class Object : public SceneItem
   virtual int intersect(const Ray& r, bool csg, HitList& hit_list) const = 0;
   virtual int evalHit(const HitInfo& h, EvaluatedHit& eh) const { return -1; }
   virtual Flt hitCost() const { return 0.0; }
-  virtual const ShaderPtr& shader() const { return _nullShader; }
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
 
+  const ShaderPtr& shader() const { return _shader; }
+
  protected:
+  ShaderPtr _shader;
   Flt _cost = -1.0; // non-negative to override default cost
 
  private:
-  static const ShaderPtr _nullShader;
   static const std::vector<ObjectPtr> _emptyList;
 };
 
@@ -62,11 +63,9 @@ class Primitive : public Object
   // Object Functions
   int init(Scene& s) override;
   int bound(BBox& b) const override;
-  const ShaderPtr& shader() const override { return _shader; }
 
  protected:
   Transform _trans;
-  ShaderPtr _shader;
 };
 
 
