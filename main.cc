@@ -75,6 +75,9 @@ int ShellRender()
   }
 
   Fb.clear();
+
+  println("Rendering ", TheScene.image_width, "x", TheScene.image_height,
+          " image (", TheScene.samples_x, "x", TheScene.samples_y, " samples)");
   Timer t;
   t.start();
 
@@ -83,24 +86,21 @@ int ShellRender()
     return -1;
   }
 
-#if 1
+#if 0
+  // FIXME - output in verbose mode
   if (!TheScene.optObjects().empty()) {
-    // TODO - limit output to verbose mode
     PrintList(TheScene.optObjects());
   }
 #endif
 
   // Render image
-  println("Rendering (", TheScene.samples_x, " x ",
-          TheScene.samples_y, " Samples)");
-
   if (Ren.init(&TheScene, &Fb)) {
     LOG_ERROR("Failed to initialize renderer");
     return -1;
   }
 
   if (Ren.jobs() <= 0) {
-    // single thread
+    // render on main thread
     HitCache freeCache;
     for (int y = TheScene.region_min[1]; y <= TheScene.region_max[1]; ++y) {
       print_err("\rscanline -- ", y+1);
@@ -108,19 +108,18 @@ int ShellRender()
 		 &freeCache, nullptr);
     }
   } else {
-    int j = Ren.jobs();
+    // render on spawned thread(s)
     Ren.startJobs();
-    while (1) {
-      int tr = Ren.waitForJobs(50);
-      print_err("Jobs: ", j, "   Tasks: ", tr, "   \r");
-      if (tr <= 0) { break; }
-    }
+    int tr;
+    do {
+      tr = Ren.waitForJobs(50);
+      print_err("tasks remaining -- ", tr, "   \r");
+    } while (tr > 0);
     Ren.stopJobs();
   }
 
   t.stop();
-  println_err("\rRendering Complete     ");
-  println("Rendering Time: ", t.elapsedSec());
+  println("\rRendering Time: ", t.elapsedSec());
   return 0;
 }
 
