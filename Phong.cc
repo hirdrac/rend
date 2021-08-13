@@ -76,7 +76,7 @@ Color Phong::evaluate(
   if (is_s) {
     Vec3 dir = r.dir;
     // init ray not normalized
-    if (r.depth == 0) { dir *= dir.lengthInv(); }
+    if (r.depth == 0) { dir.normalize(); }
 
     //const Flt len_sqr = dir.lengthSqr();
     //if (!IsOne(len_sqr)) { dir *= 1.0 / std::sqrt(len_sqr); }

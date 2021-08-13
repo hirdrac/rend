@@ -22,8 +22,8 @@ BBox::BBox(const BBox& b1, const BBox& b2)
 
 void BBox::reset()
 {
-  pmin.set( VERY_LARGE,  VERY_LARGE,  VERY_LARGE);
-  pmax.set(-VERY_LARGE, -VERY_LARGE, -VERY_LARGE);
+  pmin = { VERY_LARGE,  VERY_LARGE,  VERY_LARGE};
+  pmax = {-VERY_LARGE, -VERY_LARGE, -VERY_LARGE};
 }
 
 Flt BBox::weight() const
