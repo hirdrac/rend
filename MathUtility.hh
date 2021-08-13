@@ -36,10 +36,10 @@ namespace math {
 #endif
 
   template<class T>
-  inline constexpr T DEG_TO_RAD = PI<T> / static_cast<T>(180);
+  inline constexpr T DEG_TO_RAD = PI<T> / T{180};
 
   template<class T>
-  inline constexpr T RAD_TO_DEG = static_cast<T>(180) / PI<T>;
+  inline constexpr T RAD_TO_DEG = T{180} / PI<T>;
 
   template<class T>
   inline constexpr T VERY_SMALL = static_cast<T>(1.0e-12);
@@ -71,8 +71,8 @@ template<class fltType>
 template<class fltType>
 [[nodiscard]] constexpr bool IsOne(fltType x)
 {
-  return (x > (static_cast<fltType>(1) - math::VERY_SMALL<fltType>))
-    && (x < (static_cast<fltType>(1) + math::VERY_SMALL<fltType>));
+  return (x > (fltType{1} - math::VERY_SMALL<fltType>))
+    && (x < (fltType{1} + math::VERY_SMALL<fltType>));
 }
 
 template<class fltType>
@@ -119,7 +119,7 @@ template<class numType, class fltType>
   static_assert(std::is_floating_point_v<fltType>);
   if (s <= 0) {
     return a;
-  } else if (s >= static_cast<fltType>(1)) {
+  } else if (s >= fltType{1}) {
     return b;
   } else {
     return a + ((b - a) * s);
@@ -137,7 +137,7 @@ template<class numType>
 {
   if (y < 0) { return 0; }
 
-  numType val = static_cast<numType>(1);
+  auto val = numType{1};
   while (y) {
     if (y & 1) { val *= x; }
     y >>= 1;
@@ -151,17 +151,17 @@ template<class numType>
 [[nodiscard]] constexpr int Sgn(numType x)
 {
   if constexpr (std::is_signed_v<numType>) {
-    return int(x > 0) - int(x < 0);
+    return int{x > 0} - int{x < 0};
   } else {
-    return int(x > 0);
+    return int{x > 0};
   }
 }
 
 // return type promoted to int for small types
 [[nodiscard]] constexpr int Abs(signed char x) {
-  return (x < 0) ? -int(x) : int(x); }
+  return (x < 0) ? -int{x} : int{x}; }
 [[nodiscard]] constexpr int Abs(short x) {
-  return (x < 0) ? -int(x) : int(x); }
+  return (x < 0) ? -int{x} : int{x}; }
 
 // template for all other types
 template<class numType>
