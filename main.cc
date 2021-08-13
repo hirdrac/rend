@@ -99,6 +99,7 @@ int ShellRender()
     return -1;
   }
 
+  auto setupTime = t.elapsedSec();
   if (Ren.jobs() <= 0) {
     // render on main thread
     HitCache freeCache;
@@ -119,7 +120,9 @@ int ShellRender()
   }
 
   t.stop();
-  println("\rRendering Time: ", t.elapsedSec());
+  auto totalTime = t.elapsedSec();
+  println("\rTotal Time: ", totalTime, "  (setup ", setupTime,
+          ", rendering ", (totalTime - setupTime), ")");
   return 0;
 }
 
