@@ -52,6 +52,16 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
     if (h2 < far_hit) { far_hit = h2; }
   }
 
+  // alternate version
+  //const Vec3 h1 = (box.pmin - r.base) / r.dir;
+  //const Vec3 h2 = (box.pmax - r.base) / r.dir;
+  //for (unsigned int i = 0; i < 3; ++i) {
+  //  const Flt h_min = std::min(h1[i], h2[i]);
+  //  const Flt h_max = std::max(h1[i], h2[i]);
+  //  if (h_min > near_hit) { near_hit = h_min; }
+  //  if (h_max < far_hit) { far_hit = h_max; }
+  //}
+
   if (near_hit > far_hit || far_hit < r.min_length) {
     return 0;  // miss
   }
@@ -80,15 +90,19 @@ struct OptNode
   OptNode* child = nullptr;
   ObjectPtr object; // null if node is bound (has children)
   BBox box;
+  Flt objCost;
 
   OptNode() = default;
-  OptNode(const ObjectPtr& ob) : object(ob) { ob->bound(box); }
+  OptNode(const ObjectPtr& ob) : object(ob) {
+    ob->bound(box);
+    objCost = ob->hitCost();
+  }
 
   // Member Functions
   Flt cost(Flt weight) const
   {
     if (object) {
-      return weight * object->hitCost();
+      return weight * objCost;
     } else {
       // node is bound
       return (weight * CostTable.bound) + treeCost(child, box.weight());
