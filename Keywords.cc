@@ -18,13 +18,12 @@
 #include <map>
 #include <memory>
 #include <cctype>
-#include <cassert>
 
 
 // **** Helper Functions ****
 static Transform* findTrans(SceneItem* p)
 {
-  assert(p != nullptr);
+  if (!p) { return nullptr; }
   Transform* t = p->trans();
   if (!t) { println_err("ERROR: ", p->desc(), " cannot be transformed"); }
   return t;
@@ -32,12 +31,155 @@ static Transform* findTrans(SceneItem* p)
 
 
 // **** Item Functions ****
+// item transforms
+int MoveFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Vec3 v;
+  if (int er = sp.getVec3(n, v); er != 0) { return er; }
+  t->local.translate(v);
+  return 0;
+}
+
+int RotateXFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Flt angle;
+  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
+  t->local.rotateX(angle * math::DEG_TO_RAD<Flt>);
+  return 0;
+}
+
+int RotateYFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Flt angle;
+  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
+  t->local.rotateY(angle * math::DEG_TO_RAD<Flt>);
+  return 0;
+}
+
+int RotateZFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Flt angle;
+  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
+  t->local.rotateZ(angle * math::DEG_TO_RAD<Flt>);
+  return 0;
+}
+
+int ScaleFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Vec3 v;
+  if (int er = sp.getVec3(n, v); er != 0) { return er; }
+  t->local.scale(v);
+  return 0;
+}
+
+// scene attributes
 int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   return p ? -1 : sp.getVec3(n, s.coi);
 }
 
+int EyeFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return p ? -1 : sp.getVec3(n, s.eye);
+}
+
+int FovFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return p ? -1 : sp.getFlt(n, s.fov);
+}
+
+int JitterFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p) { return -1; }
+
+  if (int er = sp.getFlt(n, s.jitter); er != 0) { return er; }
+  return 0;
+}
+
+int MaxdepthFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return p ? -1 : sp.getInt(n, s.max_ray_depth);
+}
+
+int MinValueFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return p ? -1 : sp.getFlt(n, s.min_ray_value);
+}
+
+int RegionFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p) { return -1; }
+
+  if (int er = sp.getInt(n, s.region_min[0]); er != 0) { return er; }
+  if (int er = sp.getInt(n, s.region_min[1]); er != 0) { return er; }
+  if (int er = sp.getInt(n, s.region_max[0]); er != 0) { return er; }
+  if (int er = sp.getInt(n, s.region_max[1]); er != 0) { return er; }
+  return 0;
+}
+
+int SamplesFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p) { return -1; }
+
+  if (int er = sp.getInt(n, s.samples_x); er != 0) { return er; }
+  if (int er = sp.getInt(n, s.samples_y); er != 0) { return er; }
+  return 0;
+}
+
+int ShadowBoolFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return p ? -1 : sp.getBool(n, s.shadow);
+}
+
+int SizeFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p) { return -1; }
+
+  if (int er = sp.getInt(n, s.image_width); er != 0) { return er; }
+  if (int er = sp.getInt(n, s.image_height); er != 0) { return er; }
+
+  s.region_max[0] = s.image_width  - 1;
+  s.region_max[1] = s.image_height - 1;
+  return 0;
+}
+
+int VupFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  return p ? -1 : sp.getVec3(n, s.vup);
+}
+
+// object/light/shader attributes
 int CostFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -60,51 +202,6 @@ int ExpFn(
 {
   Phong* sh = dynamic_cast<Phong*>(p);
   return sh ? sp.getFlt(n, sh->exp) : -1;
-}
-
-int EyeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : sp.getVec3(n, s.eye);
-}
-
-int FovFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : sp.getFlt(n, s.fov);
-}
-
-int IdentityFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  t->local.setIdentity();
-  return 0;
-}
-
-int JitterFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p) { return -1; }
-
-  if (int er = sp.getFlt(n, s.jitter); er != 0) { return er; }
-  return 0;
-}
-
-int MaxdepthFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : sp.getInt(n, s.max_ray_depth);
-}
-
-int MinValueFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : sp.getFlt(n, s.min_ray_value);
 }
 
 int NameFn(
@@ -134,18 +231,6 @@ int RadiusFn(
   return p->setRadius(val);
 }
 
-int RegionFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p) { return -1; }
-
-  if (int er = sp.getInt(n, s.region_min[0]); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.region_min[1]); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.region_max[0]); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.region_max[1]); er != 0) { return er; }
-  return 0;
-}
-
 int RgbFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -157,111 +242,6 @@ int RgbFn(
   auto sh = makeShader<ShaderColor>(r, g, b);
   int error = p ? p->addShader(sh, flag) : s.addShader(sh, flag);
   return error ? error : sp.processList(s, sh.get(), n);
-}
-
-int RotateXFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Flt angle;
-  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
-  t->local.rotateX(angle * math::DEG_TO_RAD<Flt>);
-  return 0;
-}
-
-int RotateYFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Flt angle;
-  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
-  t->local.rotateY(angle * math::DEG_TO_RAD<Flt>);
-  return 0;
-}
-
-int RotateZFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Flt angle;
-  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
-  t->local.rotateZ(angle * math::DEG_TO_RAD<Flt>);
-  return 0;
-}
-
-int SamplesFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p) { return -1; }
-
-  if (int er = sp.getInt(n, s.samples_x); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.samples_y); er != 0) { return er; }
-  return 0;
-}
-
-int ScaleFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Vec3 v;
-  if (int er = sp.getVec3(n, v); er != 0) { return er; }
-  t->local.scale(v);
-  return 0;
-}
-
-int ShadowBoolFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : sp.getBool(n, s.shadow);
-}
-
-int SizeFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (p) { return -1; }
-
-  if (int er = sp.getInt(n, s.image_width); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.image_height); er != 0) { return er; }
-
-  s.region_max[0] = s.image_width  - 1;
-  s.region_max[1] = s.image_height - 1;
-  return 0;
-}
-
-int MoveFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Vec3 v;
-  if (int er = sp.getVec3(n, v); er != 0) { return er; }
-  t->local.translate(v);
-  return 0;
-}
-
-int VupFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  return p ? -1 : sp.getVec3(n, s.vup);
 }
 
 
@@ -281,7 +261,6 @@ static void initKeywords()
     {"exp",         ExpFn},
     {"eye",         EyeFn},
     {"fov",         FovFn},
-    {"identity",    IdentityFn},
     {"jitter",      JitterFn},
     {"maxdepth",    MaxdepthFn},
     {"minvalue",    MinValueFn},
