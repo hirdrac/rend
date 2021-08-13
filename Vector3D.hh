@@ -81,6 +81,8 @@ class Vector2
 
   constexpr void set(T vx, T vy) { x = vx; y = vy; }
   constexpr void set(const T* v) { set(v[0], v[1]); }
+
+  constexpr type& normalize() { return (*this) *= lengthInv(); }
 };
 
 
@@ -148,16 +150,7 @@ class Vector3
   constexpr void set(T vx, T vy, T vz) { x = vx; y = vy; z = vz; }
   constexpr void set(const T* v) { set(v[0], v[1], v[2]); }
 
-  // Vector2 swizzle
-  [[nodiscard]] constexpr Vector2<T>& xy() {
-    return *reinterpret_cast<Vector2<T>*>(data()); }
-  [[nodiscard]] constexpr const Vector2<T>& xy() const {
-    return *reinterpret_cast<const Vector2<T>*>(data()); }
-
-  [[nodiscard]] constexpr Vector2<T>& yz() {
-    return *reinterpret_cast<Vector2<T>*>(data()+1); }
-  [[nodiscard]] constexpr const Vector2<T>& yz() const {
-    return *reinterpret_cast<const Vector2<T>*>(data()+1); }
+  constexpr type& normalize() { return (*this) *= lengthInv(); }
 };
 
 
@@ -223,38 +216,6 @@ class Vector4
   constexpr void set(const T* v) { set(v[0], v[1], v[2], v[3]); }
   constexpr void set(const T* v, T vw) { set(v[0], v[1], v[2], vw); }
   constexpr void set(const Vector3<T>& v, T vw) { set(v.x, v.y, v.z, vw); }
-
-  // Vector2 swizzle
-  [[nodiscard]] constexpr Vector2<T>& xy() {
-    return *reinterpret_cast<Vector2<T>*>(data()); }
-  [[nodiscard]] constexpr const Vector2<T>& xy() const {
-    return *reinterpret_cast<const Vector2<T>*>(data()); }
-
-  [[nodiscard]] constexpr Vector2<T>& yz() {
-    return *reinterpret_cast<Vector2<T>*>(data()+1); }
-  [[nodiscard]] constexpr const Vector2<T>& yz() const {
-    return *reinterpret_cast<const Vector2<T>*>(data()+1); }
-
-  [[nodiscard]] constexpr Vector2<T>& zw() {
-    return *reinterpret_cast<Vector2<T>*>(data()+2); }
-  [[nodiscard]] constexpr const Vector2<T>& zw() const {
-    return *reinterpret_cast<const Vector2<T>*>(data()+2); }
-
-  // Vector3 swizzle
-  [[nodiscard]] constexpr Vector3<T>& xyz() {
-    return *reinterpret_cast<Vector3<T>*>(data()); }
-  [[nodiscard]] constexpr const Vector3<T>& xyz() const {
-    return *reinterpret_cast<const Vector3<T>*>(data()); }
-
-  [[nodiscard]] constexpr Vector3<T>& yzw() {
-    return *reinterpret_cast<Vector3<T>*>(data()+1); }
-  [[nodiscard]] constexpr const Vector3<T>& yzw() const {
-    return *reinterpret_cast<const Vector3<T>*>(data()+1); }
-
-  [[nodiscard]] constexpr Vector3<T>& rgb() {
-    return *reinterpret_cast<Vector3<T>*>(data()); }
-  [[nodiscard]] constexpr const Vector3<T>& rgb() const {
-    return *reinterpret_cast<const Vector3<T>*>(data()); }
 };
 
 
@@ -273,6 +234,7 @@ template<typename T>
 
 
 // **** Binary Operators ****
+// vec + vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator+(const Vector2<T>& a, const Vector2<T>& b) {
   return Vector2<T>{a.x + b.x, a.y + b.y}; }
@@ -285,7 +247,7 @@ template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator+(const Vector4<T>& a, const Vector4<T>& b) {
   return Vector4<T>{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}; }
 
-
+// vec - vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& a, const Vector2<T>& b) {
   return Vector2<T>{a.x - b.x, a.y - b.y}; }
@@ -298,7 +260,33 @@ template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator-(const Vector4<T>& a, const Vector4<T>& b) {
   return Vector4<T>{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}; }
 
+// vec * vec
+template<typename T>
+[[nodiscard]] constexpr Vector2<T> operator*(const Vector2<T>& a, const Vector2<T>& b) {
+  return Vector2<T>{a.x * b.x, a.y * b.y}; }
 
+template<typename T>
+[[nodiscard]] constexpr Vector3<T> operator*(const Vector3<T>& a, const Vector3<T>& b) {
+  return Vector3<T>{a.x * b.x, a.y * b.y, a.z * b.z}; }
+
+template<typename T>
+[[nodiscard]] constexpr Vector4<T> operator*(const Vector4<T>& a, const Vector4<T>& b) {
+  return Vector4<T>{a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w}; }
+
+// vec / vec
+template<typename T>
+[[nodiscard]] constexpr Vector2<T> operator/(const Vector2<T>& a, const Vector2<T>& b) {
+  return Vector2<T>{a.x / b.x, a.y / b.y}; }
+
+template<typename T>
+[[nodiscard]] constexpr Vector3<T> operator/(const Vector3<T>& a, const Vector3<T>& b) {
+  return Vector3<T>{a.x / b.x, a.y / b.y, a.z / b.z}; }
+
+template<typename T>
+[[nodiscard]] constexpr Vector4<T> operator/(const Vector4<T>& a, const Vector4<T>& b) {
+  return Vector4<T>{a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w}; }
+
+// vec * x
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator*(const Vector2<T>& a, T b) {
   return Vector2<T>{a.x * b, a.y * b}; }
@@ -311,7 +299,20 @@ template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(const Vector4<T>& a, T b) {
   return Vector4<T>{a.x * b, a.y * b, a.z * b, a.w * b}; }
 
+// x * vec
+template<typename T>
+[[nodiscard]] constexpr Vector2<T> operator*(T a, const Vector2<T>& b) {
+  return Vector2<T>{a * b.x, a * b.y}; }
 
+template<typename T>
+[[nodiscard]] constexpr Vector3<T> operator*(T a, const Vector3<T>& b) {
+  return Vector3<T>{a * b.x, a * b.y, a * b.z}; }
+
+template<typename T>
+[[nodiscard]] constexpr Vector4<T> operator*(T a, const Vector4<T>& b) {
+  return Vector4<T>{a * b.x, a * b.y, a * b.z, a * b.w}; }
+
+// vec / x
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator/(const Vector2<T>& a, T b) {
   return Vector2<T>{a.x / b, a.y / b}; }
@@ -342,19 +343,19 @@ inline std::ostream& operator<<(std::ostream& out, const Vector4<T>& v) {
 // **** Template Functions ****
 template<typename T>
 [[nodiscard]] constexpr T PointDistanceSqr(const Vector2<T>& a, const Vector2<T>& b) {
-  return Sqr(a.x - b.x) + Sqr(a.y - b.y); }
+  return (a - b).lengthSqr(); }
 
 template<typename T>
 [[nodiscard]] constexpr T PointDistanceSqr(const Vector3<T>& a, const Vector3<T>& b) {
-  return Sqr(a.x - b.x) + Sqr(a.y - b.y) + Sqr(a.z - b.z); }
+  return (a - b).lengthSqr(); }
 
 template<typename T>
 [[nodiscard]] inline T PointDistance(const Vector2<T>& a, const Vector2<T>& b) {
-  return std::sqrt(PointDistanceSqr(a, b)); }
+  return (a - b).length(); }
 
 template<typename T>
 [[nodiscard]] inline T PointDistance(const Vector3<T>& a, const Vector3<T>& b) {
-  return std::sqrt(PointDistanceSqr(a, b)); }
+  return (a - b).length(); }
 
 template<typename T>
 [[nodiscard]] constexpr T DotProduct(const Vector2<T>& a, const Vector2<T>& b) {
