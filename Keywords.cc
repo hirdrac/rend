@@ -92,6 +92,43 @@ int ScaleFn(
   return 0;
 }
 
+int StretchFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  // TODO: rename to StretchZ, make StretchX,StretchY
+
+  // stretch object along its Z axis between 2 points
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Vec3 p1, p2;
+  if (int er = sp.getVec3(n, p1); er != 0) { return er; }
+  if (int er = sp.getVec3(n, p2); er != 0) { return er; }
+
+  const Vec3 center = (p1+p2) * .5;
+  const Vec3 dir = p2 - p1;
+  const Flt len = dir.length();
+  if (IsZero(len)) {
+    println_err("Invalid stretch length");
+    return -1;
+  }
+
+  const Vec3 axisZ = dir / len;
+  const Vec3 up = IsOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
+    // FIXME - may need to make 'up' configurable or come up with a better
+    //   rule for when axisZ == +/- 1
+  const Vec3 axisX = CrossProduct(up, axisZ);
+  const Vec3 axisY = CrossProduct(axisZ, axisX);
+
+  t->local.scale(1, 1, len * .5);
+  t->local *= {
+    axisX.x,  axisX.y,  axisX.z,  0,
+    axisY.x,  axisY.y,  axisY.z,  0,
+    axisZ.x,  axisZ.y,  axisZ.z,  0,
+    center.x, center.y, center.z, 1};
+  return 0;
+}
+
 // scene attributes
 int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
@@ -234,12 +271,10 @@ int RadiusFn(
 int RgbFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Flt r, g, b;
-  if (int er = sp.getFlt(n, r); er != 0) { return er; }
-  if (int er = sp.getFlt(n, g); er != 0) { return er; }
-  if (int er = sp.getFlt(n, b); er != 0) { return er; }
+  Vec3 c;
+  if (int er = sp.getVec3(n, c); er != 0) { return er; }
 
-  auto sh = makeShader<ShaderColor>(r, g, b);
+  auto sh = makeShader<ShaderColor>(c.r, c.g, c.b);
   int error = p ? p->addShader(sh, flag) : s.addShader(sh, flag);
   return error ? error : sp.processList(s, sh.get(), n);
 }
@@ -281,6 +316,7 @@ static void initKeywords()
     {"scale",       ScaleFn},
     {"shadow",      ShadowBoolFn},
     {"size",        SizeFn},
+    {"stretch",     StretchFn},
     {"vup",         VupFn}
   };
 }
