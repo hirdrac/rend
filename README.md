@@ -17,3 +17,10 @@ A simple 3d ray-tracing renderer.
 
 ##
 To build, just run 'make' in the main directory.
+
+To render the title image:
+```
+./rend scenes/title.sdl title.bmp -j
+convert title.bmp title.png
+```
+(only BMP output is supported currently so ImageMagick's convert is used to produce the final PNG file)
