@@ -12,6 +12,7 @@ parser_src :=\
 BIN_rend.SRC = $(raytracer_src) $(parser_src) main.cc
 
 
+SOURCE_DIR = src
 STANDARD = c++17
 PACKAGES = readline
 OPTIONS = pthread lto modern_c++
