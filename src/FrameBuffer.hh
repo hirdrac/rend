@@ -23,7 +23,6 @@ class FrameBuffer
 
   void clear(const Color& c = colors::black);
   int plot(int x, int y, const Color& c);
-  int line(int x0, int y0, int x1, int y1, const Color& c);
 
   int value(int x, int y, float& r, float& g, float& b) const;
   int range(float& min, float& max) const;

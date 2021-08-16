@@ -105,47 +105,6 @@ int FrameBuffer::plot(int x, int y, const Color& c)
   return 0;
 }
 
-int FrameBuffer::line(int x0, int y0, int x1, int y1, const Color& c)
-{
-  const int dir_x = Sgn(x1 - x0);
-  const int dir_y = Sgn(y1 - y0);
-  const int delta_x = Abs(x1 - x0);
-  const int delta_y = Abs(y1 - y0);
-  int step = 0;
-
-  if (delta_x < delta_y) {
-    while (y0 != y1) {
-      plot(x0, y0, c);
-      y0   += dir_y;
-      step += delta_x;
-
-      if (step >= delta_y) {
-	step -= delta_y;
-	x0   += dir_x;
-      }
-    }
-  } else if (delta_y < delta_x) {
-    while (x0 != x1) {
-      plot(x0, y0, c);
-      x0   += dir_x;
-      step += delta_y;
-
-      if (step >= delta_x) {
-	step -= delta_x;
-	y0   += dir_y;
-      }
-    }
-  } else {
-    while (x0 != x1) {
-      plot(x0, y0, c);
-      x0 += dir_x;
-      y0 += dir_y;
-    }
-  }
-
-  return 0;
-}
-
 int FrameBuffer::value(int x, int y, float& r, float& g, float& b) const
 {
   if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) { return -1; }
