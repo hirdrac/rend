@@ -1,0 +1,23 @@
+// Uppercase "I"
+(group
+  // top
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move -1 4.5 0))
+    (cylinder (scale .5 .5 .5)(rotx 90)(move -.75 4.5 0)) )
+  (cylinder (scale .5 .5 .75)(roty 90)(move 0 4.5 0))
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move 1 4.5 0))
+    (cylinder (scale .5 .5 .5)(rotx 90)(move .75 4.5 0)) )
+
+  // middle
+  (cylinder (scale .5 .5 2)(rotx 90)(move 0 2.5 0))
+
+  // bottom
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move -1 .5 0))
+    (cylinder (scale .5 .5 .5)(rotx 90)(move -.75 .5 0)) )
+  (cylinder (scale .5 .5 .75)(roty 90)(move 0 .5 0))
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move 1 .5 0))
+    (cylinder (scale .5 .5 .5)(rotx 90)(move .75 .5 0)) )
+)

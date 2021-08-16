@@ -1,0 +1,44 @@
+// Settings
+(size 1280 720)
+(eye  4 4 8)
+(coi  0 0 0)
+(maxdepth 9)
+(shadow 1)
+
+// anti-aliasing
+(samples 4 4)
+//(jitter 1)
+
+// Lights
+(ambient (rgb .1 .1 .1))
+(light (pos 0 3 6)(rgb 1 1 1))
+
+(background (rgb .2 .2 .5))
+
+(default
+  (phong
+    (specular (rgb .2 .2 .2))
+    (diffuse (rgb .5 .2 .2)))
+)
+
+// letter 'A'
+(group
+  (intersect
+    (torus (radius .5)(rotx 90))
+    (cube (scale 1.5 1 .51)(move 0 1 0)))
+
+  (cylinder (scale .5 .5 1)(rotx 90)(move  1 -1 0))
+  (cylinder (scale .5 .5 1)(rotx 90)(move -1 -1 0))
+  (cylinder (scale .5 .5 1)(roty 90)(move 0 -.5 0))
+)
+
+(cube
+  (scale  8 .1 8)(move 0 -2 0)
+  (phong
+    (specular (rgb .6 .6 .6))
+    (diffuse
+      (checker (rgb .5 .5 .5)(rgb .1 .1 .1)(scale 5 5 5)(rotz 45))
+      //(rgb .5 .5 .5))
+    )
+  )
+)

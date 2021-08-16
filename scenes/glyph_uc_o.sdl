@@ -1,0 +1,16 @@
+// Uppercase "O"
+(group
+  // top
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 3.5 0))
+    (cube (scale 1.5 .75 .51)(move 0 4.25 0)) )
+
+  // sides
+  (cylinder (scale .5 .5 1)(rotx 90)(move -1 2.5 0))
+  (cylinder (scale .5 .5 1)(rotx 90)(move 1 2.5 0))
+
+  // bottom
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 1.5 0))
+    (cube (scale 1.5 .75 .51)(move 0 .75 0)) )
+)

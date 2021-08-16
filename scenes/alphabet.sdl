@@ -1,0 +1,62 @@
+// Settings
+//(size 1920 1080)
+(size 1280 720)
+(eye 0 10 22)
+(coi  0 4 0)
+(maxdepth 9)
+(shadow 1)
+
+// anti-aliasing
+(samples 2 2)
+//(jitter .95)
+
+// Lights
+(ambient (rgb .1 .1 .1))
+(light (pos -2 18 12) (rgb .9 .9 .9))
+
+(default
+  (phong
+    (specular (rgb .2 .2 .2))
+    (diffuse (rgb .5 .2 .2)))
+)
+
+// Objects
+(group (include "glyph_uc_a.sdl")(move -19.5  5.25 -6))
+(group (include "glyph_uc_b.sdl")(move -16.25 5.25 -6))
+(group (include "glyph_uc_c.sdl")(move -13.0  5.25 -6))
+(group (include "glyph_uc_d.sdl")(move -9.75  5.25 -6))
+(group (include "glyph_uc_e.sdl")(move -6.5   5.25 -6))
+(group (include "glyph_uc_f.sdl")(move -3.25  5.25 -6))
+(group (include "glyph_uc_g.sdl")(move  0     5.25 -6))
+(group (include "glyph_uc_h.sdl")(move  3.25  5.25 -6))
+(group (include "glyph_uc_i.sdl")(move  6.5   5.25 -6))
+(group (include "glyph_uc_j.sdl")(move  9.75  5.25 -6))
+(group (include "glyph_uc_k.sdl")(move  13.0  5.25 -6))
+(group (include "glyph_uc_l.sdl")(move  16.25 5.25 -6))
+(group (include "glyph_uc_m.sdl")(move  19.5  5.25 -6))
+
+(group (include "glyph_uc_n.sdl")(move -19.5  0 -6))
+(group (include "glyph_uc_o.sdl")(move -16.25 0 -6))
+(group (include "glyph_uc_p.sdl")(move -13    0 -6))
+(group (include "glyph_uc_q.sdl")(move -9.75  0 -6))
+(group (include "glyph_uc_r.sdl")(move -6.5   0 -6))
+(group (include "glyph_uc_s.sdl")(move -3.25  0 -6))
+(group (include "glyph_uc_t.sdl")(move  0     0 -6))
+(group (include "glyph_uc_u.sdl")(move  3.25  0 -6))
+(group (include "glyph_uc_v.sdl")(move  6.5   0 -6))
+(group (include "glyph_uc_w.sdl")(move  9.75  0 -6))
+(group (include "glyph_uc_x.sdl")(move  13.0  0 -6))
+(group (include "glyph_uc_y.sdl")(move  16.25 0 -6))
+(group (include "glyph_uc_z.sdl")(move  19.5  0 -6))
+
+
+(plane
+  (rotx 90)(scale  32 1 32)(move 0 -.1 0)
+  (phong
+    (specular (rgb .5 .5 .5))
+    (diffuse
+      (checker
+        (rgb .5 .5 .5)
+        (ring (rgb .1 .1 .1)(rgb .2 .2 .2)(scale 2 2 1))
+        (scale 5 5 1)(rotz 45))))
+)

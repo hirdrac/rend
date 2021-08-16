@@ -1,0 +1,34 @@
+// Uppercase "X"
+(group
+  // top left
+  (intersect
+    (cylinder (scale .5 .5 .5)(roty 90)(move -1 4.5 0))
+    (cylinder (scale .5 .5 .25)(rotx 90)(move -1 4.75 0)) )
+  (cylinder (scale .5 .5 .5)(rotx 90)(move -1 4 0))
+
+  // top right
+  (intersect
+    (cylinder (scale .5 .5 .5)(roty 90)(move 1 4.5 0))
+    (cylinder (scale .5 .5 .25)(rotx 90)(move 1 4.75 0)) )
+  (cylinder (scale .5 .5 .5)(rotx 90)(move 1 4 0))
+
+  // middle
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 3.5 0))
+    (cube (scale 1.5 .75 .51)(move 0 2.75 0)) )
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 1.5 0))
+    (cube (scale 1.5 .75 .51)(move 0 2.25 0)) )
+
+  // bottom left
+  (cylinder (scale .5 .5 .5)(rotx 90)(move -1 1 0))
+  (intersect
+    (cylinder (scale .5 .5 .5)(roty 90)(move -1 .5 0))
+    (cylinder (scale .5 .5 .25)(rotx 90)(move -1 .25 0)) )
+
+  // bottom right
+  (cylinder (scale .5 .5 .5)(rotx 90)(move  1 1 0))
+  (intersect
+    (cylinder (scale .5 .5 .5)(roty 90)(move 1 .5 0))
+    (cylinder (scale .5 .5 .25)(rotx 90)(move 1 .25 0)) )
+)
