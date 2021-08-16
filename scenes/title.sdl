@@ -20,10 +20,10 @@
     (diffuse (rgb .5 .2 .2))))
 
 // objects
-(group (include "glyph_uc_r.sdl")(move -4.875 0 0))
-(group (include "glyph_uc_e.sdl")(move -1.625 0 0))
-(group (include "glyph_uc_n.sdl")(move  1.625 0 0))
-(group (include "glyph_uc_d.sdl")(move  4.875 0 0))
+(group (include "glyphs/uc_r.sdl")(move -4.875 0 0))
+(group (include "glyphs/uc_e.sdl")(move -1.625 0 0))
+(group (include "glyphs/uc_n.sdl")(move  1.625 0 0))
+(group (include "glyphs/uc_d.sdl")(move  4.875 0 0))
 
 (difference
   (sphere (scale 6 6 6)(move -8 6 -8)
