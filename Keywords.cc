@@ -241,16 +241,6 @@ int ExpFn(
   return sh ? sp.getFlt(n, sh->exp) : -1;
 }
 
-int NameFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  if (!p) { return -1; }
-
-  std::string buffer;
-  if (int er = sp.getString(n, buffer); er != 0) { return er; }
-  return buffer.empty() ? -1 : p->setName(buffer);
-}
-
 int PositionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -300,7 +290,6 @@ static void initKeywords()
     {"maxdepth",    MaxdepthFn},
     {"minvalue",    MinValueFn},
     {"move",        MoveFn},
-    {"name",        NameFn},
     {"pos",         PositionFn},
     {"position",    PositionFn},
     {"radius",      RadiusFn},

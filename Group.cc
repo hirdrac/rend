@@ -5,7 +5,6 @@
 
 #include "Group.hh"
 #include "Stats.hh"
-#include <sstream>
 
 
 // **** Group Class ****
@@ -26,15 +25,6 @@ int Group::addObject(const ObjectPtr& ob)
 
   _children.push_back(ob);
   return 0;
-}
-
-std::string Group::desc() const
-{
-  std::ostringstream os;
-  os << "<Group";
-  if (!_name.empty()) { os << " \"" << _name << '\"'; }
-  os << '>';
-  return os.str();
 }
 
 // Object Functions

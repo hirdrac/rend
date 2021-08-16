@@ -17,8 +17,7 @@ class Group final : public Primitive
   ~Group();
 
   // SceneItem Functions
-  std::string desc() const override;
-  int setName(const std::string& str) override { _name = str; return 0; }
+  std::string desc() const override { return "<Group>"; }
   int addObject(const ObjectPtr& ob) override;
 
   // Object Functions
@@ -28,6 +27,5 @@ class Group final : public Primitive
   const std::vector<ObjectPtr>& children() const override { return _children; }
 
  protected:
-  std::string _name;
   std::vector<ObjectPtr> _children;
 };

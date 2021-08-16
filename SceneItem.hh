@@ -37,7 +37,6 @@ class SceneItem
   virtual std::string desc() const = 0;
   virtual Transform* trans() { return nullptr; }
 
-  virtual int setName(const std::string& val) { return -1; }
   virtual int setRadius(Flt r) { return -1; }
   virtual int setCost(Flt c) { return -1; }
 
