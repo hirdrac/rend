@@ -29,9 +29,6 @@ class Object : public SceneItem
   Object();
   ~Object();
 
-  // SceneItem Functions
-  virtual int setCost(Flt c) override { _cost = c; return 0; }
-
   // Member Functions
   virtual int init(Scene& s) { return 0; }
   virtual int bound(BBox& b) const { return -1; }
@@ -45,7 +42,6 @@ class Object : public SceneItem
 
  protected:
   ShaderPtr _shader;
-  Flt _cost = -1.0; // non-negative to override default cost
 
  private:
   static const std::vector<ObjectPtr> _emptyList;
@@ -59,6 +55,7 @@ class Primitive : public Object
  public:
   // SceneItem Functions
   Transform* trans() override { return &_trans; }
+  int setCost(Flt c) override { _cost = c; return 0; }
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Object Functions
@@ -67,6 +64,7 @@ class Primitive : public Object
 
  protected:
   Transform _trans;
+  Flt _cost = -1.0; // non-negative to override default cost
 };
 
 
