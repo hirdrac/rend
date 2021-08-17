@@ -29,6 +29,14 @@ static Transform* findTrans(SceneItem* p)
   return t;
 }
 
+static bool notDone(SceneParser& sp, AstNode* n)
+{
+  if (n == nullptr) { return false; }
+
+  sp.reportError(n, "Unexpected value '", n->val, "'");
+  return true;
+}
+
 
 // **** Item Functions ****
 // item transforms
@@ -39,7 +47,8 @@ int MoveFn(
   if (!t) { return -1; }
 
   Vec3 v;
-  if (int er = sp.getVec3(n, v); er != 0) { return er; }
+  if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
+
   t->local.translate(v);
   return 0;
 }
@@ -51,7 +60,8 @@ int RotateXFn(
   if (!t) { return -1; }
 
   Flt angle;
-  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
+  if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
+
   t->local.rotateX(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
@@ -63,7 +73,8 @@ int RotateYFn(
   if (!t) { return -1; }
 
   Flt angle;
-  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
+  if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
+
   t->local.rotateY(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
@@ -75,7 +86,8 @@ int RotateZFn(
   if (!t) { return -1; }
 
   Flt angle;
-  if (int er = sp.getFlt(n, angle); er != 0) { return er; }
+  if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
+
   t->local.rotateZ(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
@@ -87,7 +99,8 @@ int ScaleFn(
   if (!t) { return -1; }
 
   Vec3 v;
-  if (int er = sp.getVec3(n, v); er != 0) { return er; }
+  if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
+
   t->local.scale(v);
   return 0;
 }
@@ -102,8 +115,7 @@ int StretchFn(
   if (!t) { return -1; }
 
   Vec3 p1, p2;
-  if (int er = sp.getVec3(n, p1); er != 0) { return er; }
-  if (int er = sp.getVec3(n, p2); er != 0) { return er; }
+  if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
 
   const Vec3 center = (p1+p2) * .5;
   const Vec3 dir = p2 - p1;
@@ -133,77 +145,76 @@ int StretchFn(
 int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getVec3(n, s.coi);
+  if (p || sp.getVec3(n, s.coi) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int EyeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getVec3(n, s.eye);
+  if (p || sp.getVec3(n, s.eye) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int FovFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getFlt(n, s.fov);
+  if (p || sp.getFlt(n, s.fov) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int JitterFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p) { return -1; }
-
-  if (int er = sp.getFlt(n, s.jitter); er != 0) { return er; }
+  if (p || sp.getFlt(n, s.jitter) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
 int MaxdepthFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getInt(n, s.max_ray_depth);
+  if (p || sp.getInt(n, s.max_ray_depth) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int MinValueFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getFlt(n, s.min_ray_value);
+  if (p || sp.getFlt(n, s.min_ray_value) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int RegionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p) { return -1; }
-
-  if (int er = sp.getInt(n, s.region_min[0]); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.region_min[1]); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.region_max[0]); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.region_max[1]); er != 0) { return er; }
+  if (p || sp.getInt(n, s.region_min[0])
+      || sp.getInt(n, s.region_min[1])
+      || sp.getInt(n, s.region_max[0])
+      || sp.getInt(n, s.region_max[1])
+      || notDone(sp, n)) { return -1; }
   return 0;
 }
 
 int SamplesFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p) { return -1; }
-
-  if (int er = sp.getInt(n, s.samples_x); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.samples_y); er != 0) { return er; }
+  if (p || sp.getInt(n, s.samples_x) || sp.getInt(n, s.samples_y)
+      || notDone(sp, n)) { return -1; }
   return 0;
 }
 
 int ShadowBoolFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getBool(n, s.shadow);
+  if (p || sp.getBool(n, s.shadow) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int SizeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p) { return -1; }
-
-  if (int er = sp.getInt(n, s.image_width); er != 0) { return er; }
-  if (int er = sp.getInt(n, s.image_height); er != 0) { return er; }
+  if (p || sp.getInt(n, s.image_width) || sp.getInt(n, s.image_height)
+      || notDone(sp, n)) { return -1; }
 
   s.region_min[0] = 0;
   s.region_min[1] = 0;
@@ -215,7 +226,8 @@ int SizeFn(
 int VupFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  return p ? -1 : sp.getVec3(n, s.vup);
+  if (p || sp.getVec3(n, s.vup) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 // object/light/shader attributes
@@ -225,7 +237,7 @@ int CostFn(
   if (!p) { return -1; }
 
   Flt val;
-  if (int er = sp.getFlt(n, val); er != 0) { return er; }
+  if (sp.getFlt(n, val) || notDone(sp, n)) { return -1; }
   return p->setCost(val);
 }
 
@@ -233,21 +245,24 @@ int DirectionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Light* lt = dynamic_cast<Light*>(p);
-  return lt ? sp.getVec3(n, lt->dir) : -1;
+  if (!lt || sp.getVec3(n, lt->dir) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int ExpFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Phong* sh = dynamic_cast<Phong*>(p);
-  return sh ? sp.getFlt(n, sh->exp) : -1;
+  if (!sh || sp.getFlt(n, sh->exp) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int PositionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Light* lt = dynamic_cast<Light*>(p);
-  return lt ? sp.getVec3(n, lt->pos) : -1;
+  if (!lt || sp.getVec3(n, lt->pos) || notDone(sp, n)) { return -1; }
+  return 0;
 }
 
 int RadiusFn(
@@ -256,7 +271,7 @@ int RadiusFn(
   if (!p) { return -1; }
 
   Flt val;
-  if (int er = sp.getFlt(n, val); er != 0) { return er; }
+  if (sp.getFlt(n, val) || notDone(sp, n)) { return -1; }
   return p->setRadius(val);
 }
 
@@ -264,11 +279,19 @@ int RgbFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Vec3 c;
-  if (int er = sp.getVec3(n, c); er != 0) { return er; }
+  if (sp.getVec3(n, c) || notDone(sp, n)) { return -1; }
 
   auto sh = makeShader<ShaderColor>(c.r, c.g, c.b);
-  int error = p ? p->addShader(sh, flag) : s.addShader(sh, flag);
-  return error ? error : sp.processList(s, sh.get(), n);
+  int error = 0;
+  if (!p) {
+    error = s.addShader(sh, flag);
+  } else {
+    error = p->addShader(sh, flag);
+    if (!error && !dynamic_cast<Shader*>(p)) {
+      error = s.addShader(sh, FLAG_INIT_ONLY); // add to scene for init
+    }
+  }
+  return error;
 }
 
 
