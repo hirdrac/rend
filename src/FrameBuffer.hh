@@ -18,7 +18,7 @@ class FrameBuffer
   FrameBuffer(int w, int h) { init(w, h); }
 
   // Member Functions
-  int init(int width, int height);
+  int init(int width, int height, const Color& c = colors::black);
   int saveBMP(const std::string& filename) const;
 
   void clear(const Color& c = colors::black);

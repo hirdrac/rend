@@ -12,13 +12,14 @@
 
 
 // **** FrameBuffer Class ****
-int FrameBuffer::init(int w, int h)
+int FrameBuffer::init(int w, int h, const Color& c)
 {
   if (w <= 0 || h <= 0) { return -1; }
 
   _width = w;
   _height = h;
   _buffer.resize(std::size_t(w * h * CHANNELS));
+  clear(c);
   return 0;
 }
 
