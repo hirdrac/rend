@@ -29,6 +29,10 @@ void Scene::clear()
   default_lt.reset();
   image_width = 256;
   image_height = 256;
+  region_min[0] = 0;
+  region_min[1] = 0;
+  region_max[0] = image_width - 1;
+  region_max[1] = image_height - 1;
   eye = {0,0,1};
   coi = {0,0,0};
   vup = {0,1,0};

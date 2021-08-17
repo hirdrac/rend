@@ -43,8 +43,8 @@ class Renderer
   [[nodiscard]] const StatInfo& stats() const { return _stats; }
 
  private:
-  Scene* _scene;
-  FrameBuffer* _fb;
+  Scene* _scene = nullptr;
+  FrameBuffer* _fb = nullptr;
   std::vector<Vec2> _samples;
   StatInfo _stats;
 

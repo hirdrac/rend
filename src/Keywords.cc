@@ -205,6 +205,8 @@ int SizeFn(
   if (int er = sp.getInt(n, s.image_width); er != 0) { return er; }
   if (int er = sp.getInt(n, s.image_height); er != 0) { return er; }
 
+  s.region_min[0] = 0;
+  s.region_min[1] = 0;
   s.region_max[0] = s.image_width  - 1;
   s.region_max[1] = s.image_height - 1;
   return 0;
