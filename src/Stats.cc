@@ -69,6 +69,6 @@ StatInfo& StatInfo::operator+=(const StatInfo& s)
   paraboloid    += s.paraboloid;
   plane         += s.plane;
   sphere        += s.sphere;
-  torus         += torus;
+  torus         += s.torus;
   return *this;
 }
