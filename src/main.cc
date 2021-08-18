@@ -151,18 +151,13 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
 void ShellStats(const Renderer& ren, const Scene& s)
 {
   const StatInfo& st = ren.stats();
-  uint64_t object_tried = st.disc.tried + st.cone.tried + st.cube.tried
-    + st.cylinder.tried + st.open_cone.tried + st.open_cylinder.tried
-    + st.paraboloid.tried + st.plane.tried + st.sphere.tried + st.torus.tried;
+  const uint64_t object_tried = st.objectsTried();
+  const uint64_t object_hit = st.objectsHit();
 
-  uint64_t object_hit = st.disc.hit + st.cone.hit + st.cube.hit
-    + st.cylinder.hit + st.open_cone.hit + st.open_cylinder.hit
-    + st.paraboloid.hit + st.plane.hit + st.sphere.hit + st.torus.hit;
-
-  int64_t objs = s.object_count - (s.group_count + s.bound_count);
-  int64_t total_rays = int64_t(st.rays.tried + st.shadow_rays.tried);
-  int64_t dumb_tries = total_rays * objs;
-  int64_t total_tries = int64_t(object_tried + st.bound.tried);
+  const int64_t objs = s.object_count - (s.group_count + s.bound_count);
+  const int64_t total_rays = int64_t(st.rays.tried + st.shadow_rays.tried);
+  const int64_t dumb_tries = total_rays * objs;
+  const int64_t total_tries = int64_t(object_tried + st.bound.tried);
 
   println("       Rays Cast  ", st.rays.tried);
   println("        Rays Hit  ", st.rays.hit);
