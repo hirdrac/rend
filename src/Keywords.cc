@@ -129,8 +129,8 @@ int StretchFn(
   const Vec3 up = IsOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
     // FIXME - may need to make 'up' configurable or come up with a better
     //   rule for when axisZ == +/- 1
-  const Vec3 axisX = CrossProduct(up, axisZ);
-  const Vec3 axisY = CrossProduct(axisZ, axisX);
+  const Vec3 axisX = UnitVec(CrossProduct(up, axisZ));
+  const Vec3 axisY = UnitVec(CrossProduct(axisZ, axisX));
 
   t->local.scale(1, 1, len * .5);
   t->local *= {
