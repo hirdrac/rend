@@ -133,8 +133,7 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  BoundPtr bound = MakeBoundList(eye, _objects);
-  _optObjects = bound->children();
+  MakeBoundList(eye, _objects, _optObjects);
 
   // init lights
   for (auto& lt : _lights) {

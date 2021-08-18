@@ -10,7 +10,6 @@
 #include "Object.hh"
 #include "BBox.hh"
 #include <vector>
-#include <memory>
 
 
 // **** Types ****
@@ -31,8 +30,7 @@ class Bound final : public Object
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };
 
-using BoundPtr = std::shared_ptr<Bound>;
-
 
 // **** Functions ****
-BoundPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list);
+int MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list,
+                  std::vector<ObjectPtr>& bound_list);

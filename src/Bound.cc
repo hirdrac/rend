@@ -276,36 +276,38 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
   return 0;
 }
 
-static BoundPtr convertNodeList(OptNode* node_list)
+static int convertNodeList(
+  OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox& bound_box)
 {
-  if (!node_list) {
-    return nullptr;
-  }
+  if (!node_list) { return -1; }
 
-  auto b = std::make_shared<Bound>();
-
-  // set up bound
+  int count = 0;
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
     if (n->object) {
-      b->objects.push_back(n->object);
-      b->box.fit(n->box);
+      // object node
+      bound_list.push_back(n->object);
+      bound_box.fit(n->box);
     } else {
-      auto child_b = convertNodeList(n->child);
-      if (child_b) {
-        b->objects.push_back(child_b);
-	b->box.fit(child_b->box);
+      // bound node
+      auto b = std::make_shared<Bound>();
+      int no = convertNodeList(n->child, b->objects, b->box);
+      if (no >= 0) {
+        bound_list.push_back(b);
+	bound_box.fit(b->box);
+        count += 1 + no;
       }
     }
   }
 
-  return b;
+  return count;
 }
 
-BoundPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
+int MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list,
+                  std::vector<ObjectPtr>& bound_list)
 {
   OptNode* node_list = makeOptNodeList(o_list);
   if (!node_list) {
-    return nullptr;
+    return 0;
   }
 
   BBox box{eye};
@@ -315,13 +317,15 @@ BoundPtr MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list)
 
   println("Old tree cost: ", treeCost(node_list, box.weight()));
   if (optimizeOptNodeList(node_list, box.weight(), 0)) {
-    return nullptr;
+    killTree(node_list);
+    return 0;
   }
 
   println("New tree cost: ", treeCost(node_list, box.weight()));
 
-  auto bound = convertNodeList(node_list);
+  BBox bound_box;
+  bound_list.clear();
+  int count = convertNodeList(node_list, bound_list, bound_box);
   killTree(node_list);
-
-  return bound;
+  return count;
 }
