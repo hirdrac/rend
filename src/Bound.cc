@@ -124,21 +124,20 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
   return total;
 }
 
-static Flt mergeCost(const OptNode* n1, const OptNode* n2, Flt weight)
+static Flt calcMergeCost(const OptNode* n1, const OptNode* n2, Flt weight)
 {
-  const Flt add_c = n1->cost(weight) + n2->cost(weight);
-
   const Flt w = BBox(n1->box, n2->box).weight();
   const Flt m_cost1 = n1->object ? n1->cost(w) : treeCost(n1->child, w);
   const Flt m_cost2 = n2->object ? n2->cost(w) : treeCost(n2->child, w);
-  const Flt merge_c = (weight * CostTable.bound) + m_cost1 + m_cost2;
-
-  // positive value indicates improvement if merged
-  return add_c - merge_c;
+  return (weight * CostTable.bound) + m_cost1 + m_cost2;
 }
 
 static OptNode* mergeOptNodes(OptNode* node1, OptNode* node2)
 {
+  // Create new bounding box
+  OptNode* b = new OptNode;
+  b->box = BBox(node1->box, node2->box);
+
   OptNode* n1 = node1;
   if (!node1->object) {
     // remove bound node
@@ -153,13 +152,9 @@ static OptNode* mergeOptNodes(OptNode* node1, OptNode* node2)
     delete node2;
   }
 
-  // Create new bounding box
-  OptNode* b = new OptNode;
   b->child = n1;
-  b->box   = BBox(node1->box, node2->box);
   while (n1->next) { n1 = n1->next; }
   n1->next = n2;
-
   return b;
 }
 
@@ -204,10 +199,9 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
       OptNode* b = new OptNode;
       b->child = n;
       b->box   = n->box;
-      node_array.push_back(b);
-    } else {
-      node_array.push_back(n);
+      n = b;
     }
+    node_array.push_back(n);
   }
 
   auto node_count = node_array.size();
@@ -225,9 +219,11 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
           OptNode* n2 = node_array[j];
           if (!n2) { continue; }
 
-          Flt save = mergeCost(n1, n2, weight);
-          if (save >= best) {
-            best = save;
+          const Flt baseCost = n1->cost(weight) + n2->cost(weight);
+          const Flt mergeCost = calcMergeCost(n1, n2, weight);
+          const Flt costImprove = baseCost - mergeCost;
+          if (costImprove > best) {
+            best = costImprove;
             best_i = i;
             best_j = j;
           }
@@ -236,8 +232,8 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight, int depth)
 
       if (best <= 0) { break; }
 
-      node_array[best_i] =
-        mergeOptNodes(node_array[best_i], node_array[best_j]);
+      OptNode* n = mergeOptNodes(node_array[best_i], node_array[best_j]);
+      node_array[best_i] = n;
       node_array[best_j] = nullptr;
     }
   }
