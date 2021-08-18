@@ -16,6 +16,7 @@
 #include "Print.hh"
 #include "PrintList.hh"
 #include "Object.hh"
+#include "Light.hh"
 #include <sstream>
 #include <string_view>
 #include <thread>
@@ -23,33 +24,34 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-namespace
-{
-  // **** Module Globals ****
-  FrameBuffer Fb;
-  Scene TheScene;
-  Renderer Ren;
-}
-
 
 // **** Functions ****
-int ShellInfo()
+int ShellInfo(const Scene& s, const FrameBuffer& fb)
 {
-  if (TheScene.objects().empty()) {
+  if (s.objects().empty()) {
     println("No scene loaded");
     return -1;
   }
 
-  TheScene.info(std::cout);
+  println("    Image size:\t", s.image_width, " x ", s.image_height);
+  println("           Fov:\t", s.fov);
+  println("       Eye/Coi:\t", s.eye, " / ", s.coi);
+  println("    VUP vector:\t", s.vup);
+  println(" Max ray depth:\t", s.max_ray_depth);
+  println(" Min ray value:\t", s.min_ray_value);
+
+  print("Light List:");
+  for (auto& lt : s.lights()) { println("  ", lt->desc()); }
+  println();
 
   float min, max;
-  Fb.range(min, max);
+  fb.range(min, max);
   println("Color ranges: ", min, " to ", max);
   return 0;
 }
 
 
-int ShellLoad(const std::string& file)
+int ShellLoad(Scene& s, const std::string& file)
 {
   SceneParser parser;
   if (parser.loadFile(file) < 0) {
@@ -57,8 +59,8 @@ int ShellLoad(const std::string& file)
   }
 
   println("Loading scene file '", file, "'");
-  TheScene.clear();
-  if (parser.setupScene(TheScene)) {
+  s.clear();
+  if (parser.setupScene(s)) {
     println("Scene loading failed");
     return -1;
   }
@@ -67,56 +69,53 @@ int ShellLoad(const std::string& file)
 }
 
 
-int ShellRender()
+int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 {
-  if (TheScene.objects().empty()) {
+  if (s.objects().empty()) {
     println("No scene loaded yet");
     return -1;
   }
 
-  Fb.clear();
-
-  println("Rendering ", TheScene.image_width, "x", TheScene.image_height,
-          " image (", TheScene.samples_x, "x", TheScene.samples_y, " samples)");
+  println("Rendering ", s.image_width, "x", s.image_height,
+          " image (", s.samples_x, "x", s.samples_y, " samples)");
   Timer t;
   t.start();
 
-  if (TheScene.init()) {
+  if (s.init()) {
     println("Scene Initialization Failed - can't render");
     return -1;
   }
 
 #if 0
   // FIXME - output in verbose mode
-  if (!TheScene.optObjects().empty()) {
-    PrintList(TheScene.optObjects());
+  if (!s.optObjects().empty()) {
+    PrintList(s.optObjects());
   }
 #endif
 
   // Render image
-  if (Ren.init(&TheScene, &Fb)) {
+  if (ren.init(&s, &fb)) {
     LOG_ERROR("Failed to initialize renderer");
     return -1;
   }
 
   auto setupTime = t.elapsedSec();
-  if (Ren.jobs() <= 0) {
+  if (ren.jobs() <= 0) {
     // render on main thread
     HitCache freeCache;
-    for (int y = TheScene.region_min[1]; y <= TheScene.region_max[1]; ++y) {
+    for (int y = s.region_min[1]; y <= s.region_max[1]; ++y) {
       print_err("\rscanline -- ", y+1);
-      Ren.render(TheScene.region_min[0], y, TheScene.region_max[0], y,
-		 &freeCache, nullptr);
+      ren.render(s.region_min[0], y, s.region_max[0], y, &freeCache, nullptr);
     }
   } else {
     // render on spawned thread(s)
-    Ren.startJobs();
+    ren.startJobs();
     int tr;
     do {
-      tr = Ren.waitForJobs(50);
+      tr = ren.waitForJobs(50);
       print_err("tasks remaining -- ", tr, "   \r");
     } while (tr > 0);
-    Ren.stopJobs();
+    ren.stopJobs();
   }
 
   t.stop();
@@ -126,9 +125,9 @@ int ShellRender()
   return 0;
 }
 
-int ShellSave(const std::string& file)
+int ShellSave(const FrameBuffer& fb, const std::string& file)
 {
-  if (Fb.width() <= 0 || Fb.height() <= 0) {
+  if (fb.width() <= 0 || fb.height() <= 0) {
     println("No image to save");
     return -1;
   }
@@ -146,10 +145,51 @@ int ShellSave(const std::string& file)
 
   std::string fn = file.substr(0,x) + ext;
   println("Saving image to '", fn, "'");
-  return Fb.saveBMP(fn);
+  return fb.saveBMP(fn);
 }
 
-int ShellLoop()
+void ShellStats(const Renderer& ren, const Scene& s)
+{
+  const StatInfo& st = ren.stats();
+  uint64_t object_tried = st.disc.tried + st.cone.tried + st.cube.tried
+    + st.cylinder.tried + st.open_cone.tried + st.open_cylinder.tried
+    + st.paraboloid.tried + st.plane.tried + st.sphere.tried + st.torus.tried;
+
+  uint64_t object_hit = st.disc.hit + st.cone.hit + st.cube.hit
+    + st.cylinder.hit + st.open_cone.hit + st.open_cylinder.hit
+    + st.paraboloid.hit + st.plane.hit + st.sphere.hit + st.torus.hit;
+
+  int64_t objs = s.object_count - (s.group_count + s.bound_count);
+  int64_t total_rays = int64_t(st.rays.tried + st.shadow_rays.tried);
+  int64_t dumb_tries = total_rays * objs;
+  int64_t total_tries = int64_t(object_tried + st.bound.tried);
+
+  println("       Rays Cast  ", st.rays.tried);
+  println("        Rays Hit  ", st.rays.hit);
+  println("Shadow Rays Cast  ", st.shadow_rays.tried);
+  println(" Shadow Rays Hit  ", st.shadow_rays.hit);
+  println("     Light Count  ", s.lights().size());
+  println("    Shader Count  ", s.shader_count);
+  println("    Object Count  ", s.object_count);
+  println("     Bound Count  ", s.bound_count);
+  println("     Group Count  ", s.group_count);
+  println("       CSG Count  ", s.csg_count);
+  println("   Objects Tried  ", object_tried);
+  println("     Objects Hit  ", object_hit);
+  println("    Bounds Tried  ", st.bound.tried);
+  println("      Bounds Hit  ", st.bound.hit);
+  println();
+  println(" Total Rays Cast  ", total_rays);
+  println(" Total Hit Tries  ", total_tries);
+  println("  Dumb Hit Tries  ", dumb_tries);
+  if (dumb_tries > 0) {
+    const double percent =
+      (double(dumb_tries - total_tries) / double(dumb_tries)) * 100.0;
+    println("       Reduction  ", percent, '%');
+  }
+}
+
+int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
 {
   static std::string lastFile;
 
@@ -183,7 +223,7 @@ int ShellLoop()
     break;
 
   case 'i':
-    ShellInfo();
+    ShellInfo(s, fb);
     break;
 
   case 'j':
@@ -195,27 +235,27 @@ int ShellLoop()
 	println("Invalid number of jobs '", arg, "'");
       } else {
 	println("Jobs set to ", j);
-	Ren.setJobs(j);
+	ren.setJobs(j);
       }
     }
     break;
 
   case 'l':
     if (input >> arg) {
-      ShellLoad(arg);
+      ShellLoad(s, arg);
       lastFile = arg;
     } else if (!lastFile.empty()) {
-      ShellLoad(lastFile);
+      ShellLoad(s, lastFile);
     } else {
       println("Load requires a file name");
     }
     break;
 
   case 'o':
-    if (TheScene.objects().empty()) {
+    if (s.objects().empty()) {
       println("No object list");
     } else {
-      PrintList(TheScene.objects());
+      PrintList(s.objects());
     }
     break;
 
@@ -224,21 +264,21 @@ int ShellLoop()
     return 0; // quit
 
   case 'r':
-    ShellRender();
+    ShellRender(ren, s, fb);
     break;
 
   case 's':
     if (input >> arg) {
-      ShellSave(arg);
+      ShellSave(fb, arg);
     } else {
       std::string name = lastFile.substr(0, lastFile.rfind('.'));
       if (name.empty()) { name = "out"; }
-      ShellSave(name);
+      ShellSave(fb, name);
     }
     break;
 
   case 'z':
-    Ren.stats().print(std::cout);
+    ShellStats(ren, s);
     break;
 
   default:
@@ -313,23 +353,26 @@ int main(int argc, char** argv)
     return Usage(argv[0]);
   }
 
+  Renderer ren;
   if (jobs >= 0) {
     println("Render jobs set to ", jobs);
-    Ren.setJobs(jobs);
+    ren.setJobs(jobs);
   }
 
+  Scene s;
+  FrameBuffer fb;
   if (!fileLoad.empty()) {
-    if (ShellLoad(fileLoad)) { return -1; }
-    if (ShellRender()) { return -1; }
+    if (ShellLoad(s, fileLoad)) { return -1; }
+    if (ShellRender(ren, s, fb)) { return -1; }
   }
 
   if (!imageSave.empty()) {
-    ShellSave(imageSave);
+    ShellSave(fb, imageSave);
   }
 
   if (interactive) {
     println("Starting Rend Shell - Enter '?' for help, 'Q' to quit");
-    while (ShellLoop()) { }
+    while (ShellLoop(ren, s, fb)) { }
   }
 
   return 0;

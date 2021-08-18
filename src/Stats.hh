@@ -7,20 +7,9 @@
 
 #pragma once
 #include <cstdint>
-#include <ostream>
 
 
 // **** Types ****
-struct InventoryInfo
-{
-  uint32_t bounds = 0;
-  uint32_t csgs = 0;
-  uint32_t groups = 0;
-  uint32_t lights = 0;
-  uint32_t objects = 0;
-  uint32_t shaders = 0;
-};
-
 class StatInfo
 {
  public:
@@ -46,11 +35,5 @@ class StatInfo
   RayStats torus;
 
   // Member Functions
-  void print(std::ostream& out) const;
-
   StatInfo& operator+=(const StatInfo& stats);
 };
-
-
-// **** Globals ****
-extern InventoryInfo Inventory;

@@ -4,20 +4,10 @@
 //
 
 #include "Group.hh"
-#include "Stats.hh"
+#include "Scene.hh"
 
 
 // **** Group Class ****
-Group::Group()
-{
-  ++Inventory.groups;
-}
-
-Group::~Group()
-{
-  --Inventory.groups;
-}
-
 // SceneItem Functions
 int Group::addObject(const ObjectPtr& ob)
 {
@@ -33,6 +23,8 @@ int Group::init(Scene& s)
   for (auto& ob : _children) {
     if (InitObject(s, *ob, _shader, &_trans)) { return -1; }
   }
+
+  ++s.group_count;
   return 0;
 }
 

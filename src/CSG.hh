@@ -14,9 +14,6 @@
 class CSG : public Primitive
 {
  public:
-  CSG();
-  ~CSG();
-
   // SceneItem Functions
   int addObject(const ObjectPtr& ob) override;
 

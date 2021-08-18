@@ -19,13 +19,11 @@ class Bound final : public Object
   std::vector<ObjectPtr> objects;
   BBox box; // bound size
 
-  Bound();
-  ~Bound();
-
   // SceneItem Functions
   std::string desc() const override;
 
   // Object Functions
+  int init(Scene& s) override { return 0; }
   int intersect(const Ray& r, HitList& hit_list) const override;
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };

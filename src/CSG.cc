@@ -2,12 +2,10 @@
 // CSG.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of CSG classes
-//
 
 #include "CSG.hh"
 #include "Intersect.hh"
-#include "Stats.hh"
+#include "Scene.hh"
 #include "HitCostInfo.hh"
 #include "Logger.hh"
 #include "BBox.hh"
@@ -16,17 +14,6 @@
 
 
 // **** CSG Class ****
-CSG::CSG()
-{
-  ++Inventory.csgs;
-}
-
-CSG::~CSG()
-{
-  --Inventory.csgs;
-}
-
-// Member Functions
 int CSG::addObject(const ObjectPtr& ob)
 {
   if (!ob) { return -1; }
@@ -54,6 +41,7 @@ int CSG::init(Scene& s)
     return -1;
   }
 
+  ++s.csg_count;
   return 0;
 }
 

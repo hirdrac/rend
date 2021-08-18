@@ -18,17 +18,6 @@
 
 
 // **** Bound Class ****
-Bound::Bound()
-{
-  ++Inventory.bounds;
-}
-
-Bound::~Bound()
-{
-  --Inventory.bounds;
-}
-
-// Member Functions
 std::string Bound::desc() const
 {
   std::ostringstream os;

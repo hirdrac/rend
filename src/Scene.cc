@@ -14,7 +14,6 @@
 #include "Color.hh"
 #include "BasicShaders.hh"
 #include "Print.hh"
-#include <vector>
 
 
 // **** Scene Class ****
@@ -52,6 +51,12 @@ void Scene::clear()
   _optObjects.clear();
   _lights.clear();
   _shaders.clear();
+
+  bound_count = 0;
+  group_count = 0;
+  csg_count = 0;
+  object_count = 0;
+  shader_count = 0;
 }
 
 int Scene::addObject(const ObjectPtr& ob)
@@ -125,6 +130,9 @@ int Scene::init()
   }
 
   // Init scene items
+  csg_count = 0;
+  group_count = 0;
+  object_count = 0;
   for (auto& ob : _objects) {
     if (InitObject(*this, *ob, nullptr)) {
       println("Error initializing object list");
@@ -133,7 +141,7 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  MakeBoundList(eye, _objects, _optObjects);
+  bound_count = MakeBoundList(eye, _objects, _optObjects);
 
   // init lights
   for (auto& lt : _lights) {
@@ -144,6 +152,7 @@ int Scene::init()
   }
 
   // init shaders
+  shader_count = 0;
   for (auto& sh : _shaders) {
     if (InitShader(*this, *sh)) {
       println("Error initializing shaders");
@@ -153,19 +162,6 @@ int Scene::init()
 
   // everything okay
   return 0;
-}
-
-void Scene::info(std::ostream& out) const
-{
-  println_os(out, "    Image size:\t", image_width, " x ", image_height);
-  println_os(out, "           Fov:\t", fov);
-  println_os(out, "       Eye/Coi:\t", eye, " / ", coi);
-  println_os(out, "    VUP vector:\t", vup);
-  println_os(out, " Max ray depth:\t", max_ray_depth);
-  println_os(out, " Min ray value:\t", min_ray_value);
-  println_os(out, "Light List:");
-  for (auto& lt : _lights) { println_os(out, "  ", lt->desc()); }
-  println_os(out);
 }
 
 Color Scene::traceRay(const Ray& r) const

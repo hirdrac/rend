@@ -26,11 +26,8 @@ class BBox;
 class Object : public SceneItem
 {
  public:
-  Object();
-  ~Object();
-
   // Member Functions
-  virtual int init(Scene& s) { return 0; }
+  virtual int init(Scene& s) = 0;
   virtual int bound(BBox& b) const { return -1; }
   virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
   virtual int evalHit(const Ray& r, const HitInfo& h, EvaluatedHit& eh) const {

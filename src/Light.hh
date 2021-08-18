@@ -30,9 +30,6 @@ class Light : public SceneItem
  public:
   Vec3 pos, dir;
 
-  Light();
-  ~Light();
-
   // SceneItem Functions
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 

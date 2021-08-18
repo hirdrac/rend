@@ -7,6 +7,7 @@
 
 #include "Object.hh"
 #include "Shader.hh"
+#include "Scene.hh"
 #include "Stats.hh"
 #include "BBox.hh"
 #include "Print.hh"
@@ -14,16 +15,6 @@
 
 // **** Object Class ****
 const std::vector<ObjectPtr> Object::_emptyList;
-
-Object::Object()
-{
-  ++Inventory.objects;
-}
-
-Object::~Object()
-{
-  --Inventory.objects;
-}
 
 
 // **** Primitive Class ****
@@ -70,7 +61,7 @@ int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
   // Assign provided shader if none is set
   if (sh && !ob.shader()) { ob.addShader(sh, FLAG_NONE); }
 
-  // Init primitive
+  ++s.object_count;
   int error = ob.init(s);
   if (error) {
     println("INIT ERROR: ", ob.desc());

@@ -5,21 +5,9 @@
 
 #include "Light.hh"
 #include "Scene.hh"
-#include "Stats.hh"
 
 
 // **** Light Class ****
-Light::Light()
-{
-  ++Inventory.lights;
-}
-
-Light::~Light()
-{
-  --Inventory.lights;
-}
-
-// Member Functions
 int Light::init(Scene& s)
 {
   if (!_energy) {

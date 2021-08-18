@@ -13,9 +13,6 @@
 class Group final : public Primitive
 {
  public:
-  Group();
-  ~Group();
-
   // SceneItem Functions
   std::string desc() const override { return "<Group>"; }
   int addObject(const ObjectPtr& ob) override;

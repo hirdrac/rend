@@ -4,19 +4,7 @@
 //
 
 #include "Shader.hh"
-#include "Stats.hh"
-
-
-// **** Shader Class ****
-Shader::Shader()
-{
-  ++Inventory.shaders;
-}
-
-Shader::~Shader()
-{
-  --Inventory.shaders;
-}
+#include "Scene.hh"
 
 
 // **** PatternShader Class ****
@@ -52,5 +40,6 @@ int InitShader(Scene& s, Shader& sh, const Transform* t)
     if (t) { trans->global *= t->global; }
   }
 
+  ++s.shader_count;
   return sh.init(s);
 }

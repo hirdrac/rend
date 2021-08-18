@@ -47,6 +47,13 @@ class Scene
   Flt  min_ray_value;
   Flt  ray_moveout;
 
+  // scene inventory count
+  int bound_count;
+  int csg_count;
+  int group_count;
+  int object_count;
+  int shader_count;
+
 
   Scene() { clear(); }
   ~Scene();
@@ -57,7 +64,6 @@ class Scene
   int addLight(const LightPtr& lt);
   int addShader(const ShaderPtr& sh, SceneItemFlag flag);
   int init();
-  void info(std::ostream& out) const;
 
   Color traceRay(const Ray& r) const;
   Color traceShadowRay(const Ray& r) const;
