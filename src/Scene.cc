@@ -23,7 +23,6 @@ void Scene::clear()
 {
   ambient.reset();
   background.reset();
-  air.reset();
   default_obj.reset();
   default_lt.reset();
   image_width = 256;
@@ -80,9 +79,6 @@ int Scene::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   if (!sh) { return -1; }
 
   switch (flag) {
-    case FLAG_AIR:
-      if (air) { return -1; } else { air = sh; }
-      break;
     case FLAG_AMBIENT:
       if (ambient) { return -1; } else { ambient = sh; }
       break;

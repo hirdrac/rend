@@ -28,7 +28,6 @@ class Scene
   // Scene color shaders
   ShaderPtr ambient;
   ShaderPtr background;
-  ShaderPtr air;
 
   // Default shaders
   ShaderPtr default_obj;
