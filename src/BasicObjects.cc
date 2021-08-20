@@ -52,7 +52,6 @@ int Disc::evalHit(
   const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   eh.normal = _normal;
-  eh.map = h.local_pt;
   return 0;
 }
 
@@ -170,17 +169,10 @@ int Cone::evalHit(
   if (h.side == 1) {
     // base
     eh.normal = _baseNormal;
-    eh.map = {-(h.local_pt.x), h.local_pt.y, -1.0};
-
   } else {
     // side
     const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
     eh.normal = _trans.normalLocalToGlobal(n, r.time);
-
-    const Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
-    const Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
-    const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
-    eh.map = {(h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0};
   }
 
   return 0;
@@ -267,16 +259,6 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
 int Cube::evalHit(
   const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
-  switch (h.side) {
-    case 0: eh.map = {-h.local_pt.z,  h.local_pt.y, 0.0}; break;
-    case 1: eh.map = { h.local_pt.z,  h.local_pt.y, 0.0}; break;
-    case 2: eh.map = { h.local_pt.x, -h.local_pt.z, 0.0}; break;
-    case 3: eh.map = { h.local_pt.x,  h.local_pt.z, 0.0}; break;
-    case 4: eh.map = { h.local_pt.x,  h.local_pt.y, 0.0}; break;
-    case 5: eh.map = {-h.local_pt.x,  h.local_pt.y, 0.0}; break;
-    default: return -1;
-  }
-
   //static constexpr Vec3 n[6] = {
   //  {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
   //eh.normal = _trans.normalLocalToGlobal(n[h.side], r.time);
@@ -367,22 +349,15 @@ int Cylinder::evalHit(
     case 0: {  // side
       const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
       eh.normal = _trans.normalLocalToGlobal(n, r.time);
-
-      const Flt x =
-        std::clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
-      const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
-      eh.map = {(h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0};
       break;
     }
 
     case 1:  // end 1
       eh.normal = _endNormal[0];
-      eh.map = {h.local_pt.x, h.local_pt.y, 0.0};
       break;
 
     case 2:  // end 2
       eh.normal = _endNormal[1];
-      eh.map = {h.local_pt.x, h.local_pt.y, 0.0};
       break;
 
     default:
@@ -451,12 +426,6 @@ int OpenCone::evalHit(
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
   eh.normal = _trans.normalLocalToGlobal(n, r.time);
-
-  const Vec2 dir = UnitVec(Vec2{h.local_pt.x, h.local_pt.y});
-  const Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
-  const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
-
-  eh.map = {(h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0};
   return 0;
 }
 
@@ -516,10 +485,6 @@ int OpenCylinder::evalHit(
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
   eh.normal = _trans.normalLocalToGlobal(n, r.time);
-
-  const Flt x = std::clamp(h.local_pt.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
-  const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
-  eh.map = {(h.local_pt.y >= 0.0) ? u : -u, h.local_pt.z, 0.0};
   return 0;
 }
 
@@ -579,9 +544,6 @@ int Paraboloid::evalHit(
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, .125};
   eh.normal = _trans.normalLocalToGlobal(n, r.time);
-
-  eh.map = {(h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
-    h.local_pt.y, 0.0};
   return 0;
 }
 
@@ -634,7 +596,6 @@ int Plane::evalHit(
   const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   eh.normal = _normal;
-  eh.map = h.local_pt;
   return 0;
 }
 
@@ -693,9 +654,6 @@ int Sphere::evalHit(
   const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 {
   eh.normal = _trans.normalLocalToGlobal(h.local_pt, r.time);
-
-  eh.map = {(h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
-    h.local_pt.y, 0.0};
   return 0;
 }
 
@@ -776,9 +734,6 @@ int Torus::evalHit(
   //  4.0 * h.local_pt.z * a};
 
   eh.normal = _trans.normalLocalToGlobal(n, r.time);
-
-  eh.map = {(h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x,
-    -h.local_pt.z, 0.0};
   return 0;
 }
 

@@ -356,14 +356,20 @@ REGISTER_OBJECT_KEYWORD(Union,"union");
 REGISTER_LIGHT_KEYWORD(PointLight,"light");
 REGISTER_LIGHT_KEYWORD(SpotLight,"spotlight");
 
+REGISTER_SHADER_KEYWORD(Phong,"phong");
+// pattern shaders
 REGISTER_SHADER_KEYWORD(Checkerboard,"checker");
 REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
-REGISTER_SHADER_KEYWORD(ShaderGlobal,"global");
-REGISTER_SHADER_KEYWORD(ShaderLocal,"local");
-REGISTER_SHADER_KEYWORD(Phong,"phong");
 REGISTER_SHADER_KEYWORD(Ring,"ring");
 REGISTER_SHADER_KEYWORD(ShaderSide,"side");
 REGISTER_SHADER_KEYWORD(Stripe,"stripe");
+// map shaders
+REGISTER_SHADER_KEYWORD(MapGlobalShader,"map-global");
+REGISTER_SHADER_KEYWORD(MapConeShader,"map-cone");
+REGISTER_SHADER_KEYWORD(MapCubeShader,"map-cube");
+REGISTER_SHADER_KEYWORD(MapCylinderShader,"map-cylinder");
+REGISTER_SHADER_KEYWORD(MapParaboloidShader,"map-paraboloid");
+REGISTER_SHADER_KEYWORD(MapSphereShader,"map-sphere");
 
 REGISTER_FLAG_KEYWORD(FLAG_AMBIENT,"ambient");
 REGISTER_FLAG_KEYWORD(FLAG_BACKGROUND,"background");
