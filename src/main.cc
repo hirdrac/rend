@@ -104,7 +104,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     // render on main thread
     HitCache freeCache;
     for (int y = s.region_min[1]; y <= s.region_max[1]; ++y) {
-      print_err("\rscanline -- ", y+1);
+      print_err("\rscanlines remaining -- ", s.region_max[1] - y, " \b");
       ren.render(s.region_min[0], y, s.region_max[0], y, &freeCache, nullptr);
     }
   } else {
@@ -113,7 +113,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     int tr;
     do {
       tr = ren.waitForJobs(50);
-      print_err("tasks remaining -- ", tr, "   \r");
+      print_err("\rtasks remaining -- ", tr, " \b");
     } while (tr > 0);
     ren.stopJobs();
   }
