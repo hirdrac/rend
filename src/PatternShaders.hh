@@ -1,5 +1,5 @@
 //
-// BasicShaders.hh
+// PatternShaders.hh
 // Copyright (C) 2021 Richard Bradley
 //
 // Various simple shaders
@@ -7,61 +7,24 @@
 
 #pragma once
 #include "Shader.hh"
+#include "Transform.hh"
 #include "Color.hh"
 
 
 // **** Types ****
-class ShaderColor final : public Shader
-{
- public:
-  ShaderColor() : _color{colors::black} { }
-  ShaderColor(const Color& c) : _color{c} { }
-  ShaderColor(Color::value_type r, Color::value_type g, Color::value_type b)
-    : _color{r,g,b} { }
-
-  // SceneItem Functions
-  std::string desc() const override;
-
-  // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
-
- private:
-  Color _color;
-};
-
-
-class ShaderGlobal final : public Shader
+class PatternShader : public Shader
 {
  public:
   // SceneItem Functions
-  std::string desc() const override { return "<Global>"; }
+  Transform* trans() override { return &_trans; }
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Shader Functions
   int init(Scene& s) override;
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
 
- private:
-  ShaderPtr _child;
-};
-
-
-class ShaderLocal final : public Shader
-{
- public:
-  // SceneItem Functions
-  std::string desc() const override { return "<Local>"; }
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
-
-  // Shader Functions
-  int init(Scene& s) override;
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
-
- private:
-  ShaderPtr _child;
+ protected:
+  Transform _trans;
+  std::vector<ShaderPtr> _children;
 };
 
 

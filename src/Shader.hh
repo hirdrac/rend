@@ -2,13 +2,13 @@
 // Shader.hh
 // Copyright (C) 2021 Richard Bradley
 //
-// Shader base classes
+// Shader base class
 //
 
 #pragma once
 #include "SceneItem.hh"
-#include "Transform.hh"
 #include "ShaderPtr.hh"
+#include "Color.hh"
 #include "Types.hh"
 #include <vector>
 
@@ -18,6 +18,7 @@ class HitInfo;
 struct EvaluatedHit;
 class Color;
 class Ray;
+class Transform;
 
 class Shader : public SceneItem
 {
@@ -28,19 +29,23 @@ class Shader : public SceneItem
                          const EvaluatedHit& eh) const = 0;
 };
 
-class PatternShader : public Shader
+class ShaderColor final : public Shader
 {
  public:
+  ShaderColor() : _color{colors::black} { }
+  ShaderColor(const Color& c) : _color{c} { }
+  ShaderColor(Color::value_type r, Color::value_type g, Color::value_type b)
+    : _color{r,g,b} { }
+
   // SceneItem Functions
-  Transform* trans() override { return &_trans; }
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
+  std::string desc() const override;
 
   // Shader Functions
-  int init(Scene& s) override;
+  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
+                 const EvaluatedHit& eh) const override;
 
- protected:
-  Transform _trans;
-  std::vector<ShaderPtr> _children;
+ private:
+  Color _color;
 };
 
 

@@ -5,28 +5,22 @@
 
 #include "Shader.hh"
 #include "Scene.hh"
+#include "Transform.hh"
+#include <sstream>
 
 
-// **** PatternShader Class ****
-int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
+// **** ShaderColor Class ****
+std::string ShaderColor::desc() const
 {
-  if (!sh || flag != FLAG_NONE) { return -1; }
-
-  _children.push_back(sh);
-  return 0;
+  std::ostringstream os;
+  os << "<RGB " << _color << '>';
+  return os.str();
 }
 
-int PatternShader::init(Scene& s)
+Color ShaderColor::evaluate(
+  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  if (_children.empty()) { return -1; }
-
-  for (auto& sh : _children) {
-    int err = InitShader(s, *sh, &_trans);
-    if (err) { return err; }
-  }
-
-  _trans.init();
-  return 0;
+  return _color;
 }
 
 

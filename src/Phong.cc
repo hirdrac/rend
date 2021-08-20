@@ -8,7 +8,6 @@
 #include "Light.hh"
 #include "Intersect.hh"
 #include "Ray.hh"
-#include "BasicShaders.hh"
 
 
 // **** Phong Class ****

@@ -1,15 +1,21 @@
 # rend Makefile
 # Copyright (C) 2021 Richard Bradley
 
-raytracer_src :=\
-  BasicLights.cc BasicObjects.cc BasicShaders.cc BBox.cc Bound.cc CSG.cc\
-  FrameBuffer.cc Group.cc HitCostInfo.cc Intersect.cc Light.cc Logger.cc\
-  Object.cc Phong.cc Ray.cc Renderer.cc Roots.cc Scene.cc Shader.cc\
-  Stats.cc Transform.cc Timer.cc
+base_src :=\
+  BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc Logger.cc\
+  Ray.cc Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc Timer.cc
+object_src :=\
+  Object.cc BasicObjects.cc Bound.cc CSG.cc Group.cc
+shader_src :=\
+  Shader.cc MapShaders.cc PatternShaders.cc Phong.cc
+light_src :=\
+  Light.cc BasicLights.cc
 parser_src :=\
   Parser.cc Tokenizer.cc Keywords.cc
 
-BIN_rend.SRC = $(raytracer_src) $(parser_src) main.cc
+
+BIN_rend.SRC =\
+  $(base_src) $(object_src) $(shader_src) $(light_src) $(parser_src) main.cc
 
 
 SOURCE_DIR = src

@@ -1,71 +1,34 @@
 //
-// BasicShaders.cc
+// PatternShaders.cc
 // Copyright (C) 2021 Richard Bradley
 //
 
-#include "BasicShaders.hh"
+#include "PatternShaders.hh"
 #include "Intersect.hh"
 #include "Ray.hh"
-#include <sstream>
 #include <cmath>
 
 
-// **** ShaderColor Class ****
-std::string ShaderColor::desc() const
+// **** PatternShader Class ****
+int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  std::ostringstream os;
-  os << "<Color " << _color << '>';
-  return os.str();
-}
+  if (!sh || flag != FLAG_NONE) { return -1; }
 
-Color ShaderColor::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
-{
-  return _color;
-}
-
-
-// **** ShaderGlobal Class ****
-int ShaderGlobal::addShader(const ShaderPtr& sh, SceneItemFlag flag)
-{
-  if (!sh || _child || flag != FLAG_NONE) { return -1; }
-
-  _child = sh;
+  _children.push_back(sh);
   return 0;
 }
 
-int ShaderGlobal::init(Scene& s)
+int PatternShader::init(Scene& s)
 {
-  return _child ? InitShader(s, *_child) : -1;
-}
+  if (_children.empty()) { return -1; }
 
-Color ShaderGlobal::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
-{
-  EvaluatedHit eh2{eh.global_pt, eh.normal, eh.global_pt};
-  return _child->evaluate(s, r, h, eh2);
-}
+  for (auto& sh : _children) {
+    int err = InitShader(s, *sh, &_trans);
+    if (err) { return err; }
+  }
 
-
-// **** ShaderLocal Class ****
-int ShaderLocal::addShader(const ShaderPtr& sh, SceneItemFlag flag)
-{
-  if (!sh || _child || flag != FLAG_NONE) { return -1; }
-
-  _child = sh;
+  _trans.init();
   return 0;
-}
-
-int ShaderLocal::init(Scene& s)
-{
-  return _child ? InitShader(s, *_child) : -1;
-}
-
-Color ShaderLocal::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
-{
-  EvaluatedHit eh2{eh.global_pt, eh.normal, h.local_pt};
-  return _child->evaluate(s, r, h, eh2);
 }
 
 

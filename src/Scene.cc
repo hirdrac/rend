@@ -12,7 +12,6 @@
 #include "Intersect.hh"
 #include "Stats.hh"
 #include "Color.hh"
-#include "BasicShaders.hh"
 #include "Print.hh"
 
 
