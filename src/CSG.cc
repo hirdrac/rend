@@ -52,7 +52,8 @@ int CSG::evalHit(const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
 
 Flt CSG::hitCost() const
 {
-  Flt cost = (_cost >= 0.0) ? _cost : CostTable.csg;
+  if (_cost >= 0.0) { return _cost; }
+  Flt cost = CostTable.csg;
   for (auto& ob : _children) { cost += ob->hitCost(); }
   return cost;
 }
