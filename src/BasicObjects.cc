@@ -48,11 +48,9 @@ int Disc::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Disc::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Disc::normal(const Ray& r, const HitInfo& h) const
 {
-  eh.normal = _normal;
-  return 0;
+  return _normal;
 }
 
 int Disc::bound(BBox& b) const
@@ -163,19 +161,16 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Cone::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Cone::normal(const Ray& r, const HitInfo& h) const
 {
   if (h.side == 1) {
     // base
-    eh.normal = _baseNormal;
+    return _baseNormal;
   } else {
     // side
     const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
-    eh.normal = _trans.normalLocalToGlobal(n, r.time);
+    return _trans.normalLocalToGlobal(n, r.time);
   }
-
-  return 0;
 }
 
 Flt Cone::hitCost() const
@@ -256,15 +251,13 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Cube::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Cube::normal(const Ray& r, const HitInfo& h) const
 {
   //static constexpr Vec3 n[6] = {
   //  {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
-  //eh.normal = _trans.normalLocalToGlobal(n[h.side], r.time);
+  //return _trans.normalLocalToGlobal(n[h.side], r.time);
 
-  eh.normal = _sideNormal[h.side];
-  return 0;
+  return _sideNormal[h.side];
 }
 
 Flt Cube::hitCost() const
@@ -342,29 +335,21 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Cylinder::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
 {
   switch (h.side) {
+    default:
     case 0: {  // side
       const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
-      eh.normal = _trans.normalLocalToGlobal(n, r.time);
-      break;
+      return _trans.normalLocalToGlobal(n, r.time);
     }
 
     case 1:  // end 1
-      eh.normal = _endNormal[0];
-      break;
+      return _endNormal[0];
 
     case 2:  // end 2
-      eh.normal = _endNormal[1];
-      break;
-
-    default:
-      return -1;
+      return _endNormal[1];
   }
-
-  return 0;
 }
 
 Flt Cylinder::hitCost() const
@@ -421,12 +406,10 @@ int OpenCone::intersect(const Ray& r, HitList& hit_list) const
   return 0;
 }
 
-int OpenCone::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 OpenCone::normal(const Ray& r, const HitInfo& h) const
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
-  eh.normal = _trans.normalLocalToGlobal(n, r.time);
-  return 0;
+  return _trans.normalLocalToGlobal(n, r.time);
 }
 
 Flt OpenCone::hitCost() const
@@ -480,12 +463,10 @@ int OpenCylinder::intersect(const Ray& r, HitList& hit_list) const
   return 0;
 }
 
-int OpenCylinder::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 OpenCylinder::normal(const Ray& r, const HitInfo& h) const
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
-  eh.normal = _trans.normalLocalToGlobal(n, r.time);
-  return 0;
+  return _trans.normalLocalToGlobal(n, r.time);
 }
 
 Flt OpenCylinder::hitCost() const
@@ -539,12 +520,10 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
   return 0;
 }
 
-int Paraboloid::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Paraboloid::normal(const Ray& r, const HitInfo& h) const
 {
   const Vec3 n{h.local_pt.x, h.local_pt.y, .125};
-  eh.normal = _trans.normalLocalToGlobal(n, r.time);
-  return 0;
+  return _trans.normalLocalToGlobal(n, r.time);
 }
 
 Flt Paraboloid::hitCost() const
@@ -592,11 +571,9 @@ int Plane::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Plane::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Plane::normal(const Ray& r, const HitInfo& h) const
 {
-  eh.normal = _normal;
-  return 0;
+  return _normal;
 }
 
 int Plane::bound(BBox& b) const
@@ -650,11 +627,9 @@ int Sphere::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Sphere::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
 {
-  eh.normal = _trans.normalLocalToGlobal(h.local_pt, r.time);
-  return 0;
+  return _trans.normalLocalToGlobal(h.local_pt, r.time);
 }
 
 Flt Sphere::hitCost() const
@@ -718,8 +693,7 @@ int Torus::intersect(const Ray& r, HitList& hit_list) const
   return 1;
 }
 
-int Torus::evalHit(
-  const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
 {
   const Flt x = h.local_pt.x;
   const Flt z = h.local_pt.z;
@@ -733,8 +707,7 @@ int Torus::evalHit(
   //  4.0 * h.local_pt.y * (a + 2.0),
   //  4.0 * h.local_pt.z * a};
 
-  eh.normal = _trans.normalLocalToGlobal(n, r.time);
-  return 0;
+  return _trans.normalLocalToGlobal(n, r.time);
 }
 
 int Torus::bound(BBox& b) const

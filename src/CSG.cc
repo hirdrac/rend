@@ -45,9 +45,9 @@ int CSG::init(Scene& s)
   return 0;
 }
 
-int CSG::evalHit(const Ray& r, const HitInfo& h, EvaluatedHit& eh) const
+Vec3 CSG::normal(const Ray& r, const HitInfo& h) const
 {
-  return h.child->evalHit(r, h, eh);
+  return h.child->normal(r, h);
 }
 
 Flt CSG::hitCost() const

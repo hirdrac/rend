@@ -17,7 +17,6 @@
 // **** Types ****
 class HitInfo;
 class HitList;
-struct EvaluatedHit;
 class Ray;
 class BBox;
 
@@ -30,8 +29,7 @@ class Object : public SceneItem
   virtual int init(Scene& s) = 0;
   virtual int bound(BBox& b) const { return -1; }
   virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
-  virtual int evalHit(const Ray& r, const HitInfo& h, EvaluatedHit& eh) const {
-    return -1; }
+  virtual Vec3 normal(const Ray& r, const HitInfo& h) const { return {}; }
   virtual Flt hitCost() const { return 0.0; }
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
 
