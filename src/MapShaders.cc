@@ -37,7 +37,9 @@ Color MapGlobalShader::evaluate(
 Color MapConeShader::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  EvaluatedHit eh2{eh.global_pt, eh.normal, {}};
+  EvaluatedHit eh2;
+  eh2.global_pt = eh.global_pt;
+  eh2.normal = eh.normal;
   if (h.side == 1) {
     // base
     eh2.map = {-(h.local_pt.x), h.local_pt.y, -1.0};
@@ -74,7 +76,9 @@ Color MapCubeShader::evaluate(
 Color MapCylinderShader::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  EvaluatedHit eh2{eh.global_pt, eh.normal, {}};
+  EvaluatedHit eh2;
+  eh2.global_pt = eh.global_pt;
+  eh2.normal = eh.normal;
   if (h.side == 0) {
     // side hit
     const Flt x =
@@ -92,26 +96,29 @@ Color MapCylinderShader::evaluate(
 Color MapParaboloidShader::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  EvaluatedHit eh2{eh.global_pt, eh.normal, {}};
-  eh2.map = {(h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
-    h.local_pt.y, 0.0};
+  EvaluatedHit eh2{
+    eh.global_pt, eh.normal,
+    {(h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x, h.local_pt.y, 0.0}
+  };
   return _child->evaluate(s, r, h, eh2);
 }
 
 Color MapSphereShader::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  EvaluatedHit eh2{eh.global_pt, eh.normal, {}};
-  eh2.map = {(h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x,
-    h.local_pt.y, 0.0};
+  EvaluatedHit eh2{
+    eh.global_pt, eh.normal,
+    {(h.local_pt.z > 0.0) ? h.local_pt.x : -h.local_pt.x, h.local_pt.y, 0.0}
+  };
   return _child->evaluate(s, r, h, eh2);
 }
 
 Color MapTorusShader::evaluate(
   const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
 {
-  EvaluatedHit eh2{eh.global_pt, eh.normal, {}};
-  eh2.map = {(h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x,
-    -h.local_pt.z, 0.0};
+  EvaluatedHit eh2{
+    eh.global_pt, eh.normal,
+    {(h.local_pt.y >= 0.0) ? h.local_pt.x : -h.local_pt.x, -h.local_pt.z, 0.0}
+  };
   return _child->evaluate(s, r, h, eh2);
 }

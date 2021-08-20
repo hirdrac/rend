@@ -5,17 +5,16 @@
 // Default object map (EvaluatedHit.map value) uses the local intersection
 // point as the map value.  These shaders override that.
 //
-// GlobalMapShader     - use global intersection point for map
-// ConeMapShader       - cone/opencone surface map
-// CubeMapShader       - cube surface map
-// ParaboloidMapShader - paraboloid surface map
-// SphereMapShader     - sphere surface map
-// TorusMapShader      - torus surface map
+// MapGlobalShader     - use global intersection point for map
+// MapConeShader       - cone/opencone surface map
+// MapCubeShader       - cube surface map
+// MapParaboloidShader - paraboloid surface map
+// MapSphereShader     - sphere surface map
+// MapTorusShader      - torus surface map
 //
 
 #pragma once
 #include "Shader.hh"
-#include "Color.hh"
 
 
 // **** MapShader base class ****
