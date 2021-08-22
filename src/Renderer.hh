@@ -21,7 +21,7 @@ class FrameBuffer;
 class Renderer
 {
  public:
-  int init(Scene* s, FrameBuffer* fb);
+  int init(const Scene* s, FrameBuffer* fb);
   int render(int min_x, int min_y, int max_x, int max_y,
 	     HitCache* freeCache, StatInfo* stats);
 
@@ -43,7 +43,7 @@ class Renderer
   [[nodiscard]] const StatInfo& stats() const { return _stats; }
 
  private:
-  Scene* _scene = nullptr;
+  const Scene* _scene = nullptr;
   FrameBuffer* _fb = nullptr;
   std::vector<Vec2> _samples;
   StatInfo _stats;

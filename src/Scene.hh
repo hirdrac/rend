@@ -36,11 +36,18 @@ class Scene
   int  image_width, image_height;     // Image pixel size
   int  region_min[2], region_max[2];  // Render region
 
-  Vec3 eye, coi, vup;
-  Flt  fov;
-  int  samples_x, samples_y;  // Sample grid (for supersampling)
-  Flt  jitter;
+  // camera settings
+  Vec3 eye;                   // camera location
+  Vec3 coi;                   // center-of-interest
+  Vec3 vup;                   // view-up vector
+  Flt  fov;                   // field of view angle
 
+  // anti-aliasing
+  int  samples_x, samples_y;  // sub-pixel grid size
+  Flt  jitter;                // x/y jitter amount for a sub-pixel
+  int  jitter_count;          // sample count for a sub-pixel if jitter > 0
+
+  // secondary ray settings
   bool shadow, reflect, transmit;
   int  max_ray_depth;
   Flt  min_ray_value;

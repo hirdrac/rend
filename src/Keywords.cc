@@ -167,7 +167,13 @@ int FovFn(
 int JitterFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p || sp.getFlt(n, s.jitter) || notDone(sp, n)) { return -1; }
+  if (p || sp.getFlt(n, s.jitter)) { return -1; }
+  // optional 'jitter_count' arg
+  //  (multiple samples at same pixel/sub-pixel if jitter is enabled)
+  s.jitter_count = 1;
+  sp.getInt(n, s.jitter_count);
+
+  if (notDone(sp, n)) { return -1; }
   return 0;
 }
 

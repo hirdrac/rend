@@ -37,6 +37,7 @@ void Scene::clear()
   samples_x = 1;
   samples_y = 1;
   jitter = 0.0;
+  jitter_count = 1;
   shadow = true;
   reflect = true;
   transmit = true;

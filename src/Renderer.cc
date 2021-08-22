@@ -27,7 +27,7 @@ static inline double rnd_jitter()
 
 
 // **** Renderer class ****
-int Renderer::init(Scene* s, FrameBuffer* fb)
+int Renderer::init(const Scene* s, FrameBuffer* fb)
 {
   _scene = s;
   _fb = fb;
@@ -53,26 +53,34 @@ int Renderer::init(Scene* s, FrameBuffer* fb)
   //  O--- +X
 
   // Calculate Screen/Pixel vectors
-  const Flt imgW = Flt(_scene->image_width);
-  const Flt imgH = Flt(_scene->image_height);
-  const Flt ss = std::tan((_scene->fov * .5) * math::DEG_TO_RAD<Flt>);
+  const Flt imgW = Flt(s->image_width);
+  const Flt imgH = Flt(s->image_height);
+  const Flt ss = std::tan(DegToRad(s->fov * .5));
   const Flt screenHeight = ss;
   const Flt screenWidth = ss * (imgW / imgH);
-  const Flt screenDistance = 1.0;
+  // FIXME - assumes width > height for fov calc
   _pixelX = (vside * screenWidth) / (imgW * .5);
   _pixelY = (vtop * screenHeight) / (imgH * .5);
-  _rayDir = vnormal * screenDistance;
+  _rayDir = vnormal;
 
   // init frame buffer
-  _fb->init(_scene->image_width, _scene->image_height);
+  _fb->init(s->image_width, s->image_height);
 
   // setup sub-pixel samples
-  // (uniform pixel sub-sampling for now)
+  const int samplesX = std::max(s->samples_x, 1);
+  const int samplesY = std::max(s->samples_y, 1);
+  const int sampleCount =
+    IsPositive(s->jitter) ? std::max(s->jitter_count, 1) : 1;
+
   _samples.clear();
-  for (int y = 0; y < _scene->samples_y; ++y) {
-    for (int x = 0; x < _scene->samples_x; ++x) {
-      _samples.push_back({(Flt(x)+.5) / Flt(_scene->samples_x),
-			  (Flt(y)+.5) / Flt(_scene->samples_y)});
+  _samples.reserve(samplesX * samplesY * sampleCount);
+  for (int y = 0; y < samplesY; ++y) {
+    for (int x = 0; x < samplesX; ++x) {
+      const Vec2 pt{(Flt(x)+.5) / Flt(samplesX),
+                    (Flt(y)+.5) / Flt(samplesY)};
+      for (int i = 0; i < sampleCount; ++i) {
+        _samples.push_back(pt);
+      }
     }
   }
 
@@ -85,11 +93,11 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
   const Flt halfWidth = Flt(_scene->image_width) * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
-  const auto samples_inv =
+  const auto samplesInv =
     static_cast<Color::value_type>(1.0 / double(_samples.size()));
 
-  const Flt jitterX = _scene->jitter / Flt(_scene->samples_x);
-  const Flt jitterY = _scene->jitter / Flt(_scene->samples_y);
+  const Flt jitterX = _scene->jitter / Flt(std::max(_scene->samples_x, 1));
+  const Flt jitterY = _scene->jitter / Flt(std::max(_scene->samples_y, 1));
   const bool use_jitter = IsPositive(_scene->jitter);
 
   Ray initRay;
@@ -121,7 +129,7 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
         c += _scene->traceRay(initRay);
       }
 
-      c *= samples_inv;
+      c *= samplesInv;
       _fb->plot(x, y, c);
     }
   }
@@ -133,9 +141,9 @@ int Renderer::setJobs(int jobs)
 {
   if (jobs < 0) { jobs = 0; }
 
-  std::size_t oldSize = _jobs.size();
+  const std::size_t oldSize = _jobs.size();
   _jobs.resize(std::size_t(jobs));
-  std::size_t newSize = _jobs.size();
+  const std::size_t newSize = _jobs.size();
   if (newSize > oldSize) {
     for (std::size_t i = oldSize; i < newSize; ++i) {
       _jobs[i] = std::make_unique<Job>();
@@ -147,9 +155,9 @@ int Renderer::setJobs(int jobs)
 int Renderer::startJobs()
 {
   // make render tasks
-  int num = std::max(jobs(), 4) * 20;
-  int inc_y = std::clamp(_scene->image_height / num, 2, 16);
-  int max_y = _scene->image_height - 1;
+  const int num = std::max(jobs(), 4) * 20;
+  const int inc_y = std::clamp(_scene->image_height / num, 2, 16);
+  const int max_y = _scene->image_height - 1;
   for (int y = 0; y <= max_y; y += inc_y) {
     int yy = std::min(y + inc_y - 1, max_y);
     _tasks.push_back({0, y, _scene->image_width - 1, yy});
@@ -170,8 +178,8 @@ int Renderer::startJobs()
 
 int Renderer::waitForJobs(int timeout_ms)
 {
-  std::chrono::milliseconds timeout(timeout_ms);
-  std::unique_lock lock(_tasksMutex);
+  const std::chrono::milliseconds timeout{timeout_ms};
+  std::unique_lock lock{_tasksMutex};
   while (!_tasks.empty()) {
     if (_tasksCV.wait_for(lock, timeout) == std::cv_status::timeout) {
       return int(_tasks.size()); // timeout
