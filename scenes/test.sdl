@@ -4,7 +4,7 @@
 (shadow 1)
 
 // anti-aliasing
-(samples 4 4)
+(supersample 4 4)
 //(jitter 1)
 
 // camera

@@ -167,13 +167,7 @@ int FovFn(
 int JitterFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p || sp.getFlt(n, s.jitter)) { return -1; }
-  // optional 'jitter_count' arg
-  //  (multiple samples at same pixel/sub-pixel if jitter is enabled)
-  s.jitter_count = 1;
-  sp.getInt(n, s.jitter_count);
-
-  if (notDone(sp, n)) { return -1; }
+  if (p || sp.getFlt(n, s.jitter) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
@@ -205,8 +199,7 @@ int RegionFn(
 int SamplesFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p || sp.getInt(n, s.samples_x) || sp.getInt(n, s.samples_y)
-      || notDone(sp, n)) { return -1; }
+  if (p || sp.getInt(n, s.samples) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
@@ -227,6 +220,14 @@ int SizeFn(
   s.region_min[1] = 0;
   s.region_max[0] = s.image_width  - 1;
   s.region_max[1] = s.image_height - 1;
+  return 0;
+}
+
+int SuperSampleFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p || sp.getInt(n, s.sample_x) || sp.getInt(n, s.sample_y)
+      || notDone(sp, n)) { return -1; }
   return 0;
 }
 
@@ -336,6 +337,7 @@ static void initKeywords()
     {"samples",     SamplesFn},
     {"scale",       ScaleFn},
     {"shadow",      ShadowBoolFn},
+    {"supersample", SuperSampleFn},
     {"size",        SizeFn},
     {"stretch",     StretchFn},
     {"vup",         VupFn}

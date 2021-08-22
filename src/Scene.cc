@@ -34,10 +34,10 @@ void Scene::clear()
   coi = {0,0,0};
   vup = {0,1,0};
   fov = 50.0;
-  samples_x = 1;
-  samples_y = 1;
+  sample_x = 1;
+  sample_y = 1;
   jitter = 0.0;
-  jitter_count = 1;
+  samples = 1;
   shadow = true;
   reflect = true;
   transmit = true;

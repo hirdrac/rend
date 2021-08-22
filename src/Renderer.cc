@@ -66,18 +66,16 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   // init frame buffer
   _fb->init(s->image_width, s->image_height);
 
-  // setup sub-pixel samples
-  const int samplesX = std::max(s->samples_x, 1);
-  const int samplesY = std::max(s->samples_y, 1);
-  const int sampleCount =
-    IsPositive(s->jitter) ? std::max(s->jitter_count, 1) : 1;
+  // setup sample points
+  const int sampleX = std::max(s->sample_x, 1);
+  const int sampleY = std::max(s->sample_y, 1);
+  const int sampleCount = IsPositive(s->jitter) ? std::max(s->samples, 1) : 1;
 
   _samples.clear();
-  _samples.reserve(samplesX * samplesY * sampleCount);
-  for (int y = 0; y < samplesY; ++y) {
-    for (int x = 0; x < samplesX; ++x) {
-      const Vec2 pt{(Flt(x)+.5) / Flt(samplesX),
-                    (Flt(y)+.5) / Flt(samplesY)};
+  _samples.reserve(sampleX * sampleY * sampleCount);
+  for (int y = 0; y < sampleY; ++y) {
+    for (int x = 0; x < sampleX; ++x) {
+      const Vec2 pt{(Flt(x)+.5) / Flt(sampleX), (Flt(y)+.5) / Flt(sampleY)};
       for (int i = 0; i < sampleCount; ++i) {
         _samples.push_back(pt);
       }
@@ -96,8 +94,8 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const auto samplesInv =
     static_cast<Color::value_type>(1.0 / double(_samples.size()));
 
-  const Flt jitterX = _scene->jitter / Flt(std::max(_scene->samples_x, 1));
-  const Flt jitterY = _scene->jitter / Flt(std::max(_scene->samples_y, 1));
+  const Flt jitterX = _scene->jitter / Flt(std::max(_scene->sample_x, 1));
+  const Flt jitterY = _scene->jitter / Flt(std::max(_scene->sample_y, 1));
   const bool use_jitter = IsPositive(_scene->jitter);
 
   Ray initRay;
