@@ -1,12 +1,16 @@
 // Settings
 (size 1280 720)
-(eye 0 8 18)
-(coi  0 4 0)
-(maxdepth 64)
+(maxdepth 8)
 
 // anti-aliasing
 (supersample 8 8)
-//(jitter 2)
+(samples 8)
+
+// camera
+(eye 0 8 18)
+(coi  0 4 0)
+(aperture 1)
+(focus 18.5)
 
 // Lights
 (ambient (rgb .1 .1 .1))

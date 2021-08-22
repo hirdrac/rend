@@ -50,6 +50,7 @@ class Renderer
 
   // Calculated Data
   Vec3 _pixelX, _pixelY, _rayDir;
+  Vec3 _viewPlaneCenter, _apertureX, _apertureY;
 
   // jobs/task stuff
   struct Job {

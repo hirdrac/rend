@@ -34,6 +34,8 @@ void Scene::clear()
   coi = {0,0,0};
   vup = {0,1,0};
   fov = 50.0;
+  aperture = 0.0;
+  focus = 1;
   sample_x = 1;
   sample_y = 1;
   jitter = 0.0;

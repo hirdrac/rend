@@ -16,13 +16,31 @@
 
 
 // **** helper functions ****
+static inline double rnd_val()
+{
+  // random value in interval [0, 1)
+#if defined(__MINGW32__) || defined(__MINGW64__)
+  return double(rand()) / (double(RAND_MAX) + 1.0);
+#else
+  return drand48();
+#endif
+}
+
 static inline double rnd_jitter()
 {
-#if defined(__MINGW32__) || defined(__MINGW64__)
-  return (double(rand()) / double(RAND_MAX)) - .5;
-#else
-  return drand48() - .5; // range [-.5,+.5)
-#endif
+  // interval [-.5, .5)
+  return rnd_val() - .5;
+}
+
+static inline Vec2 rnd_disk_pt()
+{
+  // random point on diameter=1 disk
+  double x, y;
+  do {
+    x = rnd_jitter();
+    y = rnd_jitter();
+  } while ((Sqr(x) + Sqr(y)) > .25);
+  return Vec2{x, y};
 }
 
 
@@ -55,13 +73,17 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   // Calculate Screen/Pixel vectors
   const Flt imgW = Flt(s->image_width);
   const Flt imgH = Flt(s->image_height);
-  const Flt ss = std::tan(DegToRad(s->fov * .5));
+  const Flt focalLen = IsPositive(_scene->aperture) ? s->focus : 1.0;
+  const Flt ss = std::tan(DegToRad(s->fov * .5)) * focalLen;
   const Flt screenHeight = ss;
   const Flt screenWidth = ss * (imgW / imgH);
   // FIXME - assumes width > height for fov calc
   _pixelX = (vside * screenWidth) / (imgW * .5);
   _pixelY = (vtop * screenHeight) / (imgH * .5);
-  _rayDir = vnormal;
+  _rayDir = vnormal * focalLen;
+  _viewPlaneCenter = s->eye + _rayDir;
+  _apertureX = vside * s->aperture;
+  _apertureY = vtop * s->aperture;
 
   // init frame buffer
   _fb->init(s->image_width, s->image_height);
@@ -69,7 +91,9 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   // setup sample points
   const int sampleX = std::max(s->sample_x, 1);
   const int sampleY = std::max(s->sample_y, 1);
-  const int sampleCount = IsPositive(s->jitter) ? std::max(s->samples, 1) : 1;
+  const int sampleCount =
+    (IsPositive(s->jitter) || IsPositive(s->aperture))
+    ? std::max(s->samples, 1) : 1;
 
   _samples.clear();
   _samples.reserve(sampleX * sampleY * sampleCount);
@@ -88,7 +112,6 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
 int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 		     HitCache* freeCache, StatInfo* stats)
 {
-  const Vec3 px = _pixelX, py = _pixelY, rd = _rayDir;
   const Flt halfWidth = Flt(_scene->image_width) * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
   const auto samplesInv =
@@ -97,9 +120,11 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const Flt jitterX = _scene->jitter / Flt(std::max(_scene->sample_x, 1));
   const Flt jitterY = _scene->jitter / Flt(std::max(_scene->sample_y, 1));
   const bool use_jitter = IsPositive(_scene->jitter);
+  const bool use_aperture = IsPositive(_scene->aperture);
+  const Vec3 eye = _scene->eye;
 
   Ray initRay;
-  initRay.base = _scene->eye;
+  initRay.base = eye;
   initRay.min_length = 0;
   initRay.max_length = VERY_LARGE;
   initRay.time = 0.0;
@@ -121,8 +146,18 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
           sx += rnd_jitter() * jitterX;
           sy += rnd_jitter() * jitterY;
         }
-        initRay.dir = rd + (px * sx) + (py * sy);
-          // dir not normalized for performance
+
+        const Vec3 dirAdj = (_pixelX * sx) + (_pixelY * sy);
+        if (use_aperture) {
+          const Vec2 r = rnd_disk_pt();
+          initRay.base = eye + (_apertureX * r.x) + (_apertureY * r.y);
+          initRay.dir = UnitVec(_viewPlaneCenter - initRay.base + dirAdj);
+            // FIXME - normalized because dir length much greater than 1
+            // causes problems with some intersections (torus mainly)
+        } else {
+          initRay.dir = _rayDir + dirAdj;
+            // dir not normalized for performance
+        }
 
         c += _scene->traceRay(initRay);
       }

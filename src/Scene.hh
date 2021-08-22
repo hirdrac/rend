@@ -41,6 +41,8 @@ class Scene
   Vec3 coi;                 // center-of-interest
   Vec3 vup;                 // view-up vector
   Flt  fov;                 // field of view angle
+  Flt  aperture;            // depth-of-field jitter amount when positive
+  Flt  focus;               // focal distance
 
   // anti-aliasing
   int  sample_x, sample_y;  // sub-pixel grid size
@@ -79,8 +81,9 @@ class Scene
   const std::vector<LightPtr>& lights() const { return _lights; }
 
   int samplesPerPixel() const {
+    const bool multiSample = IsPositive(jitter) || IsPositive(aperture);
     return (std::max(sample_x, 1) * std::max(sample_y, 1))
-      * (IsPositive(jitter) ? std::max(samples, 1) : 1);
+      * (multiSample ? std::max(samples, 1) : 1);
   }
 
  private:

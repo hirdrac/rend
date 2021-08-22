@@ -143,6 +143,13 @@ int StretchFn(
 }
 
 // scene attributes
+int ApertureFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p || sp.getFlt(n, s.aperture) || notDone(sp, n)) { return -1; }
+  return 0;
+}
+
 int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -154,6 +161,13 @@ int EyeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getVec3(n, s.eye) || notDone(sp, n)) { return -1; }
+  return 0;
+}
+
+int FocusFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (p || sp.getFlt(n, s.focus) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
@@ -312,12 +326,14 @@ static void initKeywords()
   Keywords = std::make_unique<KeywordMap>();
   *Keywords = {
     // keyword      ItemFn
+    {"aperture",    ApertureFn},
     {"coi",         CoiFn},
     {"cost",        CostFn},
     {"dir",         DirectionFn},
     {"direction",   DirectionFn},
     {"exp",         ExpFn},
     {"eye",         EyeFn},
+    {"focus",       FocusFn},
     {"fov",         FovFn},
     {"jitter",      JitterFn},
     {"maxdepth",    MaxdepthFn},
