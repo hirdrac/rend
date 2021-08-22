@@ -76,8 +76,9 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     return -1;
   }
 
-  println("Rendering ", s.image_width, "x", s.image_height,
-          " image (", s.sample_x, "x", s.sample_y, " samples)");
+  int samples = s.samplesPerPixel();
+  println("Rendering ", s.image_width, "x", s.image_height, " image (",
+          samples, ((samples == 1) ? " sample" : " samples"), "/pixel)");
   Timer t;
   t.start();
 

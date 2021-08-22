@@ -78,6 +78,11 @@ class Scene
   const std::vector<ObjectPtr>& optObjects() const { return _optObjects; }
   const std::vector<LightPtr>& lights() const { return _lights; }
 
+  int samplesPerPixel() const {
+    return (std::max(sample_x, 1) * std::max(sample_y, 1))
+      * (IsPositive(jitter) ? std::max(samples, 1) : 1);
+  }
+
  private:
   std::vector<ObjectPtr> _objects;
     // Complete list of objects (including Groups but not Bounds)
