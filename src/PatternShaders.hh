@@ -69,6 +69,7 @@ class ShaderSide final : public PatternShader
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Side>"; }
+  Transform* trans() override { return nullptr; }
 
   // Shader Functions
   Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
