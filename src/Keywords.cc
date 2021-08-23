@@ -133,7 +133,7 @@ int StretchFn(
   const Vec3 axisX = UnitVec(CrossProduct(up, axisZ));
   const Vec3 axisY = UnitVec(CrossProduct(axisZ, axisX));
 
-  t->local.scale(1, 1, len * .5);
+  t->local.scaleZ(len * .5);
   t->local *= {
     axisX.x,  axisX.y,  axisX.z,  0,
     axisY.x,  axisY.y,  axisY.z,  0,

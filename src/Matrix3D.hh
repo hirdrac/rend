@@ -114,6 +114,9 @@ class Matrix4x4
   constexpr void setScaling(const Vector3<T>& v) { setScaling(v.x, v.y, v.z); }
   constexpr void scale(T sx, T sy, T sz);
   constexpr void scale(const Vector3<T>& v) { scale(v.x, v.y, v.z); }
+  constexpr void scaleX(T sx);
+  constexpr void scaleY(T sy);
+  constexpr void scaleZ(T sz);
 
   constexpr void transpose();
 
@@ -474,6 +477,33 @@ constexpr void Matrix4x4<T,MOT>::scale(T sx, T sy, T sz)
   _val[4]  *= sx; _val[5]  *= sy; _val[6]  *= sz;
   _val[8]  *= sx; _val[9]  *= sy; _val[10] *= sz;
   _val[12] *= sx; _val[13] *= sy; _val[14] *= sz;
+}
+
+template<typename T, MatrixOrderType MOT>
+constexpr void Matrix4x4<T,MOT>::scaleX(T sx)
+{
+  _val[0]  *= sx;
+  _val[4]  *= sx;
+  _val[8]  *= sx;
+  _val[12] *= sx;
+}
+
+template<typename T, MatrixOrderType MOT>
+constexpr void Matrix4x4<T,MOT>::scaleY(T sy)
+{
+  _val[1]  *= sy;
+  _val[5]  *= sy;
+  _val[9]  *= sy;
+  _val[13] *= sy;
+}
+
+template<typename T, MatrixOrderType MOT>
+constexpr void Matrix4x4<T,MOT>::scaleZ(T sz)
+{
+  _val[2]  *= sz;
+  _val[6]  *= sz;
+  _val[10] *= sz;
+  _val[14] *= sz;
 }
 
 template<typename T, MatrixOrderType MOT>
