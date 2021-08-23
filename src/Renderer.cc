@@ -96,7 +96,7 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
     ? std::max(s->samples, 1) : 1;
 
   _samples.clear();
-  _samples.reserve(sampleX * sampleY * sampleCount);
+  _samples.reserve(std::size_t(sampleX * sampleY * sampleCount));
   for (int y = 0; y < sampleY; ++y) {
     for (int x = 0; x < sampleX; ++x) {
       const Vec2 pt{(Flt(x)+.5) / Flt(sampleX), (Flt(y)+.5) / Flt(sampleY)};
