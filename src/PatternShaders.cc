@@ -27,7 +27,6 @@ int PatternShader::init(Scene& s)
     if (err) { return err; }
   }
 
-  _trans.init();
   return 0;
 }
 

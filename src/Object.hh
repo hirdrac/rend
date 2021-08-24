@@ -26,7 +26,7 @@ class Object : public SceneItem
 {
  public:
   // Member Functions
-  virtual int init(Scene& s) = 0;
+  virtual int init(Scene& s) { return 0; }
   virtual int bound(BBox& b) const { return -1; }
   virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
   virtual Vec3 normal(const Ray& r, const HitInfo& h) const { return {}; }
@@ -54,7 +54,6 @@ class Primitive : public Object
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Object Functions
-  int init(Scene& s) override;
   int bound(BBox& b) const override;
 
  protected:

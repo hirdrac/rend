@@ -14,12 +14,12 @@
 class Transform
 {
  public:
-  Matrix local, global;
+  Matrix base;  // configured transform for item
 
   Transform() { clear(); }
 
   // Member Functions
-  int init();
+  int init(const Transform* parent = nullptr);
   void clear();
 
   [[nodiscard]] inline Vec3 normalLocalToGlobal(const Vec3& normal, Flt time) const;
@@ -32,7 +32,8 @@ class Transform
     //   eventually time parameter will allow for motion blur
 
  private:
-  Matrix _globalInv;
+  Matrix _final; // base transform adjusted by parent transform
+  Matrix _finalInv;
 };
 
 
@@ -40,20 +41,20 @@ class Transform
 Vec3 Transform::normalLocalToGlobal(const Vec3& normal, Flt time) const
 {
   // global normal = local normal * transpose(inverse(global transform))
-  return UnitVec(MultVectorTrans(normal, _globalInv));
+  return UnitVec(MultVectorTrans(normal, _finalInv));
 }
 
 Vec3 Transform::pointLocalToGlobal(const Vec3& pt, Flt time) const
 {
-  return MultPoint(pt, global);
+  return MultPoint(pt, _final);
 }
 
 Vec3 Transform::rayLocalDir(const Ray& r) const
 {
-  return MultVector(r.dir, _globalInv);
+  return MultVector(r.dir, _finalInv);
 }
 
 Vec3 Transform::rayLocalBase(const Ray& r) const
 {
-  return MultPoint(r.base, _globalInv);
+  return MultPoint(r.base, _finalInv);
 }

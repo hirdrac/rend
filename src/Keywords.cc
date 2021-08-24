@@ -50,7 +50,7 @@ int MoveFn(
   Vec3 v;
   if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
 
-  t->local.translate(v);
+  t->base.translate(v);
   return 0;
 }
 
@@ -63,7 +63,7 @@ int RotateXFn(
   Flt angle;
   if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
 
-  t->local.rotateX(angle * math::DEG_TO_RAD<Flt>);
+  t->base.rotateX(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
 
@@ -76,7 +76,7 @@ int RotateYFn(
   Flt angle;
   if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
 
-  t->local.rotateY(angle * math::DEG_TO_RAD<Flt>);
+  t->base.rotateY(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
 
@@ -89,7 +89,7 @@ int RotateZFn(
   Flt angle;
   if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
 
-  t->local.rotateZ(angle * math::DEG_TO_RAD<Flt>);
+  t->base.rotateZ(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
 
@@ -102,7 +102,7 @@ int ScaleFn(
   Vec3 v;
   if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
 
-  t->local.scale(v);
+  t->base.scale(v);
   return 0;
 }
 
@@ -133,8 +133,8 @@ int StretchFn(
   const Vec3 axisX = UnitVec(CrossProduct(up, axisZ));
   const Vec3 axisY = UnitVec(CrossProduct(axisZ, axisX));
 
-  t->local.scaleZ(len * .5);
-  t->local *= {
+  t->base.scaleZ(len * .5);
+  t->base *= {
     axisX.x,  axisX.y,  axisX.z,  0,
     axisY.x,  axisY.y,  axisY.z,  0,
     axisZ.x,  axisZ.y,  axisZ.z,  0,

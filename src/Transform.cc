@@ -7,9 +7,14 @@
 
 
 // **** Transform Class ****
-int Transform::init()
+int Transform::init(const Transform* parent)
 {
-  if (InvertMatrix(global, _globalInv)) {
+  _final = base;
+  if (parent) {
+    _final *= parent->_final;
+  }
+
+  if (InvertMatrix(_final, _finalInv)) {
     return -1;
   }
 
@@ -18,7 +23,7 @@ int Transform::init()
 
 void Transform::clear()
 {
-  local.setIdentity();
-  global.setIdentity();
-  _globalInv.setIdentity();
+  base.setIdentity();
+  _final.setIdentity();
+  _finalInv.setIdentity();
 }

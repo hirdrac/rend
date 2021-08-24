@@ -27,11 +27,6 @@ int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   return 0;
 }
 
-int Primitive::init(Scene& s)
-{
-  return _trans.init();
-}
-
 // Object Functions
 int Primitive::bound(BBox& b) const
 {
@@ -47,16 +42,7 @@ int Primitive::bound(BBox& b) const
 int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
 {
   Transform* trans = ob.trans();
-  if (!trans) {
-    println("No Trans ERROR: ", ob.desc());
-    return -1;
-  }
-
-  // Transform by parent trans
-  trans->global = trans->local;
-  if (t) {
-    trans->global *= t->global;
-  }
+  if (trans) { trans->init(t); }
 
   // Assign provided shader if none is set
   if (sh && !ob.shader()) { ob.addShader(sh, FLAG_NONE); }

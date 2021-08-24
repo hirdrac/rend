@@ -61,7 +61,7 @@ void BBox::fit(const BBox& box)
 void BBox::fit(const Transform& t, const Vec3* pt_list, int pt_count)
 {
   for (int i = 0; i < pt_count; ++i) {
-    fit(MultPoint(pt_list[i], t.global));
+    fit(t.pointLocalToGlobal(pt_list[i], 0));
   }
 }
 

@@ -27,12 +27,8 @@ Color ShaderColor::evaluate(
 // **** Functions ****
 int InitShader(Scene& s, Shader& sh, const Transform* t)
 {
-  // Transform by parent trans
   Transform* trans = sh.trans();
-  if (trans) {
-    trans->global = trans->local;
-    if (t) { trans->global *= t->global; }
-  }
+  if (trans) { trans->init(t); }
 
   ++s.shader_count;
   return sh.init(s);
