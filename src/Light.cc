@@ -31,12 +31,10 @@ int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 
 // **** Functions ****
-int InitLight(Scene& s, Light& lt)
+int InitLight(Scene& s, Light& lt, const Transform* t)
 {
-  int error = lt.init(s);
-  if (error) {
-    return error;
-  }
+  Transform* trans = lt.trans();
+  if (trans) { trans->init(t); }
 
-  return 0;
+  return lt.init(s);
 }

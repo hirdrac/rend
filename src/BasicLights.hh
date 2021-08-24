@@ -17,9 +17,13 @@ class Sun final : public Light
   std::string desc() const override { return "<Sun>"; }
 
   // Light Functions
+  int init(Scene& s) override;
   int luminate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     LightResult& result) const override;
+
+ private:
+  Vec3 _finalDir;
 };
 
 class PointLight final : public Light
@@ -29,9 +33,13 @@ class PointLight final : public Light
   std::string desc() const override { return "<PointLight>"; }
 
   // Light Functions
+  int init(Scene& s) override;
   int luminate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     LightResult& result) const override;
+
+ private:
+  Vec3 _finalPos;
 };
 
 class SpotLight final : public Light
@@ -41,7 +49,11 @@ class SpotLight final : public Light
   std::string desc() const override { return "<SpotLight>"; }
 
   // Light Functions
+  int init(Scene& s) override;
   int luminate(
     const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
     LightResult& result) const override;
+
+ private:
+  Vec3 _finalPos, _finalDir;
 };
