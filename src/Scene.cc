@@ -13,6 +13,7 @@
 #include "Stats.hh"
 #include "Color.hh"
 #include "Print.hh"
+#include <cassert>
 
 
 // **** Scene Class ****
@@ -62,24 +63,21 @@ void Scene::clear()
 
 int Scene::addObject(const ObjectPtr& ob)
 {
-  if (!ob) { return -1; }
-
+  assert(ob != nullptr);
   _objects.push_back(ob);
   return 0;
 }
 
 int Scene::addLight(const LightPtr& lt)
 {
-  if (!lt) { return -1; }
-
+  assert(lt != nullptr);
   _lights.push_back(lt);
   return 0;
 }
 
 int Scene::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh) { return -1; }
-
+  assert(sh != nullptr);
   switch (flag) {
     case FLAG_AMBIENT:
       if (ambient) { return -1; } else { ambient = sh; }

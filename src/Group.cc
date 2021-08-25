@@ -5,14 +5,14 @@
 
 #include "Group.hh"
 #include "Scene.hh"
+#include <cassert>
 
 
 // **** Group Class ****
 // SceneItem Functions
 int Group::addObject(const ObjectPtr& ob)
 {
-  if (!ob) { return -1; }
-
+  assert(ob != nullptr);
   _children.push_back(ob);
   return 0;
 }

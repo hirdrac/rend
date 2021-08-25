@@ -8,6 +8,7 @@
 #include "Light.hh"
 #include "Intersect.hh"
 #include "Ray.hh"
+#include <cassert>
 
 
 // **** Phong Class ****
@@ -27,8 +28,7 @@ int Phong::init(Scene& s)
 
 int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh) { return -1; }
-
+  assert(sh != nullptr);
   switch (flag) {
     case FLAG_NONE:
     case FLAG_DIFFUSE:

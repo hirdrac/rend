@@ -11,6 +11,7 @@
 #include "Stats.hh"
 #include "BBox.hh"
 #include "Print.hh"
+#include <cassert>
 
 
 // **** Object Class ****
@@ -21,7 +22,8 @@ const std::vector<ObjectPtr> Object::_emptyList;
 // SceneItem Functions
 int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh || _shader) { return -1; }
+  assert(sh != nullptr);
+  if (_shader) { return -1; }
 
   _shader = sh;
   return 0;

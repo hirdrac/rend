@@ -7,12 +7,14 @@
 #include "Intersect.hh"
 #include "Ray.hh"
 #include <cmath>
+#include <cassert>
 
 
 // **** PatternShader Class ****
 int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh || flag != FLAG_NONE) { return -1; }
+  assert(sh != nullptr);
+  if (flag != FLAG_NONE) { return -1; }
 
   _children.push_back(sh);
   return 0;

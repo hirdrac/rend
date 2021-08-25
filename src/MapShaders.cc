@@ -7,12 +7,14 @@
 #include "Intersect.hh"
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 
 
 // **** MapShader Class ****
 int MapShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
-  if (!sh || _child || flag != FLAG_NONE) { return -1; }
+  assert(sh != nullptr);
+  if (_child || flag != FLAG_NONE) { return -1; }
 
   _child = sh;
   return 0;

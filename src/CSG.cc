@@ -11,13 +11,13 @@
 #include "BBox.hh"
 #include <algorithm>
 #include <sstream>
+#include <cassert>
 
 
 // **** CSG Class ****
 int CSG::addObject(const ObjectPtr& ob)
 {
-  if (!ob) { return -1; }
-
+  assert(ob != nullptr);
   _children.push_back(ob);
   return 0;
 }
