@@ -25,7 +25,8 @@ template<class LightType>
 int LightItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
                 SceneItemFlag) {
   auto lt = makeLight<LightType>();
-  int error = p ? p->addLight(lt) : s.addLight(lt);
+  int error = s.addLight(lt);
+  if (!error && p) { error = p->addLight(lt); }
   return error ? error : sp.processList(s, lt.get(), n);
 }
 

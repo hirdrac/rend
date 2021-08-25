@@ -125,7 +125,17 @@ int Scene::init()
     _shaders.push_back(default_lt);
   }
 
-  // Init scene items
+  // init lights
+  // (lights initialized before objects so lights contained in groups will
+  //  be re-initialized with the correct parent transform)
+  for (auto& lt : _lights) {
+    if (InitLight(*this, *lt)) {
+      println("Error initializing light list");
+      return -1;  // error
+    }
+  }
+
+  // init objects
   csg_count = 0;
   group_count = 0;
   object_count = 0;
@@ -138,14 +148,6 @@ int Scene::init()
 
   // setup bounding boxes
   bound_count = MakeBoundList(eye, _objects, _optObjects);
-
-  // init lights
-  for (auto& lt : _lights) {
-    if (InitLight(*this, *lt)) {
-      println("Error initializing light list");
-      return -1;  // error
-    }
-  }
 
   // init shaders
   shader_count = 0;
