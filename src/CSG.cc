@@ -44,11 +44,6 @@ int CSG::init(Scene& s)
   return 0;
 }
 
-Vec3 CSG::normal(const Ray& r, const HitInfo& h) const
-{
-  return h.child->normal(r, h);
-}
-
 Flt CSG::hitCost() const
 {
   if (_cost >= 0.0) { return _cost; }
@@ -57,8 +52,30 @@ Flt CSG::hitCost() const
   return cost;
 }
 
+Vec3 CSG::normal(const Ray& r, const HitInfo& h) const
+{
+  return h.child->normal(r, h);
+}
+
 
 // **** Merge Class ****
+BBox Merge::bound() const
+{
+  BBox b;
+  for (auto& ob : _children) { b.fit(ob->bound()); }
+  return b;
+}
+
+BBox Merge::localBound() const
+{
+  BBox b;
+  for (auto& ob : _children) {
+    InitObjectOnlyTransforms(*ob);
+    b.fit(ob->bound());
+  }
+  return b;
+}
+
 int Merge::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache(), true);
@@ -70,15 +87,25 @@ int Merge::intersect(const Ray& r, HitList& hit_list) const
   return hits;
 }
 
-BBox Merge::bound() const
+
+// **** Union Class ****
+BBox Union::bound() const
 {
   BBox b;
   for (auto& ob : _children) { b.fit(ob->bound()); }
   return b;
 }
 
+BBox Union::localBound() const
+{
+  BBox b;
+  for (auto& ob : _children) {
+    InitObjectOnlyTransforms(*ob);
+    b.fit(ob->bound());
+  }
+  return b;
+}
 
-// **** Union Class ****
 int Union::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache(), true);
@@ -90,26 +117,8 @@ int Union::intersect(const Ray& r, HitList& hit_list) const
   return hits;
 }
 
-BBox Union::bound() const
-{
-  BBox b;
-  for (auto& ob : _children) { b.fit(ob->bound()); }
-  return b;
-}
-
 
 // **** Intersection Class ****
-int Intersection::intersect(const Ray& r, HitList& hit_list) const
-{
-  HitList hl(hit_list.freeCache(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl); }
-  hl.csgIntersection(this, int(_children.size()));
-
-  int hits = hl.count();
-  hit_list.mergeList(hl);
-  return hits;
-}
-
 BBox Intersection::bound() const
 {
   if (_children.empty()) { return {}; }
@@ -123,20 +132,54 @@ BBox Intersection::bound() const
   return b;
 }
 
+BBox Intersection::localBound() const
+{
+  if (_children.empty()) { return {}; }
 
-// **** Difference Class ****
-int Difference::intersect(const Ray& r, HitList& hit_list) const
+  InitObjectOnlyTransforms(*_children[0]);
+  BBox b = _children[0]->bound();
+  for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
+    Object& child = *_children[i];
+    InitObjectOnlyTransforms(child);
+    b.intersect(child.bound());
+  }
+  return b;
+}
+
+int Intersection::intersect(const Ray& r, HitList& hit_list) const
 {
   HitList hl(hit_list.freeCache(), true);
   for (auto& ob : _children) { ob->intersect(r, hl); }
-  hl.csgDifference(this, _children.front().get());
+  hl.csgIntersection(this, int(_children.size()));
 
   int hits = hl.count();
   hit_list.mergeList(hl);
   return hits;
 }
 
+
+// **** Difference Class ****
 BBox Difference::bound() const
 {
-  return _children.empty() ? BBox{} : _children.front()->bound();
+  return _children.empty() ? BBox{} : _children[0]->bound();
+}
+
+BBox Difference::localBound() const
+{
+  if (_children.empty()) { return {}; }
+
+  Object& ob = *_children[0];
+  InitObjectOnlyTransforms(ob);
+  return ob.bound();
+}
+
+int Difference::intersect(const Ray& r, HitList& hit_list) const
+{
+  HitList hl(hit_list.freeCache(), true);
+  for (auto& ob : _children) { ob->intersect(r, hl); }
+  hl.csgDifference(this, _children[0].get());
+
+  int hits = hl.count();
+  hit_list.mergeList(hl);
+  return hits;
 }

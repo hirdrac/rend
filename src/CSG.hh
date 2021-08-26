@@ -37,6 +37,7 @@ class Merge final : public CSG
 
   // Object Functions
   BBox bound() const override;
+  BBox localBound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
 };
 
@@ -48,6 +49,7 @@ class Union final : public CSG
 
   // Object Functions
   BBox bound() const override;
+  BBox localBound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
 };
 
@@ -59,6 +61,7 @@ class Intersection final : public CSG
 
   // Object Functions
   BBox bound() const override;
+  BBox localBound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
 };
 
@@ -70,5 +73,6 @@ class Difference final : public CSG
 
   // Object Functions
   BBox bound() const override;
+  BBox localBound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
 };

@@ -19,7 +19,6 @@ const std::vector<ObjectPtr> Object::_emptyList;
 
 
 // **** Primitive Class ****
-// SceneItem Functions
 int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);
@@ -29,13 +28,18 @@ int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   return 0;
 }
 
-// Object Functions
+static constexpr Vec3 unitCubePoints[8] = {
+  { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
+  {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
+
 BBox Primitive::bound() const
 {
-  static constexpr Vec3 pt[8] = {
-    { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
-    {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
-  return BBox(pt, std::size(pt), _trans);
+  return BBox(unitCubePoints, std::size(unitCubePoints), _trans);
+}
+
+BBox Primitive::localBound() const
+{
+  return BBox(unitCubePoints, std::size(unitCubePoints));
 }
 
 
@@ -53,6 +57,18 @@ int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
   if (error) {
     println("INIT ERROR: ", ob.desc());
     return error;
+  }
+
+  return 0;
+}
+
+int InitObjectOnlyTransforms(Object& ob, const Transform* t)
+{
+  Transform* trans = ob.trans();
+  if (trans) { trans->init(t); }
+
+  for (auto& child : ob.children()) {
+    InitObjectOnlyTransforms(*child, trans);
   }
 
   return 0;

@@ -19,6 +19,7 @@ class Disc final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   BBox bound() const override;
+  BBox localBound() const override;
   Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
@@ -120,6 +121,7 @@ class Plane final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   BBox bound() const override;
+  BBox localBound() const override;
   Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
@@ -149,6 +151,7 @@ class Torus final : public Primitive
 
   // Object Functions
   BBox bound() const override;
+  BBox localBound() const override;
   Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;

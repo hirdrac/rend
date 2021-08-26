@@ -14,6 +14,11 @@
 #include <cmath>
 
 
+// shared data
+static constexpr Vec3 planeBoundPoints[4] = {
+  { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
+
+
 // **** Disc Class ****
 int Disc::init(Scene& s)
 {
@@ -21,6 +26,21 @@ int Disc::init(Scene& s)
 
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
   return 0;
+}
+
+BBox Disc::bound() const
+{
+  return BBox(planeBoundPoints, std::size(planeBoundPoints), _trans);
+}
+
+BBox Disc::localBound() const
+{
+  return BBox(planeBoundPoints, std::size(planeBoundPoints));
+}
+
+Flt Disc::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.disc;
 }
 
 int Disc::intersect(const Ray& r, HitList& hit_list) const
@@ -51,18 +71,6 @@ int Disc::intersect(const Ray& r, HitList& hit_list) const
 Vec3 Disc::normal(const Ray& r, const HitInfo& h) const
 {
   return _normal;
-}
-
-BBox Disc::bound() const
-{
-  static constexpr Vec3 pt[4] = {
-    { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
-  return BBox(pt, std::size(pt), _trans);
-}
-
-Flt Disc::hitCost() const
-{
-  return (_cost >= 0.0) ? _cost : CostTable.disc;
 }
 
 
@@ -193,6 +201,11 @@ int Cube::init(Scene& s)
   return 0;
 }
 
+Flt Cube::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.cube;
+}
+
 int Cube::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->cube.tried;
@@ -259,11 +272,6 @@ Vec3 Cube::normal(const Ray& r, const HitInfo& h) const
   return _sideNormal[h.side];
 }
 
-Flt Cube::hitCost() const
-{
-  return (_cost >= 0.0) ? _cost : CostTable.cube;
-}
-
 
 // **** Cylinder Class ****
 int Cylinder::init(Scene& s)
@@ -273,6 +281,11 @@ int Cylinder::init(Scene& s)
   _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1}, 0);
   _endNormal[1] = _trans.normalLocalToGlobal({0, 0, -1}, 0);
   return 0;
+}
+
+Flt Cylinder::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.cylinder;
 }
 
 int Cylinder::intersect(const Ray& r, HitList& hit_list) const
@@ -349,11 +362,6 @@ Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
     case 2:  // end 2
       return _endNormal[1];
   }
-}
-
-Flt Cylinder::hitCost() const
-{
-  return (_cost >= 0.0) ? _cost : CostTable.cylinder;
 }
 
 
@@ -540,6 +548,21 @@ int Plane::init(Scene& s)
   return 0;
 }
 
+BBox Plane::bound() const
+{
+  return BBox(planeBoundPoints, std::size(planeBoundPoints), _trans);
+}
+
+BBox Plane::localBound() const
+{
+  return BBox(planeBoundPoints, std::size(planeBoundPoints));
+}
+
+Flt Plane::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.plane;
+}
+
 int Plane::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->plane.tried;
@@ -575,20 +598,13 @@ Vec3 Plane::normal(const Ray& r, const HitInfo& h) const
   return _normal;
 }
 
-BBox Plane::bound() const
-{
-  static constexpr Vec3 pt[4] = {
-    { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
-  return BBox(pt, std::size(pt), _trans);
-}
-
-Flt Plane::hitCost() const
-{
-  return (_cost >= 0.0) ? _cost : CostTable.plane;
-}
-
 
 // **** Sphere Class ****
+Flt Sphere::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.sphere;
+}
+
 int Sphere::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->sphere.tried;
@@ -630,13 +646,35 @@ Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
   return _trans.normalLocalToGlobal(h.local_pt, r.time);
 }
 
-Flt Sphere::hitCost() const
-{
-  return (_cost >= 0.0) ? _cost : CostTable.sphere;
-}
-
 
 // **** Torus Class ****
+BBox Torus::bound() const
+{
+  const Flt r1 = _radius + 1.0;
+  const Vec3 pt[8] = {
+    { r1,  _radius,  r1}, {-r1,  _radius,  r1},
+    { r1, -_radius,  r1}, { r1,  _radius, -r1},
+    {-r1, -_radius,  r1}, { r1, -_radius, -r1},
+    {-r1,  _radius, -r1}, {-r1, -_radius, -r1}};
+  return BBox(pt, std::size(pt), _trans);
+}
+
+BBox Torus::localBound() const
+{
+  const Flt r1 = _radius + 1.0;
+  const Vec3 pt[8] = {
+    { r1,  _radius,  r1}, {-r1,  _radius,  r1},
+    { r1, -_radius,  r1}, { r1,  _radius, -r1},
+    {-r1, -_radius,  r1}, { r1, -_radius, -r1},
+    {-r1,  _radius, -r1}, {-r1, -_radius, -r1}};
+  return BBox(pt, std::size(pt));
+}
+
+Flt Torus::hitCost() const
+{
+  return (_cost >= 0.0) ? _cost : CostTable.torus;
+}
+
 int Torus::intersect(const Ray& r, HitList& hit_list) const
 {
   ++r.stats->torus.tried;
@@ -706,23 +744,4 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
   //  4.0 * h.local_pt.z * a};
 
   return _trans.normalLocalToGlobal(n, r.time);
-}
-
-BBox Torus::bound() const
-{
-  const Vec3 pt[8] = {
-    { 1 + _radius,  _radius,  1 + _radius},
-    {-1 - _radius,  _radius,  1 + _radius},
-    { 1 + _radius, -_radius,  1 + _radius},
-    { 1 + _radius,  _radius, -1 - _radius},
-    {-1 - _radius, -_radius,  1 + _radius},
-    { 1 + _radius, -_radius, -1 - _radius},
-    {-1 - _radius,  _radius, -1 - _radius},
-    {-1 - _radius, -_radius, -1 - _radius}};
-  return BBox(pt, std::size(pt), _trans);
-}
-
-Flt Torus::hitCost() const
-{
-  return (_cost >= 0.0) ? _cost : CostTable.torus;
 }

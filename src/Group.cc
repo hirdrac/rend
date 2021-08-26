@@ -47,6 +47,16 @@ BBox Group::bound() const
   return b;
 }
 
+BBox Group::localBound() const
+{
+  BBox b;
+  for (auto& ob : _objects) {
+    InitObjectOnlyTransforms(*ob);
+    b.fit(ob->bound());
+  }
+  return b;
+}
+
 int Group::intersect(const Ray& r, HitList& hit_list) const
 {
   int hits = 0;
