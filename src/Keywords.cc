@@ -107,11 +107,83 @@ int ScaleFn(
   return 0;
 }
 
-int StretchFn(
+int StretchXFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  // TODO: rename to StretchZ, make StretchX,StretchY
+  // stretch object along its X axis between 2 points
+  Transform* t = findTrans(p);
+  Object* ob = dynamic_cast<Object*>(p);
+  if (!t || !ob) { return -1; }
 
+  Vec3 p1, p2;
+  if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
+
+  const Vec3 dir = p2 - p1;
+  const Flt len = dir.length();
+  if (IsZero(len)) {
+    println_err("Invalid stretch length");
+    return -1;
+  }
+
+  const Vec3 center = (p1+p2) * .5;
+  const Vec3 axisX = dir / len;
+  const Vec3 up = IsOne(Abs(axisX.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
+  const Vec3 axisZ = UnitVec(CrossProduct(up, axisX));
+  const Vec3 axisY = UnitVec(CrossProduct(axisX, axisZ));
+
+  // use bound of object without parent transform for stretch calc
+  const BBox b = ob->bound(&t->base);
+
+  t->base.translate(-b.center());
+  t->base.scaleX(len / b.lengthX());
+  t->base *= {
+    axisX.x,  axisX.y,  axisX.z,  0,
+    axisY.x,  axisY.y,  axisY.z,  0,
+    axisZ.x,  axisZ.y,  axisZ.z,  0,
+    center.x, center.y, center.z, 1};
+  return 0;
+}
+
+int StretchYFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  // stretch object along its Y axis between 2 points
+  Transform* t = findTrans(p);
+  Object* ob = dynamic_cast<Object*>(p);
+  if (!t || !ob) { return -1; }
+
+  Vec3 p1, p2;
+  if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
+
+  const Vec3 dir = p2 - p1;
+  const Flt len = dir.length();
+  if (IsZero(len)) {
+    println_err("Invalid stretch length");
+    return -1;
+  }
+
+  const Vec3 center = (p1+p2) * .5;
+  const Vec3 axisY = dir / len;
+  const Vec3 side = IsOne(Abs(axisY.x)) ? Vec3{0,-1,0} : Vec3{1,0,0};
+  const Vec3 axisZ = UnitVec(CrossProduct(side, axisY));
+  const Vec3 axisX = UnitVec(CrossProduct(axisY, axisZ));
+
+  // use bound of object without parent transform for stretch calc
+  const BBox b = ob->bound(&t->base);
+
+  t->base.translate(-b.center());
+  t->base.scaleY(len / b.lengthY());
+  t->base *= {
+    axisX.x,  axisX.y,  axisX.z,  0,
+    axisY.x,  axisY.y,  axisY.z,  0,
+    axisZ.x,  axisZ.y,  axisZ.z,  0,
+    center.x, center.y, center.z, 1};
+  return 0;
+}
+
+int StretchZFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
   // stretch object along its Z axis between 2 points
   Transform* t = findTrans(p);
   Object* ob = dynamic_cast<Object*>(p);
@@ -350,9 +422,9 @@ static void initKeywords()
     {"radius",      RadiusFn},
     {"region",      RegionFn},
     {"rgb",         RgbFn},
-    {"rotatex",     RotateXFn},
-    {"rotatey",     RotateYFn},
-    {"rotatez",     RotateZFn},
+    {"rotate_x",    RotateXFn},
+    {"rotate_y",    RotateYFn},
+    {"rotate_z",    RotateZFn},
     {"rotx",        RotateXFn},
     {"roty",        RotateYFn},
     {"rotz",        RotateZFn},
@@ -361,7 +433,9 @@ static void initKeywords()
     {"shadow",      ShadowBoolFn},
     {"supersample", SuperSampleFn},
     {"size",        SizeFn},
-    {"stretch",     StretchFn},
+    {"stretch_x",   StretchXFn},
+    {"stretch_y",   StretchYFn},
+    {"stretch_z",   StretchZFn},
     {"vup",         VupFn}
   };
 }
