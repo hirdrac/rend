@@ -53,12 +53,11 @@ Vec3 Disc::normal(const Ray& r, const HitInfo& h) const
   return _normal;
 }
 
-int Disc::bound(BBox& b) const
+BBox Disc::bound() const
 {
   static constexpr Vec3 pt[4] = {
     { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
-  b.fit(_trans, pt, 4);
-  return 0;
+  return BBox(pt, std::size(pt), _trans);
 }
 
 Flt Disc::hitCost() const
@@ -576,12 +575,11 @@ Vec3 Plane::normal(const Ray& r, const HitInfo& h) const
   return _normal;
 }
 
-int Plane::bound(BBox& b) const
+BBox Plane::bound() const
 {
   static constexpr Vec3 pt[4] = {
     { 1, 1, 0}, {-1, 1, 0}, { 1,-1, 0}, {-1,-1, 0}};
-  b.fit(_trans, pt, 4);
-  return 0;
+  return BBox(pt, std::size(pt), _trans);
 }
 
 Flt Plane::hitCost() const
@@ -710,7 +708,7 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
   return _trans.normalLocalToGlobal(n, r.time);
 }
 
-int Torus::bound(BBox& b) const
+BBox Torus::bound() const
 {
   const Vec3 pt[8] = {
     { 1 + _radius,  _radius,  1 + _radius},
@@ -721,8 +719,7 @@ int Torus::bound(BBox& b) const
     { 1 + _radius, -_radius, -1 - _radius},
     {-1 - _radius,  _radius, -1 - _radius},
     {-1 - _radius, -_radius, -1 - _radius}};
-  b.fit(_trans, pt, 8);
-  return 0;
+  return BBox(pt, std::size(pt), _trans);
 }
 
 Flt Torus::hitCost() const

@@ -24,6 +24,7 @@ class Bound final : public Object
 
   // Object Functions
   int init(Scene& s) override { return 0; }
+  BBox bound() const override { return box; }
   int intersect(const Ray& r, HitList& hit_list) const override;
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };

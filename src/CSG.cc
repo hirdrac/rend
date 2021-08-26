@@ -34,8 +34,7 @@ int CSG::init(Scene& s)
     if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
   }
 
-  BBox b;
-  bound(b);
+  BBox b = bound();
   if (b.empty()) {
     LOG_WARN("Empty bound for ", desc());
     return -1;
@@ -71,10 +70,11 @@ int Merge::intersect(const Ray& r, HitList& hit_list) const
   return hits;
 }
 
-int Merge::bound(BBox& b) const
+BBox Merge::bound() const
 {
-  for (auto& ob : _children) { ob->bound(b); }
-  return 0;
+  BBox b;
+  for (auto& ob : _children) { b.fit(ob->bound()); }
+  return b;
 }
 
 
@@ -90,10 +90,11 @@ int Union::intersect(const Ray& r, HitList& hit_list) const
   return hits;
 }
 
-int Union::bound(BBox& b) const
+BBox Union::bound() const
 {
-  for (auto& ob : _children) { ob->bound(b); }
-  return 0;
+  BBox b;
+  for (auto& ob : _children) { b.fit(ob->bound()); }
+  return b;
 }
 
 
@@ -109,18 +110,17 @@ int Intersection::intersect(const Ray& r, HitList& hit_list) const
   return hits;
 }
 
-int Intersection::bound(BBox& b) const
+BBox Intersection::bound() const
 {
-  if (_children.empty()) { return -1; }
+  if (_children.empty()) { return {}; }
 
-  _children[0]->bound(b);
+  BBox b = _children[0]->bound();
   for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
-    BBox b2;
-    _children[i]->bound(b2);
+    BBox b2 = _children[i]->bound();
     b.intersect(b2);
   }
 
-  return 0;
+  return b;
 }
 
 
@@ -136,7 +136,7 @@ int Difference::intersect(const Ray& r, HitList& hit_list) const
   return hits;
 }
 
-int Difference::bound(BBox& b) const
+BBox Difference::bound() const
 {
-  return _children.empty() ? -1 : _children.front()->bound(b);
+  return _children.empty() ? BBox{} : _children.front()->bound();
 }

@@ -30,13 +30,12 @@ int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 }
 
 // Object Functions
-int Primitive::bound(BBox& b) const
+BBox Primitive::bound() const
 {
   static constexpr Vec3 pt[8] = {
     { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
     {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
-  b.fit(_trans, pt, 8);
-  return 0;
+  return BBox(pt, std::size(pt), _trans);
 }
 
 

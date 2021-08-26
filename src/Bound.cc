@@ -82,10 +82,8 @@ struct OptNode
   Flt currentCost;  // cache OptNode::cost()
 
   OptNode() = default;
-  OptNode(const ObjectPtr& ob) : object(ob) {
-    ob->bound(box);
-    objHitCost = ob->hitCost();
-  }
+  OptNode(const ObjectPtr& ob)
+    : object{ob}, box{ob->bound()}, objHitCost{ob->hitCost()} { }
 
   // Member Functions
   Flt cost(Flt weight) const

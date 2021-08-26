@@ -20,10 +20,18 @@ BBox::BBox(const BBox& b1, const BBox& b2)
   pmax.z = std::max(b1.pmax.z, b2.pmax.z);
 }
 
-void BBox::reset()
+BBox::BBox(const Vec3* pt_list, int pt_count)
 {
-  pmin = { VERY_LARGE,  VERY_LARGE,  VERY_LARGE};
-  pmax = {-VERY_LARGE, -VERY_LARGE, -VERY_LARGE};
+  reset();
+  for (int i = 0; i < pt_count; ++i) { fit(pt_list[i]); }
+}
+
+BBox::BBox(const Vec3* pt_list, int pt_count, const Transform& t)
+{
+  reset();
+  for (int i = 0; i < pt_count; ++i) {
+    fit(t.pointLocalToGlobal(pt_list[i], 0));
+  }
 }
 
 Flt BBox::weight() const
@@ -56,13 +64,6 @@ void BBox::fit(const BBox& box)
   pmax.x = std::max(pmax.x, box.pmax.x);
   pmax.y = std::max(pmax.y, box.pmax.y);
   pmax.z = std::max(pmax.z, box.pmax.z);
-}
-
-void BBox::fit(const Transform& t, const Vec3* pt_list, int pt_count)
-{
-  for (int i = 0; i < pt_count; ++i) {
-    fit(t.pointLocalToGlobal(pt_list[i], 0));
-  }
 }
 
 void BBox::intersect(const BBox& box)

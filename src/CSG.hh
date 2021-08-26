@@ -19,8 +19,8 @@ class CSG : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  Vec3 normal(const Ray& r, const HitInfo& h) const override;
   Flt hitCost() const override;
+  Vec3 normal(const Ray& r, const HitInfo& h) const override;
   const std::vector<ObjectPtr>& children() const override { return _children; }
 
  protected:
@@ -36,8 +36,8 @@ class Merge final : public CSG
   std::string desc() const override { return "<Merge>"; }
 
   // Object Functions
+  BBox bound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
-  int bound(BBox& b) const override;
 };
 
 class Union final : public CSG
@@ -47,8 +47,8 @@ class Union final : public CSG
   std::string desc() const override { return "<Union>"; }
 
   // Object Functions
+  BBox bound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
-  int bound(BBox& b) const override;
 };
 
 class Intersection final : public CSG
@@ -58,8 +58,8 @@ class Intersection final : public CSG
   std::string desc() const override { return "<Intersection>"; }
 
   // Object Functions
+  BBox bound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
-  int bound(BBox& b) const override;
 };
 
 class Difference final : public CSG
@@ -69,6 +69,6 @@ class Difference final : public CSG
   std::string desc() const override { return "<Difference>"; }
 
   // Object Functions
+  BBox bound() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
-  int bound(BBox& b) const override;
 };

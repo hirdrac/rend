@@ -18,10 +18,10 @@ class Disc final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
+  BBox bound() const override;
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  int bound(BBox& b) const override;
-  Flt hitCost() const override;
 
  private:
   Vec3 _normal;
@@ -35,9 +35,9 @@ class Cone final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 
  private:
   Vec3 _baseNormal;
@@ -51,9 +51,9 @@ class Cube final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 
  private:
   Vec3 _sideNormal[6];
@@ -67,9 +67,9 @@ class Cylinder final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 
  private:
   Vec3 _endNormal[2];
@@ -82,9 +82,9 @@ class OpenCone final : public Primitive
   std::string desc() const override { return "<OpenCone>"; }
 
   // Object Functions
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 };
 
 class OpenCylinder final : public Primitive
@@ -94,9 +94,9 @@ class OpenCylinder final : public Primitive
   std::string desc() const override { return "<OpenCylinder>"; }
 
   // Object Functions
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 };
 
 class Paraboloid final : public Primitive
@@ -106,9 +106,9 @@ class Paraboloid final : public Primitive
   std::string desc() const override { return "<Paraboloid>"; }
 
   // Object Functions
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 };
 
 class Plane final : public Primitive
@@ -119,10 +119,10 @@ class Plane final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
+  BBox bound() const override;
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  int bound(BBox& b) const override;
-  Flt hitCost() const override;
 
  private:
   Vec3 _normal;
@@ -135,9 +135,9 @@ class Sphere final : public Primitive
   std::string desc() const override { return "<Sphere>"; }
 
   // Object Functions
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 };
 
 class Torus final : public Primitive
@@ -148,10 +148,10 @@ class Torus final : public Primitive
   int setRadius(Flt r) override { _radius = r; return 0; }
 
   // Object Functions
-  int bound(BBox& b) const override;
+  BBox bound() const override;
+  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
-  Flt hitCost() const override;
 
  private:
   Flt _radius = .5;

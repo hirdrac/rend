@@ -5,6 +5,7 @@
 
 #include "Group.hh"
 #include "Scene.hh"
+#include "BBox.hh"
 #include <cassert>
 
 
@@ -37,6 +38,13 @@ int Group::init(Scene& s)
 
   ++s.group_count;
   return 0;
+}
+
+BBox Group::bound() const
+{
+  BBox b;
+  for (auto& ob : _objects) { b.fit(ob->bound()); }
+  return b;
 }
 
 int Group::intersect(const Ray& r, HitList& hit_list) const
