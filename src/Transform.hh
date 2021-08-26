@@ -22,6 +22,8 @@ class Transform
   int init(const Transform* parent = nullptr);
   void clear();
 
+  [[nodiscard]] const Matrix& final() const { return _final; }
+
   [[nodiscard]] inline Vec3 normalLocalToGlobal(const Vec3& n, Flt time) const;
   [[nodiscard]] inline Vec3 pointLocalToGlobal(const Vec3& pos, Flt time) const;
   [[nodiscard]] inline Vec3 vectorLocalToGlobal(const Vec3& dir, Flt time) const;

@@ -28,14 +28,10 @@ int Disc::init(Scene& s)
   return 0;
 }
 
-BBox Disc::bound() const
+BBox Disc::bound(const Matrix* t) const
 {
-  return BBox(planeBoundPoints, std::size(planeBoundPoints), _trans);
-}
-
-BBox Disc::localBound() const
-{
-  return BBox(planeBoundPoints, std::size(planeBoundPoints));
+  return BBox(planeBoundPoints, std::size(planeBoundPoints),
+              t ? *t : _trans.final());
 }
 
 Flt Disc::hitCost() const
@@ -548,14 +544,10 @@ int Plane::init(Scene& s)
   return 0;
 }
 
-BBox Plane::bound() const
+BBox Plane::bound(const Matrix* t) const
 {
-  return BBox(planeBoundPoints, std::size(planeBoundPoints), _trans);
-}
-
-BBox Plane::localBound() const
-{
-  return BBox(planeBoundPoints, std::size(planeBoundPoints));
+  return BBox(planeBoundPoints, std::size(planeBoundPoints),
+              t ? *t : _trans.final());
 }
 
 Flt Plane::hitCost() const
@@ -648,7 +640,7 @@ Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Torus Class ****
-BBox Torus::bound() const
+BBox Torus::bound(const Matrix* t) const
 {
   const Flt r1 = _radius + 1.0;
   const Vec3 pt[8] = {
@@ -656,18 +648,7 @@ BBox Torus::bound() const
     { r1, -_radius,  r1}, { r1,  _radius, -r1},
     {-r1, -_radius,  r1}, { r1, -_radius, -r1},
     {-r1,  _radius, -r1}, {-r1, -_radius, -r1}};
-  return BBox(pt, std::size(pt), _trans);
-}
-
-BBox Torus::localBound() const
-{
-  const Flt r1 = _radius + 1.0;
-  const Vec3 pt[8] = {
-    { r1,  _radius,  r1}, {-r1,  _radius,  r1},
-    { r1, -_radius,  r1}, { r1,  _radius, -r1},
-    {-r1, -_radius,  r1}, { r1, -_radius, -r1},
-    {-r1,  _radius, -r1}, {-r1, -_radius, -r1}};
-  return BBox(pt, std::size(pt));
+  return BBox(pt, std::size(pt), t ? *t : _trans.final());
 }
 
 Flt Torus::hitCost() const

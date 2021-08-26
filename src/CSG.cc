@@ -34,7 +34,7 @@ int CSG::init(Scene& s)
     if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
   }
 
-  BBox b = bound();
+  BBox b = bound(nullptr);
   if (b.empty()) {
     LOG_WARN("Empty bound for ", desc());
     return -1;
@@ -59,19 +59,17 @@ Vec3 CSG::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Merge Class ****
-BBox Merge::bound() const
-{
-  BBox b;
-  for (auto& ob : _children) { b.fit(ob->bound()); }
-  return b;
-}
-
-BBox Merge::localBound() const
+BBox Merge::bound(const Matrix* t) const
 {
   BBox b;
   for (auto& ob : _children) {
-    InitObjectOnlyTransforms(*ob);
-    b.fit(ob->bound());
+    if (t == nullptr) {
+      b.fit(ob->bound(nullptr));
+    } else {
+      assert(ob->trans());
+      Matrix t2 = ob->trans()->base * (*t);
+      b.fit(ob->bound(&t2));
+    }
   }
   return b;
 }
@@ -89,19 +87,17 @@ int Merge::intersect(const Ray& r, HitList& hit_list) const
 
 
 // **** Union Class ****
-BBox Union::bound() const
-{
-  BBox b;
-  for (auto& ob : _children) { b.fit(ob->bound()); }
-  return b;
-}
-
-BBox Union::localBound() const
+BBox Union::bound(const Matrix* t) const
 {
   BBox b;
   for (auto& ob : _children) {
-    InitObjectOnlyTransforms(*ob);
-    b.fit(ob->bound());
+    if (t == nullptr) {
+      b.fit(ob->bound(nullptr));
+    } else {
+      assert(ob->trans());
+      Matrix t2 = ob->trans()->base * (*t);
+      b.fit(ob->bound(&t2));
+    }
   }
   return b;
 }
@@ -119,30 +115,32 @@ int Union::intersect(const Ray& r, HitList& hit_list) const
 
 
 // **** Intersection Class ****
-BBox Intersection::bound() const
+BBox Intersection::bound(const Matrix* t) const
 {
-  if (_children.empty()) { return {}; }
+  assert(!_children.empty());
 
-  BBox b = _children[0]->bound();
+  BBox b;
+  if (t == nullptr) {
+    b = _children[0]->bound(nullptr);
+  } else {
+    assert(_children[0]->trans());
+    Matrix t2 = _children[0]->trans()->final() * (*t);
+    b = _children[0]->bound(&t2);
+  }
+
   for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
-    BBox b2 = _children[i]->bound();
+    Object& ob = *_children[i];
+    BBox b2;
+    if (t == nullptr) {
+      b2 = ob.bound(nullptr);
+    } else {
+      assert(ob.trans());
+      Matrix t2 = ob.trans()->final() * (*t);
+      b2 = ob.bound(&t2);
+    }
     b.intersect(b2);
   }
 
-  return b;
-}
-
-BBox Intersection::localBound() const
-{
-  if (_children.empty()) { return {}; }
-
-  InitObjectOnlyTransforms(*_children[0]);
-  BBox b = _children[0]->bound();
-  for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
-    Object& child = *_children[i];
-    InitObjectOnlyTransforms(child);
-    b.intersect(child.bound());
-  }
   return b;
 }
 
@@ -159,18 +157,17 @@ int Intersection::intersect(const Ray& r, HitList& hit_list) const
 
 
 // **** Difference Class ****
-BBox Difference::bound() const
+BBox Difference::bound(const Matrix* t) const
 {
-  return _children.empty() ? BBox{} : _children[0]->bound();
-}
-
-BBox Difference::localBound() const
-{
-  if (_children.empty()) { return {}; }
-
+  assert(!_children.empty());
   Object& ob = *_children[0];
-  InitObjectOnlyTransforms(ob);
-  return ob.bound();
+  if (t == nullptr) {
+    return ob.bound(nullptr);
+  } else {
+    assert(ob.trans());
+    Matrix t2 = ob.trans()->final() * (*t);
+    return ob.bound(&t2);
+  }
 }
 
 int Difference::intersect(const Ray& r, HitList& hit_list) const

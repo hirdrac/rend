@@ -114,12 +114,12 @@ int StretchFn(
 
   // stretch object along its Z axis between 2 points
   Transform* t = findTrans(p);
-  if (!t) { return -1; }
+  Object* ob = dynamic_cast<Object*>(p);
+  if (!t || !ob) { return -1; }
 
   Vec3 p1, p2;
   if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
 
-  const Vec3 center = (p1+p2) * .5;
   const Vec3 dir = p2 - p1;
   const Flt len = dir.length();
   if (IsZero(len)) {
@@ -127,15 +127,7 @@ int StretchFn(
     return -1;
   }
 
-  Flt ob_len = 2.0; // default unit object length
-  Object* ob = dynamic_cast<Object*>(p);
-  if (ob) {
-    // base stretch on bound of object
-    BBox b = ob->localBound();
-    ob_len = b.lengthZ();
-    t->base.translate(-b.center());
-  }
-
+  const Vec3 center = (p1+p2) * .5;
   const Vec3 axisZ = dir / len;
   const Vec3 up = IsOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
     // FIXME - may need to make 'up' configurable or come up with a better
@@ -143,7 +135,11 @@ int StretchFn(
   const Vec3 axisX = UnitVec(CrossProduct(up, axisZ));
   const Vec3 axisY = UnitVec(CrossProduct(axisZ, axisX));
 
-  t->base.scaleZ(len / ob_len);
+  // use bound of object without parent transform for stretch calc
+  const BBox b = ob->bound(&t->base);
+
+  t->base.translate(-b.center());
+  t->base.scaleZ(len / b.lengthZ());
   t->base *= {
     axisX.x,  axisX.y,  axisX.z,  0,
     axisY.x,  axisY.y,  axisY.z,  0,

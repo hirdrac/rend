@@ -27,8 +27,7 @@ class Object : public SceneItem
  public:
   // Member Functions
   virtual int init(Scene& s) { return 0; }
-  virtual BBox bound() const = 0;
-  virtual BBox localBound() const = 0;
+  virtual BBox bound(const Matrix* t = nullptr) const = 0;
   virtual Flt hitCost() const { return 0.0; }
   virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
   virtual Vec3 normal(const Ray& r, const HitInfo& h) const { return {}; }
@@ -55,8 +54,7 @@ class Primitive : public Object
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Object Functions
-  BBox bound() const override;
-  BBox localBound() const override;
+  BBox bound(const Matrix* t) const override;
 
  protected:
   Transform _trans;
@@ -67,4 +65,3 @@ class Primitive : public Object
 // **** Functions ****
 int InitObject(Scene& s, Object& ob, const ShaderPtr& sh,
                const Transform* t = nullptr);
-int InitObjectOnlyTransforms(Object& ob, const Transform* t = nullptr);

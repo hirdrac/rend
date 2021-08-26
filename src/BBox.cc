@@ -4,7 +4,6 @@
 //
 
 #include "BBox.hh"
-#include "Transform.hh"
 #include <algorithm>
 
 
@@ -26,11 +25,11 @@ BBox::BBox(const Vec3* pt_list, int pt_count)
   for (int i = 0; i < pt_count; ++i) { fit(pt_list[i]); }
 }
 
-BBox::BBox(const Vec3* pt_list, int pt_count, const Transform& t)
+BBox::BBox(const Vec3* pt_list, int pt_count, const Matrix& t)
 {
   reset();
   for (int i = 0; i < pt_count; ++i) {
-    fit(t.pointLocalToGlobal(pt_list[i], 0));
+    fit(MultPoint(pt_list[i], t));
   }
 }
 

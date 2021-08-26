@@ -28,18 +28,12 @@ int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   return 0;
 }
 
-static constexpr Vec3 unitCubePoints[8] = {
-  { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
-  {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
-
-BBox Primitive::bound() const
+BBox Primitive::bound(const Matrix* t) const
 {
-  return BBox(unitCubePoints, std::size(unitCubePoints), _trans);
-}
-
-BBox Primitive::localBound() const
-{
-  return BBox(unitCubePoints, std::size(unitCubePoints));
+  static constexpr Vec3 pt[8] = {
+    { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
+    {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
+  return BBox(pt, std::size(pt), t ? *t : _trans.final());
 }
 
 
@@ -57,18 +51,6 @@ int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
   if (error) {
     println("INIT ERROR: ", ob.desc());
     return error;
-  }
-
-  return 0;
-}
-
-int InitObjectOnlyTransforms(Object& ob, const Transform* t)
-{
-  Transform* trans = ob.trans();
-  if (trans) { trans->init(t); }
-
-  for (auto& child : ob.children()) {
-    InitObjectOnlyTransforms(*child, trans);
   }
 
   return 0;

@@ -20,7 +20,7 @@ class BBox
   BBox(const Vec3& pt) : pmin(pt), pmax(pt) { }
   BBox(const BBox& b1, const BBox& b2);
   BBox(const Vec3* pt_list, int pt_count);
-  BBox(const Vec3* pt_list, int pt_count, const Transform& t);
+  BBox(const Vec3* pt_list, int pt_count, const Matrix& t);
 
   // Member Functions
   inline void reset();

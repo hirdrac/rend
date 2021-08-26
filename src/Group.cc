@@ -40,19 +40,17 @@ int Group::init(Scene& s)
   return 0;
 }
 
-BBox Group::bound() const
-{
-  BBox b;
-  for (auto& ob : _objects) { b.fit(ob->bound()); }
-  return b;
-}
-
-BBox Group::localBound() const
+BBox Group::bound(const Matrix* t) const
 {
   BBox b;
   for (auto& ob : _objects) {
-    InitObjectOnlyTransforms(*ob);
-    b.fit(ob->bound());
+    if (t == nullptr) {
+      b.fit(ob->bound(nullptr));
+    } else {
+      assert(ob->trans());
+      Matrix t2 = ob->trans()->final() * (*t);
+      b.fit(ob->bound(&t2));
+    }
   }
   return b;
 }
