@@ -124,7 +124,7 @@ BBox Intersection::bound(const Matrix* t) const
     b = _children[0]->bound(nullptr);
   } else {
     assert(_children[0]->trans());
-    Matrix t2 = _children[0]->trans()->final() * (*t);
+    Matrix t2 = _children[0]->trans()->base * (*t);
     b = _children[0]->bound(&t2);
   }
 
@@ -135,7 +135,7 @@ BBox Intersection::bound(const Matrix* t) const
       b2 = ob.bound(nullptr);
     } else {
       assert(ob.trans());
-      Matrix t2 = ob.trans()->final() * (*t);
+      Matrix t2 = ob.trans()->base * (*t);
       b2 = ob.bound(&t2);
     }
     b.intersect(b2);
@@ -165,7 +165,7 @@ BBox Difference::bound(const Matrix* t) const
     return ob.bound(nullptr);
   } else {
     assert(ob.trans());
-    Matrix t2 = ob.trans()->final() * (*t);
+    Matrix t2 = ob.trans()->base * (*t);
     return ob.bound(&t2);
   }
 }

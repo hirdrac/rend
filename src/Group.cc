@@ -48,7 +48,7 @@ BBox Group::bound(const Matrix* t) const
       b.fit(ob->bound(nullptr));
     } else {
       assert(ob->trans());
-      Matrix t2 = ob->trans()->final() * (*t);
+      Matrix t2 = ob->trans()->base * (*t);
       b.fit(ob->bound(&t2));
     }
   }
