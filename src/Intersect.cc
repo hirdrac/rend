@@ -8,27 +8,6 @@
 
 
 // **** HitList Class ****
-void HitList::addHit(const Object* ob, Flt t, const Vec3& pt, int s,
-                     HitType type)
-{
-  HitInfo* ht = _freeCache ? _freeCache->fetch() : nullptr;
-  if (!ht) { ht = new HitInfo; }
-
-  ht->object    = ob;
-  ht->child     = nullptr;
-  ht->distance  = t;
-  ht->local_pt  = pt;
-  ht->side      = s;
-  ht->type      = type;
-
-  // sort hit into current hit list
-  // (keep hit list sorted at all times)
-  HitInfo* prev = nullptr;
-  HitInfo* h = _hitList.head();
-  while (h && h->distance < t) { prev = h; h = h->next; }
-  _hitList.addAfterNode(prev, ht);
-}
-
 void HitList::mergeList(HitList& list)
 {
   HitInfo* prev = nullptr;
@@ -162,6 +141,24 @@ void HitList::csgDifference(const Object* csg, const Object* primary)
       h = h->next;
     }
   }
+}
+
+HitInfo* HitList::newHit(Flt t)
+{
+  //HitInfo* ht = _freeCache ? _freeCache->fetch() : nullptr;
+  HitInfo* ht = _freeCache->fetch();
+  if (!ht) { ht = new HitInfo; }
+
+  ht->distance = t;
+  ht->child = nullptr;
+
+  // sort hit into current hit list
+  // (keep hit list sorted at all times)
+  HitInfo* prev = nullptr;
+  HitInfo* h = _hitList.head();
+  while (h && h->distance < t) { prev = h; h = h->next; }
+  _hitList.addAfterNode(prev, ht);
+  return ht;
 }
 
 void HitList::killNext(HitInfo* prev)

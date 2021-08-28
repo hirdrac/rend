@@ -63,7 +63,14 @@ class HitList
 
   // Member Functions
   void addHit(const Object* ob, Flt t, const Vec3& local_pt, int side,
-              HitType type);
+              HitType type) {
+    HitInfo* h = newHit(t);
+    h->object   = ob;
+    h->local_pt = local_pt;
+    h->side     = side;
+    h->type     = type;
+  }
+
   void mergeList(HitList& list);
   void clear();
 
@@ -85,5 +92,6 @@ class HitList
   HitCache* _freeCache;
   bool _csg;
 
+  HitInfo* newHit(Flt t);
   void killNext(HitInfo* ht);
 };
