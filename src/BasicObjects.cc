@@ -102,8 +102,8 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
 
   const Flt sqrt_x = std::sqrt(x);
 
-  Flt h[3];
-  int side[3];
+  Flt h[2];
+  int side[2];
   int hits = 0;
 
   const Flt h1 = (-b - sqrt_x) / a;
@@ -122,7 +122,7 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
     ++hits;
   }
 
-  if (LIKELY(dir.z != 0.0)) {
+  if (hits == 1 && LIKELY(dir.z != 0.0)) {
     const Flt h0 = -(base.z + 1.0) / dir.z;
     const Flt h0x = base.x + (dir.x * h0);
     const Flt h0y = base.y + (dir.y * h0);
