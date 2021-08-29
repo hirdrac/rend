@@ -40,6 +40,6 @@ constexpr Flt PI = math::PI<Flt>;
 //#define LIKELY(x) (x)
 //#define UNLIKELY(x) (x)
 
-#define ALWAYS_INLINE __attribute__((always_inline))
-#define NOINLINE __attribute__((noinline))
-#define PURE __attribute__((pure))
+//#define ALWAYS_INLINE __attribute__((always_inline))
+//#define NOINLINE __attribute__((noinline))
+//#define PURE __attribute__((pure))

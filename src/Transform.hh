@@ -6,8 +6,8 @@
 //
 
 #pragma once
-#include "Types.hh"
 #include "Ray.hh"
+#include "Types.hh"
 
 
 // **** Types ****
