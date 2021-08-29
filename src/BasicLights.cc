@@ -34,14 +34,10 @@ int PointLight::init(Scene& s)
 int PointLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
                          LightResult& result) const
 {
-  // TODO: optimized version to test
-  //Vec3 dir = _finalPos - eh.global_pt;
-  //Flt len = dir.length();
-  //result.dir = dir * (1.0 / len);
-  //result.distance = len;
-
-  result.dir = UnitVec(_finalPos - eh.global_pt);
-  result.distance = PointDistance(_finalPos, eh.global_pt);
+  const Vec3 dir = _finalPos - eh.global_pt;
+  const Flt len = dir.length();
+  result.dir = dir * (1.0 / len);
+  result.distance = len;
   result.energy = _energy->evaluate(s, r, eh);
   return 0;
 }
