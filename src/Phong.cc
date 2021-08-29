@@ -6,7 +6,6 @@
 #include "Phong.hh"
 #include "Scene.hh"
 #include "Light.hh"
-#include "Intersect.hh"
 #include "Ray.hh"
 #include <cassert>
 
@@ -55,19 +54,19 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 // Shader Functions
 Color Phong::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
+  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const auto black_val = static_cast<Color::value_type>(s.min_ray_value);
 
   // Evaluate Shaders
-  const Color color_d = _diffuse->evaluate(s, r, h, eh);
+  const Color color_d = _diffuse->evaluate(s, r, eh);
   const bool is_d = !color_d.isBlack(black_val);
 
-  const Color color_s = _specular->evaluate(s, r, h, eh);
+  const Color color_s = _specular->evaluate(s, r, eh);
   const bool is_s = !color_s.isBlack(black_val);
 
 #if 0
-  const Color color_t = _transmit->evaluate(s, r, h, eh);
+  const Color color_t = _transmit->evaluate(s, r, eh);
   const bool is_t = !color_t.isBlack(black_val);
 #endif
 
@@ -92,11 +91,11 @@ Color Phong::evaluate(
   ray.stats      = r.stats;
 
   // ambient calculation
-  Color result = s.ambient->evaluate(s, r, h, eh) * color_d;
+  Color result = s.ambient->evaluate(s, r, eh) * color_d;
 
   for (auto& lt : s.lights()) {
     LightResult lresult;
-    lt->luminate(s, r, h, eh, lresult);
+    lt->luminate(s, r, eh, lresult);
     Flt angle = DotProduct(eh.normal, lresult.dir);
     if (!IsPositive(angle)) { continue; }
 

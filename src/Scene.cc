@@ -172,10 +172,9 @@ Color Scene::traceRay(const Ray& r) const
   HitInfo* hit = hit_list.findFirstHit(r);
   if (!hit) {
     // hit background
-    const HitInfo h{nullptr, VERY_LARGE, {}};
     const EvaluatedHit eh{
-      {}, {0,0,1}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}};
-    return background->evaluate(*this, r, h, eh);
+      {}, {}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}, 0};
+    return background->evaluate(*this, r, eh);
   }
 
   ++r.stats->rays.hit;
@@ -195,11 +194,12 @@ Color Scene::traceRay(const Ray& r) const
   EvaluatedHit eh{
     CalcHitPoint(r.base, r.dir, hit->distance),
     obj->normal(r, *hit),
-    hit->local_pt
+    hit->local_pt,
+    hit->side
   };
   if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
-  return sh->evaluate(*this, r, *hit, eh);
+  return sh->evaluate(*this, r, eh);
 }
 
 Color Scene::traceShadowRay(const Ray& r) const

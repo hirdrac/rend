@@ -40,8 +40,8 @@ class MapGlobalShader final : public MapShader
   std::string desc() const override { return "<MapGlobal>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -53,8 +53,8 @@ class MapConeShader final : public MapShader
   std::string desc() const override { return "<MapCone>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -65,8 +65,8 @@ class MapCubeShader final : public MapShader
   std::string desc() const override { return "<MapCube>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -77,8 +77,8 @@ class MapCylinderShader final : public MapShader
   std::string desc() const override { return "<MapCylinder>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -89,8 +89,8 @@ class MapParaboloidShader final : public MapShader
   std::string desc() const override { return "<MapParaboloid>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -101,8 +101,8 @@ class MapSphereShader final : public MapShader
   std::string desc() const override { return "<MapSphere>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -113,6 +113,6 @@ class MapTorusShader final : public MapShader
   std::string desc() const override { return "<MapTorus>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };

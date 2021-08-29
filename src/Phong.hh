@@ -21,8 +21,8 @@ class Phong final : public Shader
 
   // Shader Functions
   int init(Scene& s) override;
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 
  private:
   ShaderPtr _diffuse, _specular, _transmit;

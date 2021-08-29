@@ -15,7 +15,6 @@
 // **** Types ****
 class Scene;
 class Shader;
-class HitInfo;
 class Ray;
 struct EvaluatedHit;
 
@@ -37,9 +36,8 @@ class Light : public SceneItem
 
   // Member Functions
   virtual int init(Scene& s);
-  virtual int luminate(
-    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-    LightResult& result) const = 0;
+  virtual int luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+                       LightResult& result) const = 0;
 
  protected:
   ShaderPtr _energy;

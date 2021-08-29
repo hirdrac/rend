@@ -18,9 +18,8 @@ class Sun final : public Light
 
   // Light Functions
   int init(Scene& s) override;
-  int luminate(
-    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-    LightResult& result) const override;
+  int luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+               LightResult& result) const override;
 
  private:
   Vec3 _finalDir;
@@ -34,9 +33,8 @@ class PointLight final : public Light
 
   // Light Functions
   int init(Scene& s) override;
-  int luminate(
-    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-    LightResult& result) const override;
+  int luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+               LightResult& result) const override;
 
  private:
   Vec3 _finalPos;
@@ -50,9 +48,8 @@ class SpotLight final : public Light
 
   // Light Functions
   int init(Scene& s) override;
-  int luminate(
-    const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-    LightResult& result) const override;
+  int luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+               LightResult& result) const override;
 
  private:
   Vec3 _finalPos, _finalDir;

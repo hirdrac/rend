@@ -13,19 +13,24 @@
 
 
 // **** Types ****
-class HitInfo;
-struct EvaluatedHit;
 class Color;
 class Ray;
 class Transform;
+
+struct EvaluatedHit {
+  Vec3 global_pt;
+  Vec3 normal;
+  Vec3 map;
+  int side;
+};
 
 class Shader : public SceneItem
 {
  public:
   // Member Functions
   virtual int init(Scene& s) { return 0; }
-  virtual Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                         const EvaluatedHit& eh) const = 0;
+  virtual Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const = 0;
 };
 
 class ShaderColor final : public Shader
@@ -40,8 +45,8 @@ class ShaderColor final : public Shader
   std::string desc() const override;
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 
  private:
   Color _color;

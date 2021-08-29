@@ -36,8 +36,8 @@ class Checkerboard final : public PatternShader
   std::string desc() const override { return "<Checkerboard>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -48,8 +48,8 @@ class ColorCube final : public PatternShader
   std::string desc() const override { return "<ColorCube>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -60,8 +60,8 @@ class Ring final : public PatternShader
   std::string desc() const override { return "<Ring>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -72,8 +72,8 @@ class ShaderSide final : public PatternShader
   std::string desc() const override { return "<Side>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };
 
 
@@ -84,6 +84,6 @@ class Stripe final : public PatternShader
   std::string desc() const override { return "<Stripe>"; }
 
   // Shader Functions
-  Color evaluate(const Scene& s, const Ray& r, const HitInfo& h,
-                 const EvaluatedHit& eh) const override;
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
 };

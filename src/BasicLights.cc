@@ -4,7 +4,6 @@
 //
 
 #include "BasicLights.hh"
-#include "Intersect.hh"
 #include "Shader.hh"
 
 
@@ -15,13 +14,12 @@ int Sun::init(Scene& s)
   return Light::init(s);
 }
 
-int Sun::luminate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  LightResult& result) const
+int Sun::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+                  LightResult& result) const
 {
   result.dir = -_finalDir;
   result.distance = VERY_LARGE;
-  result.energy = _energy->evaluate(s, r, h, eh);
+  result.energy = _energy->evaluate(s, r, eh);
   return 0;
 }
 
@@ -33,13 +31,18 @@ int PointLight::init(Scene& s)
   return Light::init(s);
 }
 
-int PointLight::luminate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  LightResult& result) const
+int PointLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+                         LightResult& result) const
 {
+  // TODO: optimized version to test
+  //Vec3 dir = _finalPos - eh.global_pt;
+  //Flt len = dir.length();
+  //result.dir = dir * (1.0 / len);
+  //result.distance = len;
+
   result.dir = UnitVec(_finalPos - eh.global_pt);
   result.distance = PointDistance(_finalPos, eh.global_pt);
-  result.energy = _energy->evaluate(s, r, h, eh);
+  result.energy = _energy->evaluate(s, r, eh);
   return 0;
 }
 
@@ -52,9 +55,8 @@ int SpotLight::init(Scene& s)
   return Light::init(s);
 }
 
-int SpotLight::luminate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh,
-  LightResult& result) const
+int SpotLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
+                        LightResult& result) const
 {
   // FIX - finish SpotLight::luminate()
   return -1;

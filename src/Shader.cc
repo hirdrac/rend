@@ -18,7 +18,7 @@ std::string ShaderColor::desc() const
 }
 
 Color ShaderColor::evaluate(
-  const Scene& s, const Ray& r, const HitInfo& h, const EvaluatedHit& eh) const
+  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   return _color;
 }
