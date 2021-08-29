@@ -30,9 +30,9 @@ void HitList::clear()
   }
 }
 
-HitInfo* HitList::findFirstHit(const Ray& r)
+const HitInfo* HitList::findFirstHit(const Ray& r) const
 {
-  HitInfo* h = _hitList.head();
+  const HitInfo* h = _hitList.head();
   while (h && (h->distance < r.min_length)) { h = h->next; }
 
   return (h && (h->distance < r.max_length)) ? h : nullptr;

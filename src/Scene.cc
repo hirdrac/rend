@@ -169,7 +169,7 @@ Color Scene::traceRay(const Ray& r) const
   HitList hit_list(r.freeCache, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
-  HitInfo* hit = hit_list.findFirstHit(r);
+  const HitInfo* hit = hit_list.findFirstHit(r);
   if (!hit) {
     // hit background
     const EvaluatedHit eh{

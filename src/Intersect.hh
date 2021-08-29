@@ -68,7 +68,7 @@ class HitList
   void mergeList(HitList& list);
   void clear();
 
-  [[nodiscard]] HitInfo* findFirstHit(const Ray& r);
+  [[nodiscard]] const HitInfo* findFirstHit(const Ray& r) const;
   [[nodiscard]] HitInfo* extractFirst() { return _hitList.removeHead(); }
   [[nodiscard]] bool empty() const { return _hitList.empty(); }
   [[nodiscard]] int  count() const { return _hitList.count(); }
