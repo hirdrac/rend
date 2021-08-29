@@ -10,7 +10,6 @@
 #include "ShaderPtr.hh"
 #include "Color.hh"
 #include "Types.hh"
-#include <vector>
 
 
 // **** Types ****

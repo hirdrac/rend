@@ -9,6 +9,7 @@
 #include "Shader.hh"
 #include "Transform.hh"
 #include "Color.hh"
+#include <vector>
 
 
 // **** Types ****

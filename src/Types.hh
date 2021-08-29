@@ -39,3 +39,7 @@ constexpr Flt PI = math::PI<Flt>;
 // disable with
 //#define LIKELY(x) (x)
 //#define UNLIKELY(x) (x)
+
+#define ALWAYS_INLINE __attribute__((always_inline))
+#define NOINLINE __attribute__((noinline))
+#define PURE __attribute__((pure))
