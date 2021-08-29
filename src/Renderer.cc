@@ -189,11 +189,12 @@ int Renderer::startJobs()
 {
   // make render tasks
   const int num = std::max(jobs(), 4) * 20;
-  const int inc_y = std::clamp(_scene->image_height / num, 2, 16);
-  const int max_y = _scene->image_height - 1;
-  for (int y = 0; y <= max_y; y += inc_y) {
-    int yy = std::min(y + inc_y - 1, max_y);
-    _tasks.push_back({0, y, _scene->image_width - 1, yy});
+  const int height = _scene->region_max[1] - _scene->region_min[1];
+  const int inc_y = std::clamp(height / num, 1, 16);
+  const int max_y = _scene->region_max[1];
+  for (int y = _scene->region_min[1]; y <= max_y; y += inc_y) {
+    int yend = std::min(y + inc_y - 1, max_y);
+    _tasks.push_back({_scene->region_min[0], y, _scene->region_max[0], yend});
   }
 
   println("Jobs: ", jobs(), "   Tasks: ", _tasks.size(),
