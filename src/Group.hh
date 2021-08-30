@@ -5,19 +5,22 @@
 
 #pragma once
 #include "Object.hh"
-#include "Light.hh"
+#include "LightPtr.hh"
+#include "Transform.hh"
 
 
 // **** Types ****
 // Group class
 //  class for grouping together objects for transformations, etc
-class Group final : public Primitive
+class Group final : public Object
 {
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Group>"; }
+  Transform* trans() override { return &_trans;}
   int addObject(const ObjectPtr& ob) override;
   int addLight(const LightPtr& lt) override;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Object Functions
   int init(Scene& s) override;
@@ -26,6 +29,7 @@ class Group final : public Primitive
   const std::vector<ObjectPtr>& children() const override { return _objects; }
 
  protected:
+  Transform _trans;
   std::vector<ObjectPtr> _objects;
   std::vector<LightPtr> _lights;
 };

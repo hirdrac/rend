@@ -6,6 +6,7 @@
 #include "Group.hh"
 #include "Scene.hh"
 #include "BBox.hh"
+#include "Light.hh"
 #include <cassert>
 
 
@@ -22,6 +23,15 @@ int Group::addLight(const LightPtr& lt)
 {
   assert(lt != nullptr);
   _lights.push_back(lt);
+  return 0;
+}
+
+int Group::addShader(const ShaderPtr& sh, SceneItemFlag flag)
+{
+  assert(sh != nullptr);
+  if (_shader) { return -1; }
+
+  _shader = sh;
   return 0;
 }
 
