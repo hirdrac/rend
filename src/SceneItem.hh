@@ -38,6 +38,7 @@ class SceneItem
   virtual Transform* trans() { return nullptr; }
 
   virtual int setRadius(Flt r) { return -1; }
+  virtual int setSides(int s) { return -1; }
   virtual int setCost(Flt c) { return -1; }
 
   virtual int addObject(const ObjectPtr& ob) { return -1; }

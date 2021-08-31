@@ -14,6 +14,7 @@
 #include "CSG.hh"
 #include "Phong.hh"
 #include "Group.hh"
+#include "Prism.hh"
 #include "BBox.hh"
 #include "Logger.hh"
 #include "Print.hh"
@@ -394,6 +395,16 @@ int RgbFn(
   return error;
 }
 
+int SidesFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  int val;
+  if (sp.getInt(n, val) || notDone(sp, n)) { return -1; }
+  return p->setSides(val);
+}
+
 
 // **** Data ****
 using KeywordMap = std::map<std::string,ItemFn,std::less<>>;
@@ -431,6 +442,7 @@ static void initKeywords()
     {"samples",     SamplesFn},
     {"scale",       ScaleFn},
     {"shadow",      ShadowBoolFn},
+    {"sides",       SidesFn},
     {"supersample", SuperSampleFn},
     {"size",        SizeFn},
     {"stretch_x",   StretchXFn},
@@ -456,6 +468,7 @@ REGISTER_OBJECT_KEYWORD(Plane,"plane");
 REGISTER_OBJECT_KEYWORD(Sphere,"sphere");
 REGISTER_OBJECT_KEYWORD(Torus,"torus");
 REGISTER_OBJECT_KEYWORD(Union,"union");
+REGISTER_OBJECT_KEYWORD(Prism,"prism");
 
 REGISTER_LIGHT_KEYWORD(PointLight,"light");
 REGISTER_LIGHT_KEYWORD(SpotLight,"spotlight");
