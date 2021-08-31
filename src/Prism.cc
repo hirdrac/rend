@@ -21,7 +21,7 @@ int Prism::init(Scene& s)
   if (_sides < 3 || _sides > 360) { return -1; }
 
   _plane.clear();
-  _plane.reserve(_sides);
+  _plane.reserve(std::size_t(_sides));
   for (int i = 0; i < _sides; ++i) {
     // side plane normal (D=1.0)
     const Flt angle = ((math::PI<Flt>*2.0) / Flt(_sides)) * Flt(i);
@@ -29,7 +29,7 @@ int Prism::init(Scene& s)
   }
 
   _normal.clear();
-  _normal.reserve(_sides + 2);
+  _normal.reserve(std::size_t(_sides + 2));
   for (const Vec2& n : _plane) {
     _normal.push_back(_trans.normalLocalToGlobal({n.x, n.y, 0}, 0));
   }
@@ -69,8 +69,8 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
   Flt near_h = VERY_LARGE, far_h = -VERY_LARGE;
   int near_s = -1, far_s = -1;
 
-  for (int s = 0; s < _sides; ++s) {
-    const Vec2& n = _plane[s];
+  for (int i = 0; i < _sides; ++i) {
+    const Vec2& n = _plane[std::size_t(i)];
     const Flt vd = (n.x * dir.x) + (n.y * dir.y); // DotProduct(n, dir);
     if (vd == 0.0) { continue; } // ray parallel to plane
 
@@ -82,8 +82,8 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
     const Flt pt_y = base.y + (dir.y * h);
     const Flt lenSqr = Sqr(pt_x - n.x) + Sqr(pt_y - n.y);
     if (lenSqr < _halfSideLenSqr) {
-      if (h < near_h) { near_h = h; near_s = s; }
-      if (h > far_h) { far_h = h; far_s = s; }
+      if (h < near_h) { near_h = h; near_s = i; }
+      if (h > far_h) { far_h = h; far_s = i; }
       if (near_s != far_s) { break; } // 2 sides hit
     }
   }
@@ -96,7 +96,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
       const Flt pt_y = base.y + (dir.y * h);
       bool inside = true;
       for (int i = 0; i < _sides; ++i) {
-        const Vec2& n = _plane[i];
+        const Vec2& n = _plane[std::size_t(i)];
         const Flt v = (n.x * pt_x) + (n.y * pt_y) - 1.0;
         if (v > 0) { inside = false; break; }
       }
@@ -114,7 +114,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
       const Flt pt_y = base.y + (dir.y * h);
       bool inside = true;
       for (int i = 0; i < _sides; ++i) {
-        const Vec2& n = _plane[i];
+        const Vec2& n = _plane[std::size_t(i)];
         const Flt v = (n.x * pt_x) + (n.y * pt_y) - 1.0;
         if (v > 0) { inside = false; break; }
       }
@@ -143,5 +143,5 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
 
 Vec3 Prism::normal(const Ray& r, const HitInfo& h) const
 {
-  return _normal[h.side];
+  return _normal[std::size_t(h.side)];
 }
