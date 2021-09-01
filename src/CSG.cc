@@ -7,8 +7,8 @@
 #include "Intersect.hh"
 #include "Scene.hh"
 #include "HitCostInfo.hh"
-#include "Logger.hh"
 #include "BBox.hh"
+#include "Print.hh"
 #include <algorithm>
 #include <sstream>
 #include <cassert>
@@ -24,9 +24,8 @@ int CSG::addObject(const ObjectPtr& ob)
 
 int CSG::init(Scene& s)
 {
-  auto count = _children.size();
-  if (count <= 1) {
-    LOG_ERROR("Too few objects for ", desc());
+  if (_children.size() <= 1) {
+    println_err("Too few objects");
     return -1;
   }
 
@@ -34,9 +33,9 @@ int CSG::init(Scene& s)
     if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
   }
 
-  BBox b = bound(nullptr);
+  const BBox b = bound(nullptr);
   if (b.empty()) {
-    LOG_WARN("Empty bound for ", desc());
+    println_err("Empty bound");
     return -1;
   }
 
@@ -67,7 +66,7 @@ BBox Merge::bound(const Matrix* t) const
       b.fit(ob->bound(nullptr));
     } else {
       assert(ob->trans());
-      Matrix t2 = ob->trans()->base * (*t);
+      const Matrix t2 = ob->trans()->base * (*t);
       b.fit(ob->bound(&t2));
     }
   }
@@ -80,7 +79,7 @@ int Merge::intersect(const Ray& r, HitList& hit_list) const
   for (auto& ob : _children) { ob->intersect(r, hl); }
   hl.csgMerge(this);
 
-  int hits = hl.count();
+  const int hits = hl.count();
   hit_list.mergeList(hl);
   return hits;
 }
@@ -95,7 +94,7 @@ BBox Union::bound(const Matrix* t) const
       b.fit(ob->bound(nullptr));
     } else {
       assert(ob->trans());
-      Matrix t2 = ob->trans()->base * (*t);
+      const Matrix t2 = ob->trans()->base * (*t);
       b.fit(ob->bound(&t2));
     }
   }
@@ -108,7 +107,7 @@ int Union::intersect(const Ray& r, HitList& hit_list) const
   for (auto& ob : _children) { ob->intersect(r, hl); }
   hl.csgUnion(this);
 
-  int hits = hl.count();
+  const int hits = hl.count();
   hit_list.mergeList(hl);
   return hits;
 }
@@ -124,7 +123,7 @@ BBox Intersection::bound(const Matrix* t) const
     b = _children[0]->bound(nullptr);
   } else {
     assert(_children[0]->trans());
-    Matrix t2 = _children[0]->trans()->base * (*t);
+    const Matrix t2 = _children[0]->trans()->base * (*t);
     b = _children[0]->bound(&t2);
   }
 
@@ -135,7 +134,7 @@ BBox Intersection::bound(const Matrix* t) const
       b2 = ob.bound(nullptr);
     } else {
       assert(ob.trans());
-      Matrix t2 = ob.trans()->base * (*t);
+      const Matrix t2 = ob.trans()->base * (*t);
       b2 = ob.bound(&t2);
     }
     b.intersect(b2);
@@ -150,7 +149,7 @@ int Intersection::intersect(const Ray& r, HitList& hit_list) const
   for (auto& ob : _children) { ob->intersect(r, hl); }
   hl.csgIntersection(this, int(_children.size()));
 
-  int hits = hl.count();
+  const int hits = hl.count();
   hit_list.mergeList(hl);
   return hits;
 }
@@ -165,7 +164,7 @@ BBox Difference::bound(const Matrix* t) const
     return ob.bound(nullptr);
   } else {
     assert(ob.trans());
-    Matrix t2 = ob.trans()->base * (*t);
+    const Matrix t2 = ob.trans()->base * (*t);
     return ob.bound(&t2);
   }
 }
@@ -176,7 +175,7 @@ int Difference::intersect(const Ray& r, HitList& hit_list) const
   for (auto& ob : _children) { ob->intersect(r, hl); }
   hl.csgDifference(this, _children[0].get());
 
-  int hits = hl.count();
+  const int hits = hl.count();
   hit_list.mergeList(hl);
   return hits;
 }

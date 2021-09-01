@@ -8,15 +8,13 @@
 #include "Scene.hh"
 #include "Parser.hh"
 #include "FrameBuffer.hh"
-#include "Stats.hh"
-#include "Timer.hh"
 #include "Renderer.hh"
-#include "Logger.hh"
-#include "Types.hh"
-#include "Print.hh"
-#include "PrintList.hh"
 #include "Object.hh"
 #include "Light.hh"
+#include "Stats.hh"
+#include "Timer.hh"
+#include "Print.hh"
+#include "PrintList.hh"
 #include <sstream>
 #include <string_view>
 #include <thread>
@@ -96,7 +94,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 
   // Render image
   if (ren.init(&s, &fb)) {
-    LOG_ERROR("Failed to initialize renderer");
+    println_err("Failed to initialize renderer");
     return -1;
   }
 

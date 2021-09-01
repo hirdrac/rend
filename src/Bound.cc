@@ -8,7 +8,6 @@
 #include "Ray.hh"
 #include "Stats.hh"
 #include "Group.hh"
-#include "Logger.hh"
 #include "Print.hh"
 #include "HitCostInfo.hh"
 #include <sstream>

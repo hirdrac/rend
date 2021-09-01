@@ -5,7 +5,7 @@
 
 #include "FrameBuffer.hh"
 #include "MathUtility.hh"
-#include "Logger.hh"
+#include "Print.hh"
 #include <fstream>
 #include <algorithm>
 #include <memory>
@@ -56,7 +56,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   // create BMP file
   std::ofstream file(filename, std::ios::out | std::ios::binary);
   if (!file) {
-    LOG_ERROR("Error writing file '", filename, "'");
+    println_err("Error writing file '", filename, "'");
     return -1;
   }
 

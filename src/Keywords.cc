@@ -16,11 +16,11 @@
 #include "Group.hh"
 #include "Prism.hh"
 #include "BBox.hh"
-#include "Logger.hh"
 #include "Print.hh"
 #include <map>
 #include <memory>
 #include <cctype>
+#include <cassert>
 
 
 // **** Helper Functions ****
@@ -516,11 +516,7 @@ bool AddItemFn(std::string_view keyword, ItemFn fn)
   if (!Keywords) { initKeywords(); }
 
   std::string key = makeKey(keyword);
-  auto i = Keywords->find(key);
-  if (i != Keywords->end()) {
-    LOG_ERROR("duplicate keyword '", key, "'");
-    return false;
-  }
+  assert(Keywords->find(key) == Keywords->end());
 
   (*Keywords)[key] = fn;
   return true;

@@ -8,7 +8,6 @@
 #include "FrameBuffer.hh"
 #include "Ray.hh"
 #include "Color.hh"
-#include "Logger.hh"
 #include "Print.hh"
 #include <chrono>
 #include <algorithm>
@@ -55,7 +54,7 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   const Vec3 vnormal = UnitVec(_scene->coi - _scene->eye);
   const Vec3 vup = UnitVec(_scene->vup);
   if (IsZero(DotProduct(vnormal, vup) - 1.0)) {
-    LOG_ERROR("Bad VUP vector");
+    println_err("Bad VUP vector");
     return -1;
   }
 

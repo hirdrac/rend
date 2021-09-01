@@ -2,8 +2,8 @@
 # Copyright (C) 2021 Richard Bradley
 
 base_src :=\
-  BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc Logger.cc\
-  Ray.cc Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc Timer.cc
+  BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc Ray.cc\
+  Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc Timer.cc
 object_src :=\
   Object.cc BasicObjects.cc Bound.cc CSG.cc Group.cc Prism.cc
 shader_src :=\
