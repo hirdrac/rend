@@ -7,8 +7,8 @@
 
 #pragma once
 #include "Shader.hh"
+#include "ShaderPtr.hh"
 #include "Transform.hh"
-#include "Color.hh"
 #include <vector>
 
 

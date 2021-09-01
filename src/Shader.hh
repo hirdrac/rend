@@ -7,13 +7,11 @@
 
 #pragma once
 #include "SceneItem.hh"
-#include "ShaderPtr.hh"
 #include "Color.hh"
 #include "Types.hh"
 
 
 // **** Types ****
-class Color;
 class Ray;
 class Transform;
 
