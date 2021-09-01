@@ -43,14 +43,16 @@ int Prism::init(Scene& s)
 
 BBox Prism::bound(const Matrix* t) const
 {
+  const Matrix& m = t ? *t : _trans.final();
   BBox box;
+
   const Flt len = std::sqrt(1.0 + _halfSideLenSqr); // length of hypotenuse
   for (int i = 0; i < _sides; ++i) {
     const Flt a = ((math::PI<Flt>*2.0) / Flt(_sides)) * (Flt(i)+.5);
     const Flt x = std::sin(a) * len;
     const Flt y = std::cos(a) * len;
-    box.fit(MultPoint({x,y, 1}, t ? *t : _trans.final()));
-    box.fit(MultPoint({x,y,-1}, t ? *t : _trans.final()));
+    box.fit(MultPoint({x,y, 1}, m));
+    box.fit(MultPoint({x,y,-1}, m));
   }
 
   return box;
@@ -88,8 +90,8 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
     }
   }
 
-  if (near_s == far_s && dir.z != 0) {
-    {
+  if (dir.z != 0) {
+    if (near_s == far_s) { // 0 or 1 hit
       // end 1
       const Flt h = -(base.z - 1.0) / dir.z;
       const Flt pt_x = base.x + (dir.x * h);
@@ -107,7 +109,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
       }
     }
 
-    {
+    if (near_s == far_s) { // 0 or 1 hit
       // end 2
       const Flt h = -(base.z + 1.0) / dir.z;
       const Flt pt_x = base.x + (dir.x * h);
@@ -126,7 +128,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
     }
   }
 
-  if (near_s == far_s) { return 0; } // 0 or 1 hit
+  if (near_s == far_s || far_h < r.min_length) { return 0; }
 
   if (hit_list.csg()) {
     hit_list.addHit(
@@ -136,6 +138,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
     return 2;
   }
 
+  if (near_h < r.min_length) { near_h = far_h; near_s = far_s; }
   hit_list.addHit(
     this, near_h, CalcHitPoint(base, dir, near_h), near_s, HIT_NORMAL);
   return 1;

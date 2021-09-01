@@ -29,6 +29,6 @@ class Prism final : public Primitive
  private:
   std::vector<Vec2> _plane; // A,B,(C=0) plane normals (D=1.0)
   std::vector<Vec3> _normal; // transformed cached normals
-  int _sides = 0;
   Flt _halfSideLenSqr;
+  int _sides = 0;
 };
