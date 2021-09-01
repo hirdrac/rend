@@ -6,6 +6,7 @@
 #include "Prism.hh"
 #include "Intersect.hh"
 #include "BBox.hh"
+#include "Stats.hh"
 #include <sstream>
 
 
@@ -65,6 +66,8 @@ Flt Prism::hitCost() const
 
 int Prism::intersect(const Ray& r, HitList& hit_list) const
 {
+  ++r.stats->prism.tried;
+
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
@@ -130,6 +133,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
 
   if (near_s == far_s || far_h < r.min_length) { return 0; }
 
+  ++r.stats->prism.hit;
   if (hit_list.csg()) {
     hit_list.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_s, HIT_ENTER);

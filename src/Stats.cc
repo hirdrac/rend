@@ -2,8 +2,6 @@
 // Stats.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of stats module
-//
 
 #include "Stats.hh"
 
@@ -22,6 +20,7 @@ StatInfo& StatInfo::operator+=(const StatInfo& s)
   open_cylinder += s.open_cylinder;
   paraboloid    += s.paraboloid;
   plane         += s.plane;
+  prism         += s.prism;
   sphere        += s.sphere;
   torus         += s.torus;
   return *this;
