@@ -9,8 +9,6 @@
 #include "HitCostInfo.hh"
 #include "BBox.hh"
 #include "Print.hh"
-#include <algorithm>
-#include <sstream>
 #include <cassert>
 
 

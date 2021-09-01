@@ -6,9 +6,7 @@
 //
 
 #include "Object.hh"
-#include "Shader.hh"
 #include "Scene.hh"
-#include "Stats.hh"
 #include "BBox.hh"
 #include "Print.hh"
 #include <cassert>
