@@ -7,6 +7,7 @@
 #include "Intersect.hh"
 #include "BBox.hh"
 #include "Stats.hh"
+#include "Print.hh"
 #include <sstream>
 
 
@@ -19,7 +20,10 @@ std::string Prism::desc() const
 
 int Prism::init(Scene& s)
 {
-  if (_sides < 3 || _sides > 360) { return -1; }
+  if (_sides < 3 || _sides > 360) {
+    println_err("Invalid 'sides' value of ", _sides);
+    return -1;
+  }
 
   _plane.clear();
   _plane.reserve(std::size_t(_sides));

@@ -148,6 +148,7 @@ class Torus final : public Primitive
   int setRadius(Flt r) override { _radius = r; return 0; }
 
   // Object Functions
+  int init(Scene& s) override;
   BBox bound(const Matrix* t) const override;
   Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;

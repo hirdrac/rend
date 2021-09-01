@@ -10,6 +10,7 @@
 #include "Stats.hh"
 #include "BBox.hh"
 #include "HitCostInfo.hh"
+#include "Print.hh"
 #include <algorithm>
 #include <cmath>
 
@@ -22,8 +23,6 @@ static constexpr Vec3 planeBoundPoints[4] = {
 // **** Disc Class ****
 int Disc::init(Scene& s)
 {
-  if (Primitive::init(s)) { return -1; }
-
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
   return 0;
 }
@@ -73,8 +72,6 @@ Vec3 Disc::normal(const Ray& r, const HitInfo& h) const
 // **** Cone Class ****
 int Cone::init(Scene& s)
 {
-  if (Primitive::init(s)) { return -1; }
-
   _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
   return 0;
 }
@@ -185,8 +182,6 @@ Flt Cone::hitCost() const
 // **** Cube Class ****
 int Cube::init(Scene& s)
 {
-  if (Primitive::init(s)) { return -1; }
-
   static constexpr Vec3 n[6] = {
     {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
 
@@ -272,8 +267,6 @@ Vec3 Cube::normal(const Ray& r, const HitInfo& h) const
 // **** Cylinder Class ****
 int Cylinder::init(Scene& s)
 {
-  if (Primitive::init(s)) { return -1; }
-
   _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1}, 0);
   _endNormal[1] = _trans.normalLocalToGlobal({0, 0, -1}, 0);
   return 0;
@@ -538,8 +531,6 @@ Flt Paraboloid::hitCost() const
 // **** Plane Class ****
 int Plane::init(Scene& s)
 {
-  if (Primitive::init(s)) { return -1; }
-
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0); // cache plane normal
   return 0;
 }
@@ -640,6 +631,16 @@ Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Torus Class ****
+int Torus::init(Scene& s)
+{
+  if (_radius < VERY_SMALL) {
+    println_err("Bad 'radius' value of ", _radius);
+    return -1;
+  }
+
+  return 0;
+}
+
 BBox Torus::bound(const Matrix* t) const
 {
   const Flt r1 = _radius + 1.0;
