@@ -11,7 +11,6 @@
 #include <mutex>
 #include <thread>
 #include <vector>
-#include <memory>
 
 
 // **** Types ****
@@ -27,17 +26,17 @@ class Renderer
 
   // jobs/task methods
   [[nodiscard]] int jobs() const { return int(_jobs.size()); }
-  int setJobs(int jobs);
+  void setJobs(int jobs);
     // number of jobs (thread) to execute render
 
-  int startJobs();
+  void startJobs();
     // creates render tasks and starts all render jobs
 
   int waitForJobs(int timeout_ms);
     // waits for jobs to finish task or timeout
     // returns number of pending tasks
 
-  int stopJobs();
+  void stopJobs();
     // stops active jobs, returns once all jobs are halted
 
   [[nodiscard]] const StatInfo& stats() const { return _stats; }
@@ -53,7 +52,7 @@ class Renderer
   Vec3 _viewPlaneCenter, _apertureX, _apertureY;
 
   // jobs/task stuff
-  struct Job {
+  struct alignas(64) Job {
     // thread local stuff
     // HitInfo pool
     std::thread jobThread;
@@ -61,7 +60,7 @@ class Renderer
     StatInfo stats;
     bool halt = false;
   };
-  std::vector<std::unique_ptr<Job>> _jobs;
+  std::vector<Job> _jobs;
 
   struct Task {
     // image region to render for task

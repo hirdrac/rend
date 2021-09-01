@@ -12,6 +12,7 @@
 #include <chrono>
 #include <algorithm>
 #include <cstdlib>
+#include <cassert>
 
 
 // **** helper functions ****
@@ -169,23 +170,16 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
   return 0;
 }
 
-int Renderer::setJobs(int jobs)
+void Renderer::setJobs(int jobs)
 {
   if (jobs < 0) { jobs = 0; }
-
-  const std::size_t oldSize = _jobs.size();
   _jobs.resize(std::size_t(jobs));
-  const std::size_t newSize = _jobs.size();
-  if (newSize > oldSize) {
-    for (std::size_t i = oldSize; i < newSize; ++i) {
-      _jobs[i] = std::make_unique<Job>();
-    }
-  }
-  return 0;
 }
 
-int Renderer::startJobs()
+void Renderer::startJobs()
 {
+  assert(!_jobs.empty());
+
   // make render tasks
   const int num = std::max(jobs(), 4) * 20;
   const int height = _scene->region_max[1] - _scene->region_min[1];
@@ -201,12 +195,10 @@ int Renderer::startJobs()
 
   // start render jobs
   for (auto& j : _jobs) {
-    j->stats = {};
-    j->halt = false;
-    j->jobThread = std::thread(&Renderer::jobMain, this, j.get());
+    j.stats = {};
+    j.halt = false;
+    j.jobThread = std::thread(&Renderer::jobMain, this, &j);
   }
-
-  return 0;
 }
 
 int Renderer::waitForJobs(int timeout_ms)
@@ -221,14 +213,13 @@ int Renderer::waitForJobs(int timeout_ms)
   return 0; // done
 }
 
-int Renderer::stopJobs()
+void Renderer::stopJobs()
 {
-  for (auto& j : _jobs) { j->halt = true; }
+  for (auto& j : _jobs) { j.halt = true; }
   for (auto& j : _jobs) {
-    j->jobThread.join();
-    _stats += j->stats;
+    j.jobThread.join();
+    _stats += j.stats;
   }
-  return 0;
 }
 
 void Renderer::jobMain(Job* j)
