@@ -75,30 +75,6 @@ class Cylinder final : public Primitive
   Vec3 _endNormal[2];
 };
 
-class OpenCone final : public Primitive
-{
- public:
-  // SceneItem Functions
-  std::string desc() const override { return "<OpenCone>"; }
-
-  // Object Functions
-  Flt hitCost() const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
-  Vec3 normal(const Ray& r, const HitInfo& h) const override;
-};
-
-class OpenCylinder final : public Primitive
-{
- public:
-  // SceneItem Functions
-  std::string desc() const override { return "<OpenCylinder>"; }
-
-  // Object Functions
-  Flt hitCost() const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
-  Vec3 normal(const Ray& r, const HitInfo& h) const override;
-};
-
 class Paraboloid final : public Primitive
 {
  public:

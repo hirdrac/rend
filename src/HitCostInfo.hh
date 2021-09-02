@@ -19,8 +19,6 @@ class HitCostInfo
   Flt csg;
   Flt cube;
   Flt cylinder;
-  Flt open_cone;
-  Flt open_cylinder;
   Flt paraboloid;
   Flt plane;
   Flt sphere;
