@@ -384,53 +384,109 @@ Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Paraboloid Class ****
+int Paraboloid::init(Scene& s)
+{
+  _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
+  return 0;
+}
+
 int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++r.stats->paraboloid.tried;
+  // modified z-axis elliptic paraboloid:
+  // (paraboloid in -1 to 1 range; points at +Z; fits in unit cube
+  //   x^2 + y^2 - .5(1 - z) = 0
+  //
+  // general quadric surface equation form:
+  //   x^2 + y^2 +.5z - .5
+  // (A=1 B=1 C=0 D=0 E=0 F=0 G=0 H=0 I=.5 J=-.5)
+  //
+  // Aq = xd^2 + yd^2
+  // Bq = 2xoxd + 2yoyd + .5zd
+  // Cq = xo^2 + yo^2 + .5zo -.5
 
+  ++r.stats->paraboloid.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
+  Flt h[2];
+  int side[2];
+  int hits = 0;
+
   const Flt a = Sqr(dir.x) + Sqr(dir.y);
-  const Flt b = (dir.x * base.x) + (dir.y * base.y) + dir.z * .25;
-  const Flt c = Sqr(base.x) + Sqr(base.y) + (base.z - .5);
-  const Flt x = Sqr(b) - (a * c);
-  if (x < VERY_SMALL) {
-    return 0;  // paraboloid missed (avoid single intersection case)
-  }
+  const Flt b = (dir.x * base.x) + (dir.y * base.y) + (.25 * dir.z);
+  const Flt c = Sqr(base.x) + Sqr(base.y) + (.5 * base.z) - .5;
+  if (IsZero(a)) {
+    // special single intersection case
+    const Flt h1 = -c / (2.0 * b);
+    if ((base.z + (dir.z * h1)) >= -1.0) {
+      h[hits] = h1; side[hits] = 0; ++hits;
+    }
+  } else {
+    // solve quadradic
+    const Flt d = Sqr(b) - (a * c);
+    if (d < VERY_SMALL) { return 0; } // 0 or 1 hit
 
-  const Flt sqrt_x = std::sqrt(x);
+    const Flt sqrt_d = std::sqrt(d);
 
-  const Flt near_h = (-b - sqrt_x) / a;
-  if (near_h >= r.min_length) {
-    const Flt pz = base.z + (dir.z * near_h);
-    if (pz >= -1.0) {
-      const Flt px = base.x + (dir.x * near_h);
-      const Flt py = base.y + (dir.y * near_h);
-      hit_list.addHit(this, near_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->paraboloid.hit;
-      return 1;
+    const Flt h1 = (-b - sqrt_d) / a;
+    if ((base.z + (dir.z * h1)) >= -1.0) {
+      h[hits] = h1; side[hits] = 0; ++hits;
+    }
+
+    const Flt h2 = (-b + sqrt_d) / a;
+    if ((base.z + (dir.z * h2)) >= -1.0) {
+      h[hits] = h2; side[hits] = 0; ++hits;
     }
   }
 
-  const Flt far_h = (-b + sqrt_x) / a;
-  if (far_h >= r.min_length) {
-    const Flt pz = base.z + (dir.z * far_h);
-    if (pz >= -1.0) {
-      const Flt px = base.x + (dir.x * far_h);
-      const Flt py = base.y + (dir.y * far_h);
-      hit_list.addHit(this, far_h, {px,py,pz}, 0, HIT_NORMAL);
-      ++r.stats->paraboloid.hit;
-      return 1;
-    }
+  if (hits == 1 && dir.z != 0.0) {
+    // base cap hit
+    const Flt h1 = -(base.z + 1.0) / dir.z;
+    h[hits] = h1; side[hits] = 1; ++hits;
   }
 
-  return 0;
+  if (hits != 2) { return 0; }
+
+  Flt near_h, far_h;
+  int near_side, far_side;
+  if (h[0] < h[1]) {
+    near_h = h[0]; near_side = side[0];
+    far_h = h[1]; far_side = side[1];
+  } else {
+    near_h = h[1]; near_side = side[1];
+    far_h = h[0]; far_side = side[0];
+  }
+
+  if (far_h < r.min_length) {
+    return 0;
+  }
+
+  ++r.stats->paraboloid.hit;
+  if (hit_list.csg()) {
+    hit_list.addHit(
+      this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
+    hit_list.addHit(
+      this, far_h, CalcHitPoint(base, dir, far_h), far_side, HIT_EXIT);
+    return 2;
+  }
+
+  if (near_h < r.min_length) { near_h = far_h; near_side = far_side; }
+  hit_list.addHit(
+    this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_NORMAL);
+  return 1;
 }
 
 Vec3 Paraboloid::normal(const Ray& r, const HitInfo& h) const
 {
-  const Vec3 n{h.local_pt.x, h.local_pt.y, .125};
+  if (h.side == 1) { return _baseNormal; }
+
+  // paraboloid normal calculation:
+  // (A=1 B=1 C=0 D=0 E=0 F=0 G=0 H=0 I=.5 J=-.5)
+  // xn = 2*A*xi + D*yi + E*zi + G = 2xi
+  // yn = 2*B*yi + D*xi + F*zi + H = 2yi
+  // zn = 2*C*zi + E*xi + F*yi + I = .5
+
+  const Vec3 n{h.local_pt.x, h.local_pt.y, .25};
   return _trans.normalLocalToGlobal(n, r.time);
 }
 

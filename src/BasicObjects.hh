@@ -82,9 +82,13 @@ class Paraboloid final : public Primitive
   std::string desc() const override { return "<Paraboloid>"; }
 
   // Object Functions
+  int init(Scene& s) override;
   Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
+
+ private:
+  Vec3 _baseNormal;
 };
 
 class Plane final : public Primitive
