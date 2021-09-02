@@ -131,7 +131,7 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
     }
   }
 
-  if (hits == 1 && LIKELY(dir.z != 0.0)) {
+  if (hits == 1 && dir.z != 0.0) {
     const Flt h0 = -(base.z + 1.0) / dir.z;
     const Flt h0x = base.x + (dir.x * h0);
     const Flt h0y = base.y + (dir.y * h0);
@@ -197,7 +197,7 @@ Flt Cone::hitCost() const
 int Cube::init(Scene& s)
 {
   static constexpr Vec3 n[6] = {
-    {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
+    {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}};
 
   for (int i = 0; i < 6; ++i) {
     _sideNormal[i] = _trans.normalLocalToGlobal(n[i], 0);
@@ -225,10 +225,13 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
   if (LIKELY(dir.x != 0.0)) {
     Flt h1 = (-1.0 - base.x) / dir.x;
     Flt h2 = ( 1.0 - base.x) / dir.x;
-    if (h1 > h2) { std::swap(h1, h2); }
-    near_h = h1; near_side = 1;
-    far_h = h2; far_side = 0;
-
+    if (h1 < h2) {
+      near_h = h1; near_side = 0;
+      far_h = h2; far_side = 1;
+    } else {
+      near_h = h2; near_side = 1;
+      far_h = h1; far_side = 0;
+    }
   } else if ((base.x < -1.0) || (base.x > 1.0)) {
     return 0;  // Miss
   }
@@ -236,11 +239,17 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
   // Y & Z
   for (unsigned int i = 1; i < 3; ++i) {
     if (LIKELY(dir[i] != 0.0)) {
-      Flt h1 = (-1.0 - base[i]) / dir[i];
-      Flt h2 = ( 1.0 - base[i]) / dir[i];
-      if (h1 > h2) { std::swap(h1, h2); }
-      if (h1 > near_h) { near_h = h1; near_side = (int(i)*2)+1; }
-      if (h2 < far_h)  { far_h  = h2; far_side  = (int(i)*2); }
+      const int s = int(i)*2;
+      const Flt h1 = (-1.0 - base[i]) / dir[i];
+      const Flt h2 = ( 1.0 - base[i]) / dir[i];
+      if (h1 < h2) {
+        if (h1 > near_h) { near_h = h1; near_side = s; }
+        if (h2 < far_h)  { far_h  = h2; far_side  = s+1; }
+      } else {
+        if (h2 > near_h) { near_h = h2; near_side = s+1; }
+        if (h1 < far_h)  { far_h  = h1; far_side  = s; }
+      }
+
       if (near_h > far_h) {
         return 0;  // Miss
       }
@@ -325,10 +334,12 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
   int near_side = 0, far_side = 0;
   if (LIKELY(dir.z != 0.0)) {
     Flt h1 = -(base.z - 1.0) / dir.z;  // plane hit 1
+    int s1 = 1;
     Flt h2 = -(base.z + 1.0) / dir.z;  // plane hit 2
-    if (h1 > h2) { std::swap(h1, h2); }
-    if (h1 > near_h) { near_h = h1; near_side = 1; }
-    if (h2 < far_h)  { far_h  = h2; far_side  = 2; }
+    int s2 = 2;
+    if (h1 > h2) { std::swap(h1, h2); std::swap(s1, s2); }
+    if (h1 > near_h) { near_h = h1; near_side = s1; }
+    if (h2 < far_h)  { far_h  = h2; far_side  = s2; }
 
     if (near_h > far_h) {
       return 0;  // cylinder missed
