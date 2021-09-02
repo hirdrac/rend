@@ -78,45 +78,57 @@ int Cone::init(Scene& s)
 
 int Cone::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++r.stats->cone.tried;
+  // modified z-axis cone:
+  //   x^2 + y^2 - ((1-z)/2)^2 = 0
+  //  (single cone in z=-1 to 1 range; points at +Z; fits in unit cube)
+  //
+  // general quadric surface equation form:
+  //   x^2 + y^2 - .25z^2 + .5z - .25 = 0
+  // (A=1 B=1 C=-.25 D=0 E=0 F=0 G=0 H=0 I=.5 J=-.25)
+  //
+  // Aq = xd^2 + yd^2 - .25z^2
+  // Bq = 2xoxd + 2yoyd - .5zozd + .5zd
+  //    = 2xoxd + 2yoyd + .5zd(1 - zo)
+  // Cq = xo^2 + yo^2 - .25zo^2 +.5zo - .25
+  //    = xo^2 + yo^2 - .25(zo - 1)^2
 
+  ++r.stats->cone.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
-
-  if (UNLIKELY(dir.z == 0.0) && (base.z < -1.0 || base.z > 1.0)) {
-    // ray parallel with cone bottom & doesn't hit side
-    return 0;
-  }
-
-  const Flt a = Sqr(dir.x) + Sqr(dir.y) - (0.25 * Sqr(dir.z));
-  const Flt b = (base.x * dir.x) + (base.y * dir.y) +
-    (dir.z * (1.0 - base.z) * 0.25);
-  const Flt c = Sqr(base.x) + Sqr(base.y) - (0.25 * Sqr(1.0 - base.z));
-  const Flt x = Sqr(b) - (a * c);
-  if (x < VERY_SMALL) {
-    return 0;
-  }
-
-  const Flt sqrt_x = std::sqrt(x);
 
   Flt h[2];
   int side[2];
   int hits = 0;
 
-  const Flt h1 = (-b - sqrt_x) / a;
-  const Flt h1z = base.z + (dir.z * h1);
-  if (h1z >= -1.0 && h1z <= 1.0) {
-    h[hits] = h1;
-    side[hits] = 0;
-    ++hits;
-  }
+  const Flt a = Sqr(dir.x) + Sqr(dir.y) - (.25 * Sqr(dir.z));
+  const Flt b = (base.x * dir.x) + (base.y * dir.y)
+    + (.25 * dir.z * (1.0 - base.z));
+  const Flt c = Sqr(base.x) + Sqr(base.y) - (.25 * Sqr(base.z - 1.0));
+  if (IsZero(a)) {
+    // ray parallel with cone side (1 hit)
+    const Flt h1 = -c / (2.0 * b);
+    const Flt h1z = base.z + (dir.z * h1);
+    if (h1z >= -1.0 && h1z <= 1.0) {
+      h[hits] = h1; side[hits] = 0; ++hits;
+    }
+  } else {
+    // solve quadradic
+    const Flt d = Sqr(b) - (a * c);
+    if (d < VERY_SMALL) { return 0; } // 0 or 1 hit
 
-  const Flt h2 = (-b + sqrt_x) / a;
-  const Flt h2z = base.z + (dir.z * h2);
-  if (h2z >= -1.0 && h2z <= 1.0) {
-    h[hits] = h2;
-    side[hits] = 0;
-    ++hits;
+    const Flt sqrt_d = std::sqrt(d);
+
+    const Flt h1 = (-b - sqrt_d) / a;
+    const Flt h1z = base.z + (dir.z * h1);
+    if (h1z >= -1.0 && h1z <= 1.0) {
+      h[hits] = h1; side[hits] = 0; ++hits;
+    }
+
+    const Flt h2 = (-b + sqrt_d) / a;
+    const Flt h2z = base.z + (dir.z * h2);
+    if (h2z >= -1.0 && h2z <= 1.0) {
+      h[hits] = h2; side[hits] = 0; ++hits;
+    }
   }
 
   if (hits == 1 && LIKELY(dir.z != 0.0)) {
@@ -163,14 +175,16 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
 
 Vec3 Cone::normal(const Ray& r, const HitInfo& h) const
 {
-  if (h.side == 1) {
-    // base
-    return _baseNormal;
-  } else {
-    // side
-    const Vec3 n{h.local_pt.x, h.local_pt.y, (1.0 - h.local_pt.z) / 4.0};
-    return _trans.normalLocalToGlobal(n, r.time);
-  }
+  if (h.side == 1) { return _baseNormal; }
+
+  // cone normal calculation:
+  // (A=1 B=1 C=-.25 D=0 E=0 F=0 G=0 H=0 I=.5 J=-.25)
+  // xn = 2*A*xi + D*yi + E*zi + G =  2xi
+  // yn = 2*B*yi + D*xi + F*zi + H =  2yi
+  // zn = 2*C*zi + E*xi + F*yi + I = -.5zi + .5
+
+  const Vec3 n{h.local_pt.x, h.local_pt.y, .25 * (1.0 - h.local_pt.z)};
+  return _trans.normalLocalToGlobal(n, r.time);
 }
 
 Flt Cone::hitCost() const
@@ -279,23 +293,29 @@ Flt Cylinder::hitCost() const
 
 int Cylinder::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++r.stats->cylinder.tried;
+  // z-axis cylinder:
+  //   x^2 + y^2 - 1 = 0
+  // (A=1 B=1 C=0 D=0 E=0 F=0 G=0 H=0 I=0 J=-1)
+  //
+  // Aq = xd^2 + yd^2
+  // Bq = 2xoxd + 2yoyd
+  // Cq = xo^2 + yo^2 - 1
 
+  ++r.stats->cylinder.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
-  // Intersect cylinder side
   const Flt a = Sqr(dir.x) + Sqr(dir.y);
   const Flt b = (dir.x * base.x) + (dir.y * base.y);
   const Flt c = Sqr(base.x) + Sqr(base.y) - 1.0;
-  const Flt x = Sqr(b) - (a * c);
+  const Flt d = Sqr(b) - (a * c);
 
   Flt near_h = -VERY_LARGE, far_h = VERY_LARGE;
-  if (IsPositive(x)) {
-    const Flt sqrt_x = std::sqrt(x);
-    near_h = (-b - sqrt_x) / a;  // cylinder hit 1
-    far_h  = (-b + sqrt_x) / a;  // cylinder hit 2
-  } else if (IsNegative(x) || c > 0.0) {
+  if (IsPositive(d)) {
+    const Flt sqrt_d = std::sqrt(d);
+    near_h = (-b - sqrt_d) / a;  // cylinder hit 1
+    far_h  = (-b + sqrt_d) / a;  // cylinder hit 2
+  } else if (IsNegative(d) || c > 0.0) {
     // cylinder missed completely or
     // ray parallel with cylinder side but outside cylinder
     return 0;
@@ -338,19 +358,17 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
 
 Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
 {
-  switch (h.side) {
-    default:
-    case 0: {  // side
-      const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
-      return _trans.normalLocalToGlobal(n, r.time);
-    }
+  if (h.side == 1) { return _endNormal[0]; }
+  else if (h.side == 2) { return _endNormal[1]; }
 
-    case 1:  // end 1
-      return _endNormal[0];
+  // cylinder normal calculation:
+  // (A=1 B=1 C=0 D=0 E=0 F=0 G=0 H=0 I=0 J=-1)
+  // xn = 2*A*xi + D*yi + E*zi + G = 2xi
+  // yn = 2*B*yi + D*xi + F*zi + H = 2yi
+  // zn = 2*C*zi + E*xi + F*yi + I = 0
 
-    case 2:  // end 2
-      return _endNormal[1];
-  }
+  const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
+  return _trans.normalLocalToGlobal(n, r.time);
 }
 
 
@@ -473,27 +491,34 @@ Flt Sphere::hitCost() const
 
 int Sphere::intersect(const Ray& r, HitList& hit_list) const
 {
-  ++r.stats->sphere.tried;
+  // unit sphere:
+  //   x^2 + y^2 + z^2 - 1 = 0
+  // (A=1 B=1 C=1 D=0 E=0 F=0 G=0 H=0 I=0 J=-1)
+  //
+  // Aq = xd^2 + yd^2 + zd^2
+  // Bq = 2xoxd + 2yoyd + 2zozd
+  // Cq = xo^2 + yo^2 + zo^2 - 1
 
+  ++r.stats->sphere.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
   const Flt a = DotProduct(dir,  dir);
   const Flt b = DotProduct(base, dir);
   const Flt c = DotProduct(base, base) - 1.0;
-  const Flt x = Sqr(b) - (a * c);
-  if (x < VERY_SMALL) {
+  const Flt d = Sqr(b) - (a * c);
+  if (d < VERY_SMALL) {
     return 0;  // missed (avoid single intersection case)
   }
 
   // Find hit points on sphere
-  const Flt sqrt_x = std::sqrt(x);
-  const Flt far_h = (-b + sqrt_x) / a;
+  const Flt sqrt_d = std::sqrt(d);
+  const Flt far_h = (-b + sqrt_d) / a;
   if (far_h < r.min_length) {
     return 0;  // sphere completely behind ray origin
   }
 
-  Flt near_h = (-b - sqrt_x) / a;
+  Flt near_h = (-b - sqrt_d) / a;
 
   ++r.stats->sphere.hit;
   if (hit_list.csg()) {
@@ -509,6 +534,12 @@ int Sphere::intersect(const Ray& r, HitList& hit_list) const
 
 Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
 {
+  // sphere normal calculation:
+  // (A=1 B=1 C=1 D=0 E=0 F=0 G=0 H=0 I=0 J=-1)
+  // xn = 2*A*xi + D*yi + E*zi + G = 2xi
+  // yn = 2*B*yi + D*xi + F*zi + H = 2yi
+  // zn = 2*C*zi + E*xi + F*yi + I = 2zi
+
   return _trans.normalLocalToGlobal(h.local_pt, r.time);
 }
 
@@ -610,3 +641,42 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
 
   return _trans.normalLocalToGlobal(n, r.time);
 }
+
+
+// **** NOTES ****
+// Ray - Quadric Intersection
+// (from "Practical Ray Tracing in C"
+//  by Craig A. Lindley, John Wiley & Sons, 1992, pp. 86-89)
+//
+// General quadric surface equation:
+// Ax^2 + By^2 + Cz^2 + Dxy + Exz + Fyz + Gx + Hy + Iz + J = 0
+//
+// Ray: Ro + Rd*t  (Ro:xo,yo,zo, Rd:xd,yd,zd)
+//
+// Intersection:
+// Aq = Axd^2 + Byd^2 + Czd^2 + Dxdyd + Exdzd + Fydzd
+// Bq = 2*Axoxd + 2*Byoyd + 2*Czozd + D(xoyd + yoxd) + E(xozd + zoxd)
+//      + F(yozd + ydzo) + Gxd + Hyd + Izd
+// Cq = Axo^2 + Byo^2 + Czo^2 + Dxoyo + Exozo + Fyozo + Gxo + Hyo + Izo + J
+//
+// if Aq = 0 then t = -Cq / Bq (single intersection)
+// otherwise, check Dq
+//
+// Quadradic formula discriminant:
+// Dq = Bq^2 - 4AqCq
+//
+// Dq < 0: miss
+// Dq = 0: 1 hit
+// Dq > 0: 2 hits
+//
+// Intersection points
+// t0 = (-Bq - sqrt(Dq)) / (2Aq)
+// t1 = (-Bq + sqrt(Dq)) / (2Aq)
+//
+// Normal Equation (xi,yi,zi is intersection point)
+// xn = 2*A*xi + D*yi + E*zi + G
+// yn = 2*B*yi + D*xi + F*zi + H
+// zn = 2*C*zi + E*xi + F*yi + I
+// (not normalized)
+//
+// ****
