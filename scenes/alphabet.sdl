@@ -51,7 +51,7 @@
 
 
 (plane
-  (rotx 90)(scale  32 1 32)(move 0 -.1 0)
+  (rotx -90)(scale  32 1 32)(move 0 -.1 0)
   (phong
     (specular (rgb .5 .5 .5))
     (diffuse

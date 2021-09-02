@@ -48,7 +48,7 @@
     (diffuse  (rgb .3 .24 .1))))
 
 (disc
-  (rotx 90)(scale  16 1 16)(move 0 -.1 0)
+  (rotx -90)(scale  16 1 16)(move 0 -.1 0)
   (phong
     (specular (rgb .5 .5 .5))
     (diffuse

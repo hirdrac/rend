@@ -36,7 +36,7 @@
 )
 
 (plane
-  (scale 8 8 1)(rotx 90)(move 0 -2 0)
+  (scale 8 8 1)(rotx -90)(move 0 -2 0)
   (phong
     (specular (rgb .6 .6 .6))
     (diffuse
