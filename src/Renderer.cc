@@ -48,16 +48,17 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   _stats = {};
 
   // Set up view vectors
-  const Vec3 vnormal = UnitVec(_scene->coi - _scene->eye);
+  _vnormal = UnitVec(_scene->coi - _scene->eye);
   const Vec3 vup = UnitVec(_scene->vup);
-  if (IsZero(DotProduct(vnormal, vup) - 1.0)) {
+  const Flt vnvup_dot = DotProduct(_vnormal, vup);
+  if (IsOne(Abs(vnvup_dot))) {
     println_err("Bad VUP vector");
     return -1;
   }
 
-  const Vec3 vtop = UnitVec(vup - (vnormal * DotProduct(vnormal, vup)));
-  const Vec3 vside = UnitVec(CrossProduct(vnormal, vtop));
-  //Vec3 vside = UnitVec(CrossProduct(vtop, vnormal)); // right-handed coords
+  const Vec3 vtop = UnitVec(vup - (_vnormal * vnvup_dot));
+  const Vec3 vside = UnitVec(CrossProduct(_vnormal, vtop));
+  //Vec3 vside = UnitVec(CrossProduct(vtop, _vnormal)); // right-handed coords
 
   // Default Left-Handed Coords
   // +Y
@@ -76,8 +77,7 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   // FIXME - assumes width > height for fov calc
   _pixelX = (vside * screenWidth) / (imgW * .5);
   _pixelY = (vtop * screenHeight) / (imgH * .5);
-  _rayDir = vnormal * focalLen;
-  _viewPlaneCenter = s->eye + _rayDir;
+  _vcenter = s->eye + (_vnormal * focalLen);
   _apertureX = vside * s->aperture;
   _apertureY = vtop * s->aperture;
 
@@ -100,8 +100,8 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   return 0;
 }
 
-int Renderer::render(int min_x, int min_y, int max_x, int max_y,
-		     HitCache* freeCache, StatInfo* stats)
+void Renderer::render(int min_x, int min_y, int max_x, int max_y,
+                      HitCache* freeCache, StatInfo* stats)
 {
   const Flt halfWidth = Flt(_scene->image_width) * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
@@ -146,12 +146,12 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
           if (use_aperture) {
             const Vec2 r = rnd.diskPt();
             initRay.base = eye + (_apertureX * r.x) + (_apertureY * r.y);
-            initRay.dir = UnitVec(_viewPlaneCenter - initRay.base + dirAdj);
+            initRay.dir = UnitVec(_vcenter - initRay.base + dirAdj);
               // FIXME - normalized because dir length much greater than 1
-              // causes problems with some intersections (torus mainly)
+              //   causes problems with torus intersections
           } else {
-            initRay.dir = _rayDir + dirAdj;
-            // dir not normalized for performance
+            initRay.dir = _vnormal + dirAdj;
+              // dir not normalized for performance
           }
 
           c += _scene->traceRay(initRay);
@@ -162,8 +162,6 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
       _fb->plot(x, y, c);
     }
   }
-
-  return 0;
 }
 
 void Renderer::setJobs(int jobs)

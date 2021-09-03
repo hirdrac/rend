@@ -21,8 +21,8 @@ class Renderer
 {
  public:
   int init(const Scene* s, FrameBuffer* fb);
-  int render(int min_x, int min_y, int max_x, int max_y,
-	     HitCache* freeCache, StatInfo* stats);
+  void render(int min_x, int min_y, int max_x, int max_y,
+              HitCache* freeCache, StatInfo* stats);
 
   // jobs/task methods
   [[nodiscard]] int jobs() const { return int(_jobs.size()); }
@@ -48,8 +48,9 @@ class Renderer
   StatInfo _stats;
 
   // Calculated Data
-  Vec3 _pixelX, _pixelY, _rayDir;
-  Vec3 _viewPlaneCenter, _apertureX, _apertureY;
+  Vec3 _vnormal, _vcenter;
+  Vec3 _pixelX, _pixelY;
+  Vec3 _apertureX, _apertureY;
 
   // jobs/task stuff
   struct alignas(64) Job {
