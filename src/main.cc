@@ -109,10 +109,13 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   } else {
     // render on spawned thread(s)
     ren.startJobs();
-    int tr;
+    int tr, last_tr = -1;
     do {
       tr = ren.waitForJobs(50);
-      print_err("\rtasks remaining -- ", tr, " \b");
+      if (tr != last_tr) {
+        print_err("\rtasks remaining -- ", tr, " \b");
+        last_tr = tr;
+      }
     } while (tr > 0);
     ren.stopJobs();
   }
