@@ -11,37 +11,33 @@
 #include "Print.hh"
 #include <chrono>
 #include <algorithm>
-#include <cstdlib>
+#include <random>
 #include <cassert>
 
 
-// **** helper functions ****
-static inline double rnd_val()
+class RandomGen
 {
-  // random value in interval [0, 1)
-#if defined(__MINGW32__) || defined(__MINGW64__)
-  return double(rand()) / (double(RAND_MAX) + 1.0);
-#else
-  return drand48();
-#endif
-}
+ public:
+  Flt jitter() { return _jitterDist(_rnd); }
+     // random value in [-.5, .5)
 
-static inline double rnd_jitter()
-{
-  // interval [-.5, .5)
-  return rnd_val() - .5;
-}
+  Vec2 diskPt() {
+    // random point on diameter=1 disk
+    Flt x, y;
+    do {
+      x = jitter();
+      y = jitter();
+    } while ((Sqr(x) + Sqr(y)) > .25);
+    return Vec2{x, y};
+  }
 
-static inline Vec2 rnd_disk_pt()
-{
-  // random point on diameter=1 disk
-  double x, y;
-  do {
-    x = rnd_jitter();
-    y = rnd_jitter();
-  } while ((Sqr(x) + Sqr(y)) > .25);
-  return Vec2{x, y};
-}
+ private:
+  std::mt19937_64 _rnd{_devRnd()};
+  std::uniform_real_distribution<Flt> _jitterDist{-.5,.5};
+  static std::random_device _devRnd;
+};
+
+std::random_device RandomGen::_devRnd;
 
 
 // **** Renderer class ****
@@ -91,18 +87,13 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   // setup sample points
   const int sampleX = std::max(s->sample_x, 1);
   const int sampleY = std::max(s->sample_y, 1);
-  const int sampleCount =
-    (IsPositive(s->jitter) || IsPositive(s->aperture))
-    ? std::max(s->samples, 1) : 1;
 
   _samples.clear();
-  _samples.reserve(std::size_t(sampleX * sampleY * sampleCount));
+  _samples.reserve(std::size_t(sampleX * sampleY));
   for (int y = 0; y < sampleY; ++y) {
     for (int x = 0; x < sampleX; ++x) {
       const Vec2 pt{(Flt(x)+.5) / Flt(sampleX), (Flt(y)+.5) / Flt(sampleY)};
-      for (int i = 0; i < sampleCount; ++i) {
-        _samples.push_back(pt);
-      }
+      _samples.push_back(pt);
     }
   }
 
@@ -114,14 +105,17 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
 {
   const Flt halfWidth = Flt(_scene->image_width) * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
-  const auto samplesInv =
-    static_cast<Color::value_type>(1.0 / double(_samples.size()));
+  const Vec3 eye = _scene->eye;
 
   const Flt jitterX = _scene->jitter / Flt(std::max(_scene->sample_x, 1));
   const Flt jitterY = _scene->jitter / Flt(std::max(_scene->sample_y, 1));
   const bool use_jitter = IsPositive(_scene->jitter);
   const bool use_aperture = IsPositive(_scene->aperture);
-  const Vec3 eye = _scene->eye;
+  const int jitterCount =
+    use_jitter || use_aperture ? std::max(_scene->samples, 1) : 1;
+  const auto samplesInv = static_cast<Color::value_type>(
+    1.0 / double(_samples.size() * jitterCount));
+  RandomGen rnd;
 
   Ray initRay;
   initRay.base = eye;
@@ -139,27 +133,29 @@ int Renderer::render(int min_x, int min_y, int max_x, int max_y,
       const Flt xx = Flt(x) - halfWidth;
 
       Color c{colors::black};
-      for (const Vec2& pt : _samples) {
-        Flt sx = xx + pt.x;
-        Flt sy = yy + pt.y;
-        if (use_jitter) {
-          sx += rnd_jitter() * jitterX;
-          sy += rnd_jitter() * jitterY;
-        }
+      for (int i = 0; i < jitterCount; ++i) {
+        for (const Vec2& pt : _samples) {
+          Flt sx = xx + pt.x;
+          Flt sy = yy + pt.y;
+          if (use_jitter) {
+            sx += rnd.jitter() * jitterX;
+            sy += rnd.jitter() * jitterY;
+          }
 
-        const Vec3 dirAdj = (_pixelX * sx) + (_pixelY * sy);
-        if (use_aperture) {
-          const Vec2 r = rnd_disk_pt();
-          initRay.base = eye + (_apertureX * r.x) + (_apertureY * r.y);
-          initRay.dir = UnitVec(_viewPlaneCenter - initRay.base + dirAdj);
-            // FIXME - normalized because dir length much greater than 1
-            // causes problems with some intersections (torus mainly)
-        } else {
-          initRay.dir = _rayDir + dirAdj;
+          const Vec3 dirAdj = (_pixelX * sx) + (_pixelY * sy);
+          if (use_aperture) {
+            const Vec2 r = rnd.diskPt();
+            initRay.base = eye + (_apertureX * r.x) + (_apertureY * r.y);
+            initRay.dir = UnitVec(_viewPlaneCenter - initRay.base + dirAdj);
+              // FIXME - normalized because dir length much greater than 1
+              // causes problems with some intersections (torus mainly)
+          } else {
+            initRay.dir = _rayDir + dirAdj;
             // dir not normalized for performance
-        }
+          }
 
-        c += _scene->traceRay(initRay);
+          c += _scene->traceRay(initRay);
+        }
       }
 
       c *= samplesInv;
