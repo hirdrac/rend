@@ -19,7 +19,7 @@ class RandomGen
 {
  public:
   Flt jitter() { return _jitterDist(_rnd); }
-     // random value in [-.5, .5)
+    // random value in [-.5, .5)
 
   Vec2 diskPt() {
     // random point on diameter=1 disk
@@ -114,7 +114,7 @@ void Renderer::render(int min_x, int min_y, int max_x, int max_y,
   const int jitterCount =
     use_jitter || use_aperture ? std::max(_scene->samples, 1) : 1;
   const auto samplesInv = static_cast<Color::value_type>(
-    1.0 / double(_samples.size() * jitterCount));
+    1.0 / double(int(_samples.size()) * jitterCount));
   RandomGen rnd;
 
   Ray initRay;
