@@ -48,7 +48,8 @@ int Bound::intersect(const Ray& r, HitList& hit_list) const
   //  if (h_max < far_hit) { far_hit = h_max; }
   //}
 
-  if (near_hit > far_hit || far_hit < r.min_length) {
+  if (near_hit > far_hit
+      || far_hit < r.min_length || near_hit > r.max_length) {
     return 0;  // miss
   }
 
