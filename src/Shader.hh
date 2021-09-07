@@ -2,13 +2,18 @@
 // Shader.hh
 // Copyright (C) 2021 Richard Bradley
 //
-// Shader base class
+// Shader base class & simple shaders:
+//
+// ShaderColor - solid color value
+// ShaderSide  - select shader based on intersection side
 //
 
 #pragma once
+#include "ShaderPtr.hh"
 #include "SceneItem.hh"
 #include "Color.hh"
 #include "Types.hh"
+#include <vector>
 
 
 // **** Types ****
@@ -31,6 +36,8 @@ class Shader : public SceneItem
     const Scene& s, const Ray& r, const EvaluatedHit& eh) const = 0;
 };
 
+
+// Simple General Shaders
 class ShaderColor final : public Shader
 {
  public:
@@ -48,6 +55,21 @@ class ShaderColor final : public Shader
 
  private:
   Color _color;
+};
+
+class ShaderSide final : public Shader
+{
+ public:
+  // SceneItem Functions
+  std::string desc() const override { return "<Side>"; }
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
+
+  // Shader Functions
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+
+ private:
+  std::vector<ShaderPtr> _sideShaders;
 };
 
 

@@ -56,15 +56,6 @@ Color Ring::evaluate(
 }
 
 
-// **** ShaderSide Class ****
-Color ShaderSide::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
-{
-  int x = eh.side % int(_children.size());
-  return _children[std::size_t(x)]->evaluate(s, r, eh);
-}
-
-
 // **** Stripe Class ****
 Color Stripe::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const

@@ -2,7 +2,11 @@
 // PatternShaders.hh
 // Copyright (C) 2021 Richard Bradley
 //
-// Various simple shaders
+// Shaders that select sub-shaders based on a (transformable) repeating pattern
+//
+// Checkerboard - classic checkboard square pattern
+// Ring         - bands radiating from the origin
+// Stripe       - repeating vertical stripes
 //
 
 #pragma once
@@ -46,18 +50,6 @@ class Ring final : public PatternShader
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Ring>"; }
-
-  // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
-};
-
-
-class ShaderSide final : public PatternShader
-{
- public:
-  // SceneItem Functions
-  std::string desc() const override { return "<Side>"; }
 
   // Shader Functions
   Color evaluate(

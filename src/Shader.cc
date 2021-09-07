@@ -7,6 +7,7 @@
 #include "Scene.hh"
 #include "Transform.hh"
 #include <sstream>
+#include <cassert>
 
 
 // **** ShaderColor Class ****
@@ -21,6 +22,24 @@ Color ShaderColor::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   return _color;
+}
+
+
+// **** ShaderSide Class ****
+int ShaderSide::addShader(const ShaderPtr& sh, SceneItemFlag flag)
+{
+  assert(sh != nullptr);
+  if (flag != FLAG_NONE) { return -1; }
+
+  _sideShaders.push_back(sh);
+  return 0;
+}
+
+Color ShaderSide::evaluate(
+  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+{
+  int x = eh.side % int(_sideShaders.size());
+  return _sideShaders[std::size_t(x)]->evaluate(s, r, eh);
 }
 
 
