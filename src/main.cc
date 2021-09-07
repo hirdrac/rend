@@ -191,16 +191,15 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
   static std::string lastFile;
 
   println();
-  char* buffer = readline("REND> ");
+  std::unique_ptr<char,decltype(free)*> buffer{readline("REND> "), free};
   if (!buffer) {
     // Control-D pressed
     println();
     return 0;
   }
 
-  add_history(buffer);
-  std::istringstream input(buffer);
-  free(buffer);
+  add_history(buffer.get());
+  std::istringstream input(buffer.get());
 
   std::string arg;
   if (!(input >> arg)) {
