@@ -4,6 +4,7 @@
 //
 
 #include "ColorShaders.hh"
+#include "Ray.hh"
 
 
 // **** ColorCube Class ****
