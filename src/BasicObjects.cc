@@ -640,6 +640,9 @@ Flt Torus::hitCost() const
 
 int Torus::intersect(const Ray& r, HitList& hit_list) const
 {
+  // R=1 torus (symmetric about z-axis):
+  // (x^2 + y^2 + z^2 - r^2 + 1)^2 - 4(x^2 + y^2) = 0
+
   ++r.stats->torus.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
@@ -669,7 +672,7 @@ int Torus::intersect(const Ray& r, HitList& hit_list) const
   //   root[0] < root[1] && root[2] < root[3]
   //   (root[1] < root[2] not always true, however)
 
-  Flt far_h = (n==2) ? root[1] : std::max(root[1], root[3]);
+  const Flt far_h = (n==2) ? root[1] : std::max(root[1], root[3]);
   if (far_h < r.min_length) {
     return 0;
   }
