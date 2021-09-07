@@ -41,18 +41,6 @@ class Checkerboard final : public PatternShader
 };
 
 
-class ColorCube final : public PatternShader
-{
- public:
-  // SceneItem Functions
-  std::string desc() const override { return "<ColorCube>"; }
-
-  // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
-};
-
-
 class Ring final : public PatternShader
 {
  public:

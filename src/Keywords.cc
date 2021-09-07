@@ -9,6 +9,7 @@
 #include "Scene.hh"
 #include "BasicLights.hh"
 #include "BasicObjects.hh"
+#include "ColorShaders.hh"
 #include "PatternShaders.hh"
 #include "MapShaders.hh"
 #include "CSG.hh"
