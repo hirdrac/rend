@@ -24,7 +24,7 @@ class FrameBuffer
   void clear(const Color& c = colors::black);
   int plot(int x, int y, const Color& c);
 
-  int value(int x, int y, float& r, float& g, float& b) const;
+  [[nodiscard]] Color value(int x, int y) const;
   int range(float& min, float& max) const;
 
   [[nodiscard]] int width() const { return _width; }
@@ -32,7 +32,8 @@ class FrameBuffer
 
  private:
   std::vector<float> _buffer;
-  int _width = 0, _height = 0;
+  int _width = 0, _height = 0; // image size
+  int _rowSize = 0;  // (width * CHANNELS) padded to 64 byte alignment
 
   static constexpr int CHANNELS = 3; // RGB
 };

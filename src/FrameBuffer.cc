@@ -9,6 +9,7 @@
 #include <fstream>
 #include <algorithm>
 #include <memory>
+#include <cassert>
 
 
 // **** FrameBuffer Class ****
@@ -17,8 +18,15 @@ int FrameBuffer::init(int w, int h, const Color& c)
   if (w <= 0 || h <= 0) { return -1; }
 
   _width = w;
+  _rowSize = w * CHANNELS;
+  if (_rowSize & 15) {
+    // padding row size to 64 byte alignment (16 * sizeof float)
+    _rowSize += 16 - (_rowSize & 15);
+    assert((_rowSize & 15) == 0);
+  }
+
   _height = h;
-  _buffer.resize(std::size_t(w * h * CHANNELS));
+  _buffer.resize(std::size_t(_rowSize * h));
   clear(c);
   return 0;
 }
@@ -27,10 +35,10 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 {
   if (_buffer.empty()) { return -1; }
 
-  const int row_pad = (4 - ((_width * CHANNELS) % 4)) % 4;
+  const int bmp_row_pad = (4 - ((_width * CHANNELS) % 4)) % 4;
     // rows must be padded to 4-byte multiple
-  const int row_size = (_width * CHANNELS) + row_pad;
-  const uint32_t file_size = 54 + uint32_t(row_size * _height);
+  const int bmp_row_size = (_width * CHANNELS) + bmp_row_pad;
+  const uint32_t file_size = 54 + uint32_t(bmp_row_size * _height);
 
   // setup BMP header
   uint8_t header[54] = {};
@@ -62,9 +70,9 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
   file.write(reinterpret_cast<char*>(header), sizeof(header));
 
-  auto row = std::make_unique<uint8_t[]>(std::size_t(row_size));
-  auto src = _buffer.begin();
+  auto row = std::make_unique<uint8_t[]>(std::size_t(bmp_row_size));
   for (int y = 0; y < _height; ++y) {
+    const float* src = _buffer.data() + (_rowSize * y);
     uint8_t* out = row.get();
     for (int x = 0; x < _width; ++x) {
       float r = *src++;
@@ -75,7 +83,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
       *out++ = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
       *out++ = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
     }
-    file.write(reinterpret_cast<char*>(row.get()), row_size);
+    file.write(reinterpret_cast<char*>(row.get()), bmp_row_size);
   }
 
   return 0;
@@ -87,11 +95,13 @@ void FrameBuffer::clear(const Color& c)
   const float g = static_cast<float>(c.green());
   const float b = static_cast<float>(c.blue());
 
-  auto itr = _buffer.begin(), end = _buffer.end();
-  while (itr != end) {
-    *itr++ = r;
-    *itr++ = g;
-    *itr++ = b;
+  for (int y = 0; y < _height; ++y) {
+    float* ptr = _buffer.data() + (y * _rowSize);
+    for (int x = 0; x < _width; ++x) {
+      *ptr++ = r;
+      *ptr++ = g;
+      *ptr++ = b;
+    }
   }
 }
 
@@ -99,22 +109,24 @@ int FrameBuffer::plot(int x, int y, const Color& c)
 {
   if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) { return -1; }
 
-  float* ptr = &_buffer[std::size_t(((y * _width) + x) * CHANNELS)];
+  float* ptr = _buffer.data() + (y * _rowSize) + (x * CHANNELS);
   *ptr++ = static_cast<float>(c.red());
   *ptr++ = static_cast<float>(c.green());
   *ptr++ = static_cast<float>(c.blue());
   return 0;
 }
 
-int FrameBuffer::value(int x, int y, float& r, float& g, float& b) const
+Color FrameBuffer::value(int x, int y) const
 {
-  if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) { return -1; }
+  if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) {
+    return colors::black;
+  }
 
-  const float* ptr = &_buffer[std::size_t(((y * _width) + x) * CHANNELS)];
-  r = *ptr++;
-  g = *ptr++;
-  b = *ptr++;
-  return 0;
+  const float* ptr = _buffer.data() + (y * _rowSize) + (x * CHANNELS);
+  float r = *ptr++;
+  float g = *ptr++;
+  float b = *ptr;
+  return {r,g,b};
 }
 
 int FrameBuffer::range(float& min_val, float& max_val) const
@@ -122,9 +134,13 @@ int FrameBuffer::range(float& min_val, float& max_val) const
   if (_buffer.empty()) { return -1; }
 
   float low = 3.4e38f, high = 0.0f;
-  for (auto& v : _buffer) {
-    if (v < low)  { low = v; }
-    if (v > high) { high = v; }
+  for (int y = 0; y < _height; ++y) {
+    const float* ptr = _buffer.data() + (y * _rowSize);
+    for (int x = 0; x < (_width * CHANNELS); ++x) {
+      float v = *ptr++;
+      if (v < low)  { low = v; }
+      if (v > high) { high = v; }
+    }
   }
 
   min_val = low;
