@@ -21,7 +21,9 @@ enum SceneItemFlag {
   FLAG_AMBIENT, FLAG_BACKGROUND, FLAG_DEFAULT_LT, FLAG_DEFAULT_OBJ,
   FLAG_INIT_ONLY,
   // phong shader types
-  FLAG_DIFFUSE, FLAG_SPECULAR, FLAG_TRANSMIT
+  FLAG_DIFFUSE, FLAG_SPECULAR, FLAG_TRANSMIT,
+  // pattern shaders
+  FLAG_BORDER,
 };
 
 
@@ -39,6 +41,7 @@ class SceneItem
 
   virtual int setRadius(Flt r) { return -1; }
   virtual int setSides(int s) { return -1; }
+  virtual int setBorderwidth(Flt bw) { return -1; }
   virtual int setCost(Flt c) { return -1; }
 
   virtual int addObject(const ObjectPtr& ob) { return -1; }

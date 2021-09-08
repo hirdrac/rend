@@ -52,9 +52,11 @@
   (phong
     (specular (rgb .5 .5 .5))
     (diffuse
-      (ring (checker (rgb .5 .5 .5)(rgb .4 .4 .4)(rotz 45)(scale 4 4 1))
-            (stripe (rgb .1 .1 .1)(rgb .15 .15 .15)(rotz 90)(scale 1.5 1.5 1))
-            (scale 5 5 1))
+      (ring (checker (rgb .5 .5 .5)(rgb .4 .4 .4)(rotz 45)(scale 2 2 1))
+            (stripe (rgb .1 .1 .1)(rgb .15 .15 .15)(rotz 90)(scale .75 .75 1))
+            (border (rgb .05 .05 .05))(borderwidth .02)
+            (scale 10 10 1)
+      )
     )
   )
 )

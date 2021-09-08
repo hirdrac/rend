@@ -44,7 +44,7 @@ static bool notDone(SceneParser& sp, AstNode* n)
 
 // **** Item Functions ****
 // item transforms
-int MoveFn(
+static int MoveFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -57,7 +57,7 @@ int MoveFn(
   return 0;
 }
 
-int RotateXFn(
+static int RotateXFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -70,7 +70,7 @@ int RotateXFn(
   return 0;
 }
 
-int RotateYFn(
+static int RotateYFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -83,7 +83,7 @@ int RotateYFn(
   return 0;
 }
 
-int RotateZFn(
+static int RotateZFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -96,7 +96,7 @@ int RotateZFn(
   return 0;
 }
 
-int ScaleFn(
+static int ScaleFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -109,7 +109,7 @@ int ScaleFn(
   return 0;
 }
 
-int StretchXFn(
+static int StretchXFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   // stretch object along its X axis between 2 points
@@ -146,7 +146,7 @@ int StretchXFn(
   return 0;
 }
 
-int StretchYFn(
+static int StretchYFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   // stretch object along its Y axis between 2 points
@@ -183,7 +183,7 @@ int StretchYFn(
   return 0;
 }
 
-int StretchZFn(
+static int StretchZFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   // stretch object along its Z axis between 2 points
@@ -223,63 +223,63 @@ int StretchZFn(
 }
 
 // scene attributes
-int ApertureFn(
+static int ApertureFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getFlt(n, s.aperture) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int CoiFn(
+static int CoiFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getVec3(n, s.coi) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int EyeFn(
+static int EyeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getVec3(n, s.eye) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int FocusFn(
+static int FocusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getFlt(n, s.focus) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int FovFn(
+static int FovFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getFlt(n, s.fov) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int JitterFn(
+static int JitterFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getFlt(n, s.jitter) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int MaxdepthFn(
+static int MaxdepthFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getInt(n, s.max_ray_depth) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int MinValueFn(
+static int MinValueFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getFlt(n, s.min_ray_value) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int RegionFn(
+static int RegionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getInt(n, s.region_min[0])
@@ -290,21 +290,21 @@ int RegionFn(
   return 0;
 }
 
-int SamplesFn(
+static int SamplesFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getInt(n, s.samples) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int ShadowBoolFn(
+static int ShadowBoolFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getBool(n, s.shadow) || notDone(sp, n)) { return -1; }
   return 0;
 }
 
-int SizeFn(
+static int SizeFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getInt(n, s.image_width) || sp.getInt(n, s.image_height)
@@ -317,7 +317,7 @@ int SizeFn(
   return 0;
 }
 
-int SuperSampleFn(
+static int SuperSampleFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getInt(n, s.sample_x) || sp.getInt(n, s.sample_y)
@@ -325,7 +325,7 @@ int SuperSampleFn(
   return 0;
 }
 
-int VupFn(
+static int VupFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (p || sp.getVec3(n, s.vup) || notDone(sp, n)) { return -1; }
@@ -333,7 +333,17 @@ int VupFn(
 }
 
 // object/light/shader attributes
-int CostFn(
+static int BorderwidthFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  Flt val;
+  if (sp.getFlt(n, val) || notDone(sp, n)) { return -1; }
+  return p->setBorderwidth(val);
+}
+
+static int CostFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (!p) { return -1; }
@@ -343,7 +353,7 @@ int CostFn(
   return p->setCost(val);
 }
 
-int DirectionFn(
+static int DirectionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Light* lt = dynamic_cast<Light*>(p);
@@ -351,7 +361,7 @@ int DirectionFn(
   return 0;
 }
 
-int ExpFn(
+static int ExpFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Phong* sh = dynamic_cast<Phong*>(p);
@@ -359,7 +369,7 @@ int ExpFn(
   return 0;
 }
 
-int PositionFn(
+static int PositionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Light* lt = dynamic_cast<Light*>(p);
@@ -367,7 +377,7 @@ int PositionFn(
   return 0;
 }
 
-int RadiusFn(
+static int RadiusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (!p) { return -1; }
@@ -377,7 +387,7 @@ int RadiusFn(
   return p->setRadius(val);
 }
 
-int RgbFn(
+static int RgbFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Vec3 c;
@@ -396,7 +406,7 @@ int RgbFn(
   return error;
 }
 
-int SidesFn(
+static int SidesFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   if (!p) { return -1; }
@@ -417,6 +427,7 @@ static void initKeywords()
   *Keywords = {
     // keyword      ItemFn
     {"aperture",    ApertureFn},
+    {"borderwidth", BorderwidthFn},
     {"coi",         CoiFn},
     {"cost",        CostFn},
     {"dir",         DirectionFn},
@@ -494,6 +505,7 @@ REGISTER_FLAG_KEYWORD(FLAG_DEFAULT_OBJ,"default");
 REGISTER_FLAG_KEYWORD(FLAG_DIFFUSE,"diffuse");
 REGISTER_FLAG_KEYWORD(FLAG_SPECULAR,"specular");
 REGISTER_FLAG_KEYWORD(FLAG_TRANSMIT,"transmit");
+REGISTER_FLAG_KEYWORD(FLAG_BORDER,"border");
 
 
 // **** Functions ****

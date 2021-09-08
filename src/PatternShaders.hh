@@ -22,6 +22,7 @@ class PatternShader : public Shader
  public:
   // SceneItem Functions
   Transform* trans() override { return &_trans; }
+  int setBorderwidth(Flt bw) override { _borderwidth = bw; return 0; }
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Shader Functions
@@ -30,6 +31,8 @@ class PatternShader : public Shader
  protected:
   Transform _trans;
   std::vector<ShaderPtr> _children;
+  ShaderPtr _border;
+  Flt _borderwidth = 0.05;
 };
 
 

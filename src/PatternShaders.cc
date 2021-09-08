@@ -5,6 +5,7 @@
 
 #include "PatternShaders.hh"
 #include "Ray.hh"
+#include "Print.hh"
 #include <cmath>
 #include <cassert>
 
@@ -13,8 +14,13 @@
 int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);
-  if (flag != FLAG_NONE) { return -1; }
+  if (flag == FLAG_BORDER) {
+    if (_border) { return -1; }
+    _border = sh;
+    return 0;
+  }
 
+  if (flag != FLAG_NONE) { return -1; }
   _children.push_back(sh);
   return 0;
 }
@@ -22,6 +28,16 @@ int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 int PatternShader::init(Scene& s)
 {
   if (_children.empty()) { return -1; }
+
+  if (_border) {
+    if (!IsPositive(_borderwidth)) {
+      println("Invalid borderwidth of ", _borderwidth);
+      return -1;
+    }
+
+    int err = InitShader(s, *_border, &_trans);
+    if (err) { return err; }
+  }
 
   for (auto& sh : _children) {
     int err = InitShader(s, *sh, &_trans);
@@ -36,11 +52,19 @@ int PatternShader::init(Scene& s)
 Color Checkerboard::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
-  int gx = int(std::floor(m.x));
-  int gy = int(std::floor(m.y));
-  int gz = int(std::floor(m.z));
-  int x  = Abs(gx + gy + gz) % int(_children.size());
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+
+  if (_border) {
+    const Flt half_bw = _borderwidth * .5;
+    if (Abs(m.x - std::floor(m.x + half_bw)) < half_bw
+        || Abs(m.y - std::floor(m.y + half_bw)) < half_bw) {
+      return _border->evaluate(s, r, eh);
+    }
+  }
+
+  const int no = int(_children.size());
+  int x = int(std::floor(m.x) + std::floor(m.y)) % no;
+  if (x < 0) { x += no; }
   return _children[std::size_t(x)]->evaluate(s, r, eh);
 }
 
@@ -49,9 +73,17 @@ Color Checkerboard::evaluate(
 Color Ring::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
-  int d = int(std::sqrt(Sqr(m.x) + Sqr(m.y) + Sqr(m.z)) * 2.0);
-  int x = Abs(d) % int(_children.size());
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y));
+
+  if (_border) {
+    const Flt half_bw = _borderwidth * .5;
+    if (d > half_bw && Abs(d - std::floor(d + half_bw)) < half_bw) {
+      return _border->evaluate(s, r, eh);
+    }
+  }
+
+  const int x = int(d) % int(_children.size());
   return _children[std::size_t(x)]->evaluate(s, r, eh);
 }
 
@@ -60,8 +92,18 @@ Color Ring::evaluate(
 Color Stripe::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
-  int gx = int(std::floor(m.x));
-  int x  = Abs(gx) % int(_children.size());
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Flt d = m.x;
+
+  if (_border) {
+    const Flt half_bw = _borderwidth * .5;
+    if (Abs(d - std::floor(d + half_bw)) < half_bw) {
+      return _border->evaluate(s, r, eh);
+    }
+  }
+
+  const int no = int(_children.size());
+  int x = int(std::floor(d)) % no;
+  if (x < 0) { x += no; }
   return _children[std::size_t(x)]->evaluate(s, r, eh);
 }
