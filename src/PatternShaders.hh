@@ -6,6 +6,7 @@
 //
 // Checkerboard - classic checkboard square pattern
 // Ring         - bands radiating from the origin
+// SquareRing   - square version for ring shader
 // Stripe       - repeating vertical stripes
 //
 
@@ -53,10 +54,30 @@ class Ring final : public PatternShader
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Ring>"; }
+  int setOffset(Flt v) override { _offset = v; return 0; }
 
   // Shader Functions
   Color evaluate(
     const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+
+ private:
+  Flt _offset = 0.0;
+};
+
+
+class SquareRing final : public PatternShader
+{
+ public:
+  // SceneItem Functions
+  std::string desc() const override { return "<SquareRing>"; }
+  int setOffset(Flt v) override { _offset = v; return 0; }
+
+  // Shader Functions
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+
+ private:
+  Flt _offset = 0.0;
 };
 
 

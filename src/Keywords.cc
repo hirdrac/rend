@@ -369,6 +369,16 @@ static int ExpFn(
   return 0;
 }
 
+static int OffsetFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  Flt val;
+  if (sp.getFlt(n, val) || notDone(sp, n)) { return -1; }
+  return p->setOffset(val);
+}
+
 static int PositionFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -440,6 +450,7 @@ static void initKeywords()
     {"maxdepth",    MaxdepthFn},
     {"minvalue",    MinValueFn},
     {"move",        MoveFn},
+    {"offset",      OffsetFn},
     {"pos",         PositionFn},
     {"position",    PositionFn},
     {"radius",      RadiusFn},
@@ -484,11 +495,13 @@ REGISTER_LIGHT_KEYWORD(PointLight,"light");
 REGISTER_LIGHT_KEYWORD(SpotLight,"spotlight");
 
 REGISTER_SHADER_KEYWORD(Phong,"phong");
+REGISTER_SHADER_KEYWORD(ShaderSide,"side");
+// color shaders
+REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
 // pattern shaders
 REGISTER_SHADER_KEYWORD(Checkerboard,"checker");
-REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
 REGISTER_SHADER_KEYWORD(Ring,"ring");
-REGISTER_SHADER_KEYWORD(ShaderSide,"side");
+REGISTER_SHADER_KEYWORD(SquareRing,"squarering");
 REGISTER_SHADER_KEYWORD(Stripe,"stripe");
 // map shaders
 REGISTER_SHADER_KEYWORD(MapGlobalShader,"map-global");

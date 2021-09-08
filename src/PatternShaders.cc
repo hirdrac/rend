@@ -74,16 +74,41 @@ Color Ring::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
-  const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y));
+  const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y)) + _offset;
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;
-    if (d > half_bw && Abs(d - std::floor(d + half_bw)) < half_bw) {
+    if ((d - _offset) > half_bw
+        && Abs(d - std::floor(d + half_bw)) < half_bw) {
       return _border->evaluate(s, r, eh);
     }
   }
 
-  const int x = int(d) % int(_children.size());
+  const int no = int(_children.size());
+  int x = int(std::floor(d)) % no;
+  if (x < 0) { x += no; }
+  return _children[std::size_t(x)]->evaluate(s, r, eh);
+}
+
+
+// **** SquareRing Class ****
+Color SquareRing::evaluate(
+  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+{
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Flt d = std::max(Abs(m.x), Abs(m.y)) + _offset;
+
+  if (_border) {
+    const Flt half_bw = _borderwidth * .5;
+    if ((d - _offset) > half_bw
+        && Abs(d - std::floor(d + half_bw)) < half_bw) {
+      return _border->evaluate(s, r, eh);
+    }
+  }
+
+  const int no = int(_children.size());
+  int x = int(std::floor(d)) % no;
+  if (x < 0) { x += no; }
   return _children[std::size_t(x)]->evaluate(s, r, eh);
 }
 
