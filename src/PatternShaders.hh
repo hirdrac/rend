@@ -34,6 +34,13 @@ class PatternShader : public Shader
   std::vector<ShaderPtr> _children;
   ShaderPtr _border;
   Flt _borderwidth = 0.05;
+
+  [[nodiscard]] const Shader* child(int i) const {
+    const int no = int(_children.size());
+    int c = i % no;
+    if (c < 0) { c += no; }
+    return _children[std::size_t(c)].get();
+  }
 };
 
 

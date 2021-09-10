@@ -62,10 +62,8 @@ Color Checkerboard::evaluate(
     }
   }
 
-  const int no = int(_children.size());
-  int x = int(std::floor(m.x) + std::floor(m.y)) % no;
-  if (x < 0) { x += no; }
-  return _children[std::size_t(x)]->evaluate(s, r, eh);
+  const int c = int(std::floor(m.x) + std::floor(m.y));
+  return child(c)->evaluate(s, r, eh);
 }
 
 
@@ -84,10 +82,8 @@ Color Ring::evaluate(
     }
   }
 
-  const int no = int(_children.size());
-  int x = int(std::floor(d)) % no;
-  if (x < 0) { x += no; }
-  return _children[std::size_t(x)]->evaluate(s, r, eh);
+  const int c = int(std::floor(d));
+  return child(c)->evaluate(s, r, eh);
 }
 
 
@@ -106,10 +102,8 @@ Color SquareRing::evaluate(
     }
   }
 
-  const int no = int(_children.size());
-  int x = int(std::floor(d)) % no;
-  if (x < 0) { x += no; }
-  return _children[std::size_t(x)]->evaluate(s, r, eh);
+  const int c = int(std::floor(d));
+  return child(c)->evaluate(s, r, eh);
 }
 
 
@@ -127,8 +121,6 @@ Color Stripe::evaluate(
     }
   }
 
-  const int no = int(_children.size());
-  int x = int(std::floor(d)) % no;
-  if (x < 0) { x += no; }
-  return _children[std::size_t(x)]->evaluate(s, r, eh);
+  const int c = int(std::floor(d));
+  return child(c)->evaluate(s, r, eh);
 }
