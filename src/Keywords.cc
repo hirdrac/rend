@@ -416,6 +416,16 @@ static int RgbFn(
   return error;
 }
 
+static int SectorsFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  int val;
+  if (sp.getInt(n, val) || notDone(sp, n)) { return -1; }
+  return p->setSectors(val);
+}
+
 static int SidesFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -424,6 +434,16 @@ static int SidesFn(
   int val;
   if (sp.getInt(n, val) || notDone(sp, n)) { return -1; }
   return p->setSides(val);
+}
+
+static int SpinFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  Flt val;
+  if (sp.getFlt(n, val) || notDone(sp, n)) { return -1; }
+  return p->setSpin(val);
 }
 
 
@@ -464,10 +484,12 @@ static void initKeywords()
     {"rotz",        RotateZFn},
     {"samples",     SamplesFn},
     {"scale",       ScaleFn},
+    {"sectors",     SectorsFn},
     {"shadow",      ShadowBoolFn},
     {"sides",       SidesFn},
     {"supersample", SuperSampleFn},
     {"size",        SizeFn},
+    {"spin",        SpinFn},
     {"stretch_x",   StretchXFn},
     {"stretch_y",   StretchYFn},
     {"stretch_z",   StretchZFn},
@@ -500,6 +522,7 @@ REGISTER_SHADER_KEYWORD(ShaderSide,"side");
 REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
 // pattern shaders
 REGISTER_SHADER_KEYWORD(Checkerboard,"checker");
+REGISTER_SHADER_KEYWORD(Pinwheel,"pinwheel");
 REGISTER_SHADER_KEYWORD(Ring,"ring");
 REGISTER_SHADER_KEYWORD(SquareRing,"squarering");
 REGISTER_SHADER_KEYWORD(Stripe,"stripe");

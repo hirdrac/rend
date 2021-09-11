@@ -5,9 +5,12 @@
 // Shaders that select sub-shaders based on a (transformable) repeating pattern
 //
 // Checkerboard - classic checkboard square pattern
+// Pinwheel     - sectors radiating outward w/ optional spin
 // Ring         - bands radiating from the origin
 // SquareRing   - square version for ring shader
 // Stripe       - repeating vertical stripes
+//
+// all pattern shaders take an optional border shader & borderwidth
 //
 
 #pragma once
@@ -53,6 +56,24 @@ class Checkerboard final : public PatternShader
   // Shader Functions
   Color evaluate(
     const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+};
+
+
+class Pinwheel final : public PatternShader
+{
+ public:
+  // SceneItem Functions
+  std::string desc() const override { return "<Pinwheel>"; }
+  int setSectors(int v) override { _sectors = v; return 0; }
+  int setSpin(Flt v) override { _spin = v; return 0; }
+
+  // Shader Functions
+  Color evaluate(
+    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+
+ private:
+  Flt _spin = 0;
+  int _sectors = 6;
 };
 
 

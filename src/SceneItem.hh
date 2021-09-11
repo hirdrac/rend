@@ -39,11 +39,13 @@ class SceneItem
   virtual std::string desc() const = 0;
   virtual Transform* trans() { return nullptr; }
 
-  virtual int setBorderwidth(Flt bw) { return -1; }
-  virtual int setCost(Flt c) { return -1; }
+  virtual int setBorderwidth(Flt v) { return -1; }
+  virtual int setCost(Flt v) { return -1; }
   virtual int setOffset(Flt v) { return -1; }
-  virtual int setRadius(Flt r) { return -1; }
-  virtual int setSides(int s) { return -1; }
+  virtual int setRadius(Flt v) { return -1; }
+  virtual int setSectors(int v) { return -1; }
+  virtual int setSides(int v) { return -1; }
+  virtual int setSpin(Flt v) { return -1; }
 
   virtual int addObject(const ObjectPtr& ob) { return -1; }
   virtual int addLight(const LightPtr& lt) { return -1; }

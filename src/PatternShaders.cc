@@ -67,6 +67,34 @@ Color Checkerboard::evaluate(
 }
 
 
+// **** Pinwheel Class ****
+Color Pinwheel::evaluate(
+  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+{
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+
+  const Flt radius = std::sqrt(Sqr(m.x) + Sqr(m.y));
+  const Flt spin_val = _spin * radius * PI * .25;
+  const Flt angle = std::atan2(m.y, m.x) + spin_val;
+
+  const Flt sect = Flt(_sectors) * (angle / (PI * 2.0));
+  if (_border) {
+    // check distance to nearest edge point at the same radius
+    // (works well enough for border calc if the spin isn't too high)
+    const Flt edge_angle =
+      ((std::floor(sect + .5) / Flt(_sectors)) * PI * 2.0) - spin_val;
+    const Flt edge_x = radius * std::cos(edge_angle);
+    const Flt edge_y = radius * std::sin(edge_angle);
+    if ((Sqr(edge_x - m.x) + Sqr(edge_y - m.y)) < Sqr(_borderwidth * .5)) {
+      return _border->evaluate(s, r, eh);
+    }
+  }
+
+  const int c = int(std::floor(sect));
+  return child(c)->evaluate(s, r, eh);
+}
+
+
 // **** Ring Class ****
 Color Ring::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
