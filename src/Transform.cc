@@ -10,8 +10,8 @@
 int Transform::init(const Transform* parent)
 {
   _final = base;
-  if (parent) {
-    _final *= parent->_final;
+  if (parent && !_noParent) {
+    _final *= parent->final();
   }
 
   if (InvertMatrix(_final, _finalInv)) {

@@ -57,6 +57,16 @@ static int MoveFn(
   return 0;
 }
 
+static int NoParentFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t || notDone(sp, n)) { return -1; }
+
+  t->setNoParent(true);
+  return 0;
+}
+
 static int RotateXFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -470,6 +480,7 @@ static void initKeywords()
     {"maxdepth",    MaxdepthFn},
     {"minvalue",    MinValueFn},
     {"move",        MoveFn},
+    {"no_parent",   NoParentFn},
     {"offset",      OffsetFn},
     {"pos",         PositionFn},
     {"position",    PositionFn},
