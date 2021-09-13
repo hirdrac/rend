@@ -81,10 +81,6 @@ struct OptNode
   Flt objHitCost;   // cache Object::hitCost()
   Flt currentCost;  // cache OptNode::cost()
 
-  OptNode() = default;
-  OptNode(const ObjectPtr& ob)
-    : object{ob}, box{ob->bound()}, objHitCost{ob->hitCost()} { }
-
   // Member Functions
   Flt cost(Flt weight) const
   {
@@ -162,11 +158,15 @@ static OptNode* makeOptNodeList(const std::vector<ObjectPtr>& o_list)
   OptNode* tail = nullptr;
   for (auto& ob : o_list) {
     OptNode* list = nullptr;
-    if (const Group* gPtr = dynamic_cast<const Group*>(ob.get()); gPtr) {
-      list = makeOptNodeList(gPtr->children());
-      if (!list) { continue; }
+    if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
+      list = new OptNode;
+      list->object = ob;
+      list->box = pPtr->bound();
+      list->objHitCost = pPtr->hitCost();
     } else {
-      list = new OptNode{ob};
+      // assume group - just process children
+      list = makeOptNodeList(ob->children());
+      if (!list) { continue; }
     }
 
     if (tail) { tail->next = list; } else { node_list = tail = list; }
