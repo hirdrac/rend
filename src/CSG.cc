@@ -16,6 +16,11 @@
 int CSG::addObject(const ObjectPtr& ob)
 {
   assert(ob != nullptr);
+  if (!dynamic_cast<const Primitive*>(ob.get())) {
+    println("Can't add non-primitive object to CSG");
+    return -1;
+  }
+
   _children.push_back(ob);
   return 0;
 }
