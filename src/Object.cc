@@ -15,9 +15,7 @@
 // **** Object Class ****
 const std::vector<ObjectPtr> Object::_emptyList;
 
-
-// **** Primitive Class ****
-int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
+int Object::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);
   if (_shader) { return -1; }
@@ -26,6 +24,8 @@ int Primitive::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   return 0;
 }
 
+
+// **** Primitive Class ****
 BBox Primitive::bound(const Matrix* t) const
 {
   static constexpr Vec3 pt[8] = {

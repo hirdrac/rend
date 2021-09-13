@@ -26,15 +26,6 @@ int Group::addLight(const LightPtr& lt)
   return 0;
 }
 
-int Group::addShader(const ShaderPtr& sh, SceneItemFlag flag)
-{
-  assert(sh != nullptr);
-  if (_shader) { return -1; }
-
-  _shader = sh;
-  return 0;
-}
-
 // Object Functions
 int Group::init(Scene& s)
 {

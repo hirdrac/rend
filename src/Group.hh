@@ -20,7 +20,6 @@ class Group final : public Object
   Transform* trans() override { return &_trans;}
   int addObject(const ObjectPtr& ob) override;
   int addLight(const LightPtr& lt) override;
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Object Functions
   int init(Scene& s) override;
