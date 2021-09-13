@@ -161,7 +161,7 @@ static OptNode* makeOptNodeList(const std::vector<ObjectPtr>& o_list)
     if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
       list = new OptNode;
       list->object = ob;
-      list->box = pPtr->bound();
+      list->box = pPtr->bound(nullptr);
       list->objHitCost = pPtr->hitCost();
     } else {
       // assume group - just process children
