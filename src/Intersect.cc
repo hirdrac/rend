@@ -38,7 +38,7 @@ const HitInfo* HitList::findFirstHit(const Ray& r) const
   return (h && (h->distance < r.max_length)) ? h : nullptr;
 }
 
-void HitList::csgMerge(const Object* csg)
+void HitList::csgMerge(const Primitive* csg)
 {
   for (HitInfo* h = _hitList.head(); h != nullptr; h = h->next) {
     // claim hit as part of csg object
@@ -47,7 +47,7 @@ void HitList::csgMerge(const Object* csg)
   }
 }
 
-void HitList::csgUnion(const Object* csg)
+void HitList::csgUnion(const Primitive* csg)
 {
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;
@@ -55,7 +55,7 @@ void HitList::csgUnion(const Object* csg)
 
   while (h) {
     // claim hit as part of csg object
-    const Object* ob = h->object;
+    const Primitive* ob = h->object;
     if (!h->child) { h->child = ob; }
     h->object = csg;
 
@@ -73,7 +73,7 @@ void HitList::csgUnion(const Object* csg)
   }
 }
 
-void HitList::csgIntersection(const Object* csg, int objectCount)
+void HitList::csgIntersection(const Primitive* csg, int objectCount)
 {
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;
@@ -107,7 +107,7 @@ void HitList::csgIntersection(const Object* csg, int objectCount)
   }
 }
 
-void HitList::csgDifference(const Object* csg, const Object* primary)
+void HitList::csgDifference(const Primitive* csg, const void* primary)
 {
   HitInfo* h = _hitList.head();
   HitInfo* prev = nullptr;

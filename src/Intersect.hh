@@ -11,7 +11,7 @@
 
 
 // **** Types ****
-class Object;
+class Primitive;
 class Ray;
 
 enum HitType {
@@ -25,15 +25,15 @@ class HitInfo
  public:
   // basic hit information
   HitInfo* next = nullptr;
-  const Object* object;
-  const Object* child; // sub-object hit for CSG
+  const Primitive* object;
+  const Primitive* child; // sub-object hit for CSG
   Flt distance;
   Vec3 local_pt;
   int side;
   HitType type;
 
   HitInfo() = default;
-  HitInfo(const Object* ob, Flt t, const Vec3& pt)
+  HitInfo(const Primitive* ob, Flt t, const Vec3& pt)
     : object(ob), child(nullptr), distance(t), local_pt(pt), side(0),
       type(HIT_NORMAL) { }
 };
@@ -56,7 +56,7 @@ class HitList
   ~HitList() { clear(); }
 
   // Member Functions
-  void addHit(const Object* ob, Flt t, const Vec3& local_pt, int side,
+  void addHit(const Primitive* ob, Flt t, const Vec3& local_pt, int side,
               HitType type) {
     HitInfo* h = newHit(t);
     h->object   = ob;
@@ -74,10 +74,10 @@ class HitList
   [[nodiscard]] int  count() const { return _hitList.count(); }
   [[nodiscard]] bool csg() const { return _csg; }
 
-  void csgMerge(const Object* csg);
-  void csgUnion(const Object* csg);
-  void csgIntersection(const Object* csg, int objectCount);
-  void csgDifference(const Object* csg, const Object* primary);
+  void csgMerge(const Primitive* csg);
+  void csgUnion(const Primitive* csg);
+  void csgIntersection(const Primitive* csg, int objectCount);
+  void csgDifference(const Primitive* csg, const void* primary);
 
   [[nodiscard]] HitCache* freeCache() { return _freeCache; }
 

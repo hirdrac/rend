@@ -179,7 +179,7 @@ Color Scene::traceRay(const Ray& r) const
 
   ++r.stats->rays.hit;
 
-  const Object* obj = hit->object;
+  const Primitive* obj = hit->object;
   const Shader* sh = obj->shader().get();
   if (!sh) {
     if (hit->child) { sh = hit->child->shader().get(); }

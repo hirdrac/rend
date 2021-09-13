@@ -22,8 +22,10 @@ class Prism final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   BBox bound(const Matrix* t = nullptr) const override;
-  Flt hitCost() const override;
   int intersect(const Ray& r, HitList& hit_list) const override;
+
+  // Primitive Functions
+  Flt hitCost() const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:

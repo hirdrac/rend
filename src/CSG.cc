@@ -50,7 +50,11 @@ Flt CSG::hitCost() const
 {
   if (_cost >= 0.0) { return _cost; }
   Flt cost = CostTable.csg;
-  for (auto& ob : _children) { cost += ob->hitCost(); }
+  for (auto& ob : _children) {
+    auto pPtr = dynamic_cast<const Primitive*>(ob.get());
+    assert(pPtr != nullptr);
+    cost += pPtr->hitCost();
+  }
   return cost;
 }
 
