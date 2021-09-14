@@ -1,0 +1,46 @@
+// Settings
+//(size 1920 1080)
+(size 1280 720)
+(eye 0 7 16)
+(coi  0 4 0)
+(maxdepth 9)
+(shadow 1)
+
+// anti-aliasing
+(supersample 3 3)
+//(jitter .95)
+
+// Lights
+(ambient (rgb .1 .1 .1))
+(light (pos -2 18 12) (rgb .9 .9 .9))
+
+(default
+  (phong
+    (specular (rgb .2 .2 .2))
+    (diffuse (rgb .5 .2 .2)))
+)
+
+// Objects
+
+(group (include "glyphs/num_0.sdl")(move -14.625  0 -6))
+(group (include "glyphs/num_1.sdl")(move -11.375  0 -6))
+(group (include "glyphs/num_2.sdl")(move  -8.125  0 -6))
+(group (include "glyphs/num_3.sdl")(move  -4.875  0 -6))
+(group (include "glyphs/num_4.sdl")(move  -1.625  0 -6))
+(group (include "glyphs/num_5.sdl")(move   1.625  0 -6))
+(group (include "glyphs/num_6.sdl")(move   4.875  0 -6))
+(group (include "glyphs/num_7.sdl")(move   8.125  0 -6))
+(group (include "glyphs/num_8.sdl")(move  11.375  0 -6))
+(group (include "glyphs/num_9.sdl")(move  14.625  0 -6))
+
+
+(plane
+  (rotx -90)(scale  32 1 32)(move 0 -.1 0)
+  (phong
+    (specular (rgb .5 .5 .5))
+    (diffuse
+      (checker
+        (rgb .5 .5 .5)
+        (ring (rgb .1 .1 .1)(rgb .2 .2 .2)(scale 4 4 1))
+        (scale 5 5 1)(rotz 45))))
+)

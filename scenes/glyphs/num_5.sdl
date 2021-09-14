@@ -1,0 +1,40 @@
+// Digit "5"
+(group
+  // top
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 4.5 0))
+    (cylinder (scale .5 .5 .25)(rotx 90)(move -1 4.75 0)) )
+  (cylinder (scale .5 .5 1)(roty 90)(move 0 4.5 0))
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move 1.25 4.5 0))
+    (cylinder (scale .5 .5 .5)(rotx 90)(move 1 4.5 0)) )
+
+  // upper left
+  (cylinder (scale .5 .5 1)(rotx 90)(move -1 3.5 0))
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 2.5 0))
+    (cylinder (scale .5 .5 .25)(rotx 90)(move -1 2.25 0)) )
+  (cylinder (scale .5 .5 .5)(roty 90)(move -.5 2.5 0))
+
+  // lower right
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 1.5 0))
+    (cube (scale .75 1.5 .51)(move .75 1.5 0)) )
+
+  // bottom
+  (cylinder (scale .5 .5 .5)(roty 90)(move -.5 .5 0))
+  (intersect
+    (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 .5 0))
+    (cylinder (scale .5 .5 .5)(rotx 90)(move -1 .5 0)) )
+
+
+/*
+  // bottom left
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 1.5 0))
+    (cylinder (scale .5 .5 1)(roty 90)(move -1 1 0)) )
+  (intersect
+    (torus (radius .5)(rotx 90)(move 0 1.5 0))
+    (cube (scale 1 1 .51)(move -1 0 0)) )
+*/
+)
