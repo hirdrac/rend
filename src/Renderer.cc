@@ -6,38 +6,13 @@
 #include "Renderer.hh"
 #include "Scene.hh"
 #include "FrameBuffer.hh"
+#include "RandomGen.hh"
 #include "Ray.hh"
 #include "Color.hh"
 #include "Print.hh"
 #include <chrono>
 #include <algorithm>
-#include <random>
 #include <cassert>
-
-
-class RandomGen
-{
- public:
-  Flt jitter() { return _jitterDist(_rnd); }
-    // random value in [-.5, .5)
-
-  Vec2 diskPt() {
-    // random point on diameter=1 disk
-    Flt x, y;
-    do {
-      x = jitter();
-      y = jitter();
-    } while ((Sqr(x) + Sqr(y)) > .25);
-    return Vec2{x, y};
-  }
-
- private:
-  std::mt19937_64 _rnd{_devRnd()};
-  std::uniform_real_distribution<Flt> _jitterDist{-.5,.5};
-  static std::random_device _devRnd;
-};
-
-std::random_device RandomGen::_devRnd;
 
 
 // **** Renderer class ****
