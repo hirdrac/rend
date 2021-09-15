@@ -172,22 +172,20 @@ template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(
   const Vector4<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
-  return Vector4<T>{
-    (v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + (v.w*m[12]),
-    (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9])  + (v.w*m[13]),
-    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + (v.w*m[14]),
-    (v.x*m[3]) + (v.y*m[7]) + (v.z*m[11]) + (v.w*m[15])};
+  return {(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + (v.w*m[12]),
+          (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9])  + (v.w*m[13]),
+          (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + (v.w*m[14]),
+          (v.x*m[3]) + (v.y*m[7]) + (v.z*m[11]) + (v.w*m[15])};
 }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector4<T>& v)
 {
-  return Vector4<T>{
-    (m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + (m[12]*v.w),
-    (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z)  + (m[13]*v.w),
-    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + (m[14]*v.w),
-    (m[3]*v.x) + (m[7]*v.y) + (m[11]*v.z) + (m[15]*v.w)};
+  return {(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + (m[12]*v.w),
+          (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z)  + (m[13]*v.w),
+          (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + (m[14]*v.w),
+          (m[3]*v.x) + (m[7]*v.y) + (m[11]*v.z) + (m[15]*v.w)};
 }
 
 
@@ -540,9 +538,9 @@ template<typename T>
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 1, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>{(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + m[12],
-		    (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9])  + m[13],
-		    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + m[14]};
+  return {(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8])  + m[12],
+	  (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9])  + m[13],
+	  (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10]) + m[14]};
 }
 
 // MultPoint() - column major matrix * column vector
@@ -551,9 +549,43 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 1, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>{(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + m[12],
-		    (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z)  + m[13],
-		    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + m[14]};
+  return {(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z)  + m[12],
+	  (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z)  + m[13],
+	  (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z) + m[14]};
+}
+
+// MultPointXY() - row vector * row major matrix; return only (x,y)
+template<class T>
+[[nodiscard]] constexpr Vector2<T> MultPointXY(
+  const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
+{
+  return {(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8]) + m[12],
+          (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9]) + m[13]};
+}
+
+// MultPointXY() - column major matrix * column vector; return only (x,y)
+template<class T>
+[[nodiscard]] constexpr Vector2<T> MultPointXY(
+  const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
+{
+  return {(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z) + m[12],
+          (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z) + m[13]};
+}
+
+// MultPointX() - row vector * row major matrix; return only x
+template<class T>
+[[nodiscard]] constexpr T MultPointX(
+  const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
+{
+  return (v.x*m[0]) + (v.y*m[4]) + (v.z*m[8]) + m[12];
+}
+
+// MultPointX() - column major matrix * column vector; return only x
+template<class T>
+[[nodiscard]] constexpr T MultPointX(
+  const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
+{
+  return (m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z) + m[12];
 }
 
 // MultVector() - row vector * row major matrix
@@ -562,9 +594,9 @@ template<typename T>
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 0, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>{(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8]),
-		    (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9]),
-		    (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10])};
+  return {(v.x*m[0]) + (v.y*m[4]) + (v.z*m[8]),
+	  (v.x*m[1]) + (v.y*m[5]) + (v.z*m[9]),
+	  (v.x*m[2]) + (v.y*m[6]) + (v.z*m[10])};
 }
 
 // MultVector() - column major matrix * column vector
@@ -573,9 +605,9 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 0, m[3,7,11] = 0, m[15] = 1
-  return Vector3<T>{(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z),
-		    (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z),
-		    (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z)};
+  return {(m[0]*v.x) + (m[4]*v.y) + (m[8]*v.z),
+	  (m[1]*v.x) + (m[5]*v.y) + (m[9]*v.z),
+	  (m[2]*v.x) + (m[6]*v.y) + (m[10]*v.z)};
 }
 
 // MultVectorTrans - row vector * transpose(row major matrix)
@@ -584,9 +616,9 @@ template<typename T>
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v.w = 0, m[12,13,14] = 0, m[15] = 1
-  return Vector3<T>{(v.x*m[0]) + (v.y*m[1]) + (v.z*m[2]),
-		    (v.x*m[4]) + (v.y*m[5]) + (v.z*m[6]),
-		    (v.x*m[8]) + (v.y*m[9]) + (v.z*m[10])};
+  return {(v.x*m[0]) + (v.y*m[1]) + (v.z*m[2]),
+	  (v.x*m[4]) + (v.y*m[5]) + (v.z*m[6]),
+	  (v.x*m[8]) + (v.y*m[9]) + (v.z*m[10])};
 }
 
 // MultVectorTrans() - transpose(column major matrix) * column vector
@@ -595,9 +627,9 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v.w = 0, m[12,13,14] = 0, m[15] = 1
-  return Vector3<T>{(m[0]*v.x) + (m[1]*v.y) + (m[2]*v.z),
-		    (m[4]*v.x) + (m[5]*v.y) + (m[6]*v.z),
-		    (m[8]*v.x) + (m[9]*v.y) + (m[10]*v.z)};
+  return {(m[0]*v.x) + (m[1]*v.y) + (m[2]*v.z),
+	  (m[4]*v.x) + (m[5]*v.y) + (m[6]*v.z),
+	  (m[8]*v.x) + (m[9]*v.y) + (m[10]*v.z)};
 }
 
 // Matrix Inversion

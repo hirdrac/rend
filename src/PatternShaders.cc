@@ -52,7 +52,7 @@ int PatternShader::init(Scene& s)
 Color Checkerboard::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;
@@ -71,7 +71,7 @@ Color Checkerboard::evaluate(
 Color Pinwheel::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
 
   const Flt radius = std::sqrt(Sqr(m.x) + Sqr(m.y));
   const Flt spin_val = _spin * radius * PI * .25;
@@ -99,7 +99,7 @@ Color Pinwheel::evaluate(
 Color Ring::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
   const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y)) + _offset;
 
   if (_border) {
@@ -119,7 +119,7 @@ Color Ring::evaluate(
 Color SquareRing::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
   const Flt d = std::max(Abs(m.x), Abs(m.y)) + _offset;
 
   if (_border) {
@@ -139,8 +139,7 @@ Color SquareRing::evaluate(
 Color Stripe::evaluate(
   const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
-  const Flt d = m.x;
+  const Flt d = _trans.pointLocalToGlobalX(eh.map, r.time);
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;
