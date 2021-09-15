@@ -222,108 +222,121 @@ class Vector4
 // **** Unary Operators ****
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& v) {
-  return Vector2<T>{-v.x, -v.y}; }
+  return {-v.x, -v.y}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator-(const Vector3<T>& v) {
-  return Vector3<T>{-v.x, -v.y, -v.z}; }
+  return {-v.x, -v.y, -v.z}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator-(const Vector4<T>& v) {
-  return Vector4<T>{-v.x, -v.y, -v.z, -v.w}; }
+  return {-v.x, -v.y, -v.z, -v.w}; }
 
 
 // **** Binary Operators ****
 // vec + vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator+(const Vector2<T>& a, const Vector2<T>& b) {
-  return Vector2<T>{a.x + b.x, a.y + b.y}; }
+  return {a.x + b.x, a.y + b.y}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator+(const Vector3<T>& a, const Vector3<T>& b) {
-  return Vector3<T>{a.x + b.x, a.y + b.y, a.z + b.z}; }
+  return {a.x + b.x, a.y + b.y, a.z + b.z}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator+(const Vector4<T>& a, const Vector4<T>& b) {
-  return Vector4<T>{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}; }
+  return {a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}; }
 
 // vec - vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& a, const Vector2<T>& b) {
-  return Vector2<T>{a.x - b.x, a.y - b.y}; }
+  return {a.x - b.x, a.y - b.y}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator-(const Vector3<T>& a, const Vector3<T>& b) {
-  return Vector3<T>{a.x - b.x, a.y - b.y, a.z - b.z}; }
+  return {a.x - b.x, a.y - b.y, a.z - b.z}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator-(const Vector4<T>& a, const Vector4<T>& b) {
-  return Vector4<T>{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}; }
+  return {a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}; }
 
 // vec * vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator*(const Vector2<T>& a, const Vector2<T>& b) {
-  return Vector2<T>{a.x * b.x, a.y * b.y}; }
+  return {a.x * b.x, a.y * b.y}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator*(const Vector3<T>& a, const Vector3<T>& b) {
-  return Vector3<T>{a.x * b.x, a.y * b.y, a.z * b.z}; }
+  return {a.x * b.x, a.y * b.y, a.z * b.z}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(const Vector4<T>& a, const Vector4<T>& b) {
-  return Vector4<T>{a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w}; }
+  return {a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w}; }
 
 // vec / vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator/(const Vector2<T>& a, const Vector2<T>& b) {
-  return Vector2<T>{a.x / b.x, a.y / b.y}; }
+  return {a.x / b.x, a.y / b.y}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator/(const Vector3<T>& a, const Vector3<T>& b) {
-  return Vector3<T>{a.x / b.x, a.y / b.y, a.z / b.z}; }
+  return {a.x / b.x, a.y / b.y, a.z / b.z}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator/(const Vector4<T>& a, const Vector4<T>& b) {
-  return Vector4<T>{a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w}; }
+  return {a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w}; }
 
 // vec * x
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator*(const Vector2<T>& a, T b) {
-  return Vector2<T>{a.x * b, a.y * b}; }
+  return {a.x * b, a.y * b}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator*(const Vector3<T>& a, T b) {
-  return Vector3<T>{a.x * b, a.y * b, a.z * b}; }
+  return {a.x * b, a.y * b, a.z * b}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(const Vector4<T>& a, T b) {
-  return Vector4<T>{a.x * b, a.y * b, a.z * b, a.w * b}; }
+  return {a.x * b, a.y * b, a.z * b, a.w * b}; }
 
 // x * vec
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator*(T a, const Vector2<T>& b) {
-  return Vector2<T>{a * b.x, a * b.y}; }
+  return {a * b.x, a * b.y}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator*(T a, const Vector3<T>& b) {
-  return Vector3<T>{a * b.x, a * b.y, a * b.z}; }
+  return {a * b.x, a * b.y, a * b.z}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator*(T a, const Vector4<T>& b) {
-  return Vector4<T>{a * b.x, a * b.y, a * b.z, a * b.w}; }
+  return {a * b.x, a * b.y, a * b.z, a * b.w}; }
 
 // vec / x
 template<typename T>
 [[nodiscard]] constexpr Vector2<T> operator/(const Vector2<T>& a, T b) {
-  return Vector2<T>{a.x / b, a.y / b}; }
+  return {a.x / b, a.y / b}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> operator/(const Vector3<T>& a, T b) {
-  return Vector3<T>{a.x / b, a.y / b, a.z / b}; }
+  return {a.x / b, a.y / b, a.z / b}; }
 
 template<typename T>
 [[nodiscard]] constexpr Vector4<T> operator/(const Vector4<T>& a, T b) {
-  return Vector4<T>{a.x / b, a.y / b, a.z / b, a.w / b}; }
+  return {a.x / b, a.y / b, a.z / b, a.w / b}; }
+
+// x / vec
+template<typename T>
+[[nodiscard]] constexpr Vector2<T> operator/(T a, const Vector2<T>& b) {
+  return {a / b.x, a / b.y}; }
+
+template<typename T>
+[[nodiscard]] constexpr Vector3<T> operator/(T a, const Vector3<T>& b) {
+  return {a / b.x, a / b.y, a / b.z}; }
+
+template<typename T>
+[[nodiscard]] constexpr Vector4<T> operator/(T a, const Vector4<T>& b) {
+  return {a / b.x, a / b.y, a / b.z, a / b.w}; }
 
 
 // **** Template Stream Operators ****
@@ -368,9 +381,9 @@ template<typename T>
 template<typename T>
 [[nodiscard]] constexpr Vector3<T> CrossProduct(const Vector3<T>& a, const Vector3<T>& b)
 {
-  return Vector3<T>{(a.y * b.z) - (a.z * b.y),
-		    (a.z * b.x) - (a.x * b.z),
-		    (a.x * b.y) - (a.y * b.x)};
+  return {(a.y * b.z) - (a.z * b.y),
+          (a.z * b.x) - (a.x * b.z),
+          (a.x * b.y) - (a.y * b.x)};
 }
 
 template<typename T>
