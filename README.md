@@ -10,6 +10,7 @@ A simple 3d ray-tracing renderer.
 * multi-threaded rendering support
 * lisp-like scene description language
 * optional interactive shell for performing rendering operations
+* outputs png or bmp format
 
 ## Platform Support
 * Linux
@@ -20,7 +21,5 @@ To build, just run 'make' in the main directory.
 
 To render the title image:
 ```
-./rend scenes/title.sdl title.bmp -j
-convert title.bmp title.png
+./rend scenes/title.sdl title.png -j
 ```
-(only BMP output is supported currently so ImageMagick's convert is used to produce the final PNG file)
