@@ -20,6 +20,7 @@ class FrameBuffer
   // Member Functions
   int init(int width, int height, const Color& c = colors::black);
   int saveBMP(const std::string& filename) const;
+  int savePNG(const std::string& filename) const;
 
   void clear(const Color& c = colors::black);
   int plot(int x, int y, const Color& c);

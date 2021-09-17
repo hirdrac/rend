@@ -20,7 +20,7 @@ BIN_rend.SRC =\
 
 SOURCE_DIR = src
 STANDARD = c++17
-PACKAGES = readline
+PACKAGES = readline libpng
 OPTIONS = pthread lto modern_c++
 WARN_EXTRA = extra-semi fatal-errors conversion cast-align cast-qual
 FLAGS = -march=native -ffast-math

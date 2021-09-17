@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 #include <cassert>
+#include <png.h>
 
 
 // **** FrameBuffer Class ****
@@ -64,7 +65,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   // create BMP file
   std::ofstream file(filename, std::ios::out | std::ios::binary);
   if (!file) {
-    println_err("Error writing file '", filename, "'");
+    println_err("Error writing bmp file");
     return -1;
   }
 
@@ -75,15 +76,52 @@ int FrameBuffer::saveBMP(const std::string& filename) const
     const float* src = _buffer.data() + (_rowSize * y);
     uint8_t* out = row.get();
     for (int x = 0; x < _width; ++x) {
-      float r = *src++;
-      float g = *src++;
-      float b = *src++;
+      const float r = *src++;
+      const float g = *src++;
+      const float b = *src++;
 
       *out++ = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
       *out++ = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
       *out++ = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
     }
     file.write(reinterpret_cast<char*>(row.get()), bmp_row_size);
+  }
+
+  return 0;
+}
+
+int FrameBuffer::savePNG(const std::string& filename) const
+{
+  if (_buffer.empty()) { return -1; }
+
+  png_image image{};
+  image.version = PNG_IMAGE_VERSION;
+  image.width   = static_cast<png_uint_32>(_width);
+  image.height  = static_cast<png_uint_32>(_height);
+  image.format  = PNG_FORMAT_RGB;  // 8-bit RGB
+
+  const std::size_t size = PNG_IMAGE_SIZE(image);
+  assert(size >= std::size_t(_width * _height * 3));
+  auto output = std::make_unique<uint8_t[]>(size);
+
+  uint8_t* out = output.get();
+  for (int y = _height - 1; y >= 0; --y) {
+    const float* src = _buffer.data() + (_rowSize * y);
+    for (int x = 0; x < _width; ++x) {
+      const float r = *src++;
+      const float g = *src++;
+      const float b = *src++;
+
+      *out++ = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
+      *out++ = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
+      *out++ = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
+    }
+  }
+
+  if (png_image_write_to_file(
+        &image, filename.c_str(), 0, output.get(), 0, nullptr) == 0) {
+    println("Error writing png file");
+    return -1;
   }
 
   return 0;

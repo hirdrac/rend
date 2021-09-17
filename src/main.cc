@@ -138,16 +138,22 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
   std::string ext;
   if (x != std::string::npos) { ext = file.substr(x); }
 
-  if (ext.empty()) { ext = ".bmp"; }
-  else if (ext != ".bmp") {
+  if (ext.empty()) { ext = ".png"; }
+  else if (ext != ".bmp" && ext != ".png") {
     println("Invalid image file extension '", ext.substr(1), "'");
-    println("(only 'bmp' currently supported)");
+    println("(currently supported: bmp,png)");
     return -1;
   }
 
   std::string fn = file.substr(0,x) + ext;
   println("Saving image to '", fn, "'");
-  return fb.saveBMP(fn);
+  if (ext == ".bmp") {
+    return fb.saveBMP(fn);
+  } else if (ext == ".png") {
+    return fb.savePNG(fn);
+  } else {
+    return -1;
+  }
 }
 
 void ShellStats(const Renderer& ren, const Scene& s)
