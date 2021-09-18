@@ -60,7 +60,6 @@ Color Phong::evaluate(
 
   // Evaluate Shaders
   const Color color_d = _diffuse->evaluate(s, r, eh);
-  const bool is_d = !color_d.isBlack(black_val);
 
   const Color color_s = _specular->evaluate(s, r, eh);
   const bool is_s = !color_s.isBlack(black_val);
@@ -82,49 +81,37 @@ Color Phong::evaluate(
     reflect = CalcReflect(dir, eh.normal);
   }
 
-  Ray ray;
-  ray.base       = eh.global_pt;
-  ray.min_length = s.ray_moveout;
-  ray.time       = r.time;
-  ray.depth      = r.depth + 1;
-  ray.freeCache  = r.freeCache;
-  ray.stats      = r.stats;
-
   // ambient calculation
   Color result = s.ambient->evaluate(s, r, eh) * color_d;
 
+  // diffuse/specular lighting calculations
   for (auto& lt : s.lights()) {
     LightResult lresult;
-    lt->luminate(s, r, eh, lresult);
-    Flt angle = DotProduct(eh.normal, lresult.dir);
-    if (!IsPositive(angle)) { continue; }
+    if (!lt->luminate(s, r, eh, lresult)) { continue; }
 
-    if (s.shadow) {
-      // shadow check
-      ray.dir        = lresult.dir;
-      ray.max_length = lresult.distance;
-
-      lresult.energy *= s.traceShadowRay(ray);
-    }
-
-    if (is_d) {
-      // diffuse calculation
-      result += (lresult.energy * color_d) * angle;
-    }
+    // diffuse calculation
+    result += (lresult.energy * color_d) * lresult.angle;
 
     if (is_s) {
       // specular hi-light calculation
-      angle = DotProduct(reflect, lresult.dir);
-      if (angle > 0.0) {
+      const Flt angle = DotProduct(reflect, lresult.dir);
+      if (IsPositive(angle)) {
 	result += (lresult.energy * color_s) * std::pow(angle, exp);
       }
     }
   }
 
+  // reflection calculation
   if (is_s && r.depth < s.max_ray_depth) {
-    // add in reflection
+    Ray ray;
+    ray.base       = eh.global_pt;
     ray.dir        = reflect;
+    ray.min_length = s.ray_moveout;
     ray.max_length = VERY_LARGE;
+    ray.time       = r.time;
+    ray.depth      = r.depth + 1;
+    ray.freeCache  = r.freeCache;
+    ray.stats      = r.stats;
 
     result += s.traceRay(ray) * color_s;
   }

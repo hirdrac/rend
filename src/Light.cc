@@ -5,6 +5,7 @@
 
 #include "Light.hh"
 #include "Scene.hh"
+#include "Print.hh"
 #include <cassert>
 
 
@@ -14,7 +15,7 @@ int Light::init(Scene& s)
   if (!_energy) {
     _energy = s.default_lt;
     if (!_energy) {
-      // FIXME - add error message here for missing shader
+      println("missing shader");
       return -1;
     }
   }
