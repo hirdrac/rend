@@ -94,10 +94,20 @@ Color Phong::evaluate(
 
     if (is_s) {
       // specular hi-light calculation
+#if 1
+      // phong
       const Flt angle = DotProduct(reflect, lresult.dir);
       if (IsPositive(angle)) {
 	result += (lresult.energy * color_s) * std::pow(angle, exp);
       }
+#else
+      // blinn-phong
+      const Vec3 halfway = UnitVec(lresult.dir - r.dir);
+      const Flt angle = DotProduct(halfway, eh.normal);
+      if (IsPositive(angle)) {
+	result += (lresult.energy * color_s) * std::pow(angle, exp * 4.0);
+      }
+#endif
     }
   }
 
