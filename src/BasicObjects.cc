@@ -232,7 +232,7 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
       near_h = h2; near_side = 1;
       far_h = h1; far_side = 0;
     }
-  } else if ((base.x < -1.0) || (base.x > 1.0)) {
+  } else if (Abs(base.x) > 1.0) {
     return 0;  // Miss
   }
 
@@ -253,7 +253,7 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
       if (near_h > far_h) {
         return 0;  // Miss
       }
-    } else if ((base[i] < -1.0) || (base[i] > 1.0)) {
+    } else if (Abs(base[i]) > 1.0) {
       return 0;  // Miss
     }
   }
@@ -344,7 +344,7 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
     if (near_h > far_h) {
       return 0;  // cylinder missed
     }
-  } else if ((base.z < -1.0) || (base.z > 1.0)) {
+  } else if (Abs(base.z) > 1.0) {
     return 0; // ray parallel with planes but not between planes
   }
 
@@ -530,12 +530,12 @@ int Plane::intersect(const Ray& r, HitList& hit_list) const
   }
 
   const Flt px = base.x + (dir.x * h);
-  if ((px < -1.0) || (px > 1.0)) {
+  if (Abs(px) > 1.0) {
     return 0;
   }
 
   const Flt py = base.y + (dir.y * h);
-  if ((py < -1.0) || (py > 1.0)) {
+  if (Abs(py) > 1.0) {
     return 0;
   }
 

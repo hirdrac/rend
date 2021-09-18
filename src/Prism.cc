@@ -85,7 +85,7 @@ int Prism::intersect(const Ray& r, HitList& hit_list) const
 
     const Flt h = (1.0 - ((n.x * base.x) + (n.y * base.y))) / vd;
     const Flt pt_z = base.z + (dir.z * h);
-    if (pt_z < -1.0 || pt_z > 1.0) { continue; } // miss
+    if (Abs(pt_z) > 1.0) { continue; } // miss
 
     const Flt pt_x = base.x + (dir.x * h);
     const Flt pt_y = base.y + (dir.y * h);
