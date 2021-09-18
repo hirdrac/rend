@@ -22,7 +22,6 @@ bool Sun::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
   const Flt angle = DotProduct(eh.normal, unit_dir);
   if (!IsPositive(angle)) { return false; }
 
-  Color energy = _energy->evaluate(s, r, eh);
   if (s.shadow) {
     Ray sray;
     sray.base       = eh.global_pt;
@@ -30,17 +29,17 @@ bool Sun::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
     sray.min_length = s.ray_moveout;
     sray.max_length = VERY_LARGE;
     sray.time       = r.time;
-    sray.depth      = r.depth + 1;
+    sray.depth      = 0;
     sray.freeCache  = r.freeCache;
     sray.stats      = r.stats;
 
-    energy *= s.traceShadowRay(sray);
+    if (s.castShadowRay(sray)) { return false; }
   }
 
   result.dir = unit_dir;
   result.distance = VERY_LARGE;
   result.angle = angle;
-  result.energy = energy;
+  result.energy = _energy->evaluate(s, r, eh);
   return true;
 }
 
@@ -61,7 +60,6 @@ bool PointLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
   const Flt angle = DotProduct(eh.normal, unit_dir);
   if (!IsPositive(angle)) { return false; }
 
-  Color energy = _energy->evaluate(s, r, eh);
   if (s.shadow) {
     Ray sray;
     sray.base       = eh.global_pt;
@@ -69,17 +67,17 @@ bool PointLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
     sray.min_length = s.ray_moveout;
     sray.max_length = len;
     sray.time       = r.time;
-    sray.depth      = r.depth + 1;
+    sray.depth      = 0;
     sray.freeCache  = r.freeCache;
     sray.stats      = r.stats;
 
-    energy *= s.traceShadowRay(sray);
+    if (s.castShadowRay(sray)) { return false; }
   }
 
   result.dir = unit_dir;
   result.distance = len;
   result.angle = angle;
-  result.energy = energy;
+  result.energy = _energy->evaluate(s, r, eh);
   return true;
 }
 

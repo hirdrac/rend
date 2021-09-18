@@ -202,7 +202,7 @@ Color Scene::traceRay(const Ray& r) const
   return sh->evaluate(*this, r, eh);
 }
 
-Color Scene::traceShadowRay(const Ray& r) const
+bool Scene::castShadowRay(const Ray& r) const
 {
   ++r.stats->shadow_rays.tried;
 
@@ -210,8 +210,9 @@ Color Scene::traceShadowRay(const Ray& r) const
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
-  if (!hit) { return colors::white; }
+  if (!hit) { return false; }
 
   ++r.stats->shadow_rays.hit;
-  return colors::black; // transparency not supported
+  // transparency not supported
+  return true;
 }

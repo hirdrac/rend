@@ -74,7 +74,7 @@ class Scene
   int init();
 
   Color traceRay(const Ray& r) const;
-  Color traceShadowRay(const Ray& r) const;
+  bool castShadowRay(const Ray& r) const;
 
   const std::vector<ObjectPtr>& objects() const { return _objects; }
   const std::vector<ObjectPtr>& optObjects() const { return _optObjects; }
