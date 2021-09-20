@@ -57,7 +57,7 @@ static int MoveFn(
   return 0;
 }
 
-template <BBox::Spot spot>
+template<BBox::Spot spot>
 int MoveByBBoxSpotFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -83,7 +83,8 @@ static int NoParentFn(
   return 0;
 }
 
-static int RotateXFn(
+template<Matrix::Axis axis>
+int RotateByAxisFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -92,33 +93,7 @@ static int RotateXFn(
   Flt angle;
   if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
 
-  t->base.rotateX(angle * math::DEG_TO_RAD<Flt>);
-  return 0;
-}
-
-static int RotateYFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Flt angle;
-  if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
-
-  t->base.rotateY(angle * math::DEG_TO_RAD<Flt>);
-  return 0;
-}
-
-static int RotateZFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Transform* t = findTrans(p);
-  if (!t) { return -1; }
-
-  Flt angle;
-  if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
-
-  t->base.rotateZ(angle * math::DEG_TO_RAD<Flt>);
+  t->base.rotate<axis>(angle * math::DEG_TO_RAD<Flt>);
   return 0;
 }
 
@@ -510,12 +485,12 @@ static void initKeywords()
     {"radius",      RadiusFn},
     {"region",      RegionFn},
     {"rgb",         RgbFn},
-    {"rotate_x",    RotateXFn},
-    {"rotate_y",    RotateYFn},
-    {"rotate_z",    RotateZFn},
-    {"rotx",        RotateXFn},
-    {"roty",        RotateYFn},
-    {"rotz",        RotateZFn},
+    {"rotate_x",    RotateByAxisFn<Matrix::X_AXIS>},
+    {"rotate_y",    RotateByAxisFn<Matrix::Y_AXIS>},
+    {"rotate_z",    RotateByAxisFn<Matrix::Z_AXIS>},
+    {"rotx",        RotateByAxisFn<Matrix::X_AXIS>},
+    {"roty",        RotateByAxisFn<Matrix::Y_AXIS>},
+    {"rotz",        RotateByAxisFn<Matrix::Z_AXIS>},
     {"samples",     SamplesFn},
     {"scale",       ScaleFn},
     {"sectors",     SectorsFn},

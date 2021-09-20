@@ -120,6 +120,24 @@ class Matrix4x4
 
   constexpr void transpose();
 
+
+  // template helper functions
+  enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
+
+  template<Axis a>
+  void rotate(T rad) {
+    if constexpr (a == X_AXIS) { rotateX(rad); }
+    else if constexpr (a == Y_AXIS) { rotateY(rad); }
+    else { rotateZ(rad); }
+  }
+
+  template<Axis a>
+  void scale(T s) {
+    if constexpr (a == X_AXIS) { scaleX(s); }
+    else if constexpr (a == Y_AXIS) { scaleY(s); }
+    else { scaleZ(s); }
+  }
+
  private:
   T _val[size()];
 };
