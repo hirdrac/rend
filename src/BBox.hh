@@ -8,8 +8,6 @@
 #pragma once
 #include "Types.hh"
 
-class Transform;
-
 
 class BBox
 {
@@ -33,10 +31,40 @@ class BBox
 
   [[nodiscard]] inline bool empty() const;
 
-  [[nodiscard]] Vec3 center() const { return (pmin + pmax) / 2.0; }
+  [[nodiscard]] Vec3 center() const { return (pmin + pmax) * .5; }
+
+  [[nodiscard]] Vec3 baseX() const {
+    return {pmin.x, (pmin.y + pmax.y) * .5, (pmin.z + pmax.z) * .5}; }
+  [[nodiscard]] Vec3 baseY() const {
+    return {(pmin.x + pmax.x) * .5, pmin.y, (pmin.z + pmax.z) * .5}; }
+  [[nodiscard]] Vec3 baseZ() const {
+    return {(pmin.x + pmax.x) * .5, (pmin.y + pmax.y) * .5, pmin.z}; }
+
+  [[nodiscard]] Vec3 topX() const {
+    return {pmax.x, (pmin.y + pmax.y) * .5, (pmin.z + pmax.z) * .5}; }
+  [[nodiscard]] Vec3 topY() const {
+    return {(pmin.x + pmax.x) * .5, pmax.y, (pmin.z + pmax.z) * .5}; }
+  [[nodiscard]] Vec3 topZ() const {
+    return {(pmin.x + pmax.x) * .5, (pmin.y + pmax.y) * .5, pmax.z}; }
+
   [[nodiscard]] Flt lengthX() const { return (pmax.x - pmin.x); }
   [[nodiscard]] Flt lengthY() const { return (pmax.y - pmin.y); }
   [[nodiscard]] Flt lengthZ() const { return (pmax.z - pmin.z); }
+
+
+  enum Spot { CENTER, BASE_X, BASE_Y, BASE_Z, TOP_X, TOP_Y, TOP_Z };
+
+  [[nodiscard]] Vec3 operator()(Spot s) const {
+    switch (s) {
+      case BASE_X: return baseX();
+      case BASE_Y: return baseY();
+      case BASE_Z: return baseZ();
+      case TOP_X:  return topX();
+      case TOP_Y:  return topY();
+      case TOP_Z:  return topZ();
+      default:     return center();
+    }
+  }
 };
 
 

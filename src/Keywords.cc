@@ -57,6 +57,22 @@ static int MoveFn(
   return 0;
 }
 
+template <BBox::Spot spot>
+int MoveByBBoxSpotFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  Object* ob = dynamic_cast<Object*>(p);
+  if (!t || !ob) { return -1; }
+
+  Vec3 v;
+  if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
+
+  v -= ob->bound(&t->base)(spot);
+  t->base.translate(v);
+  return 0;
+}
+
 static int NoParentFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -480,6 +496,13 @@ static void initKeywords()
     {"maxdepth",    MaxdepthFn},
     {"minvalue",    MinValueFn},
     {"move",        MoveFn},
+    {"move_base_x", MoveByBBoxSpotFn<BBox::BASE_X>},
+    {"move_base_y", MoveByBBoxSpotFn<BBox::BASE_Y>},
+    {"move_base_z", MoveByBBoxSpotFn<BBox::BASE_Z>},
+    {"move_center", MoveByBBoxSpotFn<BBox::CENTER>},
+    {"move_top_x",  MoveByBBoxSpotFn<BBox::TOP_X>},
+    {"move_top_y",  MoveByBBoxSpotFn<BBox::TOP_Y>},
+    {"move_top_z",  MoveByBBoxSpotFn<BBox::TOP_Z>},
     {"no_parent",   NoParentFn},
     {"offset",      OffsetFn},
     {"pos",         PositionFn},
