@@ -78,7 +78,6 @@ class HitList
   [[nodiscard]] int  count() const { return _hitList.count(); }
   [[nodiscard]] bool csg() const { return _csg; }
 
-  void csgMerge(const Primitive* csg);
   void csgUnion(const Primitive* csg);
   void csgIntersection(const Primitive* csg, int objectCount);
   void csgDifference(const Primitive* csg, const void* primary);

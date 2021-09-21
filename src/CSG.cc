@@ -64,34 +64,6 @@ Vec3 CSG::normal(const Ray& r, const HitInfo& h) const
 }
 
 
-// **** Merge Class ****
-BBox Merge::bound(const Matrix* t) const
-{
-  BBox b;
-  for (auto& ob : _children) {
-    if (t == nullptr) {
-      b.fit(ob->bound(nullptr));
-    } else {
-      assert(ob->trans());
-      const Matrix t2 = ob->trans()->base * (*t);
-      b.fit(ob->bound(&t2));
-    }
-  }
-  return b;
-}
-
-int Merge::intersect(const Ray& r, HitList& hit_list) const
-{
-  HitList hl(hit_list.freeCache(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl); }
-  hl.csgMerge(this);
-
-  const int hits = hl.count();
-  hit_list.mergeList(hl);
-  return hits;
-}
-
-
 // **** Union Class ****
 BBox Union::bound(const Matrix* t) const
 {

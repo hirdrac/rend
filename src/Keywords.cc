@@ -514,7 +514,6 @@ REGISTER_OBJECT_KEYWORD(Difference,"difference");
 REGISTER_OBJECT_KEYWORD(Disc,"disc");
 REGISTER_OBJECT_KEYWORD(Group,"group");
 REGISTER_OBJECT_KEYWORD(Intersection,"intersect");
-REGISTER_OBJECT_KEYWORD(Merge,"merge");
 REGISTER_OBJECT_KEYWORD(Paraboloid,"paraboloid");
 REGISTER_OBJECT_KEYWORD(Plane,"plane");
 REGISTER_OBJECT_KEYWORD(Sphere,"sphere");

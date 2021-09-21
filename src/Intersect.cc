@@ -34,15 +34,6 @@ const HitInfo* HitList::findFirstHit(const Ray& r) const
   return (h && (h->distance < r.max_length)) ? h : nullptr;
 }
 
-void HitList::csgMerge(const Primitive* csg)
-{
-  for (HitInfo* h = _hitList.head(); h != nullptr; h = h->next) {
-    // claim hit as part of csg object
-    if (!h->child) { h->child = h->object; }
-    h->object = csg;
-  }
-}
-
 void HitList::csgUnion(const Primitive* csg)
 {
   HitInfo* h = _hitList.head();

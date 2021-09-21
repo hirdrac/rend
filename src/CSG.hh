@@ -31,17 +31,6 @@ class CSG : public Primitive
 
 
 // **** CSG classes ****
-class Merge final : public CSG
-{
- public:
-  // SceneItem Functions
-  std::string desc() const override { return "<Merge>"; }
-
-  // Object Functions
-  BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
-};
-
 class Union final : public CSG
 {
  public:
