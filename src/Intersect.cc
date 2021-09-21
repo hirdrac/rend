@@ -23,11 +23,7 @@ void HitList::mergeList(HitList& list)
 
 void HitList::clear()
 {
-  if (_freeCache) {
-    _freeCache->store(_hitList);
-  } else {
-    _hitList.purge();
-  }
+  _freeCache->store(_hitList);
 }
 
 const HitInfo* HitList::findFirstHit(const Ray& r) const
@@ -145,10 +141,7 @@ void HitList::csgDifference(const Primitive* csg, const void* primary)
 
 HitInfo* HitList::newHit(Flt t)
 {
-  //HitInfo* ht = _freeCache ? _freeCache->fetch() : nullptr;
   HitInfo* ht = _freeCache->fetch();
-  if (!ht) { ht = new HitInfo; }
-
   ht->distance = t;
   ht->child = nullptr;
 
@@ -163,10 +156,5 @@ HitInfo* HitList::newHit(Flt t)
 
 void HitList::killNext(HitInfo* prev)
 {
-  HitInfo* h = _hitList.removeNext(prev);
-  if (_freeCache) {
-    _freeCache->store(h);
-  } else {
-    delete h;
-  }
+  _freeCache->store(_hitList.removeNext(prev));
 }

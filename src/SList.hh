@@ -57,16 +57,14 @@ class SList
 
   void purge() { KillNodes(_head); _head = nullptr; _tail = nullptr; }
 
-  int addToHead(type* item);
-  int addToHead(SList<type>& list);
-  int addToTail(type* item);
-  int addToTail(SList<type>& list);
-  int addAfterNode(type* node, type* item);
+  void addToHead(type* item);
+  void addToHead(SList<type>& list);
+  void addToTail(type* item);
+  void addToTail(SList<type>& list);
+  void addAfterNode(type* node, type* item);
 
   type* removeHead();
-  type* removeTail();
   type* removeNext(type* item);
-
   type* extractNodes();
 
   void swap(SList<type>& x) noexcept {
@@ -80,22 +78,20 @@ class SList
 };
 
 template<typename type>
-int SList<type>::addToHead(type* item)
+void SList<type>::addToHead(type* item)
 {
-  if (!item) { return -1; }
-
+  //assert(item != nullptr);
   type* end = LastNode(item);
   end->next = _head;
   if (!_tail) { _tail = end; }
 
   _head = item;
-  return 0;
 }
 
 template<typename type>
-int SList<type>::addToHead(SList<type>& list)
+void SList<type>::addToHead(SList<type>& list)
 {
-  if (list.empty()) { return -1; }
+  if (list.empty()) { return; }
 
   type* end = list.tail();
   type* start = list.extractNodes();
@@ -103,14 +99,12 @@ int SList<type>::addToHead(SList<type>& list)
   if (!_tail) { _tail = end; }
 
   _head = start;
-  return 0;
 }
 
 template<typename type>
-int SList<type>::addToTail(type* item)
+void SList<type>::addToTail(type* item)
 {
-  if (!item) { return -1; }
-
+  //assert(item != nullptr);
   if (_tail) {
     _tail->next = item;
   } else {
@@ -118,13 +112,12 @@ int SList<type>::addToTail(type* item)
   }
 
   _tail = LastNode(item);
-  return 0;
 }
 
 template<typename type>
-int SList<type>::addToTail(SList<type>& list)
+void SList<type>::addToTail(SList<type>& list)
 {
-  if (list.empty()) { return -1; }
+  if (list.empty()) { return; }
 
   type* end = list.tail();
   type* start = list.extractNodes();
@@ -136,22 +129,21 @@ int SList<type>::addToTail(SList<type>& list)
   }
 
   _tail = end;
-  return 0;
 }
 
 template<typename type>
-int SList<type>::addAfterNode(type* node, type* item)
+void SList<type>::addAfterNode(type* node, type* item)
 {
   if (!node) {
-    return addToHead(item);
+    addToHead(item);
   } else if (node == _tail) {
-    return addToTail(item);
+    addToTail(item);
+  } else {
+    //assert(item != nullptr);
+    type* end = LastNode(item);
+    end->next = node->next;
+    node->next = item;
   }
-
-  type* end = LastNode(item);
-  end->next = node->next;
-  node->next = item;
-  return 0;
 }
 
 template<typename type>
@@ -164,26 +156,6 @@ type* SList<type>::removeHead()
   if (!_head) { _tail = nullptr; }
 
   n->next = nullptr;
-  return n;
-}
-
-template<typename type>
-type* SList<type>::removeTail()
-{
-  if (!_tail) { return nullptr; }
-
-  type* n = _tail;
-  if (n == _head) {
-    _head = nullptr;
-    _tail = nullptr;
-    return n;
-  }
-
-  type* p = _head;
-  while (p->next != n) { p = p->next; }
-
-  p->next = nullptr;
-  _tail = p;
   return n;
 }
 
