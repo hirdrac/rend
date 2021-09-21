@@ -58,11 +58,6 @@ Flt CSG::hitCost() const
   return cost;
 }
 
-Vec3 CSG::normal(const Ray& r, const HitInfo& h) const
-{
-  return h.child->normal(r, h);
-}
-
 
 // **** Union Class ****
 BBox Union::bound(const Matrix* t) const

@@ -180,19 +180,12 @@ Color Scene::traceRay(const Ray& r) const
   ++r.stats->rays.hit;
 
   const Primitive* obj = hit->object;
-  const Primitive* child = hit->child;
   const Shader* sh = obj->shader().get();
-  if (!sh) {
-    if (child && child->shader()) {
-      sh = child->shader().get();
-    } else {
-      sh = default_obj.get();
-    }
-  }
+  if (!sh) { sh = default_obj.get(); }
 
   EvaluatedHit eh{
     CalcHitPoint(r.base, r.dir, hit->distance),
-    (child ? child : obj)->normal(r, *hit),
+    obj->normal(r, *hit),
     hit->local_pt,
     hit->side
   };

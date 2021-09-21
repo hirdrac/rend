@@ -26,7 +26,7 @@ class HitInfo
   // basic hit information
   HitInfo* next = nullptr;
   const Primitive* object;
-  const Primitive* child; // sub-object hit for CSG
+  const Primitive* parent; // CSG object
   Flt distance;
   Vec3 local_pt;
   int side;
@@ -34,7 +34,7 @@ class HitInfo
 
   HitInfo() = default;
   HitInfo(const Primitive* ob, Flt t, const Vec3& pt)
-    : object(ob), child(nullptr), distance(t), local_pt(pt), side(0),
+    : object(ob), parent(nullptr), distance(t), local_pt(pt), side(0),
       type(HIT_NORMAL) { }
 };
 

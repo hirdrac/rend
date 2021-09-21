@@ -41,11 +41,7 @@ void HitList::csgUnion(const Primitive* csg)
   int insideCount = 0;
 
   while (h) {
-    // claim hit as part of csg object
-    const Primitive* ob = h->object;
-    if (!h->child) { h->child = ob; }
-    h->object = csg;
-
+    h->parent = csg; // claim hit as part of csg object
     if (h->type == HIT_ENTER) {
       // entering solid object
       ++insideCount;
@@ -84,10 +80,7 @@ void HitList::csgIntersection(const Primitive* csg, int objectCount)
       h = h->next;
       killNext(prev);
     } else {
-      // claim hit as part of csg object
-      if (!h->child) { h->child = h->object; }
-      h->object = csg;
-
+      h->parent = csg; // claim hit as part of csg object
       prev = h;
       h = h->next;
     }
@@ -103,7 +96,7 @@ void HitList::csgDifference(const Primitive* csg, const void* primary)
 
   while (h) {
     bool remove = true;
-    if (h->object == primary) {
+    if (h->object == primary || h->parent == primary) {
       insidePrimary = (h->type == HIT_ENTER);
       remove = (count > 0);
     } else if (h->type == HIT_ENTER) {
@@ -120,10 +113,7 @@ void HitList::csgDifference(const Primitive* csg, const void* primary)
       h = h->next;
       killNext(prev);
     } else {
-      // claim hit as part of csg object
-      if (!h->child) { h->child = h->object; }
-      h->object = csg;
-
+      h->parent = csg; // claim hit as part of csg object
       prev = h;
       h = h->next;
     }
@@ -134,7 +124,7 @@ HitInfo* HitList::newHit(Flt t)
 {
   HitInfo* ht = _freeCache->fetch();
   ht->distance = t;
-  ht->child = nullptr;
+  ht->parent = nullptr;
 
   // sort hit into current hit list
   // (keep hit list sorted at all times)

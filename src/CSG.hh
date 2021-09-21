@@ -23,7 +23,7 @@ class CSG : public Primitive
 
   // Primitive Functions
   Flt hitCost() const override;
-  Vec3 normal(const Ray& r, const HitInfo& h) const override;
+  Vec3 normal(const Ray& r, const HitInfo& h) const override { return {}; }
 
  protected:
   std::vector<ObjectPtr> _children;
