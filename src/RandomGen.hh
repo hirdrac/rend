@@ -27,7 +27,7 @@ class RandomGen
       x = jitter();
       y = jitter();
     } while ((Sqr(x) + Sqr(y)) > .25);
-    return Vec2{x, y};
+    return {x, y};
   }
 
   static uint32_t devRnd32() { return _devRnd(); }
