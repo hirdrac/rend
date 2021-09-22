@@ -166,7 +166,7 @@ Color Scene::traceRay(const Ray& r) const
 {
   ++r.stats->rays.tried;
 
-  HitList hit_list(r.freeCache, false);
+  HitList hit_list(*r.freeCache, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
@@ -198,7 +198,7 @@ bool Scene::castShadowRay(const Ray& r) const
 {
   ++r.stats->shadow_rays.tried;
 
-  HitList hit_list(r.freeCache, false);
+  HitList hit_list(*r.freeCache, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);

@@ -56,7 +56,7 @@ class HitCache
 class HitList
 {
  public:
-  HitList(HitCache* cache, bool csg) : _freeCache(cache), _csg(csg) { }
+  HitList(HitCache& cache, bool csg) : _cache(&cache), _csg(csg) { }
   ~HitList() { clear(); }
 
   // Member Functions
@@ -82,11 +82,11 @@ class HitList
   void csgIntersection(const Primitive* csg, int objectCount);
   void csgDifference(const Primitive* csg, const void* primary);
 
-  [[nodiscard]] HitCache* freeCache() { return _freeCache; }
+  [[nodiscard]] HitCache& cache() { return *_cache; }
 
  private:
   SList<HitInfo> _hitList;
-  HitCache* _freeCache;
+  HitCache* _cache;
   bool _csg;
 
   [[nodiscard]] HitInfo* newHit(Flt t);
