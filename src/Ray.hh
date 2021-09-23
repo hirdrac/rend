@@ -10,7 +10,6 @@
 
 
 // **** Types ****
-class Transform;
 class HitCache;
 class StatInfo;
 
