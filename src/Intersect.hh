@@ -13,6 +13,7 @@
 // **** Types ****
 class Primitive;
 class Ray;
+class StatInfo;
 
 enum HitType {
   HIT_NORMAL, // non-CSG surface hit
@@ -56,7 +57,8 @@ class HitCache
 class HitList
 {
  public:
-  HitList(HitCache& cache, bool csg) : _cache(&cache), _csg(csg) { }
+  HitList(HitCache& cache, StatInfo& stats, bool csg)
+    : _cache(&cache), _stats(&stats), _csg(csg) { }
   ~HitList() { clear(); }
 
   // Member Functions
@@ -83,10 +85,12 @@ class HitList
   void csgDifference(const Primitive* csg, const void* primary);
 
   [[nodiscard]] HitCache& cache() { return *_cache; }
+  [[nodiscard]] StatInfo& stats() { return *_stats; }
 
  private:
   SList<HitInfo> _hitList;
   HitCache* _cache;
+  StatInfo* _stats;
   bool _csg;
 
   [[nodiscard]] HitInfo* newHit(Flt t);

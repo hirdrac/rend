@@ -24,7 +24,7 @@ std::string Bound::desc() const
 
 int Bound::intersect(const Ray& r, HitList& hl) const
 {
-  ++r.stats->bound.tried;
+  ++hl.stats().bound.tried;
   Flt near_hit = -VERY_LARGE, far_hit = VERY_LARGE;
 
   for (unsigned int i = 0; i < 3; ++i) {
@@ -53,7 +53,7 @@ int Bound::intersect(const Ray& r, HitList& hl) const
     return 0;  // miss
   }
 
-  ++r.stats->bound.hit;
+  ++hl.stats().bound.hit;
 
   // Intersect all contained objects
   int hits = 0;

@@ -164,9 +164,10 @@ int Scene::init()
 
 Color Scene::traceRay(const Ray& r) const
 {
-  ++r.stats->rays.tried;
+  StatInfo& si = *r.stats;
+  ++si.rays.tried;
 
-  HitList hit_list(*r.freeCache, false);
+  HitList hit_list(*r.freeCache, si, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
@@ -177,7 +178,7 @@ Color Scene::traceRay(const Ray& r) const
     return background->evaluate(*this, r, eh);
   }
 
-  ++r.stats->rays.hit;
+  ++si.rays.hit;
 
   const Primitive* obj = hit->object;
   const Shader* sh = obj->shader().get();
@@ -196,15 +197,16 @@ Color Scene::traceRay(const Ray& r) const
 
 bool Scene::castShadowRay(const Ray& r) const
 {
-  ++r.stats->shadow_rays.tried;
+  StatInfo& si = *r.stats;
+  ++si.shadow_rays.tried;
 
-  HitList hit_list(*r.freeCache, false);
+  HitList hit_list(*r.freeCache, si, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
   if (!hit) { return false; }
 
-  ++r.stats->shadow_rays.hit;
+  ++si.shadow_rays.hit;
   // transparency not supported
   return true;
 }

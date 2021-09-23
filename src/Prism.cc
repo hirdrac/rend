@@ -70,7 +70,7 @@ Flt Prism::hitCost() const
 
 int Prism::intersect(const Ray& r, HitList& hl) const
 {
-  ++r.stats->prism.tried;
+  ++hl.stats().prism.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
@@ -137,7 +137,7 @@ int Prism::intersect(const Ray& r, HitList& hl) const
 
   if (near_s == far_s || far_h < r.min_length) { return 0; }
 
-  ++r.stats->prism.hit;
+  ++hl.stats().prism.hit;
   if (hl.csg()) {
     hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_s, HIT_ENTER);

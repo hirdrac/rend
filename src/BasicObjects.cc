@@ -40,7 +40,7 @@ Flt Disc::hitCost() const
 
 int Disc::intersect(const Ray& r, HitList& hl) const
 {
-  ++r.stats->disc.tried;
+  ++hl.stats().disc.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
   if (UNLIKELY(dir.z == 0.0)) {
@@ -59,7 +59,7 @@ int Disc::intersect(const Ray& r, HitList& hl) const
   }
 
   hl.addHit(this, h, pt, 0, HIT_NORMAL);
-  ++r.stats->disc.hit;
+  ++hl.stats().disc.hit;
   return 1;
 }
 
@@ -92,7 +92,7 @@ int Cone::intersect(const Ray& r, HitList& hl) const
   // Cq = xo^2 + yo^2 - .25zo^2 +.5zo - .25
   //    = xo^2 + yo^2 - .25(zo - 1)^2
 
-  ++r.stats->cone.tried;
+  ++hl.stats().cone.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
@@ -158,7 +158,7 @@ int Cone::intersect(const Ray& r, HitList& hl) const
     return 0;
   }
 
-  ++r.stats->cone.hit;
+  ++hl.stats().cone.hit;
   if (hl.csg()) {
     hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -213,7 +213,7 @@ Flt Cube::hitCost() const
 
 int Cube::intersect(const Ray& r, HitList& hl) const
 {
-  ++r.stats->cube.tried;
+  ++hl.stats().cube.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
@@ -262,7 +262,7 @@ int Cube::intersect(const Ray& r, HitList& hl) const
     return 0;
   }
 
-  ++r.stats->cube.hit;
+  ++hl.stats().cube.hit;
   if (hl.csg()) {
     hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -310,7 +310,7 @@ int Cylinder::intersect(const Ray& r, HitList& hl) const
   // Bq = 2xoxd + 2yoyd
   // Cq = xo^2 + yo^2 - 1
 
-  ++r.stats->cylinder.tried;
+  ++hl.stats().cylinder.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
@@ -352,7 +352,7 @@ int Cylinder::intersect(const Ray& r, HitList& hl) const
     return 0;  // cylinder completely behind ray origin
   }
 
-  ++r.stats->cylinder.hit;
+  ++hl.stats().cylinder.hit;
   if (hl.csg()) {
     hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -404,7 +404,7 @@ int Paraboloid::intersect(const Ray& r, HitList& hl) const
   // Bq = 2xoxd + 2yoyd + .5zd
   // Cq = xo^2 + yo^2 + .5zo -.5
 
-  ++r.stats->paraboloid.tried;
+  ++hl.stats().paraboloid.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
@@ -461,7 +461,7 @@ int Paraboloid::intersect(const Ray& r, HitList& hl) const
     return 0;
   }
 
-  ++r.stats->paraboloid.hit;
+  ++hl.stats().paraboloid.hit;
   if (hl.csg()) {
     hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
@@ -516,7 +516,7 @@ Flt Plane::hitCost() const
 
 int Plane::intersect(const Ray& r, HitList& hl) const
 {
-  ++r.stats->plane.tried;
+  ++hl.stats().plane.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
   if (UNLIKELY(dir.z == 0.0)) {
@@ -540,7 +540,7 @@ int Plane::intersect(const Ray& r, HitList& hl) const
   }
 
   hl.addHit(this, h, {px,py,0.0}, 0, HIT_NORMAL);
-  ++r.stats->plane.hit;
+  ++hl.stats().plane.hit;
   return 1;
 }
 
@@ -566,7 +566,7 @@ int Sphere::intersect(const Ray& r, HitList& hl) const
   // Bq = 2xoxd + 2yoyd + 2zozd
   // Cq = xo^2 + yo^2 + zo^2 - 1
 
-  ++r.stats->sphere.tried;
+  ++hl.stats().sphere.tried;
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
@@ -587,7 +587,7 @@ int Sphere::intersect(const Ray& r, HitList& hl) const
 
   Flt near_h = (-b - sqrt_d) / a;
 
-  ++r.stats->sphere.hit;
+  ++hl.stats().sphere.hit;
   if (hl.csg()) {
     hl.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_ENTER);
     hl.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, HIT_EXIT);
@@ -643,7 +643,7 @@ int Torus::intersect(const Ray& r, HitList& hl) const
   // R=1 torus (symmetric about z-axis):
   // (x^2 + y^2 + z^2 - r^2 + 1)^2 - 4(x^2 + y^2) = 0
 
-  ++r.stats->torus.tried;
+  ++hl.stats().torus.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
@@ -677,7 +677,7 @@ int Torus::intersect(const Ray& r, HitList& hl) const
     return 0;
   }
 
-  ++r.stats->torus.hit;
+  ++hl.stats().torus.hit;
   if (hl.csg()) {
     for (int i = 0; i < n; ++i) {
       hl.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0,
