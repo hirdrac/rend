@@ -75,14 +75,14 @@ BBox Union::bound(const Matrix* t) const
   return b;
 }
 
-int Union::intersect(const Ray& r, HitList& hit_list) const
+int Union::intersect(const Ray& r, HitList& hl) const
 {
-  HitList hl(hit_list.cache(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl); }
-  hl.csgUnion(this);
+  HitList hl2(hl.cache(), true);
+  for (auto& ob : _children) { ob->intersect(r, hl2); }
+  hl2.csgUnion(this);
 
-  const int hits = hl.count();
-  hit_list.mergeList(hl);
+  const int hits = hl2.count();
+  hl.mergeList(hl2);
   return hits;
 }
 
@@ -117,14 +117,14 @@ BBox Intersection::bound(const Matrix* t) const
   return b;
 }
 
-int Intersection::intersect(const Ray& r, HitList& hit_list) const
+int Intersection::intersect(const Ray& r, HitList& hl) const
 {
-  HitList hl(hit_list.cache(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl); }
-  hl.csgIntersection(this, int(_children.size()));
+  HitList hl2(hl.cache(), true);
+  for (auto& ob : _children) { ob->intersect(r, hl2); }
+  hl2.csgIntersection(this, int(_children.size()));
 
-  const int hits = hl.count();
-  hit_list.mergeList(hl);
+  const int hits = hl2.count();
+  hl.mergeList(hl2);
   return hits;
 }
 
@@ -143,13 +143,13 @@ BBox Difference::bound(const Matrix* t) const
   }
 }
 
-int Difference::intersect(const Ray& r, HitList& hit_list) const
+int Difference::intersect(const Ray& r, HitList& hl) const
 {
-  HitList hl(hit_list.cache(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl); }
-  hl.csgDifference(this, _children[0].get());
+  HitList hl2(hl.cache(), true);
+  for (auto& ob : _children) { ob->intersect(r, hl2); }
+  hl2.csgDifference(this, _children[0].get());
 
-  const int hits = hl.count();
-  hit_list.mergeList(hl);
+  const int hits = hl2.count();
+  hl.mergeList(hl2);
   return hits;
 }

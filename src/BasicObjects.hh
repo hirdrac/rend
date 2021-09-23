@@ -19,7 +19,7 @@ class Disc final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -37,7 +37,7 @@ class Cone final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -55,7 +55,7 @@ class Cube final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -73,7 +73,7 @@ class Cylinder final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -91,7 +91,7 @@ class Paraboloid final : public Primitive
 
   // Object Functions
   int init(Scene& s) override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -110,7 +110,7 @@ class Plane final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -127,7 +127,7 @@ class Sphere final : public Primitive
   std::string desc() const override { return "<Sphere>"; }
 
   // Object Functions
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;
@@ -144,7 +144,7 @@ class Torus final : public Primitive
   // Object Functions
   int init(Scene& s) override;
   BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
   Flt hitCost() const override;

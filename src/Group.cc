@@ -56,9 +56,9 @@ BBox Group::bound(const Matrix* t) const
   return b;
 }
 
-int Group::intersect(const Ray& r, HitList& hit_list) const
+int Group::intersect(const Ray& r, HitList& hl) const
 {
   int hits = 0;
-  for (auto& ob : _objects) { hits += ob->intersect(r, hit_list); }
+  for (auto& ob : _objects) { hits += ob->intersect(r, hl); }
   return hits;
 }

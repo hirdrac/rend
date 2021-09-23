@@ -31,7 +31,7 @@ class Object : public SceneItem
   // Member Functions
   virtual int init(Scene& s) { return 0; }
   virtual BBox bound(const Matrix* t = nullptr) const = 0;
-  virtual int intersect(const Ray& r, HitList& hit_list) const = 0;
+  virtual int intersect(const Ray& r, HitList& hl) const = 0;
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
 
   const ShaderPtr& shader() const { return _shader; }

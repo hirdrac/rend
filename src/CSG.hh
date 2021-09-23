@@ -39,7 +39,7 @@ class Union final : public CSG
 
   // Object Functions
   BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 };
 
 class Intersection final : public CSG
@@ -50,7 +50,7 @@ class Intersection final : public CSG
 
   // Object Functions
   BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 };
 
 class Difference final : public CSG
@@ -61,5 +61,5 @@ class Difference final : public CSG
 
   // Object Functions
   BBox bound(const Matrix* t) const override;
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
 };

@@ -24,7 +24,7 @@ class Bound final : public Object
 
   // Object Functions
   BBox bound(const Matrix* t) const override { return box; }
-  int intersect(const Ray& r, HitList& hit_list) const override;
+  int intersect(const Ray& r, HitList& hl) const override;
   const std::vector<ObjectPtr>& children() const override { return objects; }
 };
 

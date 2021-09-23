@@ -38,7 +38,7 @@ Flt Disc::hitCost() const
   return (_cost >= 0.0) ? _cost : CostTable.disc;
 }
 
-int Disc::intersect(const Ray& r, HitList& hit_list) const
+int Disc::intersect(const Ray& r, HitList& hl) const
 {
   ++r.stats->disc.tried;
 
@@ -58,7 +58,7 @@ int Disc::intersect(const Ray& r, HitList& hit_list) const
     return 0;
   }
 
-  hit_list.addHit(this, h, pt, 0, HIT_NORMAL);
+  hl.addHit(this, h, pt, 0, HIT_NORMAL);
   ++r.stats->disc.hit;
   return 1;
 }
@@ -76,7 +76,7 @@ int Cone::init(Scene& s)
   return 0;
 }
 
-int Cone::intersect(const Ray& r, HitList& hit_list) const
+int Cone::intersect(const Ray& r, HitList& hl) const
 {
   // modified z-axis cone:
   //   x^2 + y^2 - ((1-z)/2)^2 = 0
@@ -159,16 +159,16 @@ int Cone::intersect(const Ray& r, HitList& hit_list) const
   }
 
   ++r.stats->cone.hit;
-  if (hit_list.csg()) {
-    hit_list.addHit(
+  if (hl.csg()) {
+    hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
-    hit_list.addHit(
+    hl.addHit(
       this, far_h, CalcHitPoint(base, dir, far_h), far_side, HIT_EXIT);
     return 2;
   }
 
   if (near_h < r.min_length) { near_h = far_h; near_side = far_side; }
-  hit_list.addHit(
+  hl.addHit(
     this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_NORMAL);
   return 1;
 }
@@ -211,7 +211,7 @@ Flt Cube::hitCost() const
   return (_cost >= 0.0) ? _cost : CostTable.cube;
 }
 
-int Cube::intersect(const Ray& r, HitList& hit_list) const
+int Cube::intersect(const Ray& r, HitList& hl) const
 {
   ++r.stats->cube.tried;
 
@@ -263,16 +263,16 @@ int Cube::intersect(const Ray& r, HitList& hit_list) const
   }
 
   ++r.stats->cube.hit;
-  if (hit_list.csg()) {
-    hit_list.addHit(
+  if (hl.csg()) {
+    hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
-    hit_list.addHit(
+    hl.addHit(
       this, far_h, CalcHitPoint(base, dir, far_h), far_side, HIT_EXIT);
     return 2;
   }
 
   if (near_h < r.min_length) { near_h = far_h; near_side = far_side; }
-  hit_list.addHit(
+  hl.addHit(
     this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_NORMAL);
   return 1;
 }
@@ -300,7 +300,7 @@ Flt Cylinder::hitCost() const
   return (_cost >= 0.0) ? _cost : CostTable.cylinder;
 }
 
-int Cylinder::intersect(const Ray& r, HitList& hit_list) const
+int Cylinder::intersect(const Ray& r, HitList& hl) const
 {
   // z-axis cylinder:
   //   x^2 + y^2 - 1 = 0
@@ -353,16 +353,16 @@ int Cylinder::intersect(const Ray& r, HitList& hit_list) const
   }
 
   ++r.stats->cylinder.hit;
-  if (hit_list.csg()) {
-    hit_list.addHit(
+  if (hl.csg()) {
+    hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
-    hit_list.addHit(
+    hl.addHit(
       this, far_h, CalcHitPoint(base, dir, far_h), far_side, HIT_EXIT);
     return 2;
   }
 
   if (near_h < r.min_length) { near_h = far_h; near_side = far_side; }
-  hit_list.addHit(
+  hl.addHit(
     this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_NORMAL);
   return 1;
 }
@@ -390,7 +390,7 @@ int Paraboloid::init(Scene& s)
   return 0;
 }
 
-int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
+int Paraboloid::intersect(const Ray& r, HitList& hl) const
 {
   // modified z-axis elliptic paraboloid:
   // (paraboloid in -1 to 1 range; points at +Z; fits in unit cube
@@ -462,16 +462,16 @@ int Paraboloid::intersect(const Ray& r, HitList& hit_list) const
   }
 
   ++r.stats->paraboloid.hit;
-  if (hit_list.csg()) {
-    hit_list.addHit(
+  if (hl.csg()) {
+    hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_ENTER);
-    hit_list.addHit(
+    hl.addHit(
       this, far_h, CalcHitPoint(base, dir, far_h), far_side, HIT_EXIT);
     return 2;
   }
 
   if (near_h < r.min_length) { near_h = far_h; near_side = far_side; }
-  hit_list.addHit(
+  hl.addHit(
     this, near_h, CalcHitPoint(base, dir, near_h), near_side, HIT_NORMAL);
   return 1;
 }
@@ -514,7 +514,7 @@ Flt Plane::hitCost() const
   return (_cost >= 0.0) ? _cost : CostTable.plane;
 }
 
-int Plane::intersect(const Ray& r, HitList& hit_list) const
+int Plane::intersect(const Ray& r, HitList& hl) const
 {
   ++r.stats->plane.tried;
 
@@ -539,7 +539,7 @@ int Plane::intersect(const Ray& r, HitList& hit_list) const
     return 0;
   }
 
-  hit_list.addHit(this, h, {px,py,0.0}, 0, HIT_NORMAL);
+  hl.addHit(this, h, {px,py,0.0}, 0, HIT_NORMAL);
   ++r.stats->plane.hit;
   return 1;
 }
@@ -556,7 +556,7 @@ Flt Sphere::hitCost() const
   return (_cost >= 0.0) ? _cost : CostTable.sphere;
 }
 
-int Sphere::intersect(const Ray& r, HitList& hit_list) const
+int Sphere::intersect(const Ray& r, HitList& hl) const
 {
   // unit sphere:
   //   x^2 + y^2 + z^2 - 1 = 0
@@ -588,14 +588,14 @@ int Sphere::intersect(const Ray& r, HitList& hit_list) const
   Flt near_h = (-b - sqrt_d) / a;
 
   ++r.stats->sphere.hit;
-  if (hit_list.csg()) {
-    hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_ENTER);
-    hit_list.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, HIT_EXIT);
+  if (hl.csg()) {
+    hl.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_ENTER);
+    hl.addHit(this, far_h, CalcHitPoint(base, dir, far_h), 0, HIT_EXIT);
     return 2;
   }
 
   if (near_h < r.min_length) { near_h = far_h; }
-  hit_list.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_NORMAL);
+  hl.addHit(this, near_h, CalcHitPoint(base, dir, near_h), 0, HIT_NORMAL);
   return 1;
 }
 
@@ -638,7 +638,7 @@ Flt Torus::hitCost() const
   return (_cost >= 0.0) ? _cost : CostTable.torus;
 }
 
-int Torus::intersect(const Ray& r, HitList& hit_list) const
+int Torus::intersect(const Ray& r, HitList& hl) const
 {
   // R=1 torus (symmetric about z-axis):
   // (x^2 + y^2 + z^2 - r^2 + 1)^2 - 4(x^2 + y^2) = 0
@@ -678,10 +678,10 @@ int Torus::intersect(const Ray& r, HitList& hit_list) const
   }
 
   ++r.stats->torus.hit;
-  if (hit_list.csg()) {
+  if (hl.csg()) {
     for (int i = 0; i < n; ++i) {
-      hit_list.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0,
-                      (i&1) ? HIT_EXIT : HIT_ENTER);
+      hl.addHit(this, root[i], CalcHitPoint(base, dir, root[i]), 0,
+                (i&1) ? HIT_EXIT : HIT_ENTER);
     }
     return n;
   }
@@ -691,7 +691,7 @@ int Torus::intersect(const Ray& r, HitList& hit_list) const
     if (root[i] >= r.min_length && root[i] < h) { h = root[i]; }
   }
 
-  hit_list.addHit(this, h, CalcHitPoint(base, dir, h), 0, HIT_NORMAL);
+  hl.addHit(this, h, CalcHitPoint(base, dir, h), 0, HIT_NORMAL);
   return 1;
 }
 
