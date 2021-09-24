@@ -15,8 +15,8 @@ int Sun::init(Scene& s)
   return Light::init(s);
 }
 
-bool Sun::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
-                   LightResult& result) const
+bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
+                   const EvaluatedHit& eh, LightResult& result) const
 {
   const Vec3 unit_dir = -_finalDir;
   const Flt angle = DotProduct(eh.normal, unit_dir);
@@ -30,16 +30,14 @@ bool Sun::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
     sray.max_length = VERY_LARGE;
     sray.time       = r.time;
     sray.depth      = 0;
-    sray.freeCache  = r.freeCache;
-    sray.stats      = r.stats;
 
-    if (s.castShadowRay(sray)) { return false; }
+    if (s.castShadowRay(js, sray)) { return false; }
   }
 
   result.dir = unit_dir;
   result.distance = VERY_LARGE;
   result.angle = angle;
-  result.energy = _energy->evaluate(s, r, eh);
+  result.energy = _energy->evaluate(js, s, r, eh);
   return true;
 }
 
@@ -51,8 +49,8 @@ int PointLight::init(Scene& s)
   return Light::init(s);
 }
 
-bool PointLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
-                          LightResult& result) const
+bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
+                          const EvaluatedHit& eh, LightResult& result) const
 {
   const Vec3 dir = _finalPos - eh.global_pt;
   const Flt len = dir.length();
@@ -68,16 +66,14 @@ bool PointLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
     sray.max_length = len;
     sray.time       = r.time;
     sray.depth      = 0;
-    sray.freeCache  = r.freeCache;
-    sray.stats      = r.stats;
 
-    if (s.castShadowRay(sray)) { return false; }
+    if (s.castShadowRay(js, sray)) { return false; }
   }
 
   result.dir = unit_dir;
   result.distance = len;
   result.angle = angle;
-  result.energy = _energy->evaluate(s, r, eh);
+  result.energy = _energy->evaluate(js, s, r, eh);
   return true;
 }
 
@@ -90,8 +86,8 @@ int SpotLight::init(Scene& s)
   return Light::init(s);
 }
 
-bool SpotLight::luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
-                         LightResult& result) const
+bool SpotLight::luminate(JobState& js, const Scene& s, const Ray& r,
+                         const EvaluatedHit& eh, LightResult& result) const
 {
   // FIX - finish SpotLight::luminate()
   return false;

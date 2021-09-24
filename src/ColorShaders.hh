@@ -19,8 +19,8 @@ class ColorCube final : public Shader
   Transform* trans() override { return &_trans; }
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 
  private:
   Transform _trans;

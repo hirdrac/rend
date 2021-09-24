@@ -17,6 +17,7 @@
 
 
 // **** Types ****
+struct JobState;
 class Ray;
 class Transform;
 
@@ -32,8 +33,8 @@ class Shader : public SceneItem
  public:
   // Member Functions
   virtual int init(Scene& s) { return 0; }
-  virtual Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const = 0;
+  virtual Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                         const EvaluatedHit& eh) const = 0;
 };
 
 
@@ -50,8 +51,8 @@ class ShaderColor final : public Shader
   std::string desc() const override;
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 
  private:
   Color _color;
@@ -65,8 +66,8 @@ class ShaderSide final : public Shader
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 
  private:
   std::vector<ShaderPtr> _sideShaders;

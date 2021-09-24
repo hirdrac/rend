@@ -13,8 +13,8 @@
 
 
 // **** Types ****
+struct JobState;
 class Scene;
-class Shader;
 class Ray;
 struct EvaluatedHit;
 
@@ -37,8 +37,8 @@ class Light : public SceneItem
 
   // Member Functions
   virtual int init(Scene& s);
-  virtual bool luminate(const Scene& s, const Ray& r, const EvaluatedHit& eh,
-                        LightResult& result) const = 0;
+  virtual bool luminate(JobState& js, const Scene& s, const Ray& r,
+                        const EvaluatedHit& eh, LightResult& result) const = 0;
 
  protected:
   ShaderPtr _energy;

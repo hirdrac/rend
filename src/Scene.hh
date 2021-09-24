@@ -17,6 +17,7 @@
 // **** Types ****
 class SceneItem;
 class Color;
+struct JobState;
 class Ray;
 
 
@@ -73,8 +74,8 @@ class Scene
   int addShader(const ShaderPtr& sh, SceneItemFlag flag);
   int init();
 
-  Color traceRay(const Ray& r) const;
-  bool castShadowRay(const Ray& r) const;
+  Color traceRay(JobState& js, const Ray& r) const;
+  bool castShadowRay(JobState& js, const Ray& r) const;
 
   const std::vector<ObjectPtr>& objects() const { return _objects; }
   const std::vector<ObjectPtr>& optObjects() const { return _optObjects; }

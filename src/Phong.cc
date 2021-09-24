@@ -54,18 +54,18 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 // Shader Functions
 Color Phong::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const auto black_val = static_cast<Color::value_type>(s.min_ray_value);
 
   // Evaluate Shaders
-  const Color color_d = _diffuse->evaluate(s, r, eh);
+  const Color color_d = _diffuse->evaluate(js, s, r, eh);
 
-  const Color color_s = _specular->evaluate(s, r, eh);
+  const Color color_s = _specular->evaluate(js, s, r, eh);
   const bool is_s = !color_s.isBlack(black_val);
 
 #if 0
-  const Color color_t = _transmit->evaluate(s, r, eh);
+  const Color color_t = _transmit->evaluate(js, s, r, eh);
   const bool is_t = !color_t.isBlack(black_val);
 #endif
 
@@ -82,12 +82,12 @@ Color Phong::evaluate(
   }
 
   // ambient calculation
-  Color result = s.ambient->evaluate(s, r, eh) * color_d;
+  Color result = s.ambient->evaluate(js, s, r, eh) * color_d;
 
   // diffuse/specular lighting calculations
   for (auto& lt : s.lights()) {
     LightResult lresult;
-    if (!lt->luminate(s, r, eh, lresult)) { continue; }
+    if (!lt->luminate(js, s, r, eh, lresult)) { continue; }
 
     // diffuse calculation
     result += (lresult.energy * color_d) * lresult.angle;
@@ -120,10 +120,8 @@ Color Phong::evaluate(
     ray.max_length = VERY_LARGE;
     ray.time       = r.time;
     ray.depth      = r.depth + 1;
-    ray.freeCache  = r.freeCache;
-    ray.stats      = r.stats;
 
-    result += s.traceRay(ray) * color_s;
+    result += s.traceRay(js, ray) * color_s;
   }
 
   return result;

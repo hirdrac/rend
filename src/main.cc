@@ -101,11 +101,12 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   auto setupTime = t.elapsedSec();
   if (ren.jobs() <= 0) {
     // render on main thread
-    HitCache freeCache;
+    JobState js;
     for (int y = s.region_min[1]; y <= s.region_max[1]; ++y) {
       print_err("\rscanlines remaining -- ", s.region_max[1] - y, " \b");
-      ren.render(s.region_min[0], y, s.region_max[0], y, &freeCache, nullptr);
+      ren.render(js, s.region_min[0], y, s.region_max[0], y);
     }
+    ren.setStats(js.stats);
   } else {
     // render on spawned thread(s)
     ren.startJobs();

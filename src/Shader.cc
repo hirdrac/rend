@@ -19,7 +19,7 @@ std::string ShaderColor::desc() const
 }
 
 Color ShaderColor::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   return _color;
 }
@@ -36,10 +36,10 @@ int ShaderSide::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 }
 
 Color ShaderSide::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   int x = eh.side % int(_sideShaders.size());
-  return _sideShaders[std::size_t(x)]->evaluate(s, r, eh);
+  return _sideShaders[std::size_t(x)]->evaluate(js, s, r, eh);
 }
 
 

@@ -50,7 +50,7 @@ int PatternShader::init(Scene& s)
 
 // **** Checkerboard Class ****
 Color Checkerboard::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
 
@@ -58,18 +58,18 @@ Color Checkerboard::evaluate(
     const Flt half_bw = _borderwidth * .5;
     if (Abs(m.x - std::floor(m.x + half_bw)) < half_bw
         || Abs(m.y - std::floor(m.y + half_bw)) < half_bw) {
-      return _border->evaluate(s, r, eh);
+      return _border->evaluate(js, s, r, eh);
     }
   }
 
   const int c = int(std::floor(m.x) + std::floor(m.y));
-  return child(c)->evaluate(s, r, eh);
+  return child(c)->evaluate(js, s, r, eh);
 }
 
 
 // **** Pinwheel Class ****
 Color Pinwheel::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
 
@@ -86,18 +86,18 @@ Color Pinwheel::evaluate(
     const Flt edge_x = radius * std::cos(edge_angle);
     const Flt edge_y = radius * std::sin(edge_angle);
     if ((Sqr(edge_x - m.x) + Sqr(edge_y - m.y)) < Sqr(_borderwidth * .5)) {
-      return _border->evaluate(s, r, eh);
+      return _border->evaluate(js, s, r, eh);
     }
   }
 
   const int c = int(std::floor(sect));
-  return child(c)->evaluate(s, r, eh);
+  return child(c)->evaluate(js, s, r, eh);
 }
 
 
 // **** Ring Class ****
 Color Ring::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
   const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y)) + _offset;
@@ -106,18 +106,18 @@ Color Ring::evaluate(
     const Flt half_bw = _borderwidth * .5;
     if ((d - _offset) > half_bw
         && Abs(d - std::floor(d + half_bw)) < half_bw) {
-      return _border->evaluate(s, r, eh);
+      return _border->evaluate(js, s, r, eh);
     }
   }
 
   const int c = int(std::floor(d));
-  return child(c)->evaluate(s, r, eh);
+  return child(c)->evaluate(js, s, r, eh);
 }
 
 
 // **** SquareRing Class ****
 Color SquareRing::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
   const Flt d = std::max(Abs(m.x), Abs(m.y)) + _offset;
@@ -126,28 +126,28 @@ Color SquareRing::evaluate(
     const Flt half_bw = _borderwidth * .5;
     if ((d - _offset) > half_bw
         && Abs(d - std::floor(d + half_bw)) < half_bw) {
-      return _border->evaluate(s, r, eh);
+      return _border->evaluate(js, s, r, eh);
     }
   }
 
   const int c = int(std::floor(d));
-  return child(c)->evaluate(s, r, eh);
+  return child(c)->evaluate(js, s, r, eh);
 }
 
 
 // **** Stripe Class ****
 Color Stripe::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Flt d = _trans.pointLocalToGlobalX(eh.map, r.time);
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;
     if (Abs(d - std::floor(d + half_bw)) < half_bw) {
-      return _border->evaluate(s, r, eh);
+      return _border->evaluate(js, s, r, eh);
     }
   }
 
   const int c = int(std::floor(d));
-  return child(c)->evaluate(s, r, eh);
+  return child(c)->evaluate(js, s, r, eh);
 }

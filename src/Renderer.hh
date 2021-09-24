@@ -6,6 +6,7 @@
 #pragma once
 #include "Intersect.hh"
 #include "Stats.hh"
+#include "JobState.hh"
 #include "Types.hh"
 #include <condition_variable>
 #include <mutex>
@@ -21,8 +22,7 @@ class Renderer
 {
  public:
   int init(const Scene* s, FrameBuffer* fb);
-  void render(int min_x, int min_y, int max_x, int max_y,
-              HitCache* freeCache, StatInfo* stats);
+  void render(JobState& js, int min_x, int min_y, int max_x, int max_y);
 
   // jobs/task methods
   [[nodiscard]] int jobs() const { return int(_jobs.size()); }
@@ -39,6 +39,7 @@ class Renderer
   void stopJobs();
     // stops active jobs, returns once all jobs are halted
 
+  void setStats(const StatInfo& st) { _stats = st; }
   [[nodiscard]] const StatInfo& stats() const { return _stats; }
 
  private:
@@ -57,8 +58,7 @@ class Renderer
     // thread local stuff
     // HitInfo pool
     std::thread jobThread;
-    HitCache hitCache;
-    StatInfo stats;
+    JobState state;
     bool halt = false;
   };
   std::vector<Job> _jobs;

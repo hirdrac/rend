@@ -9,7 +9,7 @@
 
 // **** ColorCube Class ****
 Color ColorCube::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
   return {

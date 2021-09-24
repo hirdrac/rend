@@ -54,8 +54,8 @@ class Checkerboard final : public PatternShader
   std::string desc() const override { return "<Checkerboard>"; }
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 };
 
 
@@ -68,8 +68,8 @@ class Pinwheel final : public PatternShader
   int setSpin(Flt v) override { _spin = v; return 0; }
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 
  private:
   Flt _spin = 0;
@@ -85,8 +85,8 @@ class Ring final : public PatternShader
   int setOffset(Flt v) override { _offset = v; return 0; }
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 
  private:
   Flt _offset = 0.0;
@@ -101,8 +101,8 @@ class SquareRing final : public PatternShader
   int setOffset(Flt v) override { _offset = v; return 0; }
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 
  private:
   Flt _offset = 0.0;
@@ -116,6 +116,6 @@ class Stripe final : public PatternShader
   std::string desc() const override { return "<Stripe>"; }
 
   // Shader Functions
-  Color evaluate(
-    const Scene& s, const Ray& r, const EvaluatedHit& eh) const override;
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
 };

@@ -27,16 +27,16 @@ int MapShader::init(Scene& s)
 
 // **** General Map Shaders ****
 Color MapGlobalShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2{eh.global_pt, eh.normal, eh.global_pt, eh.side};
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }
 
 
 // **** Object Map Shaders ****
 Color MapConeShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2;
   eh2.global_pt = eh.global_pt;
@@ -53,11 +53,11 @@ Color MapConeShader::evaluate(
   }
   eh2.side = eh.side;
 
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }
 
 Color MapCubeShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2;
   eh2.global_pt = eh.global_pt;
@@ -73,11 +73,11 @@ Color MapCubeShader::evaluate(
   }
   eh2.side = eh.side;
 
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }
 
 Color MapCylinderShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2;
   eh2.global_pt = eh.global_pt;
@@ -94,38 +94,38 @@ Color MapCylinderShader::evaluate(
   }
   eh2.side = eh.side;
 
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }
 
 Color MapParaboloidShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2{
     eh.global_pt, eh.normal,
     {(eh.map.z > 0.0) ? eh.map.x : -eh.map.x, eh.map.y, 0.0},
     eh.side
   };
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }
 
 Color MapSphereShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2{
     eh.global_pt, eh.normal,
     {(eh.map.z > 0.0) ? eh.map.x : -eh.map.x, eh.map.y, 0.0},
     eh.side
   };
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }
 
 Color MapTorusShader::evaluate(
-  const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   EvaluatedHit eh2{
     eh.global_pt, eh.normal,
     {(eh.map.y >= 0.0) ? eh.map.x : -eh.map.x, -eh.map.z, 0.0},
     eh.side
   };
-  return _child->evaluate(s, r, eh2);
+  return _child->evaluate(js, s, r, eh2);
 }

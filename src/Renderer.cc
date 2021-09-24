@@ -75,8 +75,7 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   return 0;
 }
 
-void Renderer::render(int min_x, int min_y, int max_x, int max_y,
-                      HitCache* freeCache, StatInfo* stats)
+void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
 {
   const Flt halfWidth = Flt(_scene->image_width) * .5;
   const Flt halfHeight = Flt(_scene->image_height) * .5;
@@ -90,7 +89,7 @@ void Renderer::render(int min_x, int min_y, int max_x, int max_y,
     use_jitter || use_aperture ? std::max(_scene->samples, 1) : 1;
   const auto samplesInv = static_cast<Color::value_type>(
     1.0 / double(int(_samples.size()) * jitterCount));
-  RandomGen rnd;
+  RandomGen& rnd = js.rnd;
 
   Ray initRay;
   initRay.base = eye;
@@ -98,8 +97,6 @@ void Renderer::render(int min_x, int min_y, int max_x, int max_y,
   initRay.max_length = VERY_LARGE;
   initRay.time = 0.0;
   initRay.depth = 0;
-  initRay.freeCache = freeCache;
-  initRay.stats = stats ? stats : &_stats;
 
   // start rendering
   for (int y = min_y; y <= max_y; ++y) {
@@ -129,7 +126,7 @@ void Renderer::render(int min_x, int min_y, int max_x, int max_y,
               // dir not normalized for performance
           }
 
-          c += _scene->traceRay(initRay);
+          c += _scene->traceRay(js, initRay);
         }
       }
 
@@ -164,7 +161,7 @@ void Renderer::startJobs()
 
   // start render jobs
   for (auto& j : _jobs) {
-    j.stats = {};
+    j.state.stats = {};
     j.halt = false;
     j.jobThread = std::thread(&Renderer::jobMain, this, &j);
   }
@@ -187,7 +184,7 @@ void Renderer::stopJobs()
   for (auto& j : _jobs) { j.halt = true; }
   for (auto& j : _jobs) {
     j.jobThread.join();
-    _stats += j.stats;
+    _stats += j.state.stats;
   }
 }
 
@@ -207,6 +204,6 @@ void Renderer::jobMain(Job* j)
       _tasks.pop_back();
     }
 
-    render(t.min_x, t.min_y, t.max_x, t.max_y, &j->hitCache, &j->stats);
+    render(j->state, t.min_x, t.min_y, t.max_x, t.max_y);
   }
 }

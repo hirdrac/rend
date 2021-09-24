@@ -10,9 +10,6 @@
 
 
 // **** Types ****
-class HitCache;
-class StatInfo;
-
 class Ray
 {
  public:
@@ -23,10 +20,6 @@ class Ray
   Flt  max_length;
   Flt  time;
   int  depth;
-
-  // job specific buffers
-  HitCache* freeCache = nullptr;
-  StatInfo* stats = nullptr;
 
   // Member Functions
   void moveOut(Flt amount) { base += dir * amount; }

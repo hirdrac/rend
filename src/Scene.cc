@@ -10,7 +10,7 @@
 #include "Bound.hh"
 #include "Ray.hh"
 #include "Intersect.hh"
-#include "Stats.hh"
+#include "JobState.hh"
 #include "Color.hh"
 #include "Print.hh"
 #include <cassert>
@@ -162,12 +162,12 @@ int Scene::init()
   return 0;
 }
 
-Color Scene::traceRay(const Ray& r) const
+Color Scene::traceRay(JobState& js, const Ray& r) const
 {
-  StatInfo& si = *r.stats;
+  StatInfo& si = js.stats;
   ++si.rays.tried;
 
-  HitList hit_list(*r.freeCache, si, false);
+  HitList hit_list(js.cache, si, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
@@ -175,7 +175,7 @@ Color Scene::traceRay(const Ray& r) const
     // hit background
     const EvaluatedHit eh{
       {}, {}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}, 0};
-    return background->evaluate(*this, r, eh);
+    return background->evaluate(js, *this, r, eh);
   }
 
   ++si.rays.hit;
@@ -192,15 +192,15 @@ Color Scene::traceRay(const Ray& r) const
   };
   if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
-  return sh->evaluate(*this, r, eh);
+  return sh->evaluate(js, *this, r, eh);
 }
 
-bool Scene::castShadowRay(const Ray& r) const
+bool Scene::castShadowRay(JobState& js, const Ray& r) const
 {
-  StatInfo& si = *r.stats;
+  StatInfo& si = js.stats;
   ++si.shadow_rays.tried;
 
-  HitList hit_list(*r.freeCache, si, false);
+  HitList hit_list(js.cache, si, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.findFirstHit(r);
