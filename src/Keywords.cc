@@ -535,12 +535,12 @@ REGISTER_SHADER_KEYWORD(Ring,"ring");
 REGISTER_SHADER_KEYWORD(SquareRing,"squarering");
 REGISTER_SHADER_KEYWORD(Stripe,"stripe");
 // map shaders
-REGISTER_SHADER_KEYWORD(MapGlobalShader,"map-global");
-REGISTER_SHADER_KEYWORD(MapConeShader,"map-cone");
-REGISTER_SHADER_KEYWORD(MapCubeShader,"map-cube");
-REGISTER_SHADER_KEYWORD(MapCylinderShader,"map-cylinder");
-REGISTER_SHADER_KEYWORD(MapParaboloidShader,"map-paraboloid");
-REGISTER_SHADER_KEYWORD(MapSphereShader,"map-sphere");
+REGISTER_SHADER_KEYWORD(MapGlobalShader,"map_global");
+REGISTER_SHADER_KEYWORD(MapConeShader,"map_cone");
+REGISTER_SHADER_KEYWORD(MapCubeShader,"map_cube");
+REGISTER_SHADER_KEYWORD(MapCylinderShader,"map_cylinder");
+REGISTER_SHADER_KEYWORD(MapParaboloidShader,"map_paraboloid");
+REGISTER_SHADER_KEYWORD(MapSphereShader,"map_sphere");
 
 REGISTER_FLAG_KEYWORD(FLAG_AMBIENT,"ambient");
 REGISTER_FLAG_KEYWORD(FLAG_BACKGROUND,"background");
