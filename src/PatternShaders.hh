@@ -4,11 +4,17 @@
 //
 // Shaders that select sub-shaders based on a (transformable) repeating pattern
 //
-// Checkerboard - classic checkboard square pattern
-// Pinwheel     - sectors radiating outward w/ optional spin
-// Ring         - bands radiating from the origin
-// SquareRing   - square version for ring shader
-// Stripe       - repeating vertical stripes
+// 1D pattern shaders (use x map coord)
+//   Stripe         - repeating vertical stripes
+//
+// 2D pattern shaders (use x,y map coords)
+//   Checkerboard   - classic checkboard square pattern based on x,y map coords
+//   Pinwheel       - sectors radiating outward w/ optional spin
+//   Ring           - bands radiating from the origin
+//   SquareRing     - square version for ring shader
+//
+// 3D pattern shaders (use x,y,z map coords)
+//   Checkerboard3D - checkerboard pattern in 3 dimensions
 //
 // all pattern shaders take an optional border shader & borderwidth
 //
@@ -52,6 +58,17 @@ class Checkerboard final : public PatternShader
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Checkerboard>"; }
+
+  // Shader Functions
+  Color evaluate(JobState& js, const Scene& s, const Ray& r,
+                 const EvaluatedHit& eh) const override;
+};
+
+
+class Checkerboard3D final : public PatternShader
+{
+  // SceneItem Functions
+  std::string desc() const override { return "<Checkerboard3D>"; }
 
   // Shader Functions
   Color evaluate(JobState& js, const Scene& s, const Ray& r,

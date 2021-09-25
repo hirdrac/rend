@@ -530,6 +530,7 @@ REGISTER_SHADER_KEYWORD(ShaderSide,"side");
 REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
 // pattern shaders
 REGISTER_SHADER_KEYWORD(Checkerboard,"checker");
+REGISTER_SHADER_KEYWORD(Checkerboard3D,"checker3d");
 REGISTER_SHADER_KEYWORD(Pinwheel,"pinwheel");
 REGISTER_SHADER_KEYWORD(Ring,"ring");
 REGISTER_SHADER_KEYWORD(SquareRing,"squarering");

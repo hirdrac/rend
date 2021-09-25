@@ -68,6 +68,28 @@ Color Checkerboard::evaluate(
 }
 
 
+// **** Checkerboard3D Class ****
+Color Checkerboard3D::evaluate(
+  JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
+{
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+
+  if (_border) {
+    const Flt half_bw = _borderwidth * .5;
+    if (Abs(m.x - std::floor(m.x + half_bw)) < half_bw
+        || Abs(m.y - std::floor(m.y + half_bw)) < half_bw
+        || Abs(m.z - std::floor(m.z + half_bw)) < half_bw) {
+      return _border->evaluate(js, s, r, eh);
+    }
+  }
+
+  const int c =
+    int(std::floor(m.x + VERY_SMALL) + std::floor(m.y + VERY_SMALL)
+        + std::floor(m.z + VERY_SMALL));
+  return child(c)->evaluate(js, s, r, eh);
+}
+
+
 // **** Pinwheel Class ****
 Color Pinwheel::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
