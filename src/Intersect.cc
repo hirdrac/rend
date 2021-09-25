@@ -42,16 +42,20 @@ void HitList::csgUnion(const Primitive* csg)
 
   while (h) {
     h->parent = csg; // claim hit as part of csg object
+    bool remove;
     if (h->type == HIT_ENTER) {
       // entering solid object
-      ++insideCount;
+      remove = ++insideCount > 1;
     } else if (h->type == HIT_EXIT) {
       // leaving object
-      --insideCount;
+      remove = --insideCount > 0;
+    } else {
+      // non-csg objects (plane/disc)
+      remove = insideCount > 0;
     }
 
     HitInfo* next = h->next;
-    if (insideCount > 0) { killNext(prev); } else { prev = h; }
+    if (remove) { killNext(prev); } else { prev = h; }
     h = next;
   }
 }
