@@ -62,7 +62,8 @@ Color Checkerboard::evaluate(
     }
   }
 
-  const int c = int(std::floor(m.x) + std::floor(m.y));
+  const int c =
+    int(std::floor(m.x + VERY_SMALL) + std::floor(m.y + VERY_SMALL));
   return child(c)->evaluate(js, s, r, eh);
 }
 
@@ -148,6 +149,6 @@ Color Stripe::evaluate(
     }
   }
 
-  const int c = int(std::floor(d));
+  const int c = int(std::floor(d + VERY_SMALL));
   return child(c)->evaluate(js, s, r, eh);
 }
