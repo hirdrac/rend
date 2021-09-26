@@ -81,15 +81,19 @@ struct OptNode
   Flt objHitCost;   // cache Object::hitCost()
   Flt currentCost;  // cache OptNode::cost()
 
+  // bound constructor
+  OptNode() : objHitCost{CostTable.bound} { }
+
+  // object constructor
+  OptNode(const ObjectPtr& ob, Flt cost)
+    : object{ob}, box{ob->bound(nullptr)}, objHitCost{cost} { }
+
   // Member Functions
   Flt cost(Flt weight) const
   {
-    if (object) {
-      return weight * objHitCost;
-    } else {
-      // node is bound
-      return (weight * CostTable.bound) + treeCost(child, box.weight());
-    }
+    Flt c = weight * objHitCost;
+    if (child) { c += treeCost(child, box.weight()); }
+    return c;
   }
 };
 
@@ -159,12 +163,9 @@ static OptNode* makeOptNodeList(const std::vector<ObjectPtr>& o_list)
   for (auto& ob : o_list) {
     OptNode* list = nullptr;
     if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
-      list = new OptNode;
-      list->object = ob;
-      list->box = pPtr->bound(nullptr);
-      list->objHitCost = pPtr->hitCost();
+      list = new OptNode(ob, pPtr->hitCost());
     } else {
-      // assume group - just process children
+      // assume group - ignore it and just process children
       list = makeOptNodeList(ob->children());
       if (!list) { continue; }
     }
@@ -249,7 +250,7 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight)
 
   // Optimize inside bounds (recursively)
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
-    if (!n->object && n->child->next) {
+    if (n->child && n->child->next) {
       // bound node with 2 or more children
       int error = optimizeOptNodeList(n->child, n->box.weight());
       if (error) { return error; }
@@ -259,42 +260,21 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight)
   return 0;
 }
 
-static int convertNodeSubList(
-  OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox& bound_box)
-{
-  int count = 0;
-  for (OptNode* n = node_list; n != nullptr; n = n->next) {
-    if (n->object) {
-      // object node
-      bound_list.push_back(n->object);
-      bound_box.fit(n->box);
-    } else {
-      // bound node
-      auto b = std::make_shared<Bound>();
-      count += 1 + convertNodeSubList(n->child, b->objects, b->box);
-      bound_list.push_back(b);
-      bound_box.fit(b->box);
-    }
-  }
-
-  return count;
-}
-
 static int convertNodeList(
-  OptNode* node_list, std::vector<ObjectPtr>& bound_list)
+  OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox* bound_box)
 {
-  if (!node_list) { return -1; }
-
   int count = 0;
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
     if (n->object) {
       // object node
       bound_list.push_back(n->object);
+      if (bound_box) { bound_box->fit(n->box); }
     } else {
       // bound node
-      auto b = std::make_shared<Bound>();
-      count += 1 + convertNodeSubList(n->child, b->objects, b->box);
+      auto b = makeObject<Bound>();
+      count += 1 + convertNodeList(n->child, b->objects, &b->box);
       bound_list.push_back(b);
+      if (bound_box) { bound_box->fit(b->box); }
     }
   }
 
@@ -325,7 +305,7 @@ int MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list,
   println("New tree cost: ", treeCost(node_list, scene_weight));
 
   bound_list.clear();
-  int count = convertNodeList(node_list, bound_list);
+  int count = convertNodeList(node_list, bound_list, nullptr);
   killTree(node_list);
   return count;
 }
