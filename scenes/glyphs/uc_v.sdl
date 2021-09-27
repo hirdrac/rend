@@ -1,23 +1,22 @@
 // Uppercase "V"
-(group
-  // left side
-  (intersect
-    (cylinder (scale .5 .5 .5)(roty 90)(move -1 4.5 0))
-    (cylinder (scale .5 .5 .25)(rotx 90)(move -1 4.75 0)) )
-  (cylinder (scale .5 .5 2)(rotx 90)(move -1 2.5 0))
-  (intersect
-    (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 .5 0))
-    (cylinder (scale .5 .5 .25)(rotx 90)(move -1 .25 0)))
 
-  // right side
-  (intersect
-    (cylinder (scale .5 .5 .5)(roty 90)(move 1 4.5 0))
-    (cylinder (scale .5 .5 .25)(rotx 90)(move 1 4.75 0)) )
-  (cylinder (scale .5 .5 1.5)(rotx 90)(move 1 3 0))
-  (intersect
-    (torus (radius .5)(rotx 90)(move 0 1.5 0))
-    (cube (scale .75 .75 .51)(move .75 .75 0)) )
+// left side
+(intersect
+  (cylinder (scale .5 .5 .5)(roty 90)(move -1 4.5 0))
+  (cylinder (scale .5 .5 .25)(rotx 90)(move -1 4.75 0)) )
+(cylinder (scale .5 .5 2)(rotx 90)(move -1 2.5 0))
+(intersect
+  (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 .5 0))
+  (cylinder (scale .5 .5 .25)(rotx 90)(move -1 .25 0)))
 
-  // bottom
-  (cylinder (scale .5 .5 .5)(roty 90)(move -.5   .5 0))
-)
+// right side
+(intersect
+  (cylinder (scale .5 .5 .5)(roty 90)(move 1 4.5 0))
+  (cylinder (scale .5 .5 .25)(rotx 90)(move 1 4.75 0)) )
+(cylinder (scale .5 .5 1.5)(rotx 90)(move 1 3 0))
+(intersect
+  (torus (radius .5)(rotx 90)(move 0 1.5 0))
+  (cube (scale .75 .75 .51)(move .75 .75 0)) )
+
+// bottom
+(cylinder (scale .5 .5 .5)(roty 90)(move -.5 .5 0))

@@ -1,19 +1,18 @@
 // Digit "6"
-(group
-  // top
-  (intersect
-    (torus (radius .5)(rotx 90)(move 0 3.5 0))
-    (cube (scale 1 1 .51)(move -1 4.5 0)) )
-  (intersect
-    (torus (radius .5)(rotx 90)(move 0 3.5 0))
-    (cube (scale 1 1 .51)(move 1 5 0)) )
-  (intersect
-    (torus (radius .5)(rotx 90)(move 0 3.5 0))
-    (cylinder (scale .5 .5 1)(roty 90)(move 1 4 0)) )
 
-  // left side
-  (cylinder (scale .5 .5 1)(rotx 90)(move -1 2.5 0))
+// top
+(intersect
+  (torus (radius .5)(rotx 90)(move 0 3.5 0))
+  (cube (scale 1 1 .51)(move -1 4.5 0)) )
+(intersect
+  (torus (radius .5)(rotx 90)(move 0 3.5 0))
+  (cube (scale 1 1 .51)(move 1 5 0)) )
+(intersect
+  (torus (radius .5)(rotx 90)(move 0 3.5 0))
+  (cylinder (scale .5 .5 1)(roty 90)(move 1 4 0)) )
 
-  // bottom
-  (torus (radius .5)(rotx 90)(move 0 1.5 0))
-)
+// left side
+(cylinder (scale .5 .5 1)(rotx 90)(move -1 2.5 0))
+
+// bottom
+(torus (radius .5)(rotx 90)(move 0 1.5 0))
