@@ -21,18 +21,18 @@ int CSG::addObject(const ObjectPtr& ob)
     return -1;
   }
 
-  _children.push_back(ob);
+  objects.push_back(ob);
   return 0;
 }
 
 int CSG::init(Scene& s)
 {
-  if (_children.size() <= 1) {
+  if (objects.size() <= 1) {
     println_err("Too few objects");
     return -1;
   }
 
-  for (auto& ob : _children) {
+  for (auto& ob : objects) {
     if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
   }
 
@@ -50,7 +50,7 @@ Flt CSG::hitCost() const
 {
   if (_cost >= 0.0) { return _cost; }
   Flt cost = CostTable.csg;
-  for (auto& ob : _children) {
+  for (auto& ob : objects) {
     auto pPtr = dynamic_cast<const Primitive*>(ob.get());
     assert(pPtr != nullptr);
     cost += pPtr->hitCost();
@@ -63,7 +63,7 @@ Flt CSG::hitCost() const
 BBox Union::bound(const Matrix* t) const
 {
   BBox b;
-  for (auto& ob : _children) {
+  for (auto& ob : objects) {
     if (t == nullptr) {
       b.fit(ob->bound(nullptr));
     } else {
@@ -78,7 +78,7 @@ BBox Union::bound(const Matrix* t) const
 int Union::intersect(const Ray& r, HitList& hl) const
 {
   HitList hl2(hl.cache(), hl.stats(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl2); }
+  for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgUnion(this);
 
   const int hits = hl2.count();
@@ -90,19 +90,19 @@ int Union::intersect(const Ray& r, HitList& hl) const
 // **** Intersection Class ****
 BBox Intersection::bound(const Matrix* t) const
 {
-  assert(!_children.empty());
+  assert(!objects.empty());
 
   BBox b;
   if (t == nullptr) {
-    b = _children[0]->bound(nullptr);
+    b = objects[0]->bound(nullptr);
   } else {
-    assert(_children[0]->trans());
-    const Matrix t2 = _children[0]->trans()->base * (*t);
-    b = _children[0]->bound(&t2);
+    assert(objects[0]->trans());
+    const Matrix t2 = objects[0]->trans()->base * (*t);
+    b = objects[0]->bound(&t2);
   }
 
-  for (std::size_t i = 1, size = _children.size(); i < size; ++i) {
-    Object& ob = *_children[i];
+  for (std::size_t i = 1, size = objects.size(); i < size; ++i) {
+    Object& ob = *objects[i];
     BBox b2;
     if (t == nullptr) {
       b2 = ob.bound(nullptr);
@@ -120,8 +120,8 @@ BBox Intersection::bound(const Matrix* t) const
 int Intersection::intersect(const Ray& r, HitList& hl) const
 {
   HitList hl2(hl.cache(), hl.stats(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl2); }
-  hl2.csgIntersection(this, int(_children.size()));
+  for (auto& ob : objects) { ob->intersect(r, hl2); }
+  hl2.csgIntersection(this, int(objects.size()));
 
   const int hits = hl2.count();
   hl.mergeList(hl2);
@@ -132,8 +132,8 @@ int Intersection::intersect(const Ray& r, HitList& hl) const
 // **** Difference Class ****
 BBox Difference::bound(const Matrix* t) const
 {
-  assert(!_children.empty());
-  Object& ob = *_children[0];
+  assert(!objects.empty());
+  Object& ob = *objects[0];
   if (t == nullptr) {
     return ob.bound(nullptr);
   } else {
@@ -146,8 +146,8 @@ BBox Difference::bound(const Matrix* t) const
 int Difference::intersect(const Ray& r, HitList& hl) const
 {
   HitList hl2(hl.cache(), hl.stats(), true);
-  for (auto& ob : _children) { ob->intersect(r, hl2); }
-  hl2.csgDifference(this, _children[0].get());
+  for (auto& ob : objects) { ob->intersect(r, hl2); }
+  hl2.csgDifference(this, objects[0].get());
 
   const int hits = hl2.count();
   hl.mergeList(hl2);

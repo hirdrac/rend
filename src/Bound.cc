@@ -8,6 +8,7 @@
 #include "Ray.hh"
 #include "Stats.hh"
 #include "Group.hh"
+#include "CSG.hh"
 #include "Print.hh"
 #include "HitCostInfo.hh"
 #include <sstream>
@@ -71,6 +72,8 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight);
 
 
 // **** OptNode struct ****
+enum OptNodeType { NODE_BOUND, NODE_UNION, NODE_OBJECT };
+
 struct OptNode
 {
   OptNode* next = nullptr;
@@ -80,13 +83,14 @@ struct OptNode
 
   Flt objHitCost;   // cache Object::hitCost()
   Flt currentCost;  // cache OptNode::cost()
+  OptNodeType type;
 
   // bound constructor
-  OptNode() : objHitCost{CostTable.bound} { }
+  OptNode() : objHitCost{CostTable.bound}, type{NODE_BOUND} { }
 
-  // object constructor
-  OptNode(const ObjectPtr& ob, Flt cost)
-    : object{ob}, box{ob->bound(nullptr)}, objHitCost{cost} { }
+  // object/union constructor
+  OptNode(OptNodeType t, const ObjectPtr& ob, Flt cost)
+    : object{ob}, box{ob->bound(nullptr)}, objHitCost{cost}, type{t} { }
 
   // Member Functions
   Flt cost(Flt weight) const
@@ -125,8 +129,10 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 static Flt calcMergeCost(const OptNode* n1, const OptNode* n2, Flt weight)
 {
   const Flt w = BBox(n1->box, n2->box).weight();
-  const Flt m_cost1 = n1->object ? n1->cost(w) : treeCost(n1->child, w);
-  const Flt m_cost2 = n2->object ? n2->cost(w) : treeCost(n2->child, w);
+  const Flt m_cost1 =
+    (n1->type == NODE_BOUND) ? treeCost(n1->child, w) : n1->cost(w);
+  const Flt m_cost2 =
+    (n2->type == NODE_BOUND) ? treeCost(n2->child, w) : n2->cost(w);
   return (weight * CostTable.bound) + m_cost1 + m_cost2;
 }
 
@@ -137,14 +143,14 @@ static OptNode* mergeOptNodes(OptNode* node1, OptNode* node2)
   b->box = BBox(node1->box, node2->box);
 
   OptNode* n1 = node1;
-  if (!node1->object) {
+  if (node1->type == NODE_BOUND) {
     // remove bound node
     n1 = node1->child;
     delete node1;
   }
 
   OptNode* n2 = node2;
-  if (!node2->object) {
+  if (node2->type == NODE_BOUND) {
     // remove bound node
     n2 = node2->child;
     delete node2;
@@ -162,8 +168,11 @@ static OptNode* makeOptNodeList(const std::vector<ObjectPtr>& o_list)
   OptNode* tail = nullptr;
   for (auto& ob : o_list) {
     OptNode* list = nullptr;
-    if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
-      list = new OptNode(ob, pPtr->hitCost());
+    if (auto uPtr = dynamic_cast<const Union*>(ob.get()); uPtr) {
+      list = new OptNode(NODE_UNION, ob, uPtr->hitCost());
+      list->child = makeOptNodeList(uPtr->children());
+    } else if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
+      list = new OptNode(NODE_OBJECT, ob, pPtr->hitCost());
     } else {
       // assume group - ignore it and just process children
       list = makeOptNodeList(ob->children());
@@ -177,7 +186,7 @@ static OptNode* makeOptNodeList(const std::vector<ObjectPtr>& o_list)
   return node_list;
 }
 
-static int optimizeOptNodeList(OptNode*& node_list, Flt weight)
+static void optimizeOptNodeList(OptNode*& node_list, Flt weight)
 {
   // create array to index nodes
   std::vector<OptNode*> node_array;
@@ -248,16 +257,14 @@ static int optimizeOptNodeList(OptNode*& node_list, Flt weight)
     }
   }
 
-  // Optimize inside bounds (recursively)
+  // Optimize inside bounds/unions (recursively)
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
-    if (n->child && n->child->next) {
-      // bound node with 2 or more children
-      int error = optimizeOptNodeList(n->child, n->box.weight());
-      if (error) { return error; }
+    if (n->child && (n->child->next || n->child->type == NODE_UNION)) {
+      // bound/union with 2 or more children
+      // - OR - bound containing a single union
+      optimizeOptNodeList(n->child, n->box.weight());
     }
   }
-
-  return 0;
 }
 
 static int convertNodeList(
@@ -265,12 +272,15 @@ static int convertNodeList(
 {
   int count = 0;
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
-    if (n->object) {
-      // object node
+    if (n->type == NODE_OBJECT) {
       bound_list.push_back(n->object);
       if (bound_box) { bound_box->fit(n->box); }
-    } else {
-      // bound node
+    } else if (n->type == NODE_UNION) {
+      auto u = makeObject<Union>();
+      count += convertNodeList(n->child, u->objects, nullptr);
+      bound_list.push_back(u);
+      if (bound_box) { bound_box->fit(n->box); }
+    } else { // n->type == NODE_BOUND
       auto b = makeObject<Bound>();
       count += 1 + convertNodeList(n->child, b->objects, &b->box);
       bound_list.push_back(b);
@@ -296,12 +306,7 @@ int MakeBoundList(const Vec3& eye, const std::vector<ObjectPtr>& o_list,
 
   const Flt scene_weight = box.weight();
   println("Old tree cost: ", treeCost(node_list, scene_weight));
-
-  if (optimizeOptNodeList(node_list, scene_weight)) {
-    killTree(node_list);
-    return 0;
-  }
-
+  optimizeOptNodeList(node_list, scene_weight);
   println("New tree cost: ", treeCost(node_list, scene_weight));
 
   bound_list.clear();
