@@ -22,7 +22,7 @@ class Disc final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
@@ -40,7 +40,7 @@ class Cone final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
@@ -58,7 +58,7 @@ class Cube final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
@@ -76,7 +76,7 @@ class Cylinder final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
@@ -94,7 +94,7 @@ class Paraboloid final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
@@ -113,7 +113,7 @@ class Plane final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
@@ -130,7 +130,7 @@ class Sphere final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 };
 
@@ -147,7 +147,7 @@ class Torus final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:

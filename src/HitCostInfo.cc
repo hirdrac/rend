@@ -6,10 +6,6 @@
 #include "HitCostInfo.hh"
 
 
-// **** Globals ****
-HitCostInfo CostTable;
-
-
 // **** HitCostInfo Class ****
 void HitCostInfo::reset()
 {

@@ -46,14 +46,14 @@ int CSG::init(Scene& s)
   return 0;
 }
 
-Flt CSG::hitCost() const
+Flt CSG::hitCost(const HitCostInfo& hc) const
 {
   if (_cost >= 0.0) { return _cost; }
-  Flt cost = CostTable.csg;
+  Flt cost = hc.csg;
   for (auto& ob : objects) {
     auto pPtr = dynamic_cast<const Primitive*>(ob.get());
     assert(pPtr != nullptr);
-    cost += pPtr->hitCost();
+    cost += pPtr->hitCost(hc);
   }
   return cost;
 }

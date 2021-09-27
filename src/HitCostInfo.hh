@@ -29,7 +29,3 @@ class HitCostInfo
   // Member Functions
   void reset();
 };
-
-
-// **** Globals ****
-extern HitCostInfo CostTable;

@@ -33,9 +33,9 @@ BBox Disc::bound(const Matrix* t) const
               t ? *t : _trans.final());
 }
 
-Flt Disc::hitCost() const
+Flt Disc::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.disc;
+  return (_cost >= 0.0) ? _cost : hc.disc;
 }
 
 int Disc::intersect(const Ray& r, HitList& hl) const
@@ -187,9 +187,9 @@ Vec3 Cone::normal(const Ray& r, const HitInfo& h) const
   return _trans.normalLocalToGlobal(n, r.time);
 }
 
-Flt Cone::hitCost() const
+Flt Cone::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.cone;
+  return (_cost >= 0.0) ? _cost : hc.cone;
 }
 
 
@@ -206,9 +206,9 @@ int Cube::init(Scene& s)
   return 0;
 }
 
-Flt Cube::hitCost() const
+Flt Cube::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.cube;
+  return (_cost >= 0.0) ? _cost : hc.cube;
 }
 
 int Cube::intersect(const Ray& r, HitList& hl) const
@@ -295,9 +295,9 @@ int Cylinder::init(Scene& s)
   return 0;
 }
 
-Flt Cylinder::hitCost() const
+Flt Cylinder::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.cylinder;
+  return (_cost >= 0.0) ? _cost : hc.cylinder;
 }
 
 int Cylinder::intersect(const Ray& r, HitList& hl) const
@@ -490,9 +490,9 @@ Vec3 Paraboloid::normal(const Ray& r, const HitInfo& h) const
   return _trans.normalLocalToGlobal(n, r.time);
 }
 
-Flt Paraboloid::hitCost() const
+Flt Paraboloid::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.paraboloid;
+  return (_cost >= 0.0) ? _cost : hc.paraboloid;
 }
 
 
@@ -509,9 +509,9 @@ BBox Plane::bound(const Matrix* t) const
               t ? *t : _trans.final());
 }
 
-Flt Plane::hitCost() const
+Flt Plane::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.plane;
+  return (_cost >= 0.0) ? _cost : hc.plane;
 }
 
 int Plane::intersect(const Ray& r, HitList& hl) const
@@ -551,9 +551,9 @@ Vec3 Plane::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Sphere Class ****
-Flt Sphere::hitCost() const
+Flt Sphere::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.sphere;
+  return (_cost >= 0.0) ? _cost : hc.sphere;
 }
 
 int Sphere::intersect(const Ray& r, HitList& hl) const
@@ -633,9 +633,9 @@ BBox Torus::bound(const Matrix* t) const
   return BBox(pt, std::size(pt), t ? *t : _trans.final());
 }
 
-Flt Torus::hitCost() const
+Flt Torus::hitCost(const HitCostInfo& hc) const
 {
-  return (_cost >= 0.0) ? _cost : CostTable.torus;
+  return (_cost >= 0.0) ? _cost : hc.torus;
 }
 
 int Torus::intersect(const Ray& r, HitList& hl) const

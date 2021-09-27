@@ -10,6 +10,7 @@
 #include "LightPtr.hh"
 #include "ShaderPtr.hh"
 #include "SceneItem.hh"
+#include "HitCostInfo.hh"
 #include "Types.hh"
 #include <vector>
 
@@ -34,8 +35,8 @@ class Scene
   ShaderPtr default_obj;
   ShaderPtr default_lt;
 
-  int  image_width, image_height;     // Image pixel size
-  int  region_min[2], region_max[2];  // Render region
+  int image_width, image_height;     // Image pixel size
+  int region_min[2], region_max[2];  // Render region
 
   // camera settings
   Vec3 eye;                 // camera location
@@ -62,6 +63,9 @@ class Scene
   int group_count;
   int object_count;
   int shader_count;
+
+  // intersection cost estimate
+  HitCostInfo hitCosts;
 
 
   Scene() { clear(); }

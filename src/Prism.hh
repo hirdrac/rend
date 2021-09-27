@@ -25,7 +25,7 @@ class Prism final : public Primitive
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
-  Flt hitCost() const override;
+  Flt hitCost(const HitCostInfo& hc) const override;
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:

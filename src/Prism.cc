@@ -63,7 +63,7 @@ BBox Prism::bound(const Matrix* t) const
   return box;
 }
 
-Flt Prism::hitCost() const
+Flt Prism::hitCost(const HitCostInfo& hc) const
 {
   return (_cost >= 0.0) ? _cost : 1.0 + (.2 * _sides);
 }

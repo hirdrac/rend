@@ -17,6 +17,7 @@
 // **** Types ****
 class HitInfo;
 class HitList;
+class HitCostInfo;
 class Ray;
 class BBox;
 
@@ -57,7 +58,7 @@ class Primitive : public Object
   BBox bound(const Matrix* t = nullptr) const override;
 
   // Member Functions
-  virtual Flt hitCost() const = 0;
+  virtual Flt hitCost(const HitCostInfo& hc) const = 0;
   virtual Vec3 normal(const Ray& r, const HitInfo& h) const = 0;
 
  protected:
