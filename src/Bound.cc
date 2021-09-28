@@ -193,6 +193,7 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
   // create array to index nodes
   std::vector<OptNode*> node_array;
   node_array.reserve(CountNodes(node_list));
+  const Flt bound_cost = s.hitCosts.bound;
 
   for (OptNode* ptr = node_list; ptr != nullptr; ) {
     OptNode* n = ptr;
@@ -201,10 +202,10 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
 
     const Flt cost1 = n->cost(weight);
     n->currentCost = cost1;
-    const Flt cost2 = (weight * s.hitCosts.bound) + n->cost(n->box.weight());
+    const Flt cost2 = (weight * bound_cost) + n->cost(n->box.weight());
     if (cost1 > cost2) {
       // Put object into bound (alone)
-      OptNode* b = new OptNode(s.hitCosts.bound);
+      OptNode* b = new OptNode(bound_cost);
       b->child = n;
       b->box   = n->box;
       b->currentCost = cost2;
@@ -213,56 +214,47 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
     node_array.push_back(n);
   }
 
+  // Group objects together in bounding boxes
   auto node_count = node_array.size();
-  if (node_count > 1) {
-    // Group objects together in bounding boxes
-    for (;;) {
-      Flt best = 0;
-      Flt bestMergeCost = 0;
-      unsigned int best_i = 0, best_j = 0;
+  while (node_count > 1) {
+    Flt best = 0, bestMergeCost = 0;
+    unsigned int best_i = 0, best_j = 0;
 
-      for (unsigned int i = 0; i < (node_count-1); ++i) {
-        OptNode* n1 = node_array[i];
-        if (!n1) { continue; }
+    for (unsigned int i = 0; i < (node_count-1); ++i) {
+      OptNode* n1 = node_array[i];
 
-        for (unsigned int j = i+1; j < node_count; ++j) {
-          OptNode* n2 = node_array[j];
-          if (!n2) { continue; }
+      for (unsigned int j = i+1; j < node_count; ++j) {
+        OptNode* n2 = node_array[j];
 
-          const Flt baseCost = n1->currentCost + n2->currentCost;
-          const Flt mergeCost = calcMergeCost(s, n1, n2, weight);
-          const Flt costImprove = baseCost - mergeCost;
-          if (costImprove > best) {
-            best = costImprove;
-            bestMergeCost = mergeCost;
-            best_i = i;
-            best_j = j;
-          }
+        const Flt baseCost = n1->currentCost + n2->currentCost;
+        const Flt mergeCost = calcMergeCost(s, n1, n2, weight);
+        const Flt costImprove = baseCost - mergeCost;
+        if (costImprove > best) {
+          best = costImprove;
+          bestMergeCost = mergeCost;
+          best_i = i;
+          best_j = j;
         }
       }
-
-      if (best <= 0) { break; }
-
-      OptNode* n = mergeOptNodes(s, node_array[best_i], node_array[best_j]);
-      n->currentCost = bestMergeCost;
-      node_array[best_i] = n;
-      node_array[best_j] = nullptr;
     }
+
+    if (best <= 0) { break; }
+
+    OptNode* n = mergeOptNodes(s, node_array[best_i], node_array[best_j]);
+    n->currentCost = bestMergeCost;
+    node_array[best_i] = n;
+    node_array[best_j] = node_array[--node_count];
   }
 
   // Reconstruct linked list
   node_list = nullptr;
   OptNode* prev = nullptr;
-  for (auto n : node_array) {
-    if (n) {
-      if (prev) { prev->next = n; }
-      else { node_list = n; }
-      prev = n;
-    }
-  }
+  for (unsigned int i = 0; i < node_count; ++i) {
+    OptNode* n = node_array[i];
+    if (prev) { prev->next = n; } else { node_list = n; }
+    prev = n;
 
-  // Optimize inside bounds/unions (recursively)
-  for (OptNode* n = node_list; n != nullptr; n = n->next) {
+    // Optimize inside bounds/unions
     if (n->child && (n->child->next || n->child->type == NODE_UNION)) {
       // bound/union with 2 or more children
       // - OR - bound containing a single union
@@ -274,25 +266,27 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
 static int convertNodeList(
   OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox* bound_box)
 {
-  int count = 0;
+  bound_list.reserve(CountNodes(node_list));
+
+  int bound_count = 0;
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
     if (n->type == NODE_OBJECT) {
       bound_list.push_back(n->object);
       if (bound_box) { bound_box->fit(n->box); }
     } else if (n->type == NODE_UNION) {
       auto u = makeObject<Union>();
-      count += convertNodeList(n->child, u->objects, nullptr);
+      bound_count += convertNodeList(n->child, u->objects, nullptr);
       bound_list.push_back(u);
       if (bound_box) { bound_box->fit(n->box); }
     } else { // n->type == NODE_BOUND
       auto b = makeObject<Bound>();
-      count += 1 + convertNodeList(n->child, b->objects, &b->box);
+      bound_count += 1 + convertNodeList(n->child, b->objects, &b->box);
       bound_list.push_back(b);
       if (bound_box) { bound_box->fit(b->box); }
     }
   }
 
-  return count;
+  return bound_count;
 }
 
 int MakeBoundList(const Scene& s, const std::vector<ObjectPtr>& o_list,
@@ -314,7 +308,7 @@ int MakeBoundList(const Scene& s, const std::vector<ObjectPtr>& o_list,
   println("New tree cost: ", treeCost(node_list, scene_weight));
 
   bound_list.clear();
-  int count = convertNodeList(node_list, bound_list, nullptr);
+  const int bound_count = convertNodeList(node_list, bound_list, nullptr);
   killTree(node_list);
-  return count;
+  return bound_count;
 }
