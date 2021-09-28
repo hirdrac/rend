@@ -147,7 +147,7 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  bound_count = MakeBoundList(eye, _objects, _optObjects);
+  bound_count = MakeBoundList(*this, _objects, _optObjects);
 
   // init shaders
   shader_count = 0;
