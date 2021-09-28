@@ -192,7 +192,7 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
 {
   // create array to index nodes
   std::vector<OptNode*> node_array;
-  node_array.reserve(CountNodes(node_list));
+  node_array.reserve(std::size_t(CountNodes(node_list)));
   const Flt bound_cost = s.hitCosts.bound;
 
   for (OptNode* ptr = node_list; ptr != nullptr; ) {
@@ -266,7 +266,7 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
 static int convertNodeList(
   OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox* bound_box)
 {
-  bound_list.reserve(CountNodes(node_list));
+  bound_list.reserve(std::size_t(CountNodes(node_list)));
 
   int bound_count = 0;
   for (OptNode* n = node_list; n != nullptr; n = n->next) {
