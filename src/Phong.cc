@@ -70,16 +70,7 @@ Color Phong::evaluate(
 #endif
 
   Vec3 reflect;
-  if (is_s) {
-    Vec3 dir = r.dir;
-    // init ray not normalized
-    if (r.depth == 0) { dir.normalize(); }
-
-    //const Flt len_sqr = dir.lengthSqr();
-    //if (!IsOne(len_sqr)) { dir *= 1.0 / std::sqrt(len_sqr); }
-
-    reflect = CalcReflect(dir, eh.normal);
-  }
+  if (is_s) { reflect = CalcReflect(r.dir, eh.normal); }
 
   // ambient calculation
   Color result = s.ambient->evaluate(js, s, r, eh) * color_d;

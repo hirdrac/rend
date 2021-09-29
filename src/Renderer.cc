@@ -114,18 +114,16 @@ void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
             sy += rnd.jitter() * jitterY;
           }
 
-          const Vec3 dirAdj = (_pixelX * sx) + (_pixelY * sy);
+          Vec3 dir = (_pixelX * sx) + (_pixelY * sy);
           if (use_aperture) {
             const Vec2 r = rnd.diskPt();
             initRay.base = eye + (_apertureX * r.x) + (_apertureY * r.y);
-            initRay.dir = UnitVec(_vcenter - initRay.base + dirAdj);
-              // FIXME - normalized because dir length much greater than 1
-              //   causes problems with torus intersections
+            dir += _vcenter - initRay.base;
           } else {
-            initRay.dir = _vnormal + dirAdj;
-              // dir not normalized for performance
+            dir += _vnormal;
           }
 
+          initRay.dir = UnitVec(dir);
           c += _scene->traceRay(js, initRay);
         }
       }
