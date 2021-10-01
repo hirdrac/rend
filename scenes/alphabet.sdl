@@ -7,7 +7,7 @@
 (shadow 1)
 
 // anti-aliasing
-(supersample 2 2)
+(supersample 3 3)
 //(jitter .95)
 
 // Lights
