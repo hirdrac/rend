@@ -25,7 +25,7 @@ class MapShader : public Shader
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
 
   // Shader Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
 
  protected:
   ShaderPtr _child;

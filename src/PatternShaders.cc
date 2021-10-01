@@ -25,7 +25,7 @@ int PatternShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   return 0;
 }
 
-int PatternShader::init(Scene& s)
+int PatternShader::init(Scene& s, const Transform* tr)
 {
   if (_children.empty()) { return -1; }
 
@@ -35,12 +35,12 @@ int PatternShader::init(Scene& s)
       return -1;
     }
 
-    int err = InitShader(s, *_border, &_trans);
+    int err = InitShader(s, *_border, tr);
     if (err) { return err; }
   }
 
   for (auto& sh : _children) {
-    int err = InitShader(s, *sh, &_trans);
+    int err = InitShader(s, *sh, tr);
     if (err) { return err; }
   }
 

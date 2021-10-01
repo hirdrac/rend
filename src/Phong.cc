@@ -11,16 +11,16 @@
 
 
 // **** Phong Class ****
-int Phong::init(Scene& s)
+int Phong::init(Scene& s, const Transform* tr)
 {
   if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
-  if (int er = InitShader(s, *_diffuse); er != 0) { return er; }
+  if (int er = InitShader(s, *_diffuse, tr); er != 0) { return er; }
 
   if (!_specular) { _specular = makeShader<ShaderColor>(0, 0, 0); }
-  if (int er = InitShader(s, *_specular); er != 0) { return er; }
+  if (int er = InitShader(s, *_specular, tr); er != 0) { return er; }
 
   if (!_transmit) { _transmit = makeShader<ShaderColor>(0, 0, 0); }
-  if (int er = InitShader(s, *_transmit); er != 0) { return er; }
+  if (int er = InitShader(s, *_transmit, tr); er != 0) { return er; }
 
   return 0;
 }

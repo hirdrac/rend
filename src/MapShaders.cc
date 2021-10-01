@@ -19,9 +19,9 @@ int MapShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
   return 0;
 }
 
-int MapShader::init(Scene& s)
+int MapShader::init(Scene& s, const Transform* tr)
 {
-  return _child ? InitShader(s, *_child) : -1;
+  return _child ? InitShader(s, *_child, tr) : -1;
 }
 
 

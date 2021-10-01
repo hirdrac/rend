@@ -32,7 +32,7 @@ class Shader : public SceneItem
 {
  public:
   // Member Functions
-  virtual int init(Scene& s) { return 0; }
+  virtual int init(Scene& s, const Transform* tr) { return 0; }
   virtual Color evaluate(JobState& js, const Scene& s, const Ray& r,
                          const EvaluatedHit& eh) const = 0;
 };
@@ -75,4 +75,4 @@ class ShaderSide final : public Shader
 
 
 // **** Functions ****
-int InitShader(Scene& s, Shader& sh, const Transform* t = nullptr);
+int InitShader(Scene& s, Shader& sh, const Transform* tr);

@@ -152,7 +152,7 @@ int Scene::init()
   // init shaders
   shader_count = 0;
   for (auto& sh : _shaders) {
-    if (InitShader(*this, *sh)) {
+    if (InitShader(*this, *sh, nullptr)) {
       println("Error initializing shaders");
       return -1;
     }

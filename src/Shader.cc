@@ -44,11 +44,11 @@ Color ShaderSide::evaluate(
 
 
 // **** Functions ****
-int InitShader(Scene& s, Shader& sh, const Transform* t)
+int InitShader(Scene& s, Shader& sh, const Transform* tr)
 {
   Transform* trans = sh.trans();
-  if (trans) { trans->init(t); }
+  if (trans) { trans->init(tr); tr = trans; }
 
   ++s.shader_count;
-  return sh.init(s);
+  return sh.init(s, tr);
 }
