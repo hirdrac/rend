@@ -12,7 +12,7 @@
 int Sun::init(Scene& s)
 {
   _finalDir = _trans.vectorLocalToGlobal(dir, 0);
-  return Light::init(s);
+  return 0;
 }
 
 bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
@@ -46,7 +46,7 @@ bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
 int PointLight::init(Scene& s)
 {
   _finalPos = _trans.pointLocalToGlobal(pos, 0);
-  return Light::init(s);
+  return 0;
 }
 
 bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
@@ -83,7 +83,7 @@ int SpotLight::init(Scene& s)
 {
   _finalPos = _trans.pointLocalToGlobal(pos, 0);
   _finalDir = _trans.vectorLocalToGlobal(dir, 0);
-  return Light::init(s);
+  return 0;
 }
 
 bool SpotLight::luminate(JobState& js, const Scene& s, const Ray& r,

@@ -129,7 +129,7 @@ int Scene::init()
   // (lights initialized before objects so lights contained in groups will
   //  be re-initialized with the correct parent transform)
   for (auto& lt : _lights) {
-    if (InitLight(*this, *lt)) {
+    if (InitLight(*this, *lt, nullptr)) {
       println("Error initializing light list");
       return -1;  // error
     }

@@ -10,19 +10,6 @@
 
 
 // **** Light Class ****
-int Light::init(Scene& s)
-{
-  if (!_energy) {
-    _energy = s.default_lt;
-    if (!_energy) {
-      println("missing shader");
-      return -1;
-    }
-  }
-
-  return 0;
-}
-
 int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);
@@ -34,10 +21,12 @@ int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 
 // **** Functions ****
-int InitLight(Scene& s, Light& lt, const Transform* t)
+int InitLight(Scene& s, Light& lt, const Transform* tr)
 {
   Transform* trans = lt.trans();
-  if (trans) { trans->init(t); }
+  if (trans) { trans->init(tr); }
+
+  if (!lt.energy()) { lt.addShader(s.default_lt, FLAG_NONE); }
 
   return lt.init(s);
 }

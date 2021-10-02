@@ -33,12 +33,14 @@ class Light : public SceneItem
 
   // SceneItem Functions
   Transform* trans() override final { return &_trans; }
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
 
   // Member Functions
-  virtual int init(Scene& s);
+  virtual int init(Scene& s) = 0;
   virtual bool luminate(JobState& js, const Scene& s, const Ray& r,
                         const EvaluatedHit& eh, LightResult& result) const = 0;
+
+  const ShaderPtr& energy() const { return _energy; }
 
  protected:
   ShaderPtr _energy;
@@ -47,4 +49,4 @@ class Light : public SceneItem
 
 
 // **** Functions ****
-int InitLight(Scene& s, Light& lt, const Transform* t = nullptr);
+int InitLight(Scene& s, Light& lt, const Transform* tr);
