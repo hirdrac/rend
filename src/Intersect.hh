@@ -32,11 +32,6 @@ class HitInfo
   Vec3 local_pt;
   int side;
   HitType type;
-
-  HitInfo() = default;
-  HitInfo(const Primitive* ob, Flt t, const Vec3& pt)
-    : object(ob), parent(nullptr), distance(t), local_pt(pt), side(0),
-      type(HIT_NORMAL) { }
 };
 
 class HitCache
