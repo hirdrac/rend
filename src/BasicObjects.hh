@@ -17,7 +17,7 @@ class Disc final : public Primitive
   std::string desc() const override { return "<Disc>"; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   BBox bound(const Matrix* t) const override;
   int intersect(const Ray& r, HitList& hl) const override;
 
@@ -36,7 +36,7 @@ class Cone final : public Primitive
   std::string desc() const override { return "<Cone>"; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
@@ -54,7 +54,7 @@ class Cube final : public Primitive
   std::string desc() const override { return "<Cube>"; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
@@ -72,7 +72,7 @@ class Cylinder final : public Primitive
   std::string desc() const override { return "<Cylinder>"; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
@@ -90,7 +90,7 @@ class Paraboloid final : public Primitive
   std::string desc() const override { return "<Paraboloid>"; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   int intersect(const Ray& r, HitList& hl) const override;
 
   // Primitive Functions
@@ -108,7 +108,7 @@ class Plane final : public Primitive
   std::string desc() const override { return "<Plane>"; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   BBox bound(const Matrix* t) const override;
   int intersect(const Ray& r, HitList& hl) const override;
 
@@ -142,7 +142,7 @@ class Torus final : public Primitive
   int setRadius(Flt r) override { _radius = r; return 0; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   BBox bound(const Matrix* t) const override;
   int intersect(const Ray& r, HitList& hl) const override;
 

@@ -36,16 +36,16 @@ BBox Primitive::bound(const Matrix* t) const
 
 
 // **** Functions ****
-int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* t)
+int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* tr)
 {
   Transform* trans = ob.trans();
-  if (trans) { trans->init(t); }
+  if (trans) { trans->init(tr); tr = trans; }
 
   // Assign provided shader if none is set
   if (sh && !ob.shader()) { ob.addShader(sh, FLAG_NONE); }
 
   ++s.object_count;
-  int error = ob.init(s);
+  int error = ob.init(s, tr);
   if (error) {
     println("INIT ERROR: ", ob.desc());
     return error;

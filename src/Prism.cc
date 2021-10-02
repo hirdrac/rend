@@ -18,7 +18,7 @@ std::string Prism::desc() const
   return os.str();
 }
 
-int Prism::init(Scene& s)
+int Prism::init(Scene& s, const Transform* tr)
 {
   if (_sides < 3 || _sides > 360) {
     println_err("Invalid 'sides' value of ", _sides);

@@ -27,14 +27,14 @@ int Group::addLight(const LightPtr& lt)
 }
 
 // Object Functions
-int Group::init(Scene& s)
+int Group::init(Scene& s, const Transform* tr)
 {
   for (auto& lt : _lights) {
-    if (InitLight(s, *lt, &_trans)) { return -1; }
+    if (InitLight(s, *lt, tr)) { return -1; }
   }
 
   for (auto& ob : _objects) {
-    if (InitObject(s, *ob, _shader, &_trans)) { return -1; }
+    if (InitObject(s, *ob, _shader, tr)) { return -1; }
   }
 
   ++s.group_count;

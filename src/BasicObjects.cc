@@ -21,7 +21,7 @@ static constexpr Vec3 planeBoundPoints[4] = {
 
 
 // **** Disc Class ****
-int Disc::init(Scene& s)
+int Disc::init(Scene& s, const Transform* tr)
 {
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
   return 0;
@@ -70,7 +70,7 @@ Vec3 Disc::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Cone Class ****
-int Cone::init(Scene& s)
+int Cone::init(Scene& s, const Transform* tr)
 {
   _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
   return 0;
@@ -194,7 +194,7 @@ Flt Cone::hitCost(const HitCostInfo& hc) const
 
 
 // **** Cube Class ****
-int Cube::init(Scene& s)
+int Cube::init(Scene& s, const Transform* tr)
 {
   static constexpr Vec3 n[6] = {
     {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}};
@@ -288,7 +288,7 @@ Vec3 Cube::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Cylinder Class ****
-int Cylinder::init(Scene& s)
+int Cylinder::init(Scene& s, const Transform* tr)
 {
   _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1}, 0);
   _endNormal[1] = _trans.normalLocalToGlobal({0, 0, -1}, 0);
@@ -384,7 +384,7 @@ Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Paraboloid Class ****
-int Paraboloid::init(Scene& s)
+int Paraboloid::init(Scene& s, const Transform* tr)
 {
   _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
   return 0;
@@ -497,7 +497,7 @@ Flt Paraboloid::hitCost(const HitCostInfo& hc) const
 
 
 // **** Plane Class ****
-int Plane::init(Scene& s)
+int Plane::init(Scene& s, const Transform* tr)
 {
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0); // cache plane normal
   return 0;
@@ -612,7 +612,7 @@ Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Torus Class ****
-int Torus::init(Scene& s)
+int Torus::init(Scene& s, const Transform* tr)
 {
   if (_radius < VERY_SMALL) {
     println_err("Bad 'radius' value of ", _radius);

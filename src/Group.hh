@@ -22,7 +22,7 @@ class Group final : public Object
   int addLight(const LightPtr& lt) override;
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   BBox bound(const Matrix* t) const override;
   int intersect(const Ray& r, HitList& hl) const override;
   const std::vector<ObjectPtr>& children() const override { return _objects; }

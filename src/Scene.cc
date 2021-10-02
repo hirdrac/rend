@@ -140,7 +140,7 @@ int Scene::init()
   group_count = 0;
   object_count = 0;
   for (auto& ob : _objects) {
-    if (InitObject(*this, *ob, nullptr)) {
+    if (InitObject(*this, *ob, nullptr, nullptr)) {
       println("Error initializing object list");
       return -1;  // error
     }

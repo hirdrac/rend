@@ -25,7 +25,7 @@ int CSG::addObject(const ObjectPtr& ob)
   return 0;
 }
 
-int CSG::init(Scene& s)
+int CSG::init(Scene& s, const Transform* tr)
 {
   if (objects.size() <= 1) {
     println_err("Too few objects");
@@ -33,7 +33,7 @@ int CSG::init(Scene& s)
   }
 
   for (auto& ob : objects) {
-    if (InitObject(s, *ob, shader(), &_trans)) { return -1; }
+    if (InitObject(s, *ob, shader(), tr)) { return -1; }
   }
 
   const BBox b = bound(nullptr);

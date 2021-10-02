@@ -30,7 +30,7 @@ class Object : public SceneItem
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
 
   // Member Functions
-  virtual int init(Scene& s) { return 0; }
+  virtual int init(Scene& s, const Transform* tr) { return 0; }
   virtual BBox bound(const Matrix* t = nullptr) const = 0;
   virtual int intersect(const Ray& r, HitList& hl) const = 0;
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
@@ -68,5 +68,4 @@ class Primitive : public Object
 
 
 // **** Functions ****
-int InitObject(Scene& s, Object& ob, const ShaderPtr& sh,
-               const Transform* t = nullptr);
+int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* tr);

@@ -20,7 +20,7 @@ class Prism final : public Primitive
   int setSides(int s) override { _sides = s; return 0; }
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   BBox bound(const Matrix* t = nullptr) const override;
   int intersect(const Ray& r, HitList& hl) const override;
 

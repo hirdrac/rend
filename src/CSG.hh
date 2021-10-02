@@ -20,7 +20,7 @@ class CSG : public Primitive
   int addObject(const ObjectPtr& ob) override;
 
   // Object Functions
-  int init(Scene& s) override;
+  int init(Scene& s, const Transform* tr) override;
   const std::vector<ObjectPtr>& children() const override { return objects; }
 
   // Primitive Functions
