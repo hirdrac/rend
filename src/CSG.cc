@@ -81,9 +81,18 @@ int Union::intersect(const Ray& r, HitList& hl) const
   for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgUnion(this);
 
-  const int hits = hl2.count();
-  hl.mergeList(hl2);
-  return hits;
+  if (hl.csg()) {
+    const int hits = hl2.count();
+    hl.mergeList(hl2);
+    return hits;
+  } else {
+    HitInfo* h = hl2.removeFirstHit(r);
+    if (!h) { return 0; }
+
+    h->type = HIT_NORMAL;
+    hl.add(h);
+    return 1;
+  }
 }
 
 
@@ -123,9 +132,18 @@ int Intersection::intersect(const Ray& r, HitList& hl) const
   for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgIntersection(this, int(objects.size()));
 
-  const int hits = hl2.count();
-  hl.mergeList(hl2);
-  return hits;
+  if (hl.csg()) {
+    const int hits = hl2.count();
+    hl.mergeList(hl2);
+    return hits;
+  } else {
+    HitInfo* h = hl2.removeFirstHit(r);
+    if (!h) { return 0; }
+
+    h->type = HIT_NORMAL;
+    hl.add(h);
+    return 1;
+  }
 }
 
 
@@ -149,7 +167,16 @@ int Difference::intersect(const Ray& r, HitList& hl) const
   for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgDifference(this, objects[0].get());
 
-  const int hits = hl2.count();
-  hl.mergeList(hl2);
-  return hits;
+  if (hl.csg()) {
+    const int hits = hl2.count();
+    hl.mergeList(hl2);
+    return hits;
+  } else {
+    HitInfo* h = hl2.removeFirstHit(r);
+    if (!h) { return 0; }
+
+    h->type = HIT_NORMAL;
+    hl.add(h);
+    return 1;
+  }
 }

@@ -66,11 +66,14 @@ class HitList
     h->type     = type;
   }
 
+  void add(HitInfo* ht);
   void mergeList(HitList& list);
   void clear();
 
   [[nodiscard]] const HitInfo* findFirstHit(const Ray& r) const;
-  [[nodiscard]] HitInfo* extractFirst() { return _hitList.removeHead(); }
+  [[nodiscard]] HitInfo* removeFirstHit(const Ray& r);
+
+  [[nodiscard]] HitInfo* removeHead() { return _hitList.removeHead(); }
   [[nodiscard]] bool empty() const { return _hitList.empty(); }
   [[nodiscard]] int  count() const { return _hitList.count(); }
   [[nodiscard]] bool csg() const { return _csg; }

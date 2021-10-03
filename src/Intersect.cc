@@ -8,12 +8,20 @@
 
 
 // **** HitList Class ****
+void HitList::add(HitInfo* ht)
+{
+  HitInfo* prev = nullptr;
+  HitInfo* h = _hitList.head();
+  while (h && h->distance < ht->distance) { prev = h; h = h->next; }
+  _hitList.addAfterNode(prev, ht);
+}
+
 void HitList::mergeList(HitList& list)
 {
   HitInfo* prev = nullptr;
   HitInfo* h = _hitList.head();
   while (!list.empty()) {
-    HitInfo* ht = list.extractFirst();
+    HitInfo* ht = list.removeHead();
     while (h && h->distance < ht->distance) { prev = h; h = h->next; }
     _hitList.addAfterNode(prev, ht);
     prev = ht;
@@ -32,6 +40,16 @@ const HitInfo* HitList::findFirstHit(const Ray& r) const
   while (h && (h->distance < r.min_length)) { h = h->next; }
 
   return (h && (h->distance < r.max_length)) ? h : nullptr;
+}
+
+HitInfo* HitList::removeFirstHit(const Ray& r)
+{
+  HitInfo* prev = nullptr;
+  HitInfo* h = _hitList.head();
+  while (h && (h->distance < r.min_length)) { prev = h; h = h->next; }
+
+  return (h && (h->distance < r.max_length))
+    ? _hitList.removeNext(prev) : nullptr;
 }
 
 void HitList::csgUnion(const Primitive* csg)
