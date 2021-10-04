@@ -2,8 +2,6 @@
 // Timer.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of Timer module
-//
 
 #include "Timer.hh"
 

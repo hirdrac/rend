@@ -2,7 +2,6 @@
 // Roots.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of polynomial root finding functions
 // SolveQuadric(), SolveCubic(), SolveQuartic() based on code
 // by Jochen Schwarze (Graphics Gems I)
 //

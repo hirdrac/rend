@@ -2,8 +2,6 @@
 // Object.cc
 // Copyright (C) 2021 Richard Bradley
 //
-// Implementation of object classes
-//
 
 #include "Object.hh"
 #include "Scene.hh"
