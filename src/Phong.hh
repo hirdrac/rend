@@ -25,5 +25,5 @@ class Phong final : public Shader
                  const EvaluatedHit& eh) const override;
 
  private:
-  ShaderPtr _diffuse, _specular, _transmit;
+  ShaderPtr _ambient, _diffuse, _specular, _transmit;
 };

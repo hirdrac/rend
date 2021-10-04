@@ -13,6 +13,9 @@
 // **** Phong Class ****
 int Phong::init(Scene& s, const Transform* tr)
 {
+  if (!_ambient) { _ambient = s.ambient; }
+  if (int er = InitShader(s, *_ambient, tr); er != 0) { return er; }
+
   if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
   if (int er = InitShader(s, *_diffuse, tr); er != 0) { return er; }
 
@@ -29,7 +32,11 @@ int Phong::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);
   switch (flag) {
-    case FLAG_NONE:
+    case FLAG_AMBIENT:
+      if (_ambient) { return -1; }
+      _ambient = sh;
+      break;
+
     case FLAG_DIFFUSE:
       if (_diffuse) { return -1; }
       _diffuse = sh;
@@ -73,7 +80,7 @@ Color Phong::evaluate(
   if (is_s) { reflect = CalcReflect(r.dir, eh.normal); }
 
   // ambient calculation
-  Color result = s.ambient->evaluate(js, s, r, eh) * color_d;
+  Color result = _ambient->evaluate(js, s, r, eh) * color_d;
 
   // diffuse/specular lighting calculations
   for (auto& lt : s.lights()) {
