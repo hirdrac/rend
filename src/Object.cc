@@ -18,7 +18,7 @@ const std::vector<ObjectPtr> Object::_emptyList;
 int Object::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);
-  if (_shader) { return -1; }
+  if (_shader || flag != FLAG_NONE) { return -1; }
 
   _shader = sh;
   return 0;
