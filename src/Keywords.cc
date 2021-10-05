@@ -294,8 +294,15 @@ static int RegionFn(
 static int SamplesFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  if (p || sp.getInt(n, s.samples) || notDone(sp, n)) { return -1; }
-  return 0;
+  int value;
+  if (sp.getInt(n, value) || notDone(sp, n)) { return -1; }
+
+  if (p) {
+    return p->setSamples(value);
+  } else {
+    s.samples = value;
+    return 0;
+  }
 }
 
 static int ShadowBoolFn(

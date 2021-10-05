@@ -43,6 +43,7 @@ class SceneItem
   virtual int setCost(Flt v) { return -1; }
   virtual int setOffset(Flt v) { return -1; }
   virtual int setRadius(Flt v) { return -1; }
+  virtual int setSamples(int v) { return -1; }
   virtual int setSectors(int v) { return -1; }
   virtual int setSides(int v) { return -1; }
   virtual int setSpin(Flt v) { return -1; }
