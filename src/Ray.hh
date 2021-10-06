@@ -23,6 +23,9 @@ class Ray
 
   // Member Functions
   void moveOut(Flt amount) { base += dir * amount; }
+
+  [[nodiscard]] bool inRange(Flt t) const {
+    return (t >= min_length) && (t < max_length); }
 };
 
 

@@ -13,6 +13,7 @@
 #include "JobState.hh"
 #include "Color.hh"
 #include "Print.hh"
+//#include "PrintList.hh"
 #include <cassert>
 
 
@@ -148,6 +149,7 @@ int Scene::init()
 
   // setup bounding boxes
   bound_count = MakeBoundList(*this, _objects, _optObjects);
+  //PrintList(_optObjects);
 
   // init shaders
   shader_count = 0;
@@ -170,7 +172,7 @@ Color Scene::traceRay(JobState& js, const Ray& r) const
   HitList hit_list(js.cache, si, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
-  const HitInfo* hit = hit_list.findFirstHit(r);
+  const HitInfo* hit = hit_list.firstHit();
   if (!hit) {
     // hit background
     const EvaluatedHit eh{
@@ -203,7 +205,7 @@ bool Scene::castShadowRay(JobState& js, const Ray& r) const
   HitList hit_list(js.cache, si, false);
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
-  const HitInfo* hit = hit_list.findFirstHit(r);
+  const HitInfo* hit = hit_list.firstHit();
   if (!hit) { return false; }
 
   ++si.shadow_rays.hit;

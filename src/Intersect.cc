@@ -34,14 +34,6 @@ void HitList::clear()
   _cache->store(_hitList);
 }
 
-const HitInfo* HitList::findFirstHit(const Ray& r) const
-{
-  const HitInfo* h = _hitList.head();
-  while (h && (h->distance < r.min_length)) { h = h->next; }
-
-  return (h && (h->distance < r.max_length)) ? h : nullptr;
-}
-
 HitInfo* HitList::removeFirstHit(const Ray& r)
 {
   HitInfo* prev = nullptr;

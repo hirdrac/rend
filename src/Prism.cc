@@ -135,10 +135,12 @@ int Prism::intersect(const Ray& r, HitList& hl) const
     }
   }
 
-  if (near_s == far_s || far_h < r.min_length) { return 0; }
+  if (near_s == far_s || far_h < r.min_length || near_h >= r.max_length) {
+    return 0;
+  }
 
-  ++hl.stats().prism.hit;
   if (hl.csg()) {
+    ++hl.stats().prism.hit;
     hl.addHit(
       this, near_h, CalcHitPoint(base, dir, near_h), near_s, HIT_ENTER);
     hl.addHit(
@@ -146,7 +148,12 @@ int Prism::intersect(const Ray& r, HitList& hl) const
     return 2;
   }
 
-  if (near_h < r.min_length) { near_h = far_h; near_s = far_s; }
+  if (near_h < r.min_length) {
+    if (far_h >= r.max_length) { return 0; }
+    near_h = far_h; near_s = far_s;
+  }
+
+  ++hl.stats().prism.hit;
   hl.addHit(
     this, near_h, CalcHitPoint(base, dir, near_h), near_s, HIT_NORMAL);
   return 1;

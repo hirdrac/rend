@@ -70,7 +70,7 @@ class HitList
   void mergeList(HitList& list);
   void clear();
 
-  [[nodiscard]] const HitInfo* findFirstHit(const Ray& r) const;
+  [[nodiscard]] const HitInfo* firstHit() const { return _hitList.head(); }
   [[nodiscard]] HitInfo* removeFirstHit(const Ray& r);
 
   [[nodiscard]] HitInfo* removeHead() { return _hitList.removeHead(); }
