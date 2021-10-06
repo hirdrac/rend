@@ -30,6 +30,29 @@ class RandomGen
     return {x, y};
   }
 
+  Vec3 dir() {
+    // random direction unit vector
+    Vec3 d;
+    Flt len2;
+    do {
+      d.x = jitter();
+      d.y = jitter();
+      d.z = jitter();
+      len2 = d.lengthSqr();
+    } while (len2 > .25 || !IsPositive(len2));
+    return d / std::sqrt(len2);
+  }
+
+  Vec3 hemisphereDir(const Vec3& normal) {
+    Vec3 d;
+    Flt dot;
+    do {
+      d = dir();
+      dot = DotProduct(normal, d);
+    } while (IsZero(dot));
+    return (dot < 0.0) ? -d : d;
+  }
+
   static uint32_t devRnd32() { return _devRnd(); }
   static uint64_t devRnd64() {
     return uint64_t(_devRnd()) | (uint64_t(_devRnd()) << 32); }

@@ -12,6 +12,7 @@
 #include "ColorShaders.hh"
 #include "PatternShaders.hh"
 #include "MapShaders.hh"
+#include "Occlusion.hh"
 #include "CSG.hh"
 #include "Phong.hh"
 #include "Group.hh"
@@ -533,6 +534,8 @@ REGISTER_LIGHT_KEYWORD(SpotLight,"spotlight");
 
 REGISTER_SHADER_KEYWORD(Phong,"phong");
 REGISTER_SHADER_KEYWORD(ShaderSide,"side");
+// ambient shaders
+REGISTER_SHADER_KEYWORD(Occlusion,"occlusion");
 // color shaders
 REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
 // pattern shaders

@@ -7,7 +7,8 @@ base_src :=\
 object_src :=\
   Object.cc BasicObjects.cc Bound.cc CSG.cc Group.cc Prism.cc
 shader_src :=\
-  Shader.cc ColorShaders.cc MapShaders.cc PatternShaders.cc Phong.cc
+  Shader.cc ColorShaders.cc MapShaders.cc Occlusion.cc PatternShaders.cc\
+  Phong.cc
 light_src :=\
   Light.cc BasicLights.cc
 parser_src :=\
