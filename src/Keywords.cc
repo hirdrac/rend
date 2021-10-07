@@ -59,7 +59,7 @@ static int MoveFn(
 }
 
 template<BBox::Spot spot>
-int MoveByBBoxSpotFn(
+static int MoveByBBoxSpotFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -85,7 +85,7 @@ static int NoParentFn(
 }
 
 template<Matrix::Axis axis>
-int RotateByAxisFn(
+static int RotateByAxisFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
   Transform* t = findTrans(p);
@@ -108,6 +108,48 @@ static int ScaleFn(
   if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
 
   t->base.scale(v);
+  return 0;
+}
+
+template<Matrix::Axis axis>
+static int ScaleAxisFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Flt v;
+  if (sp.getFlt(n, v) || notDone(sp, n)) { return -1; }
+
+  t->base.scale<axis>(v);
+  return 0;
+}
+
+template<Matrix::Axis axis1, Matrix::Axis axis2>
+static int Scale2AxesFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Flt v;
+  if (sp.getFlt(n, v) || notDone(sp, n)) { return -1; }
+
+  t->base.scale<axis1>(v);
+  t->base.scale<axis2>(v);
+  return 0;
+}
+
+static int ScaleAllAxesFn(
+  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  Transform* t = findTrans(p);
+  if (!t) { return -1; }
+
+  Flt v;
+  if (sp.getFlt(n, v) || notDone(sp, n)) { return -1; }
+
+  t->base.scale(v, v, v);
   return 0;
 }
 
@@ -501,6 +543,13 @@ static void initKeywords()
     {"rotz",        RotateByAxisFn<Matrix::Z_AXIS>},
     {"samples",     SamplesFn},
     {"scale",       ScaleFn},
+    {"scale_x",     ScaleAxisFn<Matrix::X_AXIS>},
+    {"scale_y",     ScaleAxisFn<Matrix::Y_AXIS>},
+    {"scale_z",     ScaleAxisFn<Matrix::Z_AXIS>},
+    {"scale_xy",    Scale2AxesFn<Matrix::X_AXIS, Matrix::Y_AXIS>},
+    {"scale_xz",    Scale2AxesFn<Matrix::X_AXIS, Matrix::Z_AXIS>},
+    {"scale_yz",    Scale2AxesFn<Matrix::Y_AXIS, Matrix::Z_AXIS>},
+    {"scale_xyz",   ScaleAllAxesFn},
     {"sectors",     SectorsFn},
     {"shadow",      ShadowBoolFn},
     {"sides",       SidesFn},

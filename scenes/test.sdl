@@ -15,34 +15,37 @@
 // Lights
 (ambient (rgb .1 .1 .1))
 (light (pos 0 3 6)(rgb 1 1 1))
+//(ambient (occlusion (rgb .2 .2 .2)(radius .2)(samples 8)))
+//(light (pos 0 3 6)(rgb .8 .8 .8))
 
 (background (rgb .2 .2 .5))
 
 (default
   (phong
     (specular (rgb .2 .2 .2))
-    (diffuse (rgb .5 .2 .2)))
+    (diffuse (rgb .5 .2 .2))
+  )
 )
 
 // letter 'A'
 (group
   (intersect
-    (torus (radius .5)(rotx 90))
+    (torus (radius .5)(rotate_x 90))
     (cube (scale 1.5 1 .51)(move 0 1 0)))
 
-  (cylinder (scale .5 .5 1)(rotx 90)(move  1 -1 0))
-  (cylinder (scale .5 .5 1)(rotx 90)(move -1 -1 0))
-  (cylinder (scale .5 .5 1)(roty 90)(move 0 -.5 0))
+  (cylinder (scale_xy .5)(rotate_x 90)(move  1 -1 0))
+  (cylinder (scale_xy .5)(rotate_x 90)(move -1 -1 0))
+  (cylinder (scale_xy .5)(rotate_y 90)(move 0 -.5 0))
 )
 
 (plane
-  (scale 8 8 1)(rotx -90)(move 0 -2 0)
+  (scale_xy 8)(rotate_x -90)(move 0 -2 0)
   (phong
     (specular (rgb .6 .6 .6))
     (diffuse
       (checker
         (rgb .5 .5 .5)(rgb .1 .1 .1)(rgb .2 .3 .4)
-        (scale 5 5 5)(rotz 45)
+        (scale_xy 5)(rotate_z 45)
         (border (rgb 0 0 0))
         (borderwidth .02)
       )

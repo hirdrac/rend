@@ -35,12 +35,14 @@
 
 
 (plane
-  (rotx -90)(scale  32 1 32)(move 0 -.1 0)
+  (scale_xy 32)(rotate_x -90)(move 0 -.1 0)
   (phong
     (specular (rgb .5 .5 .5))
     (diffuse
       (checker
         (rgb .5 .5 .5)
         (ring (rgb .1 .1 .1)(rgb .2 .2 .2)(scale 4 4 1))
-        (scale 5 5 1)(rotz 45))))
+        (scale_xy 5)(rotate_z 45))
+    )
+  )
 )
