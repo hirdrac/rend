@@ -29,7 +29,7 @@ struct LightResult {
 class Light : public SceneItem
 {
  public:
-  Vec3 pos, dir;
+  Vec3 dir{0,0,1};
 
   // SceneItem Functions
   Transform* trans() override final { return &_trans; }

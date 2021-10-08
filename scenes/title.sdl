@@ -16,7 +16,7 @@
 // Lights
 (ambient (rgb .1 .1 .1))
 //(ambient (occlusion (rgb .1 .1 .1)(radius .2)(samples 4)))
-(light (pos -6 18 12) (rgb .9 .9 .9))
+(light (move -6 18 12) (rgb .9 .9 .9))
 
 (background (rgb .2 .2 .5))
 

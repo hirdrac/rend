@@ -430,14 +430,6 @@ static int OffsetFn(
   return p->setOffset(val);
 }
 
-static int PositionFn(
-  SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
-{
-  Light* lt = dynamic_cast<Light*>(p);
-  if (!lt || sp.getVec3(n, lt->pos) || notDone(sp, n)) { return -1; }
-  return 0;
-}
-
 static int RadiusFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
@@ -530,8 +522,6 @@ static void initKeywords()
     {"move_top_z",  MoveByBBoxSpotFn<BBox::TOP_Z>},
     {"no_parent",   NoParentFn},
     {"offset",      OffsetFn},
-    {"pos",         PositionFn},
-    {"position",    PositionFn},
     {"radius",      RadiusFn},
     {"region",      RegionFn},
     {"rgb",         RgbFn},

@@ -12,7 +12,7 @@
 
 // Lights
 (ambient (rgb .1 .1 .1))
-(light (pos -2 18 12) (rgb .9 .9 .9))
+(light (move -2 18 12) (rgb .9 .9 .9))
 
 (default
   (phong

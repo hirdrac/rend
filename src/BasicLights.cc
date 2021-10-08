@@ -45,7 +45,7 @@ bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
 // **** PointLight Class ****
 int PointLight::init(Scene& s)
 {
-  _finalPos = _trans.pointLocalToGlobal(pos, 0);
+  _finalPos = _trans.pointLocalToGlobal({0,0,0}, 0);
   return 0;
 }
 
@@ -81,7 +81,7 @@ bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
 // **** SpotLight Class ****
 int SpotLight::init(Scene& s)
 {
-  _finalPos = _trans.pointLocalToGlobal(pos, 0);
+  _finalPos = _trans.pointLocalToGlobal({0,0,0}, 0);
   _finalDir = _trans.vectorLocalToGlobal(dir, 0);
   return 0;
 }
