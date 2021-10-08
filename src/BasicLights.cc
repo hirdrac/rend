@@ -11,7 +11,7 @@
 // **** Sun Class ****
 int Sun::init(Scene& s)
 {
-  _finalDir = _trans.vectorLocalToGlobal(dir, 0);
+  _finalDir = UnitVec(dir);
   return 0;
 }
 

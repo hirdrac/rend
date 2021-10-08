@@ -22,6 +22,7 @@ int Group::addObject(const ObjectPtr& ob)
 int Group::addLight(const LightPtr& lt)
 {
   assert(lt != nullptr);
+  if (!lt->trans()) { return -1; }
   _lights.push_back(lt);
   return 0;
 }

@@ -32,7 +32,6 @@ class Light : public SceneItem
   Vec3 dir{0,0,1};
 
   // SceneItem Functions
-  Transform* trans() override final { return &_trans; }
   int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
 
   // Member Functions
@@ -44,7 +43,6 @@ class Light : public SceneItem
 
  protected:
   ShaderPtr _energy;
-  Transform _trans;
 };
 
 

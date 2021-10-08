@@ -30,6 +30,7 @@ class PointLight final : public Light
  public:
   // SceneItem Functions
   std::string desc() const override { return "<PointLight>"; }
+  Transform* trans() override final { return &_trans; }
 
   // Light Functions
   int init(Scene& s) override;
@@ -37,6 +38,7 @@ class PointLight final : public Light
                 const EvaluatedHit& eh, LightResult& result) const override;
 
  private:
+  Transform _trans;
   Vec3 _finalPos;
 };
 
@@ -45,6 +47,7 @@ class SpotLight final : public Light
  public:
   // SceneItem Functions
   std::string desc() const override { return "<SpotLight>"; }
+  Transform* trans() override final { return &_trans; }
 
   // Light Functions
   int init(Scene& s) override;
@@ -52,5 +55,6 @@ class SpotLight final : public Light
                 const EvaluatedHit& eh, LightResult& result) const override;
 
  private:
+  Transform _trans;
   Vec3 _finalPos, _finalDir;
 };
