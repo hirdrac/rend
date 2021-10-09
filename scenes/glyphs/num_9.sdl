@@ -1,20 +1,20 @@
 // Digit "9"
 
 // top
-(torus (radius .5)(rotx 90)(move 0 3.5 0))
+(torus (radius .5)(rotate_x 90)(move 0 3.5 0))
 
 // right side
-(cylinder (scale .5 .5 1)(rotx 90)(move 1 2.5 0))
+(cylinder (scale .5 .5 1)(rotate_x 90)(move 1 2.5 0))
 
 // bottom left
 (intersect
-  (torus (radius .5)(rotx 90)(move 0 1.5 0))
-  (cylinder (scale .5 .5 1)(roty 90)(move -1 1 0)) )
+  (torus (radius .5)(rotate_x 90)(move 0 1.5 0))
+  (cylinder (scale .5 .5 1)(rotate_y 90)(move -1 1 0)) )
 (intersect
-  (torus (radius .5)(rotx 90)(move 0 1.5 0))
+  (torus (radius .5)(rotate_x 90)(move 0 1.5 0))
   (cube (scale 1 1 .51)(move -1 0 0)) )
 
 // bottom right
 (intersect
-  (torus (radius .5)(rotx 90)(move 0 1.5 0))
+  (torus (radius .5)(rotate_x 90)(move 0 1.5 0))
   (cube (scale 1 1 .51)(move 1 .5 0)) )

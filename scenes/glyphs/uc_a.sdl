@@ -2,20 +2,20 @@
 
 // top arc
 (intersect
-  (torus (radius .5)(rotx 90)(move 0 3.5 0))
+  (torus (radius .5)(rotate_x 90)(move 0 3.5 0))
   (cube (scale 1.5 .75 .51)(move 0 4.25 0)) )
 
 // middle
-(cylinder (scale .5 .5 1)(roty 90)(move 0 2.5 0))
+(cylinder (scale .5 .5 1)(rotate_y 90)(move 0 2.5 0))
 
 // left side
-(cylinder (scale .5 .5 1.5)(rotx 90)(move -1 2 0))
+(cylinder (scale .5 .5 1.5)(rotate_x 90)(move -1 2 0))
 (intersect
-  (cylinder (scale .5 .5 .5)(roty 90)(move -1 .5 0))
-  (cylinder (scale .5 .5 .25)(rotx 90)(move -1 .25 0)) )
+  (cylinder (scale .5 .5 .5)(rotate_y 90)(move -1 .5 0))
+  (cylinder (scale .5 .5 .25)(rotate_x 90)(move -1 .25 0)) )
 
 // right side
-(cylinder (scale .5 .5 1.5)(rotx 90)(move  1 2 0))
+(cylinder (scale .5 .5 1.5)(rotate_x 90)(move  1 2 0))
 (intersect
-  (cylinder (scale .5 .5 .5)(roty 90)(move 1 .5 0))
-  (cylinder (scale .5 .5 .25)(rotx 90)(move 1 .25 0)) )
+  (cylinder (scale .5 .5 .5)(rotate_y 90)(move 1 .5 0))
+  (cylinder (scale .5 .5 .25)(rotate_x 90)(move 1 .25 0)) )

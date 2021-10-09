@@ -1,27 +1,27 @@
 // Uppercase "D"
 
 // left edge
-(cylinder (scale .5 .5 2)(rotx 90)(move -1 2.5 0))
+(cylinder (scale .5 .5 2)(rotate_x 90)(move -1 2.5 0))
 
 // right edge
 (intersect
-  (torus (radius .5)(rotx 90)(move 0  3.5 0))
+  (torus (radius .5)(rotate_x 90)(move 0  3.5 0))
   (cube (scale .75 .75 .51)(move .75 4.25 0)) )
 
-(cylinder (scale .5 .5 1)(rotx 90)(move 1 2.5 0))
+(cylinder (scale .5 .5 1)(rotate_x 90)(move 1 2.5 0))
 
 (intersect
-  (torus (radius .5)(rotx 90)(move 0 1.5 0))
+  (torus (radius .5)(rotate_x 90)(move 0 1.5 0))
   (cube (scale .75 .75 .51)(move .75 .75 0)) )
 
 // top cornor
-(cylinder (scale .5 .5 .5)(roty 90)(move -.5  4.5 0))
+(cylinder (scale .5 .5 .5)(rotate_y 90)(move -.5  4.5 0))
 (intersect
-  (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 4.5 0))
-  (cylinder (scale .5 .5 .25)(rotx 90)(move -1 4.75 0)))
+  (cylinder (scale .5 .5 .25)(rotate_y 90)(move -1.25 4.5 0))
+  (cylinder (scale .5 .5 .25)(rotate_x 90)(move -1 4.75 0)))
 
 // bottom cornor
-(cylinder (scale .5 .5 .5)(roty 90)(move -.5   .5 0))
+(cylinder (scale .5 .5 .5)(rotate_y 90)(move -.5   .5 0))
 (intersect
-  (cylinder (scale .5 .5 .25)(roty 90)(move -1.25 .5 0))
-  (cylinder (scale .5 .5 .25)(rotx 90)(move -1 .25 0)))
+  (cylinder (scale .5 .5 .25)(rotate_y 90)(move -1.25 .5 0))
+  (cylinder (scale .5 .5 .25)(rotate_x 90)(move -1 .25 0)))
