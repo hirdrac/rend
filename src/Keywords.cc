@@ -181,7 +181,7 @@ static int StretchXFn(
   const BBox b = ob->bound(&t->base);
 
   t->base.translate(-b.center());
-  t->base.scaleX(len / b.lengthX());
+  t->base.scaleX(len / b.xlength());
   t->base *= {
     axisX.x,  axisX.y,  axisX.z,  0,
     axisY.x,  axisY.y,  axisY.z,  0,
@@ -218,7 +218,7 @@ static int StretchYFn(
   const BBox b = ob->bound(&t->base);
 
   t->base.translate(-b.center());
-  t->base.scaleY(len / b.lengthY());
+  t->base.scaleY(len / b.ylength());
   t->base *= {
     axisX.x,  axisX.y,  axisX.z,  0,
     axisY.x,  axisY.y,  axisY.z,  0,
@@ -257,7 +257,7 @@ static int StretchZFn(
   const BBox b = ob->bound(&t->base);
 
   t->base.translate(-b.center());
-  t->base.scaleZ(len / b.lengthZ());
+  t->base.scaleZ(len / b.zlength());
   t->base *= {
     axisX.x,  axisX.y,  axisX.z,  0,
     axisY.x,  axisY.y,  axisY.z,  0,
@@ -513,29 +513,29 @@ static void initKeywords()
     {"maxdepth",    MaxdepthFn},
     {"minvalue",    MinValueFn},
     {"move",        MoveFn},
-    {"move_base_x", MoveByBBoxSpotFn<BBox::BASE_X>},
-    {"move_base_y", MoveByBBoxSpotFn<BBox::BASE_Y>},
-    {"move_base_z", MoveByBBoxSpotFn<BBox::BASE_Z>},
+    {"move_xbase",  MoveByBBoxSpotFn<BBox::XBASE>},
+    {"move_ybase",  MoveByBBoxSpotFn<BBox::YBASE>},
+    {"move_zbase",  MoveByBBoxSpotFn<BBox::ZBASE>},
     {"move_center", MoveByBBoxSpotFn<BBox::CENTER>},
-    {"move_top_x",  MoveByBBoxSpotFn<BBox::TOP_X>},
-    {"move_top_y",  MoveByBBoxSpotFn<BBox::TOP_Y>},
-    {"move_top_z",  MoveByBBoxSpotFn<BBox::TOP_Z>},
+    {"move_xtop",   MoveByBBoxSpotFn<BBox::XTOP>},
+    {"move_ytop",   MoveByBBoxSpotFn<BBox::YTOP>},
+    {"move_ztop",   MoveByBBoxSpotFn<BBox::ZTOP>},
     {"no_parent",   NoParentFn},
     {"offset",      OffsetFn},
     {"radius",      RadiusFn},
     {"region",      RegionFn},
     {"rgb",         RgbFn},
-    {"rotate_x",    RotateByAxisFn<Matrix::X_AXIS>},
-    {"rotate_y",    RotateByAxisFn<Matrix::Y_AXIS>},
-    {"rotate_z",    RotateByAxisFn<Matrix::Z_AXIS>},
+    {"rotate_x",    RotateByAxisFn<Matrix::XAXIS>},
+    {"rotate_y",    RotateByAxisFn<Matrix::YAXIS>},
+    {"rotate_z",    RotateByAxisFn<Matrix::ZAXIS>},
     {"samples",     SamplesFn},
     {"scale",       ScaleFn},
-    {"scale_x",     ScaleAxisFn<Matrix::X_AXIS>},
-    {"scale_y",     ScaleAxisFn<Matrix::Y_AXIS>},
-    {"scale_z",     ScaleAxisFn<Matrix::Z_AXIS>},
-    {"scale_xy",    Scale2AxesFn<Matrix::X_AXIS, Matrix::Y_AXIS>},
-    {"scale_xz",    Scale2AxesFn<Matrix::X_AXIS, Matrix::Z_AXIS>},
-    {"scale_yz",    Scale2AxesFn<Matrix::Y_AXIS, Matrix::Z_AXIS>},
+    {"scale_x",     ScaleAxisFn<Matrix::XAXIS>},
+    {"scale_y",     ScaleAxisFn<Matrix::YAXIS>},
+    {"scale_z",     ScaleAxisFn<Matrix::ZAXIS>},
+    {"scale_xy",    Scale2AxesFn<Matrix::XAXIS, Matrix::YAXIS>},
+    {"scale_xz",    Scale2AxesFn<Matrix::XAXIS, Matrix::ZAXIS>},
+    {"scale_yz",    Scale2AxesFn<Matrix::YAXIS, Matrix::ZAXIS>},
     {"scale_xyz",   ScaleAllAxesFn},
     {"sectors",     SectorsFn},
     {"shadow",      ShadowBoolFn},

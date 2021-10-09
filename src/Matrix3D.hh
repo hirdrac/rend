@@ -122,19 +122,19 @@ class Matrix4x4
 
 
   // template helper functions
-  enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
+  enum Axis { XAXIS, YAXIS, ZAXIS };
 
   template<Axis a>
   void rotate(T rad) {
-    if constexpr (a == X_AXIS) { rotateX(rad); }
-    else if constexpr (a == Y_AXIS) { rotateY(rad); }
+    if constexpr (a == XAXIS) { rotateX(rad); }
+    else if constexpr (a == YAXIS) { rotateY(rad); }
     else { rotateZ(rad); }
   }
 
   template<Axis a>
   void scale(T s) {
-    if constexpr (a == X_AXIS) { scaleX(s); }
-    else if constexpr (a == Y_AXIS) { scaleY(s); }
+    if constexpr (a == XAXIS) { scaleX(s); }
+    else if constexpr (a == YAXIS) { scaleY(s); }
     else { scaleZ(s); }
   }
 

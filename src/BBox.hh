@@ -33,36 +33,36 @@ class BBox
 
   [[nodiscard]] Vec3 center() const { return (pmin + pmax) * .5; }
 
-  [[nodiscard]] Vec3 baseX() const {
+  [[nodiscard]] Vec3 xbase() const {
     return {pmin.x, (pmin.y + pmax.y) * .5, (pmin.z + pmax.z) * .5}; }
-  [[nodiscard]] Vec3 baseY() const {
+  [[nodiscard]] Vec3 ybase() const {
     return {(pmin.x + pmax.x) * .5, pmin.y, (pmin.z + pmax.z) * .5}; }
-  [[nodiscard]] Vec3 baseZ() const {
+  [[nodiscard]] Vec3 zbase() const {
     return {(pmin.x + pmax.x) * .5, (pmin.y + pmax.y) * .5, pmin.z}; }
 
-  [[nodiscard]] Vec3 topX() const {
+  [[nodiscard]] Vec3 xtop() const {
     return {pmax.x, (pmin.y + pmax.y) * .5, (pmin.z + pmax.z) * .5}; }
-  [[nodiscard]] Vec3 topY() const {
+  [[nodiscard]] Vec3 ytop() const {
     return {(pmin.x + pmax.x) * .5, pmax.y, (pmin.z + pmax.z) * .5}; }
-  [[nodiscard]] Vec3 topZ() const {
+  [[nodiscard]] Vec3 ztop() const {
     return {(pmin.x + pmax.x) * .5, (pmin.y + pmax.y) * .5, pmax.z}; }
 
-  [[nodiscard]] Flt lengthX() const { return (pmax.x - pmin.x); }
-  [[nodiscard]] Flt lengthY() const { return (pmax.y - pmin.y); }
-  [[nodiscard]] Flt lengthZ() const { return (pmax.z - pmin.z); }
+  [[nodiscard]] Flt xlength() const { return (pmax.x - pmin.x); }
+  [[nodiscard]] Flt ylength() const { return (pmax.y - pmin.y); }
+  [[nodiscard]] Flt zlength() const { return (pmax.z - pmin.z); }
 
 
-  enum Spot { CENTER, BASE_X, BASE_Y, BASE_Z, TOP_X, TOP_Y, TOP_Z };
+  enum Spot { CENTER, XBASE, YBASE, ZBASE, XTOP, YTOP, ZTOP };
 
   [[nodiscard]] Vec3 operator()(Spot s) const {
     switch (s) {
-      case BASE_X: return baseX();
-      case BASE_Y: return baseY();
-      case BASE_Z: return baseZ();
-      case TOP_X:  return topX();
-      case TOP_Y:  return topY();
-      case TOP_Z:  return topZ();
-      default:     return center();
+      case XBASE: return xbase();
+      case YBASE: return ybase();
+      case ZBASE: return zbase();
+      case XTOP:  return xtop();
+      case YTOP:  return ytop();
+      case ZTOP:  return ztop();
+      default:    return center();
     }
   }
 };
