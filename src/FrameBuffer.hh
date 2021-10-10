@@ -8,7 +8,7 @@
 #pragma once
 #include "Color.hh"
 #include <string>
-#include <vector>
+#include <memory>
 
 
 class FrameBuffer
@@ -32,9 +32,22 @@ class FrameBuffer
   [[nodiscard]] int height() const { return _height; }
 
  private:
-  std::vector<float> _buffer;
+  std::unique_ptr<float[]> _buffer;
   int _width = 0, _height = 0; // image size
   int _rowSize = 0;  // (width * CHANNELS) padded to 64 byte alignment
 
   static constexpr int CHANNELS = 3; // RGB
+
+  [[nodiscard]] float* bufferRow(int y) {
+    return _buffer.get() + (_rowSize * y); }
+  [[nodiscard]] const float* bufferRow(int y) const {
+    return _buffer.get() + (_rowSize * y); }
+
+  [[nodiscard]] float* pixel(int x, int y) {
+    return bufferRow(y) + (x * CHANNELS); }
+  [[nodiscard]] const float* pixel(int x, int y) const {
+    return bufferRow(y) + (x * CHANNELS); }
+
+  [[nodiscard]] bool inRange(int x, int y) const {
+    return (x >= 0) && (x < _width) && (y >= 0) && (y < _height); }
 };

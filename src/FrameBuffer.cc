@@ -20,21 +20,21 @@ int FrameBuffer::init(int w, int h, const Color& c)
 
   _width = w;
   _rowSize = w * CHANNELS;
-  if (_rowSize & 15) {
+  if (_rowSize % 16) {
     // padding row size to 64 byte alignment (16 * sizeof float)
-    _rowSize += 16 - (_rowSize & 15);
-    assert((_rowSize & 15) == 0);
+    _rowSize += 16 - (_rowSize % 16);
+    assert((_rowSize % 16) == 0);
   }
 
   _height = h;
-  _buffer.resize(std::size_t(_rowSize * h));
+  _buffer.reset(new(std::align_val_t{64}) float[std::size_t(_rowSize * h)]);
   clear(c);
   return 0;
 }
 
 int FrameBuffer::saveBMP(const std::string& filename) const
 {
-  if (_buffer.empty()) { return -1; }
+  if (!_buffer) { return -1; }
 
   const int bmp_row_pad = (4 - ((_width * CHANNELS) % 4)) % 4;
     // rows must be padded to 4-byte multiple
@@ -73,7 +73,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
   auto row = std::make_unique<uint8_t[]>(std::size_t(bmp_row_size));
   for (int y = 0; y < _height; ++y) {
-    const float* src = _buffer.data() + (_rowSize * y);
+    const float* src = bufferRow(y);
     uint8_t* out = row.get();
     for (int x = 0; x < _width; ++x) {
       const float r = *src++;
@@ -92,7 +92,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
 int FrameBuffer::savePNG(const std::string& filename) const
 {
-  if (_buffer.empty()) { return -1; }
+  if (_buffer) { return -1; }
 
   png_image image{};
   image.version = PNG_IMAGE_VERSION;
@@ -106,7 +106,7 @@ int FrameBuffer::savePNG(const std::string& filename) const
 
   uint8_t* out = output.get();
   for (int y = _height - 1; y >= 0; --y) {
-    const float* src = _buffer.data() + (_rowSize * y);
+    const float* src = bufferRow(y);
     for (int x = 0; x < _width; ++x) {
       const float r = *src++;
       const float g = *src++;
@@ -134,7 +134,7 @@ void FrameBuffer::clear(const Color& c)
   const float b = static_cast<float>(c.blue());
 
   for (int y = 0; y < _height; ++y) {
-    float* ptr = _buffer.data() + (y * _rowSize);
+    float* ptr = bufferRow(y);
     for (int x = 0; x < _width; ++x) {
       *ptr++ = r;
       *ptr++ = g;
@@ -145,35 +145,30 @@ void FrameBuffer::clear(const Color& c)
 
 int FrameBuffer::plot(int x, int y, const Color& c)
 {
-  if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) { return -1; }
+  if (!inRange(x, y)) { return -1; }
 
-  float* ptr = _buffer.data() + (y * _rowSize) + (x * CHANNELS);
-  *ptr++ = static_cast<float>(c.red());
-  *ptr++ = static_cast<float>(c.green());
-  *ptr++ = static_cast<float>(c.blue());
+  float* ptr = pixel(x, y);
+  ptr[0] = static_cast<float>(c.red());
+  ptr[1] = static_cast<float>(c.green());
+  ptr[2] = static_cast<float>(c.blue());
   return 0;
 }
 
 Color FrameBuffer::value(int x, int y) const
 {
-  if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) {
-    return colors::black;
-  }
+  if (!inRange(x, y)) { return colors::black; }
 
-  const float* ptr = _buffer.data() + (y * _rowSize) + (x * CHANNELS);
-  float r = *ptr++;
-  float g = *ptr++;
-  float b = *ptr;
-  return {r,g,b};
+  const float* ptr = pixel(x, y);
+  return {ptr[0], ptr[1], ptr[2]};
 }
 
 int FrameBuffer::range(float& min_val, float& max_val) const
 {
-  if (_buffer.empty()) { return -1; }
+  if (_buffer) { return -1; }
 
   float low = 3.4e38f, high = 0.0f;
   for (int y = 0; y < _height; ++y) {
-    const float* ptr = _buffer.data() + (y * _rowSize);
+    const float* ptr = bufferRow(y);
     for (int x = 0; x < (_width * CHANNELS); ++x) {
       float v = *ptr++;
       if (v < low)  { low = v; }
