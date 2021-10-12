@@ -70,7 +70,7 @@ int ShellLoad(Scene& s, const std::string& file)
 int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 {
   if (s.objects().empty()) {
-    println("No scene loaded yet");
+    println_err("No scene loaded yet");
     return -1;
   }
 
@@ -81,7 +81,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   t.start();
 
   if (s.init()) {
-    println("Scene Initialization Failed - can't render");
+    println_err("Scene Initialization Failed - can't render");
     return -1;
   }
 
@@ -131,7 +131,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 int ShellSave(const FrameBuffer& fb, const std::string& file)
 {
   if (fb.width() <= 0 || fb.height() <= 0) {
-    println("No image to save");
+    println_err("No image to save");
     return -1;
   }
 
@@ -141,20 +141,23 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
 
   if (ext.empty()) { ext = ".png"; }
   else if (ext != ".bmp" && ext != ".png") {
-    println("Invalid image file extension '", ext.substr(1), "'");
-    println("(currently supported: bmp,png)");
+    println_err("Invalid image file extension '", ext.substr(1),
+                "'\n(currently supported: bmp,png)");
     return -1;
   }
 
   std::string fn = file.substr(0,x) + ext;
   println("Saving image to '", fn, "'");
+
+  int error = -1;
   if (ext == ".bmp") {
-    return fb.saveBMP(fn);
+    error = fb.saveBMP(fn);
   } else if (ext == ".png") {
-    return fb.savePNG(fn);
-  } else {
-    return -1;
+    error = fb.savePNG(fn);
   }
+
+  if (error) { println_err("image save failed"); }
+  return error;
 }
 
 void ShellStats(const Renderer& ren, const Scene& s)
@@ -231,11 +234,11 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
 
   case 'j':
     if (!(input >> arg)) {
-      println("Number of jobs required");
+      println_err("Number of jobs required");
     } else {
       int j = std::stoi(arg);
       if (j < 0) {
-	println("Invalid number of jobs '", arg, "'");
+	println_err("Invalid number of jobs '", arg, "'");
       } else {
 	println("Jobs set to ", j);
 	ren.setJobs(j);
@@ -250,7 +253,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
     } else if (!lastFile.empty()) {
       ShellLoad(s, lastFile);
     } else {
-      println("Load requires a file name");
+      println_err("Load requires a file name");
     }
     break;
 
@@ -330,7 +333,7 @@ int main(int argc, char** argv)
         } else {
           arg = argv[++i];
           if (!std::isdigit(arg[0])) {
-            println("Bad job count '", arg, "'\n");
+            println_err("Bad job count '", arg, "'\n");
             return Usage(argv[0]);
           }
           jobs = std::atoi(argv[i]);
@@ -340,7 +343,7 @@ int main(int argc, char** argv)
       } else if (arg.size() > 7 && arg.substr(0,7) == "--jobs=" && std::isdigit(arg[7])) {
         jobs = std::atoi(argv[i] + 7);
       } else {
-        println("Bad option '", arg, "'\n");
+        println_err("Bad option '", arg, "'\n");
         return Usage(argv[0]);
       }
     } else if (fileLoad.empty()) {
