@@ -35,7 +35,7 @@ class Object : public SceneItem
   virtual int intersect(const Ray& r, HitList& hl) const = 0;
   virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
 
-  const ShaderPtr& shader() const { return _shader; }
+  [[nodiscard]] const ShaderPtr& shader() const { return _shader; }
 
  protected:
   ShaderPtr _shader;

@@ -39,7 +39,7 @@ class Light : public SceneItem
   virtual bool luminate(JobState& js, const Scene& s, const Ray& r,
                         const EvaluatedHit& eh, LightResult& result) const = 0;
 
-  const ShaderPtr& energy() const { return _energy; }
+  [[nodiscard]] const ShaderPtr& energy() const { return _energy; }
 
  protected:
   ShaderPtr _energy;
