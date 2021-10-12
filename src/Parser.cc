@@ -86,12 +86,8 @@ int SceneParser::includeFile(
   _files[++_lastID] = file;
   const int baseID = _lastID;
 
-  Tokenizer tk;
-  tk.init(fs);
-
-  for (;;) {
-    AstNode* n = nextBlock(tk, baseID, 0);
-    if (!n) { break; }
+  Tokenizer tk(fs);
+  while (AstNode* n = nextBlock(tk, baseID, 0)) {
     nodeList.addToTail(n);
   }
 
@@ -117,8 +113,10 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
 
     auto n = std::make_unique<AstNode>(token);
     if (type == TOKEN_LPARAN) {
-      n->type = AST_LIST;
       n->child = nextBlock(tk, fileID, depth + 1);
+      if (evalSpecialOp(n->child, nodeList, depth)) { continue; }
+      n->type = AST_LIST;
+
     } else if (type == TOKEN_SYMBOL) {
       ItemFn fn = FindItemFn(token);
       if (fn) {
@@ -134,10 +132,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
     n->file_id = fileID;
     n->line = line;
     n->column = column;
-
-    if (!evalSpecialOp(n.get(), nodeList, depth)) {
-      nodeList.addToTail(n.release());
-    }
+    nodeList.addToTail(n.release());
   }
 
   return nodeList.extractNodes();
@@ -146,13 +141,11 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
 bool SceneParser::evalSpecialOp(
   const AstNode* n, SList<AstNode>& nodeList, int depth)
 {
-  if (!n || n->type != AST_LIST) { return false; }
-  const AstNode* n1 = n->child;
-  if (!n1 || n1->type != AST_UNKNOWN) { return false; }
+  if (!n || n->type != AST_UNKNOWN) { return false; }
 
-  const AstNode* n2 = n1->next;
-  if (n1->val == "include") {
-    if (!n2 || n2->type != AST_STRING) {
+  const AstNode* n2 = n->next;
+  if (n->val == "include") {
+    if (!n2 || n2->type != AST_STRING || n2->next) {
       throw ParseError{"'include' syntax error", n->file_id, n->line, n->column};
     }
 
@@ -163,14 +156,6 @@ bool SceneParser::evalSpecialOp(
     }
 
     includeFile(baseDir + n2->val, nodeList, n);
-    return true;
-  } else if (n1->val == "define") {
-    println("define!");
-    // FIXME - finish 'define'
-    return true;
-  } else if (n1->val == "instance") {
-    println("instance!");
-    // FIXME - finish 'instance'
     return true;
   }
 
@@ -185,27 +170,27 @@ int SceneParser::setupScene(Scene& s)
 int SceneParser::processList(
   Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
-  int error = 0;
   while (n) {
-    error = processNode(s, parent, n, flag);
-    if (error) { break; }
+    int error = processNode(s, parent, n, flag);
+    if (error) { return error; }
     n = n->next;
   }
-  return error;
+  return 0;
 }
 
 int SceneParser::processNode(
   Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   if (n->type == AST_LIST) {
-    AstNode* n0 = n;
-    n = n->child;
-    if (n == nullptr) {
-      reportError(n0, "Empty statement");
+    if (n->child == nullptr) {
+      reportError(n, "Empty statement");
       return -1;
-    } else if (n->type == AST_ITEM) {
+    }
+
+    n = n->child;
+    if (n->type == AST_ITEM) {
       int er = ItemFn(n->ptr)(*this, s, parent, n->next, flag);
-      if (er) { reportError(n0, "Error with ", n->desc()); }
+      if (er) { reportError(n, "Error with ", n->desc()); }
       return er;
     }
   }
@@ -218,10 +203,7 @@ int SceneParser::getBool(AstNode*& n, bool& val) const
 {
   if (!n) { return -1; }
 
-  AstNode* d = n;
-  n = n->next;
-
-  switch (d->val[0]) {
+  switch (n->val[0]) {
     case '0': case 'f': case 'F': case 'n': case 'N':
       val = false; break;
 
@@ -229,16 +211,18 @@ int SceneParser::getBool(AstNode*& n, bool& val) const
       val = true; break;
 
     default:
-      reportError(d, "Expected boolean value, not '", d->val, "'");
+      reportError(n, "Expected boolean value, not '", n->val, "'");
       return -1;
   }
 
+  n = n->next;
   return 0;
 }
 
 int SceneParser::getString(AstNode*& n, std::string& val) const
 {
   if (!n) { return -1; }
+
   val = n->val;
   n = n->next;
   return 0;
@@ -248,15 +232,13 @@ int SceneParser::getFlt(AstNode*& n, Flt& val) const
 {
   if (!n) { return -1; }
 
-  AstNode* d = n;
-  n = n->next;
-
-  if (d->type != AST_NUMBER) {
-    reportError(d, "Expected floating point value, not '", d->val, "'");
+  if (n->type != AST_NUMBER) {
+    reportError(n, "Expected floating point value, not '", n->val, "'");
     return -1;
   }
 
-  val = std::stof(d->val);
+  val = std::stod(n->val);
+  n = n->next;
   return 0;
 }
 
@@ -264,15 +246,13 @@ int SceneParser::getInt(AstNode*& n, int& val) const
 {
   if (!n) { return -1; }
 
-  AstNode* d = n;
-  n = n->next;
-
-  if (d->type != AST_NUMBER) {
-    reportError(d, "Expected integer value, not '", d->val, "'");
+  if (n->type != AST_NUMBER) {
+    reportError(n, "Expected integer value, not '", n->val, "'");
     return -1;
   }
 
-  val = std::stoi(d->val);
+  val = std::stoi(n->val);
+  n = n->next;
   return 0;
 }
 

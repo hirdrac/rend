@@ -32,13 +32,12 @@ class AstNode
   AstNode*    child = nullptr;
   void*       ptr = nullptr;
   std::string val;
-  int         file_id = 0;
-  int         line = 0;
-  int         column = 0;
+  int         file_id;
+  int         line;
+  int         column;
   AstType     type = AST_UNKNOWN;
 
-  AstNode() = default;
-  AstNode(std::string_view value) : val(value) { }
+  AstNode(std::string_view value) : val{value} { }
   ~AstNode() { KillNodes(child); }
 
   // Member Functions

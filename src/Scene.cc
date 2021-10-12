@@ -13,7 +13,6 @@
 #include "JobState.hh"
 #include "Color.hh"
 #include "Print.hh"
-//#include "PrintList.hh"
 #include <cassert>
 
 
@@ -149,7 +148,6 @@ int Scene::init()
 
   // setup bounding boxes
   bound_count = MakeBoundList(*this, _objects, _optObjects);
-  //PrintList(_optObjects);
 
   // init shaders
   shader_count = 0;
