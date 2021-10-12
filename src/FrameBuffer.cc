@@ -92,7 +92,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 
 int FrameBuffer::savePNG(const std::string& filename) const
 {
-  if (_buffer) { return -1; }
+  if (!_buffer) { return -1; }
 
   png_image image{};
   image.version = PNG_IMAGE_VERSION;
@@ -164,7 +164,7 @@ Color FrameBuffer::value(int x, int y) const
 
 int FrameBuffer::range(float& min_val, float& max_val) const
 {
-  if (_buffer) { return -1; }
+  if (!_buffer) { return -1; }
 
   float low = 3.4e38f, high = 0.0f;
   for (int y = 0; y < _height; ++y) {
