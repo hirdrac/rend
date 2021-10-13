@@ -47,6 +47,7 @@ class SceneItem
   virtual int setSectors(int v) { return -1; }
   virtual int setSides(int v) { return -1; }
   virtual int setSpin(Flt v) { return -1; }
+  virtual int setValue(Flt v) { return -1; }
 
   virtual int addObject(const ObjectPtr& ob) { return -1; }
   virtual int addLight(const LightPtr& lt) { return -1; }

@@ -12,6 +12,7 @@
 #include "ColorShaders.hh"
 #include "PatternShaders.hh"
 #include "MapShaders.hh"
+#include "NoiseShaders.hh"
 #include "Occlusion.hh"
 #include "CSG.hh"
 #include "Phong.hh"
@@ -489,6 +490,16 @@ static int SpinFn(
   return p->setSpin(val);
 }
 
+static int ValueFn(
+   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
+{
+  if (!p) { return -1; }
+
+  Flt val;
+  if (sp.getFlt(n, val) || notDone(sp, n)) { return -1; }
+  return p->setValue(val);
+}
+
 
 // **** Data ****
 using KeywordMap = std::map<std::string,ItemFn,std::less<>>;
@@ -546,6 +557,7 @@ static void initKeywords()
     {"stretch_x",   StretchXFn},
     {"stretch_y",   StretchYFn},
     {"stretch_z",   StretchZFn},
+    {"value",       ValueFn},
     {"vup",         VupFn}
   };
 }
@@ -588,6 +600,8 @@ REGISTER_SHADER_KEYWORD(MapCubeShader,"map_cube");
 REGISTER_SHADER_KEYWORD(MapCylinderShader,"map_cylinder");
 REGISTER_SHADER_KEYWORD(MapParaboloidShader,"map_paraboloid");
 REGISTER_SHADER_KEYWORD(MapSphereShader,"map_sphere");
+// noise shaders
+REGISTER_SHADER_KEYWORD(NoiseShader,"noise");
 
 REGISTER_FLAG_KEYWORD(FLAG_AMBIENT,"ambient");
 REGISTER_FLAG_KEYWORD(FLAG_BACKGROUND,"background");
