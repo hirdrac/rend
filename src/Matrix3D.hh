@@ -31,12 +31,8 @@ class Matrix4x4
 
   Matrix4x4() = default;
   constexpr Matrix4x4(T a, T b, T c, T d, T e, T f, T g, T h,
-                      T i, T j, T k, T l, T m, T n, T o, T p) {
-    _val[ 0] = a; _val[ 1] = b; _val[ 2] = c; _val[ 3] = d;
-    _val[ 4] = e; _val[ 5] = f; _val[ 6] = g; _val[ 7] = h;
-    _val[ 8] = i; _val[ 9] = j; _val[10] = k; _val[11] = l;
-    _val[12] = m; _val[13] = n; _val[14] = o; _val[15] = p;
-  }
+                      T i, T j, T k, T l, T m, T n, T o, T p)
+    : _val{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p} { }
 
 
   // Operators
@@ -149,7 +145,7 @@ template<typename T>
   const Matrix4x4<T,ROW_MAJOR>& a, const Matrix4x4<T,ROW_MAJOR>& b)
 {
   Matrix4x4<T,ROW_MAJOR> m;
-  //for (int i = 0; i != 16; i += 4) {
+  //for (unsigned int i = 0; i != 16; i += 4) {
   //  m[i]   = (a[i]*b[0]) + (a[i+1]*b[4]) + (a[i+2]*b[8])  + (a[i+3]*b[12]);
   //  m[i+1] = (a[i]*b[1]) + (a[i+1]*b[5]) + (a[i+2]*b[9])  + (a[i+3]*b[13]);
   //  m[i+2] = (a[i]*b[2]) + (a[i+1]*b[6]) + (a[i+2]*b[10]) + (a[i+3]*b[14]);
@@ -170,7 +166,7 @@ template<typename T>
   const Matrix4x4<T,COLUMN_MAJOR>& a, const Matrix4x4<T,COLUMN_MAJOR>& b)
 {
   Matrix4x4<T,COLUMN_MAJOR> m;
-  //for (int i = 0; i != 16; i += 4) {
+  //for (unsigned int i = 0; i != 16; i += 4) {
   //  m[i]   = (a[0]*b[i]) + (a[4]*b[i+1]) + (a[8]*b[i+2])  + (a[12]*b[i+3]);
   //  m[i+1] = (a[1]*b[i]) + (a[5]*b[i+1]) + (a[9]*b[i+2])  + (a[13]*b[i+3]);
   //  m[i+2] = (a[2]*b[i]) + (a[6]*b[i+1]) + (a[10]*b[i+2]) + (a[14]*b[i+3]);
@@ -210,26 +206,26 @@ template<typename T>
 // **** Template Stream Operators ****
 template<typename T>
 inline std::ostream& operator<<(
-  std::ostream& out, const Matrix4x4<T,ROW_MAJOR>& m)
+  std::ostream& os, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   for (unsigned int i = 0; i != 16; i += 4) {
-    out << '[' << m[i] << '\t' << m[i+1] << '\t' << m[i+2]
-	<< '\t'	<< m[i+3] << "\t]\n";
+    os << '[' << m[i] << '\t' << m[i+1] << '\t' << m[i+2]
+       << '\t'	<< m[i+3] << "\t]\n";
   }
 
-  return out;
+  return os;
 }
 
 template<typename T>
 inline std::ostream& operator<<(
-  std::ostream& out, const Matrix4x4<T,COLUMN_MAJOR>& m)
+  std::ostream& os, const Matrix4x4<T,COLUMN_MAJOR>& m)
 {
   for (unsigned int i = 0; i != 4; ++i) {
-    out << '[' << m[i] << '\t' << m[i+4] << '\t' << m[i+8]
-	<< '\t'	<< m[i+12] << "\t]\n";
+    os << '[' << m[i] << '\t' << m[i+4] << '\t' << m[i+8]
+       << '\t'	<< m[i+12] << "\t]\n";
   }
 
-  return out;
+  return os;
 }
 
 
@@ -237,9 +233,9 @@ inline std::ostream& operator<<(
 template<typename T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setIdentity()
 {
-  _val[ 0] = 1; _val[ 1] = 0; _val[ 2] = 0; _val[ 3] = 0;
-  _val[ 4] = 0; _val[ 5] = 1; _val[ 6] = 0; _val[ 7] = 0;
-  _val[ 8] = 0; _val[ 9] = 0; _val[10] = 1; _val[11] = 0;
+  _val[0]  = 1; _val[1]  = 0; _val[2]  = 0; _val[3]  = 0;
+  _val[4]  = 0; _val[5]  = 1; _val[6]  = 0; _val[7]  = 0;
+  _val[8]  = 0; _val[9]  = 0; _val[10] = 1; _val[11] = 0;
   _val[12] = 0; _val[13] = 0; _val[14] = 0; _val[15] = 1;
 }
 
@@ -252,9 +248,9 @@ constexpr void Matrix4x4<T,MOT>::setTranslation(T tx, T ty, T tz)
   // [0 0 1 0]
   // [x y z 1]
 
-  _val[ 0] = 1;  _val[ 1] = 0;  _val[ 2] = 0;  _val[ 3] = 0;
-  _val[ 4] = 0;  _val[ 5] = 1;  _val[ 6] = 0;  _val[ 7] = 0;
-  _val[ 8] = 0;  _val[ 9] = 0;  _val[10] = 1;  _val[11] = 0;
+  _val[0]  = 1;  _val[1]  = 0;  _val[2]  = 0;  _val[3]  = 0;
+  _val[4]  = 0;  _val[5]  = 1;  _val[6]  = 0;  _val[7]  = 0;
+  _val[8]  = 0;  _val[9]  = 0;  _val[10] = 1;  _val[11] = 0;
   _val[12] = tx; _val[13] = ty; _val[14] = tz; _val[15] = 1;
 }
 
@@ -267,20 +263,20 @@ constexpr void Matrix4x4<T,MOT>::translate(T tx, T ty, T tz)
   // [c0 c1 c2 c3] [0 0 1 0] [c0+c3x c1+c3y c2+c3z c3]
   // [d0 d1 d2 d3] [x y z 1] [d0+d3x d1+d3y d2+d3z d3]
 
-  //_val[ 0] += _val[ 3] * tx;
-  //_val[ 1] += _val[ 3] * ty;
-  //_val[ 2] += _val[ 3] * tz;
-  //_val[ 4] += _val[ 7] * tx;
-  //_val[ 5] += _val[ 7] * ty;
-  //_val[ 6] += _val[ 7] * tz;
-  //_val[ 8] += _val[11] * tx;
-  //_val[ 9] += _val[11] * ty;
+  //_val[0]  += _val[3]  * tx;
+  //_val[1]  += _val[3]  * ty;
+  //_val[2]  += _val[3]  * tz;
+  //_val[4]  += _val[7]  * tx;
+  //_val[5]  += _val[7]  * ty;
+  //_val[6]  += _val[7]  * tz;
+  //_val[8]  += _val[11] * tx;
+  //_val[9]  += _val[11] * ty;
   //_val[10] += _val[11] * tz;
   //_val[12] += _val[15] * tx;
   //_val[13] += _val[15] * ty;
   //_val[14] += _val[15] * tz;
 
-  for (unsigned int i = 0; i != 16; i += 4) {
+  for (size_type i = 0; i != 16; i += 4) {
     const T v = _val[(i & ~3u) + 3];
     _val[i]   += v * tx;
     _val[i+1] += v * ty;
@@ -312,9 +308,9 @@ constexpr void Matrix4x4<T,MOT>::setRotationX_sc(T sinVal, T cosVal)
   // [0 -s  c  0]
   // [0  0  0  1]
 
-  _val[ 0] = 1; _val[ 1] = 0;       _val[ 2] = 0;      _val[ 3] = 0;
-  _val[ 4] = 0; _val[ 5] = cosVal;  _val[ 6] = sinVal; _val[ 7] = 0;
-  _val[ 8] = 0; _val[ 9] = -sinVal; _val[10] = cosVal; _val[11] = 0;
+  _val[0]  = 1; _val[1]  = 0;       _val[2]  = 0;      _val[3]  = 0;
+  _val[4]  = 0; _val[5]  = cosVal;  _val[6]  = sinVal; _val[7]  = 0;
+  _val[8]  = 0; _val[9]  = -sinVal; _val[10] = cosVal; _val[11] = 0;
   _val[12] = 0; _val[13] = 0;       _val[14] = 0;      _val[15] = 1;
 }
 
@@ -328,7 +324,7 @@ constexpr void Matrix4x4<T,MOT>::rotateX_sc(T sinVal, T cosVal)
   // [c0 c1 c2 c3] [0 -s  c  0] [c0  (c1)(c)-(c2)(s)  (c1)(s)+(c2)(c)  c3]
   // [d0 d1 d2 d3] [0  0  0  1] [d0  (d1)(c)-(d2)(s)  (d1)(s)+(d2)(c)  d3]
 
-  for (unsigned int i = 0; i != 16; i += 4) {
+  for (size_type i = 0; i != 16; i += 4) {
     const T t1 = _val[i+1], t2 = _val[i+2];
     _val[i+1] = (t1*cosVal) - (t2*sinVal);
     _val[i+2] = (t1*sinVal) + (t2*cosVal);
@@ -344,9 +340,9 @@ constexpr void Matrix4x4<T,MOT>::setRotationY_sc(T sinVal, T cosVal)
   // [s  0  c  0]
   // [0  0  0  1]
 
-  _val[ 0] = cosVal; _val[ 1] = 0; _val[ 2] = -sinVal; _val[ 3] = 0;
-  _val[ 4] = 0;      _val[ 5] = 1; _val[ 6] = 0;       _val[ 7] = 0;
-  _val[ 8] = sinVal; _val[ 9] = 0; _val[10] = cosVal;  _val[11] = 0;
+  _val[0]  = cosVal; _val[1]  = 0; _val[2]  = -sinVal; _val[3]  = 0;
+  _val[4]  = 0;      _val[5]  = 1; _val[6]  = 0;       _val[7]  = 0;
+  _val[8]  = sinVal; _val[9]  = 0; _val[10] = cosVal;  _val[11] = 0;
   _val[12] = 0;      _val[13] = 0; _val[14] = 0;       _val[15] = 1;
 }
 
@@ -360,7 +356,7 @@ constexpr void Matrix4x4<T,MOT>::rotateY_sc(T sinVal, T cosVal)
   // [c0 c1 c2 c3] [s  0  c  0] [(c0)(c)+(c2)(s)  c1  -(c0)(s)+(c2)(c)  c3]
   // [d0 d1 d2 d3] [0  0  0  1] [(d0)(c)+(d2)(s)  d1  -(d0)(s)+(d2)(c)  d3]
 
-  for (unsigned int i = 0; i != 16; i += 4) {
+  for (size_type i = 0; i != 16; i += 4) {
     const T t0 = _val[i], t2 = _val[i+2];
     _val[i]   = (t0*cosVal) + (t2*sinVal);
     _val[i+2] = (t2*cosVal) - (t0*sinVal);
@@ -376,9 +372,9 @@ constexpr void Matrix4x4<T,MOT>::setRotationZ_sc(T sinVal, T cosVal)
   // [ 0  0  1  0]
   // [ 0  0  0  1]
 
-  _val[ 0] = cosVal;  _val[ 1] = sinVal; _val[ 2] = 0; _val[ 3] = 0;
-  _val[ 4] = -sinVal; _val[ 5] = cosVal; _val[ 6] = 0; _val[ 7] = 0;
-  _val[ 8] = 0;       _val[ 9] = 0;      _val[10] = 1; _val[11] = 0;
+  _val[0]  = cosVal;  _val[1]  = sinVal; _val[2]  = 0; _val[3]  = 0;
+  _val[4]  = -sinVal; _val[5]  = cosVal; _val[6]  = 0; _val[7]  = 0;
+  _val[8]  = 0;       _val[9]  = 0;      _val[10] = 1; _val[11] = 0;
   _val[12] = 0;       _val[13] = 0;      _val[14] = 0; _val[15] = 1;
 }
 
@@ -392,7 +388,7 @@ constexpr void Matrix4x4<T,MOT>::rotateZ_sc(T sinVal, T cosVal)
   // [c0 c1 c2 c3] [ 0  0  1  0] [(c0)(c)-(c1)(s)  (c0)(s)+(c1)(c)  c2  c3]
   // [d0 d1 d2 d3] [ 0  0  0  1] [(d0)(c)-(d1)(s)  (d0)(s)+(d1)(c)  d2  d3]
 
-  for (unsigned int i = 0; i != 16; i += 4) {
+  for (size_type i = 0; i != 16; i += 4) {
     const T t0 = _val[i], t1 = _val[i+1];
     _val[i]   = (t0*cosVal) - (t1*sinVal);
     _val[i+1] = (t0*sinVal) + (t1*cosVal);
@@ -411,18 +407,18 @@ constexpr void Matrix4x4<T,MOT>::setRotation_sc(
   const T ys = axis.y * sinVal;
   const T zs = axis.z * sinVal;
 
-  _val[ 0] = (Sqr(axis.x) * cinv) + cosVal;
-  _val[ 1] = xyc + zs;
-  _val[ 2] = xzc - ys;
-  _val[ 3] = 0;
+  _val[0]  = (Sqr(axis.x) * cinv) + cosVal;
+  _val[1]  = xyc + zs;
+  _val[2]  = xzc - ys;
+  _val[3]  = 0;
 
-  _val[ 4] = xyc - zs;
-  _val[ 5] = (Sqr(axis.y) * cinv) + cosVal;
-  _val[ 6] = yzc + xs;
-  _val[ 7] = 0;
+  _val[4]  = xyc - zs;
+  _val[5]  = (Sqr(axis.y) * cinv) + cosVal;
+  _val[6]  = yzc + xs;
+  _val[7]  = 0;
 
-  _val[ 8] = xzc + ys;
-  _val[ 9] = yzc - xs;
+  _val[8]  = xzc + ys;
+  _val[9]  = yzc - xs;
   _val[10] = (Sqr(axis.z) * cinv) + cosVal;
   _val[11] = 0;
 
@@ -454,7 +450,7 @@ constexpr void Matrix4x4<T,MOT>::rotate_sc(
   const T ys = axis.y * sinVal;
   const T zs = axis.z * sinVal;
 
-  for (unsigned int i = 0; i != 16; i += 4) {
+  for (size_type i = 0; i != 16; i += 4) {
     const T t0 = _val[i];
     const T t1 = _val[i+1];
     const T t2 = _val[i+2];
@@ -474,9 +470,9 @@ constexpr void Matrix4x4<T,MOT>::setScaling(T sx, T sy, T sz)
   // [0 0 z 0]
   // [0 0 0 1]
 
-  _val[ 0] = sx; _val[ 1] = 0;  _val[ 2] = 0;  _val[ 3] = 0;
-  _val[ 4] = 0;  _val[ 5] = sy; _val[ 6] = 0;  _val[ 7] = 0;
-  _val[ 8] = 0;  _val[ 9] = 0;  _val[10] = sz; _val[11] = 0;
+  _val[0]  = sx; _val[1]  = 0;  _val[2]  = 0;  _val[3]  = 0;
+  _val[4]  = 0;  _val[5]  = sy; _val[6]  = 0;  _val[7]  = 0;
+  _val[8]  = 0;  _val[9]  = 0;  _val[10] = sz; _val[11] = 0;
   _val[12] = 0;  _val[13] = 0;  _val[14] = 0;  _val[15] = 1;
 }
 
@@ -532,19 +528,19 @@ constexpr void Matrix4x4<T,MOT>::transpose()
   // [d0 d1 d2 d3]    [a3 b3 c3 d3]
 
   // std::swap not constexpr until C++20
-  //std::swap(_val[ 1], _val[ 4]);
-  //std::swap(_val[ 2], _val[ 8]);
-  //std::swap(_val[ 3], _val[12]);
-  //std::swap(_val[ 6], _val[ 9]);
-  //std::swap(_val[ 7], _val[13]);
+  //std::swap(_val[1],  _val[4]);
+  //std::swap(_val[2],  _val[8]);
+  //std::swap(_val[3],  _val[12]);
+  //std::swap(_val[6],  _val[9]);
+  //std::swap(_val[7],  _val[13]);
   //std::swap(_val[11], _val[14]);
 
   T tmp;
-  tmp = _val[1]; _val[1] = _val[4]; _val[4] = tmp;
-  tmp = _val[2]; _val[2] = _val[8]; _val[8] = tmp;
-  tmp = _val[3]; _val[3] = _val[12]; _val[12] = tmp;
-  tmp = _val[6]; _val[6] = _val[9]; _val[9] = tmp;
-  tmp = _val[7]; _val[7] = _val[13]; _val[13] = tmp;
+  tmp = _val[1];  _val[1]  = _val[4];  _val[4]  = tmp;
+  tmp = _val[2];  _val[2]  = _val[8];  _val[8]  = tmp;
+  tmp = _val[3];  _val[3]  = _val[12]; _val[12] = tmp;
+  tmp = _val[6];  _val[6]  = _val[9];  _val[9]  = tmp;
+  tmp = _val[7];  _val[7]  = _val[13]; _val[13] = tmp;
   tmp = _val[11]; _val[11] = _val[14]; _val[14] = tmp;
 }
 
@@ -573,7 +569,7 @@ template<typename T>
 }
 
 // MultPointXY() - row vector * row major matrix; return only (x,y)
-template<class T>
+template<typename T>
 [[nodiscard]] constexpr Vector2<T> MultPointXY(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -582,7 +578,7 @@ template<class T>
 }
 
 // MultPointXY() - column major matrix * column vector; return only (x,y)
-template<class T>
+template<typename T>
 [[nodiscard]] constexpr Vector2<T> MultPointXY(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
@@ -591,7 +587,7 @@ template<class T>
 }
 
 // MultPointX() - row vector * row major matrix; return only x
-template<class T>
+template<typename T>
 [[nodiscard]] constexpr T MultPointX(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -599,7 +595,7 @@ template<class T>
 }
 
 // MultPointX() - column major matrix * column vector; return only x
-template<class T>
+template<typename T>
 [[nodiscard]] constexpr T MultPointX(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
