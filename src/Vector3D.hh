@@ -341,16 +341,16 @@ template<typename T>
 
 // **** Template Stream Operators ****
 template<typename T>
-inline std::ostream& operator<<(std::ostream& out, const Vector2<T>& v) {
-  return out << '[' << v.x << ' ' << v.y << ']'; }
+inline std::ostream& operator<<(std::ostream& os, const Vector2<T>& v) {
+  return os << '[' << v.x << ' ' << v.y << ']'; }
 
 template<typename T>
-inline std::ostream& operator<<(std::ostream& out, const Vector3<T>& v) {
-  return out << '[' << v.x << ' ' << v.y << ' ' << v.z << ']'; }
+inline std::ostream& operator<<(std::ostream& os, const Vector3<T>& v) {
+  return os << '[' << v.x << ' ' << v.y << ' ' << v.z << ']'; }
 
 template<typename T>
-inline std::ostream& operator<<(std::ostream& out, const Vector4<T>& v) {
-  return out << '[' << v.x << ' ' << v.y << ' ' << v.z << ' ' << v.w << ']'; }
+inline std::ostream& operator<<(std::ostream& os, const Vector4<T>& v) {
+  return os << '[' << v.x << ' ' << v.y << ' ' << v.z << ' ' << v.w << ']'; }
 
 
 // **** Template Functions ****
