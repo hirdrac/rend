@@ -53,56 +53,86 @@ namespace math {
 template<class fltType>
 [[nodiscard]] constexpr fltType DegToRad(fltType deg)
 {
+  static_assert(std::is_floating_point_v<fltType>);
   return deg * math::DEG_TO_RAD<fltType>;
 }
 
 template<class fltType>
 [[nodiscard]] constexpr fltType RadToDeg(fltType rad)
 {
+  static_assert(std::is_floating_point_v<fltType>);
   return rad * math::RAD_TO_DEG<fltType>;
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsZero(fltType x)
+template<class numType>
+[[nodiscard]] constexpr bool IsZero(numType x)
 {
-  return (x > -math::VERY_SMALL<fltType>) && (x < math::VERY_SMALL<fltType>);
+  if constexpr (std::is_floating_point_v<numType>) {
+    return (x > -math::VERY_SMALL<numType>) && (x < math::VERY_SMALL<numType>);
+  } else {
+    return (x == 0);
+  }
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsOne(fltType x)
+template<class numType>
+[[nodiscard]] constexpr bool IsOne(numType x)
 {
-  return (x > (fltType{1} - math::VERY_SMALL<fltType>))
-    && (x < (fltType{1} + math::VERY_SMALL<fltType>));
+  if constexpr (std::is_floating_point_v<numType>) {
+    return (x > (numType{1} - math::VERY_SMALL<numType>))
+      && (x < (numType{1} + math::VERY_SMALL<numType>));
+  } else {
+    return (x == 1);
+  }
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsPositive(fltType x)
+template<class numType>
+[[nodiscard]] constexpr bool IsPositive(numType x)
 {
-  return (x >= math::VERY_SMALL<fltType>);
+  if constexpr (std::is_floating_point_v<numType>) {
+    return (x >= math::VERY_SMALL<numType>);
+  } else {
+    return (x > 0);
+  }
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsNegative(fltType x)
+template<class numType>
+[[nodiscard]] constexpr bool IsNegative(numType x)
 {
-  return (x <= -math::VERY_SMALL<fltType>);
+  if constexpr (std::is_floating_point_v<numType>) {
+    return (x <= -math::VERY_SMALL<numType>);
+  } else {
+    return (x < 0);
+  }
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsEqual(fltType x, fltType y)
+template<class numType>
+[[nodiscard]] constexpr bool IsEqual(numType x, numType y)
 {
-  return IsZero(x-y);
+  if constexpr (std::is_floating_point_v<numType>) {
+    return IsZero(x-y);
+  } else {
+    return (x == y);
+  }
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsLess(fltType x, fltType y)
+template<class numType>
+[[nodiscard]] constexpr bool IsLess(numType x, numType y)
 {
-  return IsNegative(x-y);
+  if constexpr (std::is_floating_point_v<numType>) {
+    return IsNegative(x-y);
+  } else {
+    return (x < y);
+  }
 }
 
-template<class fltType>
-[[nodiscard]] constexpr bool IsGreater(fltType x, fltType y)
+template<class numType>
+[[nodiscard]] constexpr bool IsGreater(numType x, numType y)
 {
-  return IsPositive(x-y);
+  if constexpr (std::is_floating_point_v<numType>) {
+    return IsPositive(x-y);
+  } else {
+    return (x > y);
+  }
 }
 
 template<class intType>
