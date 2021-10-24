@@ -295,16 +295,18 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
   return 1; // don't quit
 }
 
-int Usage(const char* argv0)
+
+int Usage(char** argv)
 {
-  println("Usage: ", argv0, " [options] [<scene file> [<image save>]]");
+  println("Usage: ", argv[0], " [options] [<scene file> [<image save>]]");
   println("Options:");
   println("  -j[#], --jobs [#]  Use multiple render jobs");
   println("                     (uses ", std::thread::hardware_concurrency(),
           " jobs if # is unspecified)");
   println("  -i, --interactive  Start interactive shell");
-  println("  -h, --help         Show usage\n");
-  return 0;
+  println("  -h, --help         Show usage");
+  println();
+  return -1;
 }
 
 
@@ -326,7 +328,8 @@ int main(int argc, char** argv)
       } else if (arg == "-i" || arg == "--interactive") {
         interactive = true;
       } else if (arg == "-h" || arg == "--help") {
-        return Usage(argv[0]);
+        Usage(argv);
+        return 0;
       } else if (arg == "-j" || arg == "--jobs") {
         if (i >= (argc-1) || *argv[i+1] == '-') {
           jobs = int(std::thread::hardware_concurrency());
@@ -334,7 +337,7 @@ int main(int argc, char** argv)
           arg = argv[++i];
           if (!std::isdigit(arg[0])) {
             println_err("Bad job count '", arg, "'\n");
-            return Usage(argv[0]);
+            return Usage(argv);
           }
           jobs = std::atoi(argv[i]);
         }
@@ -344,7 +347,7 @@ int main(int argc, char** argv)
         jobs = std::atoi(argv[i] + 7);
       } else {
         println_err("Bad option '", arg, "'\n");
-        return Usage(argv[0]);
+        return Usage(argv);
       }
     } else if (fileLoad.empty()) {
       fileLoad = arg;
@@ -356,7 +359,7 @@ int main(int argc, char** argv)
   }
 
   if (!interactive && (fileLoad.empty() || imageSave.empty())) {
-    return Usage(argv[0]);
+    return Usage(argv);
   }
 
   Renderer ren;
