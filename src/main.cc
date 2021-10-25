@@ -15,10 +15,9 @@
 #include "Timer.hh"
 #include "Print.hh"
 #include "PrintList.hh"
+#include "CmdLineParser.hh"
 #include <sstream>
-#include <string_view>
 #include <thread>
-#include <cctype>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -300,12 +299,17 @@ int Usage(char** argv)
 {
   println("Usage: ", argv[0], " [options] [<scene file> [<image save>]]");
   println("Options:");
-  println("  -j[#], --jobs [#]  Use multiple render jobs");
-  println("                     (uses ", std::thread::hardware_concurrency(),
-          " jobs if # is unspecified)");
-  println("  -i, --interactive  Start interactive shell");
-  println("  -h, --help         Show usage");
-  println();
+  println("  -j [#], --jobs [#]  Use multiple render jobs/threads");
+  println("                      (uses ", std::thread::hardware_concurrency(),
+          " if option is used without #)");
+  println("  -i, --interactive   Start interactive shell");
+  println("  -h, --help          Show usage");
+  return 0;
+}
+
+int ErrorUsage(char** argv)
+{
+  println_err("Try '", argv[0], " --help' for usage information.");
   return -1;
 }
 
@@ -316,50 +320,35 @@ int main(int argc, char** argv)
   println("Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley");
 
   std::string fileLoad, imageSave;
-  int jobs = -1;
-  bool optionsDone = false;
   bool interactive = false;
+  int jobs = -1;
 
-  for (int i = 1; i < argc; ++i) {
-    std::string_view arg = argv[i];
-    if (arg[0] == '-' && !optionsDone) {
-      if (arg == "--") {
-        optionsDone = true;
-      } else if (arg == "-i" || arg == "--interactive") {
+  for (CmdLineParser p(argc, argv); p; ++p) {
+    if (p.option()) {
+      if (p.option('i',"interactive")) {
         interactive = true;
-      } else if (arg == "-h" || arg == "--help") {
-        Usage(argv);
-        return 0;
-      } else if (arg == "-j" || arg == "--jobs") {
-        if (i >= (argc-1) || *argv[i+1] == '-') {
-          jobs = int(std::thread::hardware_concurrency());
-        } else {
-          arg = argv[++i];
-          if (!std::isdigit(arg[0])) {
-            println_err("Bad job count '", arg, "'\n");
-            return Usage(argv);
-          }
-          jobs = std::atoi(argv[i]);
-        }
-      } else if (arg.size() > 2 && arg.substr(0,2) == "-j" && std::isdigit(arg[2])) {
-        jobs = std::atoi(argv[i] + 2);
-      } else if (arg.size() > 7 && arg.substr(0,7) == "--jobs=" && std::isdigit(arg[7])) {
-        jobs = std::atoi(argv[i] + 7);
-      } else {
-        println_err("Bad option '", arg, "'\n");
+      } else if (p.option('h',"help")) {
         return Usage(argv);
+      } else if (p.option('j',"jobs",jobs)) {
+        // jobs value specified
+      } else if (p.option('j',"jobs")) {
+        jobs = int(std::thread::hardware_concurrency());
+      } else {
+        println_err("ERROR: Bad option '", p.arg(), "'");
+        return ErrorUsage(argv);
       }
     } else if (fileLoad.empty()) {
-      fileLoad = arg;
+      p.get(fileLoad);
     } else if (imageSave.empty()) {
-      imageSave = arg;
+      p.get(imageSave);
     } else {
-      break;
+      break; // ignore additional arguments
     }
   }
 
   if (!interactive && (fileLoad.empty() || imageSave.empty())) {
-    return Usage(argv);
+    println_err("ERROR: Missing arguments");
+    return ErrorUsage(argv);
   }
 
   Renderer ren;
