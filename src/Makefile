@@ -1,11 +1,13 @@
 # call Makefile in base directory if 'make' is executed here
 base_dir := ..
 
-%: ; $(MAKE) -C $(base_dir)$(MAKEFLAGS) $@
-.PHONY: all
-all: ; $(MAKE) -C $(base_dir)$(MAKEFLAGS)
-
-
-# FIXME - calling target that matches a file in current directory
-#  doesn't call the base dir makefile
+%: ; @$(MAKE) -C $(base_dir)$(MAKEFLAGS) $@
+# NOTE: doesn't work for targets that match a file in the current directory
 #  (can't do wildcard .PHONY)
+
+# make sure these targets always work
+targets := all clean clobber tests info help release debug profile
+.PHONY: $(targets)
+$(targets): ; @$(MAKE) -C $(base_dir)$(MAKEFLAGS) $@
+
+## END
