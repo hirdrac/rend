@@ -1,6 +1,6 @@
 //
 // Parser.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Parser.hh"
@@ -101,7 +101,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
   for (;;) {
     int line = 0, column = 0;
     std::string token;
-    TokenType type = tk.getToken(token, line, column);
+    const TokenType type = tk.getToken(token, line, column);
     if (type == TOKEN_EOF) {
       if (depth > 0) {
         throw ParseError{"Unexpected end of file", fileID, line, column};
@@ -149,7 +149,7 @@ bool SceneParser::evalSpecialOp(
       throw ParseError{"'include' syntax error", n->file_id, n->line, n->column};
     }
 
-    std::string file = fileName(n->file_id);
+    const std::string file = fileName(n->file_id);
     std::string baseDir;
     if (auto x = file.rfind('/'); x != std::string::npos) {
       baseDir = file.substr(0,x+1);
@@ -171,7 +171,7 @@ int SceneParser::processList(
   Scene& s, SceneItem* parent, AstNode* n, SceneItemFlag flag)
 {
   while (n) {
-    int error = processNode(s, parent, n, flag);
+    const int error = processNode(s, parent, n, flag);
     if (error) { return error; }
     n = n->next;
   }

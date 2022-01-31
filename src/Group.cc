@@ -1,6 +1,6 @@
 //
 // Group.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Group.hh"
@@ -50,7 +50,7 @@ BBox Group::bound(const Matrix* t) const
       b.fit(ob->bound(nullptr));
     } else {
       assert(ob->trans());
-      Matrix t2 = ob->trans()->base * (*t);
+      const Matrix t2 = ob->trans()->base * (*t);
       b.fit(ob->bound(&t2));
     }
   }

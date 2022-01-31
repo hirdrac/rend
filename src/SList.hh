@@ -1,6 +1,6 @@
 //
 // SList.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // intrusive single linked list
 //
@@ -23,7 +23,7 @@ class SList
 {
  public:
   SList() = default;
-  SList(type* item) : _head(item), _tail(LastNode(item)) { }
+  SList(type* item) : _head{item}, _tail{LastNode(item)} { }
   ~SList() { KillNodes(_head); }
 
   // prevent copy/assign
@@ -32,8 +32,8 @@ class SList
 
   // allow move/move-assign
   SList(SList<type>&& x) noexcept :
-    _head(std::exchange(x._head, nullptr)),
-    _tail(std::exchange(x._tail, nullptr)) { }
+    _head{std::exchange(x._head, nullptr)},
+    _tail{std::exchange(x._tail, nullptr)} { }
 
   SList<type>& operator=(SList<type>&& x) noexcept {
     if (this != &x) {
@@ -55,7 +55,7 @@ class SList
   [[nodiscard]] bool empty() const { return !_head; }
   [[nodiscard]] int count() const { return CountNodes(_head); }
 
-  void purge() { KillNodes(_head); _head = nullptr; _tail = nullptr; }
+  void purge() { KillNodes(_head); _head = _tail = nullptr; }
 
   void addToHead(type* item);
   void addToHead(SList<type>& list);

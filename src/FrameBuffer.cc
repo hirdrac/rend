@@ -1,6 +1,6 @@
 //
 // FrameBuffer.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "FrameBuffer.hh"
@@ -63,7 +63,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   header[28] = 24;                               // Bit count
 
   // create BMP file
-  std::ofstream file(filename, std::ios::out | std::ios::binary);
+  std::ofstream file{filename, std::ios::out | std::ios::binary};
   if (!file) {
     println_err("Error writing bmp file");
     return -1;
@@ -170,7 +170,7 @@ int FrameBuffer::range(float& min_val, float& max_val) const
   for (int y = 0; y < _height; ++y) {
     const float* ptr = bufferRow(y);
     for (int x = 0; x < (_width * CHANNELS); ++x) {
-      float v = *ptr++;
+      const float v = *ptr++;
       if (v < low)  { low = v; }
       if (v > high) { high = v; }
     }

@@ -1,6 +1,6 @@
 //
 // Timer.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Timer.hh"
@@ -10,15 +10,15 @@
 // Member Functions
 double TimeStamp::elapsedSec(const TimeStamp& endTime) const
 {
-  long sec  = endTime.sec()  - _val.tv_sec;
-  long usec = endTime.usec() - _val.tv_usec;
+  const long sec  = endTime.sec()  - _val.tv_sec;
+  const long usec = endTime.usec() - _val.tv_usec;
   return double(sec) + (double(usec) / 1000000.0);
 }
 
 int64_t TimeStamp::elapsedMilliSec(const TimeStamp& endTime) const
 {
-  int64_t sec  = endTime.sec()  - _val.tv_sec;
-  int64_t usec = endTime.usec() - _val.tv_usec;
+  const int64_t sec  = endTime.sec()  - _val.tv_sec;
+  const int64_t usec = endTime.usec() - _val.tv_usec;
   return (sec * 1000LL) + (usec / 1000LL);
 }
 
@@ -120,8 +120,8 @@ double Timer::elapsedSec(const TimeStamp& endTime) const
     return 0.0; // unable to calculate if timer isn't running
   }
 
-  long sec  = _elapsedSec  + (endTime.sec()  - _start.sec());
-  long usec = _elapsedUSec + (endTime.usec() - _start.usec());
+  const long sec  = _elapsedSec  + (endTime.sec()  - _start.sec());
+  const long usec = _elapsedUSec + (endTime.usec() - _start.usec());
   return double(sec) + (double(usec) / 1000000.0);
 }
 
@@ -148,7 +148,7 @@ int64_t Timer::elapsedMilliSec(const TimeStamp& endTime) const
     return 0LL; // unable to calculate if timer isn't running
   }
 
-  long sec  = _elapsedSec  + (endTime.sec()  - _start.sec());
-  long usec = _elapsedUSec + (endTime.usec() - _start.usec());
+  const long sec  = _elapsedSec  + (endTime.sec()  - _start.sec());
+  const long usec = _elapsedUSec + (endTime.usec() - _start.usec());
   return (int64_t(sec) * 1000LL) + (int64_t(usec) / 1000LL);
 }

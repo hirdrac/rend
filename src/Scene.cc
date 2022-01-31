@@ -1,6 +1,6 @@
 //
 // Scene.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Scene.hh"
@@ -167,7 +167,7 @@ Color Scene::traceRay(JobState& js, const Ray& r) const
   StatInfo& si = js.stats;
   ++si.rays.tried;
 
-  HitList hit_list(js.cache, si, false);
+  HitList hit_list{js.cache, si, false};
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.firstHit();
@@ -200,7 +200,7 @@ bool Scene::castShadowRay(JobState& js, const Ray& r) const
   StatInfo& si = js.stats;
   ++si.shadow_rays.tried;
 
-  HitList hit_list(js.cache, si, false);
+  HitList hit_list{js.cache, si, false};
   for (auto& ob : _optObjects) { ob->intersect(r, hit_list); }
 
   const HitInfo* hit = hit_list.firstHit();

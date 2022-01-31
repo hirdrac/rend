@@ -1,6 +1,6 @@
 //
 // Keywords.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Keywords.hh"
@@ -631,7 +631,7 @@ bool AddItemFn(std::string_view keyword, ItemFn fn)
 {
   if (!Keywords) { initKeywords(); }
 
-  std::string key = makeKey(keyword);
+  const std::string key = makeKey(keyword);
   assert(Keywords->find(key) == Keywords->end());
 
   (*Keywords)[key] = fn;

@@ -1,13 +1,13 @@
 //
 // Tokenizer.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Tokenizer.hh"
 #include <cctype>
 
 namespace {
-  bool isNumber(const std::string& val)
+  [[nodiscard]] bool isNumber(const std::string& val)
   {
     const char* p = val.c_str();
     if (*p == '-') { ++p; }
@@ -15,6 +15,7 @@ namespace {
     return std::isdigit(*p);
   }
 }
+
 
 // **** Tokenizer class ****
 void Tokenizer::init(std::istream& input)
@@ -37,7 +38,7 @@ TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
     if (c == '\0') {
       return TOKEN_EOF;
     } else if (c == '\"' || c == '\'') {
-      int quote = c;
+      const int quote = c;
       c = getChar();
       if (c != quote) {
         value = char(c);
@@ -93,7 +94,7 @@ int Tokenizer::getChar()
     return _nextChar;
   }
 
-  int c = _nextChar;
+  const int c = _nextChar;
   if (c == '\n') { ++_line; _column = 1; }
   else if (c != '\0') { ++_column; }
 

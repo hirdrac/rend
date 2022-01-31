@@ -1,6 +1,6 @@
 //
 // BasicObjects.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "BasicObjects.hh"
@@ -228,8 +228,8 @@ int Cube::intersect(const Ray& r, HitList& hl) const
 
   // X
   if (LIKELY(dir.x != 0.0)) {
-    Flt h1 = (-1.0 - base.x) / dir.x;
-    Flt h2 = ( 1.0 - base.x) / dir.x;
+    const Flt h1 = (-1.0 - base.x) / dir.x;
+    const Flt h2 = ( 1.0 - base.x) / dir.x;
     if (h1 < h2) {
       near_h = h1; near_side = 0;
       far_h = h2; far_side = 1;

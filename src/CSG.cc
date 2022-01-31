@@ -1,6 +1,6 @@
 //
 // CSG.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "CSG.hh"
@@ -77,7 +77,7 @@ BBox Union::bound(const Matrix* t) const
 
 int Union::intersect(const Ray& r, HitList& hl) const
 {
-  HitList hl2(hl.cache(), hl.stats(), true);
+  HitList hl2{hl.cache(), hl.stats(), true};
   for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgUnion(this);
 
@@ -128,7 +128,7 @@ BBox Intersection::bound(const Matrix* t) const
 
 int Intersection::intersect(const Ray& r, HitList& hl) const
 {
-  HitList hl2(hl.cache(), hl.stats(), true);
+  HitList hl2{hl.cache(), hl.stats(), true};
   for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgIntersection(this, int(objects.size()));
 
@@ -163,7 +163,7 @@ BBox Difference::bound(const Matrix* t) const
 
 int Difference::intersect(const Ray& r, HitList& hl) const
 {
-  HitList hl2(hl.cache(), hl.stats(), true);
+  HitList hl2{hl.cache(), hl.stats(), true};
   for (auto& ob : objects) { ob->intersect(r, hl2); }
   hl2.csgDifference(this, objects[0].get());
 
