@@ -29,8 +29,8 @@ int Disc::init(Scene& s, const Transform* tr)
 
 BBox Disc::bound(const Matrix* t) const
 {
-  return BBox(planeBoundPoints, std::size(planeBoundPoints),
-              t ? *t : _trans.final());
+  return {planeBoundPoints, std::size(planeBoundPoints),
+          t ? *t : _trans.final()};
 }
 
 Flt Disc::hitCost(const HitCostInfo& hc) const
@@ -525,8 +525,8 @@ int Plane::init(Scene& s, const Transform* tr)
 
 BBox Plane::bound(const Matrix* t) const
 {
-  return BBox(planeBoundPoints, std::size(planeBoundPoints),
-              t ? *t : _trans.final());
+  return {planeBoundPoints, std::size(planeBoundPoints),
+          t ? *t : _trans.final()};
 }
 
 Flt Plane::hitCost(const HitCostInfo& hc) const
@@ -654,7 +654,7 @@ BBox Torus::bound(const Matrix* t) const
     { r1, -_radius,  r1}, { r1,  _radius, -r1},
     {-r1, -_radius,  r1}, { r1, -_radius, -r1},
     {-r1,  _radius, -r1}, {-r1, -_radius, -r1}};
-  return BBox(pt, std::size(pt), t ? *t : _trans.final());
+  return {pt, std::size(pt), t ? *t : _trans.final()};
 }
 
 Flt Torus::hitCost(const HitCostInfo& hc) const

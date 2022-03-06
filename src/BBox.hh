@@ -1,6 +1,6 @@
 //
 // BBox.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Axis-aligned bounding box
 //
@@ -15,7 +15,7 @@ class BBox
   Vec3 pmin, pmax;
 
   BBox() { reset(); }
-  BBox(const Vec3& pt) : pmin(pt), pmax(pt) { }
+  BBox(const Vec3& pt) : pmin{pt}, pmax{pt} { }
   BBox(const BBox& b1, const BBox& b2);
   BBox(const Vec3* pt_list, int pt_count);
   BBox(const Vec3* pt_list, int pt_count, const Matrix& t);

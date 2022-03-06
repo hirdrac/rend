@@ -1,6 +1,6 @@
 //
 // Bound.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Bound.hh"
@@ -138,7 +138,7 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 static Flt calcMergeCost(
   const Scene& s, const OptNode* n1, const OptNode* n2, Flt weight)
 {
-  const Flt w = BBox(n1->box, n2->box).weight();
+  const Flt w = BBox{n1->box, n2->box}.weight();
   const Flt m_cost1 =
     (n1->type == NODE_BOUND) ? treeCost(n1->child, w) : n1->cost(w);
   const Flt m_cost2 =
@@ -150,7 +150,7 @@ static OptNode* mergeOptNodes(const Scene& s, OptNode* node1, OptNode* node2)
 {
   // Create new bounding box
   OptNode* b = new OptNode(s.hitCosts.bound);
-  b->box = BBox(node1->box, node2->box);
+  b->box = BBox{node1->box, node2->box};
 
   OptNode* n1 = node1;
   if (node1->type == NODE_BOUND) {

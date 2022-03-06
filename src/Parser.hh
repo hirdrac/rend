@@ -64,7 +64,7 @@ class SceneParser
 
   [[nodiscard]] std::string fileName(int file_id) const {
     auto itr = _files.find(file_id);
-    return (itr == _files.end()) ? std::string("<unknown>") : itr->second;
+    return (itr == _files.end()) ? std::string{"<unknown>"} : itr->second;
   }
 
   template<typename... Args>
