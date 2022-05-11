@@ -1,6 +1,6 @@
 #
-# Makefile.mk - revision 42 (2021/6/4)
-# Copyright (C) 2021 Richard Bradley
+# Makefile.mk - revision 43 (2022/5/9)
+# Copyright (C) 2022 Richard Bradley
 #
 # Additional contributions from:
 #   Stafford Horne (github:stffrdhrn)
@@ -82,7 +82,8 @@
 #  OPT_LEVEL_DEBUG optimization level for debug builds
 #  SUBSYSTEM       subsystem value for Windows binary builds
 #  WARN            C/C++ compile warning flags (-W optional)
-#  WARN_C          C specific warnings (WARN setting used for C code if unset)
+#  WARN_C          C specific warnings (defaults to WARN or C specific list)
+#  WARN_CXX        C++ specific warnings (defaults to WARN or C++ specific list)
 #  PACKAGES        list of packages for pkg-config
 #  PACKAGES_TEST   additional packages for all tests
 #  INCLUDE         includes needed not covered by pkg-config (-I optional)
@@ -177,10 +178,11 @@ OPT_LEVEL ?= 3
 OPT_LEVEL_DEBUG ?= g
 ifndef WARN
   override _common_warn := all extra missing-include-dirs no-unused-parameter
-  WARN = $(_common_warn) non-virtual-dtor overloaded-virtual $(_$(COMPILER)_warn)
-  WARN_C ?= $(_common_warn) write-strings $(_$(COMPILER)_warn)
+  WARN_C ?= $(_common_warn) write-strings $(_$(COMPILER)_warn) $(WARN_EXTRA)
+  WARN_CXX ?= $(_common_warn) non-virtual-dtor overloaded-virtual $(_$(COMPILER)_warn) $(WARN_EXTRA)
 else
-  WARN_C ?= $(WARN)
+  WARN_C ?= $(WARN) $(WARN_EXTRA)
+  WARN_CXX ?= $(WARN) $(WARN_EXTRA)
 endif
 PACKAGES ?=
 PACKAGES_TEST ?=
@@ -213,8 +215,8 @@ override SFX := SFX
 override BUILD_TMP := BUILD_TMP
 override LIBPREFIX := lib
 
-# apply *_EXTRA setting values
-$(foreach x,WARN WARN_C PACKAGES PACKAGES_TEST INCLUDE LIBS LIBS_TEST DEFINE OPTIONS FLAGS FLAGS_TEST FLAGS_RELEASE FLAGS_DEBUG FLAGS_PROFILE,\
+# apply *_EXTRA setting values (WARN_EXTRA handled above)
+$(foreach x,WARN_C WARN_CXX PACKAGES PACKAGES_TEST INCLUDE LIBS LIBS_TEST DEFINE OPTIONS FLAGS FLAGS_TEST FLAGS_RELEASE FLAGS_DEBUG FLAGS_PROFILE,\
   $(if $($x_EXTRA),$(eval override $x += $($x_EXTRA))))
 
 
@@ -258,7 +260,6 @@ override _gcc_cxx := g++
 override _gcc_cc := gcc
 override _gcc_as := gcc -x assembler-with-cpp
 override _gcc_ar := gcc-ar
-override _gcc_ranlib := gcc-ranlib
 override _gcc_warn := shadow=local
 override _gcc_modern := -Wzero-as-null-pointer-constant -Wregister -Wsuggest-override -Wsuggest-final-methods -Wsuggest-final-types
 
@@ -266,7 +267,6 @@ override _clang_cxx := clang++
 override _clang_cc := clang
 override _clang_as := clang -x assembler-with-cpp
 override _clang_ar := llvm-ar
-override _clang_ranlib := llvm-ranlib
 override _clang_warn := shadow
 override _clang_modern := -Wzero-as-null-pointer-constant -Wregister -Winconsistent-missing-override
 
@@ -307,7 +307,6 @@ CXX = $(CROSS_COMPILE)$(or $(_$(COMPILER)_cxx),c++)
 CC = $(CROSS_COMPILE)$(or $(_$(COMPILER)_cc),cc)
 AS = $(CROSS_COMPILE)$(or $(_$(COMPILER)_as),as)
 AR = $(CROSS_COMPILE)$(or $(_$(COMPILER)_ar),ar)
-RANLIB = $(CROSS_COMPILE)$(or $(_$(COMPILER)_ranlib),ranlib)
 
 override _c_ptrn := %.c
 override _c_stds := c90 gnu90 c99 gnu99 c11 gnu11 c17 gnu17 c18 gnu18 c2x gnu2x
@@ -671,7 +670,7 @@ else ifneq ($(_build_env),)
 
   override _define := $(call _format_define,$(DEFINE))
   override _include := $(call _format_include,$(INCLUDE))
-  override _warn := $(call _format_warn,$(WARN))
+  override _warn := $(call _format_warn,$(WARN_CXX))
   override _warn_c := $(call _format_warn,$(WARN_C))
 
   # setup compile flags for each build path
@@ -1016,7 +1015,7 @@ override _do_link = $(if $(filter cxx,$(_$1_lang)),$(CXX) $(_cxxflags_$(_$1_buil
 # static library build
 override define _make_static_lib  # <1:label>
 override _$1_all_objs := $$(addprefix $$(BUILD_DIR)/$$(_$1_build)/,$$(_$1_src_objs))
-override _$1_link_cmd := $$(AR) rc '$$(_$1_name)' $$(strip $$(_$1_all_objs) $$(_$1_other_objs))
+override _$1_link_cmd := cd '$$(BUILD_DIR)/$$(_$1_build)'; $$(AR) rcs '../../$$(_$1_name)' $$(strip $$(_$1_src_objs) $$(addprefix ../../,$$(_$1_other_objs)))
 override _$1_trigger := $$(BUILD_DIR)/.$$(ENV)-cmd-$1-static
 $$(eval $$(call _rebuild_check_var,$$$$(_$1_trigger),_$1_link_cmd))
 
@@ -1030,7 +1029,6 @@ $$(_$1_name): $$(_$1_all_objs) $$(_$1_other_objs) $$(_$1_trigger)
 	$$(call _make_path,$$@)
 	@-$$(RM) "$$@"
 	$$(_$1_link_cmd)
-	$$(RANLIB) '$$@'
 	@echo "$$(_msgInfo)Static library '$$@' built$$(_end)"
 endef
 
