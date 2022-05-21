@@ -1,5 +1,5 @@
 # rend Makefile
-# Copyright (C) 2021 Richard Bradley
+# Copyright (C) 2022 Richard Bradley
 
 base_src :=\
   BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc Ray.cc\
@@ -23,7 +23,8 @@ SOURCE_DIR = src
 STANDARD = c++17
 PACKAGES = readline libpng
 OPTIONS = pthread lto modern_c++
-WARN_EXTRA = extra-semi fatal-errors conversion cast-align cast-qual
+WARN_EXTRA = fatal-errors
+WARN_CXX_EXTRA = extra-semi conversion cast-align cast-qual
 FLAGS = -march=native -ffast-math -fno-plt
 #FLAGS_RELEASE = -DNDEBUG
 
