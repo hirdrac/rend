@@ -164,12 +164,15 @@ Color FrameBuffer::value(int x, int y) const
 
 int FrameBuffer::range(float& min_val, float& max_val) const
 {
+  min_val = max_val = 0;
   if (!_buffer) { return -1; }
 
-  float low = 3.4e38f, high = 0.0f;
+  float low = _buffer[0], high = _buffer[0];
+  const int width = _width * CHANNELS;
   for (int y = 0; y < _height; ++y) {
     const float* ptr = bufferRow(y);
-    for (int x = 0; x < (_width * CHANNELS); ++x) {
+    const float* end = ptr + width;
+    while (ptr != end) {
       const float v = *ptr++;
       if (v < low)  { low = v; }
       if (v > high) { high = v; }
