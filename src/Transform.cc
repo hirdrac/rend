@@ -1,6 +1,6 @@
 //
 // Transform.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Transform.hh"
@@ -23,7 +23,7 @@ int Transform::init(const Transform* parent)
 
 void Transform::clear()
 {
-  base.setIdentity();
-  _final.setIdentity();
-  _finalInv.setIdentity();
+  base = INIT_IDENTITY;
+  _final = INIT_IDENTITY;
+  _finalInv = INIT_IDENTITY;
 }

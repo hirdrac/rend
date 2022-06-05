@@ -1,6 +1,6 @@
 //
 // Matrix3D.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
@@ -8,6 +8,7 @@
 #pragma once
 #include "Vector3D.hh"
 #include "MathUtility.hh"
+#include "InitType.hh"
 #include <ostream>
 
 
@@ -28,8 +29,13 @@ class Matrix4x4
   using value_type = T;
   using size_type = unsigned int;
 
+  Matrix4x4(Uninitialized_t) { }
 
-  Matrix4x4() = default;
+  constexpr Matrix4x4(ZeroInit_t)
+    : Matrix4x4{0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0} { }
+  constexpr Matrix4x4(IdentityInit_t)
+    : Matrix4x4{1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1} { }
+
   constexpr Matrix4x4(T a, T b, T c, T d, T e, T f, T g, T h,
                       T i, T j, T k, T l, T m, T n, T o, T p)
     : _val{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p} { }
@@ -60,8 +66,6 @@ class Matrix4x4
   [[nodiscard]] static constexpr size_type size() noexcept { return 16; }
   [[nodiscard]] constexpr T* data() noexcept { return _val; }
   [[nodiscard]] constexpr const T* data() const noexcept { return _val; }
-
-  constexpr void setIdentity();
 
   constexpr void setTranslation(T tx, T ty, T tz);
   constexpr void setTranslation(const Vector3<T>& v) {
@@ -133,7 +137,7 @@ template<typename T>
 [[nodiscard]] constexpr Matrix4x4<T,ROW_MAJOR> operator*(
   const Matrix4x4<T,ROW_MAJOR>& a, const Matrix4x4<T,ROW_MAJOR>& b)
 {
-  Matrix4x4<T,ROW_MAJOR> m;
+  Matrix4x4<T,ROW_MAJOR> m{UNINITIALIZED};
   //for (unsigned int i = 0; i != 16; i += 4) {
   //  m[i]   = (a[i]*b[0]) + (a[i+1]*b[4]) + (a[i+2]*b[8])  + (a[i+3]*b[12]);
   //  m[i+1] = (a[i]*b[1]) + (a[i+1]*b[5]) + (a[i+2]*b[9])  + (a[i+3]*b[13]);
@@ -154,7 +158,7 @@ template<typename T>
 [[nodiscard]] constexpr Matrix4x4<T,COLUMN_MAJOR> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& a, const Matrix4x4<T,COLUMN_MAJOR>& b)
 {
-  Matrix4x4<T,COLUMN_MAJOR> m;
+  Matrix4x4<T,COLUMN_MAJOR> m{UNINITIALIZED};
   //for (unsigned int i = 0; i != 16; i += 4) {
   //  m[i]   = (a[0]*b[i]) + (a[4]*b[i+1]) + (a[8]*b[i+2])  + (a[12]*b[i+3]);
   //  m[i+1] = (a[1]*b[i]) + (a[5]*b[i+1]) + (a[9]*b[i+2])  + (a[13]*b[i+3]);
@@ -219,15 +223,6 @@ inline std::ostream& operator<<(
 
 
 // **** Inline Implementations ****
-template<typename T, MatrixOrderType MOT>
-constexpr void Matrix4x4<T,MOT>::setIdentity()
-{
-  _val[0]  = 1; _val[1]  = 0; _val[2]  = 0; _val[3]  = 0;
-  _val[4]  = 0; _val[5]  = 1; _val[6]  = 0; _val[7]  = 0;
-  _val[8]  = 0; _val[9]  = 0; _val[10] = 1; _val[11] = 0;
-  _val[12] = 0; _val[13] = 0; _val[14] = 0; _val[15] = 1;
-}
-
 template<typename T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setTranslation(T tx, T ty, T tz)
 {
