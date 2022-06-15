@@ -1,11 +1,9 @@
 //
 // Renderer.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #pragma once
-#include "Intersect.hh"
-#include "Stats.hh"
 #include "JobState.hh"
 #include "Types.hh"
 #include <condition_variable>
