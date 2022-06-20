@@ -1,6 +1,6 @@
 //
 // main.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // startup for rend
 //
@@ -317,7 +317,7 @@ int ErrorUsage(char** argv)
 // **** Main Function ****
 int main(int argc, char** argv)
 {
-  println("Rend v0.1 (alpha) - Copyright (C) 2021 Richard Bradley");
+  println("Rend v0.1 (alpha) - Copyright (C) 2022 Richard Bradley");
 
   std::string fileLoad, imageSave;
   bool interactive = false;
