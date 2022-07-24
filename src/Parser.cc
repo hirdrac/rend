@@ -76,7 +76,7 @@ int SceneParser::includeFile(
       "Circular include error", src_fileID, src_line, src_column};
   }
 
-  std::ifstream fs(file);
+  std::ifstream fs{file};
   if (!fs) {
     throw ParseError{
       "Cannot open file '"+file+"'", src_fileID, src_line, src_column};
@@ -86,7 +86,7 @@ int SceneParser::includeFile(
   _files[++_lastID] = file;
   const int baseID = _lastID;
 
-  Tokenizer tk(fs);
+  Tokenizer tk{fs};
   while (AstNode* n = nextBlock(tk, baseID, 0)) {
     nodeList.addToTail(n);
   }
@@ -99,26 +99,25 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
 {
   SList<AstNode> nodeList;
   for (;;) {
-    int line = 0, column = 0;
-    std::string token;
-    const TokenType type = tk.getToken(token, line, column);
+    Token t;
+    const TokenType type = tk.getToken(t);
     if (type == TOKEN_EOF) {
       if (depth > 0) {
-        throw ParseError{"Unexpected end of file", fileID, line, column};
+        throw ParseError{"Unexpected end of file", fileID, t.line, t.column};
       }
       break; // done with parse
     } else if (type == TOKEN_RPARAN) {
       break; // end of block
     }
 
-    auto n = std::make_unique<AstNode>(token);
+    auto n = std::make_unique<AstNode>(t.value);
     if (type == TOKEN_LPARAN) {
       n->child = nextBlock(tk, fileID, depth + 1);
       if (evalSpecialOp(n->child, nodeList, depth)) { continue; }
       n->type = AST_LIST;
 
     } else if (type == TOKEN_SYMBOL) {
-      ItemFn fn = FindItemFn(token);
+      ItemFn fn = FindItemFn(t.value);
       if (fn) {
         n->type = AST_ITEM;
         n->ptr = (void*)fn;
@@ -130,8 +129,8 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
     }
 
     n->file_id = fileID;
-    n->line = line;
-    n->column = column;
+    n->line = t.line;
+    n->column = t.column;
     nodeList.addToTail(n.release());
   }
 

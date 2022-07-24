@@ -3,6 +3,8 @@
 // Copyright (C) 2022 Richard Bradley
 //
 
+// TODO: add utf8/unicode support
+
 #include "Tokenizer.hh"
 #include <cctype>
 
@@ -26,13 +28,13 @@ void Tokenizer::init(std::istream& input)
   _nextChar = _input->get();
 }
 
-TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
+TokenType Tokenizer::getToken(Token& tk)
 {
   for (;;) {
     // start of token read
     while (std::isspace(_nextChar)) { getChar(); }
-    line = _line;
-    column = _column;
+    tk.line = _line;
+    tk.column = _column;
 
     int c = getChar();
     if (c == '\0') {
@@ -41,10 +43,10 @@ TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
       const int quote = c;
       c = getChar();
       if (c != quote) {
-        value = char(c);
+        tk.value = char(c);
         // read rest of string
         while (_nextChar != quote && _nextChar != '\0') {
-          value += char(getChar());
+          tk.value += char(getChar());
         }
         getChar(); // skip ending quote
       }
@@ -69,7 +71,7 @@ TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
       continue; // restart token read
     }
 
-    value = char(c);
+    tk.value = char(c);
     if (c == '(') { return TOKEN_LPARAN; }
     else if (c == ')') { return TOKEN_RPARAN; }
 
@@ -77,11 +79,11 @@ TokenType Tokenizer::getToken(std::string& value, int& line, int& column)
     if (std::isalnum(c) || (c == '-') || (c == '.') || (c == '_')) {
       while (std::isalnum(_nextChar) || (_nextChar == '-')
              || (_nextChar == '.') || (_nextChar == '_')) {
-        value += char(getChar());
+        tk.value += char(getChar());
       }
     }
 
-    return isNumber(value) ? TOKEN_NUMBER : TOKEN_SYMBOL;
+    return isNumber(tk.value) ? TOKEN_NUMBER : TOKEN_SYMBOL;
   }
 }
 

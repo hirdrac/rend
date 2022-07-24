@@ -1,6 +1,6 @@
 //
 // Tokenizer.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #pragma once
@@ -18,6 +18,14 @@ enum TokenType {
   TOKEN_RPARAN,
 };
 
+struct Token
+{
+  std::string value;
+  int line;
+  int column;
+};
+
+
 class Tokenizer
 {
  public:
@@ -25,7 +33,7 @@ class Tokenizer
   Tokenizer(std::istream& input) { init(input); }
 
   void init(std::istream& input);
-  [[nodiscard]] TokenType getToken(std::string& value, int& line, int& column);
+  [[nodiscard]] TokenType getToken(Token& token);
 
  private:
   std::istream* _input = nullptr;
