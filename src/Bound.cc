@@ -12,16 +12,14 @@
 #include "Print.hh"
 #include "Scene.hh"
 #include "ListUtility.hh"
-#include <sstream>
+#include "StringUtility.hh"
 #include <vector>
 
 
 // **** Bound Class ****
 std::string Bound::desc() const
 {
-  std::ostringstream os;
-  os << "<Bound " << objects.size() << '>';
-  return os.str();
+  return concat("<Bound ", objects.size(), '>');
 }
 
 int Bound::init(Scene& s, const Transform* tr)

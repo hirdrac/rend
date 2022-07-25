@@ -1,21 +1,19 @@
 //
 // Shader.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Shader.hh"
 #include "Scene.hh"
 #include "Transform.hh"
-#include <sstream>
+#include "StringUtility.hh"
 #include <cassert>
 
 
 // **** ShaderColor Class ****
 std::string ShaderColor::desc() const
 {
-  std::ostringstream os;
-  os << "<RGB " << _color << '>';
-  return os.str();
+  return concat("<RGB ", _color, '>');
 }
 
 Color ShaderColor::evaluate(

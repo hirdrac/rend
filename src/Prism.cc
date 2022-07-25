@@ -1,6 +1,6 @@
 //
 // Prism.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Prism.hh"
@@ -8,14 +8,13 @@
 #include "BBox.hh"
 #include "Stats.hh"
 #include "Print.hh"
-#include <sstream>
+#include "StringUtility.hh"
 
 
+// **** Prism class ****
 std::string Prism::desc() const
 {
-  std::ostringstream os;
-  os << "<Prism-" << _sides << ">";
-  return os.str();
+  return concat("<Prism-", _sides, '>');
 }
 
 int Prism::init(Scene& s, const Transform* tr)
