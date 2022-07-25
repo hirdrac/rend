@@ -11,6 +11,7 @@
 #include "CSG.hh"
 #include "Print.hh"
 #include "Scene.hh"
+#include "ListUtility.hh"
 #include <sstream>
 #include <vector>
 
@@ -101,6 +102,8 @@ struct OptNode
   OptNode(OptNodeType t, const ObjectPtr& ob, Flt cost)
     : object{ob}, box{ob->bound(nullptr)}, objHitCost{cost}, type{t} { }
 
+  ~OptNode() { KillNodes(child); }
+
   // Member Functions
   Flt cost(Flt weight) const
   {
@@ -112,19 +115,6 @@ struct OptNode
 
 
 // **** Functions ****
-static void killTree(OptNode* node_list)
-{
-  while (node_list) {
-    OptNode* next = node_list->next;
-    if (node_list->child) {
-      killTree(node_list->child);
-    }
-
-    delete node_list;
-    node_list = next;
-  }
-}
-
 static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 {
   Flt total = 0;
@@ -149,20 +139,20 @@ static Flt calcMergeCost(
 static OptNode* mergeOptNodes(const Scene& s, OptNode* node1, OptNode* node2)
 {
   // Create new bounding box
-  OptNode* b = new OptNode(s.hitCosts.bound);
+  OptNode* b = new OptNode{s.hitCosts.bound};
   b->box = BBox{node1->box, node2->box};
 
   OptNode* n1 = node1;
   if (node1->type == NODE_BOUND) {
     // remove bound node
-    n1 = node1->child;
+    n1 = std::exchange(node1->child, nullptr);
     delete node1;
   }
 
   OptNode* n2 = node2;
   if (node2->type == NODE_BOUND) {
     // remove bound node
-    n2 = node2->child;
+    n2 = std::exchange(node2->child, nullptr);
     delete node2;
   }
 
@@ -180,10 +170,10 @@ static OptNode* makeOptNodeList(
   for (auto& ob : o_list) {
     OptNode* list = nullptr;
     if (auto uPtr = dynamic_cast<const Union*>(ob.get()); uPtr) {
-      list = new OptNode(NODE_UNION, ob, uPtr->hitCost(s.hitCosts));
+      list = new OptNode{NODE_UNION, ob, uPtr->hitCost(s.hitCosts)};
       list->child = makeOptNodeList(s, uPtr->children());
     } else if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
-      list = new OptNode(NODE_OBJECT, ob, pPtr->hitCost(s.hitCosts));
+      list = new OptNode{NODE_OBJECT, ob, pPtr->hitCost(s.hitCosts)};
     } else {
       // assume group - ignore it and just process children
       list = makeOptNodeList(s, ob->children());
@@ -214,7 +204,7 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
     const Flt cost2 = (weight * bound_cost) + n->cost(n->box.weight());
     if (cost1 > cost2) {
       // Put object into bound (alone)
-      OptNode* b = new OptNode(bound_cost);
+      OptNode* b = new OptNode{bound_cost};
       b->child = n;
       b->box   = n->box;
       b->currentCost = cost2;
@@ -298,26 +288,41 @@ static int convertNodeList(
   return bound_count;
 }
 
+
+class OptNodeTree
+{
+ public:
+  OptNodeTree(const Scene& s, const std::vector<ObjectPtr>& o_list) {
+    _head = makeOptNodeList(s, o_list);
+    BBox box{s.eye};
+    for (OptNode* n = _head; n != nullptr; n = n->next) { box.fit(n->box); }
+    _weight = box.weight();
+  }
+
+  ~OptNodeTree() { KillNodes(_head); }
+
+  [[nodiscard]] explicit operator bool() const { return _head != nullptr; }
+  [[nodiscard]] Flt cost() const { return treeCost(_head, _weight); }
+  void optimize(const Scene& s) { optimizeOptNodeList(s, _head, _weight); }
+  int makeBoundList(std::vector<ObjectPtr>& bound_list) {
+    return convertNodeList(_head, bound_list, nullptr); }
+
+ private:
+  OptNode* _head = nullptr;
+  Flt _weight = 0;
+};
+
+
 int MakeBoundList(const Scene& s, const std::vector<ObjectPtr>& o_list,
                   std::vector<ObjectPtr>& bound_list)
 {
-  OptNode* node_list = makeOptNodeList(s, o_list);
-  if (!node_list) {
-    return 0;
-  }
+  OptNodeTree tree{s, o_list};
+  if (!tree) { return 0; }
 
-  BBox box{s.eye};
-  for (OptNode* n = node_list; n != nullptr; n = n->next) {
-    box.fit(n->box);
-  }
-
-  const Flt scene_weight = box.weight();
-  println("Old tree cost: ", treeCost(node_list, scene_weight));
-  optimizeOptNodeList(s, node_list, scene_weight);
-  println("New tree cost: ", treeCost(node_list, scene_weight));
+  println("Old tree cost: ", tree.cost());
+  tree.optimize(s);
+  println("New tree cost: ", tree.cost());
 
   bound_list.clear();
-  const int bound_count = convertNodeList(node_list, bound_list, nullptr);
-  killTree(node_list);
-  return bound_count;
+  return tree.makeBoundList(bound_list);
 }
