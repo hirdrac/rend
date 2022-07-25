@@ -1,6 +1,6 @@
 //
 // Renderer.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Renderer.hh"
@@ -49,7 +49,7 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   const Flt ss = std::tan(DegToRad(s->fov * .5)) * focalLen;
   const Flt screenHeight = ss;
   const Flt screenWidth = ss * (imgW / imgH);
-  // FIXME - assumes width > height for fov calc
+  // FIXME: assumes width > height for fov calc
   _pixelX = (vside * screenWidth) / (imgW * .5);
   _pixelY = (vtop * screenHeight) / (imgH * .5);
   _vcenter = s->eye + (_vnormal * focalLen);
@@ -150,7 +150,7 @@ void Renderer::startJobs()
   const int inc_y = std::clamp(height / num, 1, 16);
   const int max_y = _scene->region_max[1];
   for (int y = _scene->region_min[1]; y <= max_y; y += inc_y) {
-    int yend = std::min(y + inc_y - 1, max_y);
+    const int yend = std::min(y + inc_y - 1, max_y);
     _tasks.push_back({_scene->region_min[0], y, _scene->region_max[0], yend});
   }
 
@@ -161,7 +161,7 @@ void Renderer::startJobs()
   for (auto& j : _jobs) {
     j.state.stats = {};
     j.halt = false;
-    j.jobThread = std::thread(&Renderer::jobMain, this, &j);
+    j.jobThread = std::thread{&Renderer::jobMain, this, &j};
   }
 }
 
@@ -191,7 +191,7 @@ void Renderer::jobMain(Job* j)
   Task t;
   while (!j->halt) {
     {
-      std::lock_guard lock(_tasksMutex);
+      std::lock_guard lock{_tasksMutex};
       if (_tasks.empty()) {
 	j->halt = true;
 	_tasksCV.notify_one();

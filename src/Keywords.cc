@@ -27,7 +27,7 @@
 
 
 // **** Helper Functions ****
-static Transform* findTrans(SceneItem* p)
+[[nodiscard]] static Transform* findTrans(SceneItem* p)
 {
   if (!p) { return nullptr; }
   Transform* t = p->trans();
@@ -35,7 +35,7 @@ static Transform* findTrans(SceneItem* p)
   return t;
 }
 
-static bool notDone(SceneParser& sp, AstNode* n)
+[[nodiscard]] static bool notDone(SceneParser& sp, AstNode* n)
 {
   if (n == nullptr) { return false; }
 

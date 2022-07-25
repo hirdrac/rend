@@ -1,8 +1,8 @@
 //
 // Scene.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
-// Definition of scene class
+// storage class for all scene information
 //
 
 #pragma once
@@ -16,14 +16,11 @@
 
 
 // **** Types ****
-class SceneItem;
 class Color;
 struct JobState;
 class Ray;
 
 
-// Scene class
-//  storage class for all scene information
 class Scene
 {
  public:
@@ -78,14 +75,17 @@ class Scene
   int addShader(const ShaderPtr& sh, SceneItemFlag flag);
   int init();
 
-  Color traceRay(JobState& js, const Ray& r) const;
-  bool castShadowRay(JobState& js, const Ray& r) const;
+  [[nodiscard]] Color traceRay(JobState& js, const Ray& r) const;
+  [[nodiscard]] bool castShadowRay(JobState& js, const Ray& r) const;
 
-  const std::vector<ObjectPtr>& objects() const { return _objects; }
-  const std::vector<ObjectPtr>& optObjects() const { return _optObjects; }
-  const std::vector<LightPtr>& lights() const { return _lights; }
+  [[nodiscard]] const std::vector<ObjectPtr>& objects() const {
+    return _objects; }
+  [[nodiscard]] const std::vector<ObjectPtr>& optObjects() const {
+    return _optObjects; }
+  [[nodiscard]] const std::vector<LightPtr>& lights() const {
+    return _lights; }
 
-  int samplesPerPixel() const {
+  [[nodiscard]] int samplesPerPixel() const {
     const bool multiSample = IsPositive(jitter) || IsPositive(aperture);
     return (std::max(sample_x, 1) * std::max(sample_y, 1))
       * (multiSample ? std::max(samples, 1) : 1);
