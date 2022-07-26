@@ -11,8 +11,6 @@
 
 
 // **** Object Class ****
-const std::vector<ObjectPtr> Object::_emptyList;
-
 int Object::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);

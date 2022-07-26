@@ -1,6 +1,6 @@
 //
 // Object.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Definition of base object class
 //
@@ -41,7 +41,7 @@ class Object : public SceneItem
   ShaderPtr _shader;
 
  private:
-  static const std::vector<ObjectPtr> _emptyList;
+  inline static const std::vector<ObjectPtr> _emptyList;
 };
 
 

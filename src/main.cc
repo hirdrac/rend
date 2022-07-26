@@ -73,7 +73,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     return -1;
   }
 
-  int samples = s.samplesPerPixel();
+  const int samples = s.samplesPerPixel();
   println("Rendering ", s.image_width, "x", s.image_height, " image (",
           samples, ((samples == 1) ? " sample" : " samples"), "/pixel)");
   Timer t;
@@ -97,7 +97,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     return -1;
   }
 
-  auto setupTime = t.elapsedSec();
+  const auto setupTime = t.elapsedSec();
   if (ren.jobs() <= 0) {
     // render on main thread
     JobState js;
@@ -121,7 +121,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   }
 
   t.stop();
-  auto totalTime = t.elapsedSec();
+  const auto totalTime = t.elapsedSec();
   println("\rTotal Time: ", totalTime, "  (setup ", setupTime,
           ", rendering ", (totalTime - setupTime), ")");
   return 0;
@@ -134,7 +134,7 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
     return -1;
   }
 
-  auto x = file.rfind('.');
+  const auto x = file.rfind('.');
   std::string ext;
   if (x != std::string::npos) { ext = file.substr(x); }
 
@@ -145,7 +145,7 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
     return -1;
   }
 
-  std::string fn = file.substr(0,x) + ext;
+  const std::string fn = file.substr(0,x) + ext;
   println("Saving image to '", fn, "'");
 
   int error = -1;
@@ -208,7 +208,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
   }
 
   add_history(buffer.get());
-  std::istringstream input(buffer.get());
+  std::istringstream input{buffer.get()};
 
   std::string arg;
   if (!(input >> arg)) {
@@ -235,7 +235,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
     if (!(input >> arg)) {
       println_err("Number of jobs required");
     } else {
-      int j = std::stoi(arg);
+      const int j = std::stoi(arg);
       if (j < 0) {
 	println_err("Invalid number of jobs '", arg, "'");
       } else {

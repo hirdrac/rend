@@ -1,8 +1,8 @@
 //
 // Bound.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
-// Defintion of Bound object class and
+// Definition of Bound object class and
 // bounding box hierarchy function
 //
 
