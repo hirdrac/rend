@@ -10,7 +10,6 @@
 #include <fstream>
 #include <sstream>
 #include <memory>
-#include <cctype>
 
 namespace {
   struct ParseError {
@@ -117,7 +116,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
       n->type = AST_LIST;
 
     } else if (type == TOKEN_SYMBOL) {
-      ItemFn fn = FindItemFn(t.value);
+      const ItemFn fn = FindItemFn(t.value);
       if (fn) {
         n->type = AST_ITEM;
         n->ptr = (void*)fn;
@@ -188,7 +187,7 @@ int SceneParser::processNode(
 
     n = n->child;
     if (n->type == AST_ITEM) {
-      int er = ItemFn(n->ptr)(*this, s, parent, n->next, flag);
+      const int er = ItemFn(n->ptr)(*this, s, parent, n->next, flag);
       if (er) { reportError(n, "Error with ", n->desc()); }
       return er;
     }
