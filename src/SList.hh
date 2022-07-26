@@ -140,8 +140,7 @@ void SList<type>::addAfterNode(type* node, type* item)
     addToTail(item);
   } else {
     //assert(item != nullptr);
-    type* end = LastNode(item);
-    end->next = node->next;
+    LastNode(item)->next = node->next;
     node->next = item;
   }
 }
@@ -179,8 +178,7 @@ template<typename type>
 type* SList<type>::extractNodes()
 {
   type* list = _head;
-  _head = nullptr;
-  _tail = nullptr;
+  _head = _tail = nullptr;
   return list;
 }
 

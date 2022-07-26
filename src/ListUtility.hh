@@ -1,6 +1,6 @@
 //
 // ListUtility.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // linked list node template classes & support functions
 //
@@ -37,6 +37,7 @@ void KillNodes(type* list)
 template<typename type>
 [[nodiscard]] type* LastNode(type* list)
 {
-  if (list) { while (list->next) { list = list->next; } }
+  //assert(item != nullptr);
+  while (list->next) { list = list->next; }
   return list;
 }

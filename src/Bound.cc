@@ -155,8 +155,7 @@ static OptNode* mergeOptNodes(const Scene& s, OptNode* node1, OptNode* node2)
   }
 
   b->child = n1;
-  while (n1->next) { n1 = n1->next; }
-  n1->next = n2;
+  LastNode(n1)->next = n2;
   return b;
 }
 
@@ -178,8 +177,8 @@ static OptNode* makeOptNodeList(
       if (!list) { continue; }
     }
 
-    if (tail) { tail->next = list; } else { node_list = tail = list; }
-    while (tail->next) { tail = tail->next; }
+    if (tail) { tail->next = list; } else { node_list = list; }
+    tail = LastNode(list);
   }
 
   return node_list;
