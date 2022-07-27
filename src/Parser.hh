@@ -1,6 +1,6 @@
 //
 // Parser.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Scene description file parser
 //
@@ -62,9 +62,10 @@ class SceneParser
   int getInt(AstNode*& n, int& val) const;
   int getVec3(AstNode*& n, Vec3& v) const;
 
-  [[nodiscard]] std::string fileName(int file_id) const {
-    auto itr = _files.find(file_id);
-    return (itr == _files.end()) ? std::string{"<unknown>"} : itr->second;
+  [[nodiscard]] const std::string& fileName(int file_id) const {
+    static const std::string unknown{"<unknown>"};
+    const auto itr = _files.find(file_id);
+    return (itr == _files.end()) ? unknown : itr->second;
   }
 
   template<typename... Args>
