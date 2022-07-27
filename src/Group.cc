@@ -7,11 +7,13 @@
 #include "Scene.hh"
 #include "BBox.hh"
 #include "Light.hh"
+#include "RegisterObject.hh"
 #include <cassert>
 
 
 // **** Group Class ****
-// SceneItem Functions
+REGISTER_OBJECT_CLASS(Group,"group");
+
 int Group::addObject(const ObjectPtr& ob)
 {
   assert(ob != nullptr);
@@ -27,7 +29,6 @@ int Group::addLight(const LightPtr& lt)
   return 0;
 }
 
-// Object Functions
 int Group::init(Scene& s, const Transform* tr)
 {
   for (auto& lt : _lights) {

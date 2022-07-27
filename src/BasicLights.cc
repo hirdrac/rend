@@ -1,14 +1,17 @@
 //
 // BasicLights.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "BasicLights.hh"
 #include "Shader.hh"
 #include "Scene.hh"
+#include "RegisterLight.hh"
 
 
 // **** Sun Class ****
+REGISTER_LIGHT_CLASS(Sun,"sun");
+
 int Sun::init(Scene& s)
 {
   _finalDir = UnitVec(dir);
@@ -43,6 +46,8 @@ bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
 
 
 // **** PointLight Class ****
+REGISTER_LIGHT_CLASS(PointLight,"light");
+
 int PointLight::init(Scene& s)
 {
   _finalPos = _trans.pointLocalToGlobal({0,0,0}, 0);
@@ -79,6 +84,8 @@ bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
 
 
 // **** SpotLight Class ****
+REGISTER_LIGHT_CLASS(SpotLight,"spotlight");
+
 int SpotLight::init(Scene& s)
 {
   _finalPos = _trans.pointLocalToGlobal({0,0,0}, 0);
@@ -89,6 +96,6 @@ int SpotLight::init(Scene& s)
 bool SpotLight::luminate(JobState& js, const Scene& s, const Ray& r,
                          const EvaluatedHit& eh, LightResult& result) const
 {
-  // FIX - finish SpotLight::luminate()
+  // FIXME: finish SpotLight::luminate()
   return false;
 }

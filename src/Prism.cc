@@ -9,9 +9,12 @@
 #include "Stats.hh"
 #include "Print.hh"
 #include "StringUtility.hh"
+#include "RegisterObject.hh"
 
 
-// **** Prism class ****
+// **** Prism Class ****
+REGISTER_OBJECT_CLASS(Prism,"prism");
+
 std::string Prism::desc() const
 {
   return concat("<Prism-", _sides, '>');

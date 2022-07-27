@@ -9,6 +9,7 @@
 #include "HitCostInfo.hh"
 #include "BBox.hh"
 #include "Print.hh"
+#include "RegisterObject.hh"
 #include <cassert>
 
 
@@ -60,6 +61,8 @@ Flt CSG::hitCost(const HitCostInfo& hc) const
 
 
 // **** Union Class ****
+REGISTER_OBJECT_CLASS(Union,"union");
+
 BBox Union::bound(const Matrix* t) const
 {
   BBox b;
@@ -97,6 +100,8 @@ int Union::intersect(const Ray& r, HitList& hl) const
 
 
 // **** Intersection Class ****
+REGISTER_OBJECT_CLASS(Intersection,"intersect");
+
 BBox Intersection::bound(const Matrix* t) const
 {
   assert(!objects.empty());
@@ -148,6 +153,8 @@ int Intersection::intersect(const Ray& r, HitList& hl) const
 
 
 // **** Difference Class ****
+REGISTER_OBJECT_CLASS(Difference,"difference");
+
 BBox Difference::bound(const Matrix* t) const
 {
   assert(!objects.empty());

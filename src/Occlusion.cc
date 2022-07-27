@@ -1,16 +1,19 @@
 //
 // Occlusion.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Occlusion.hh"
 #include "JobState.hh"
 #include "Scene.hh"
 #include "Ray.hh"
+#include "RegisterShader.hh"
 #include <cassert>
 
 
-// **** Occlusion Class ****/
+// **** Occlusion Class ****
+REGISTER_SHADER_CLASS(Occlusion,"occlusion");
+
 int Occlusion::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);

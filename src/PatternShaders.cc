@@ -6,6 +6,7 @@
 #include "PatternShaders.hh"
 #include "Ray.hh"
 #include "Print.hh"
+#include "RegisterShader.hh"
 #include <cmath>
 #include <cassert>
 
@@ -49,6 +50,8 @@ int PatternShader::init(Scene& s, const Transform* tr)
 
 
 // **** Checkerboard Class ****
+REGISTER_SHADER_CLASS(Checkerboard,"checker");
+
 Color Checkerboard::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -69,6 +72,8 @@ Color Checkerboard::evaluate(
 
 
 // **** Checkerboard3D Class ****
+REGISTER_SHADER_CLASS(Checkerboard3D,"checker3d");
+
 Color Checkerboard3D::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -91,6 +96,8 @@ Color Checkerboard3D::evaluate(
 
 
 // **** Pinwheel Class ****
+REGISTER_SHADER_CLASS(Pinwheel,"pinwheel");
+
 Color Pinwheel::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -119,6 +126,8 @@ Color Pinwheel::evaluate(
 
 
 // **** Ring Class ****
+REGISTER_SHADER_CLASS(Ring,"ring");
+
 Color Ring::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -139,6 +148,8 @@ Color Ring::evaluate(
 
 
 // **** SquareRing Class ****
+REGISTER_SHADER_CLASS(SquareRing,"squarering");
+
 Color SquareRing::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -159,6 +170,8 @@ Color SquareRing::evaluate(
 
 
 // **** Stripe Class ****
+REGISTER_SHADER_CLASS(Stripe,"stripe");
+
 Color Stripe::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {

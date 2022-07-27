@@ -4,20 +4,13 @@
 //
 
 #include "Keywords.hh"
-#include "RegisterKeyword.hh"
+#include "RegisterFlag.hh"
 #include "Parser.hh"
 #include "Scene.hh"
-#include "BasicLights.hh"
-#include "BasicObjects.hh"
-#include "ColorShaders.hh"
-#include "PatternShaders.hh"
-#include "MapShaders.hh"
-#include "NoiseShaders.hh"
-#include "Occlusion.hh"
-#include "CSG.hh"
+#include "Object.hh"
+#include "Light.hh"
+#include "Shader.hh"
 #include "Phong.hh"
-#include "Group.hh"
-#include "Prism.hh"
 #include "BBox.hh"
 #include "Print.hh"
 #include <map>
@@ -249,7 +242,7 @@ static int StretchZFn(
   const Vec3 center = (p1+p2) * .5;
   const Vec3 axisZ = dir / len;
   const Vec3 up = IsOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
-    // FIXME - may need to make 'up' configurable or come up with a better
+    // FIXME: may need to make 'up' configurable or come up with a better
     //   rule for when axisZ == +/- 1
   const Vec3 axisX = UnitVec(CrossProduct(up, axisZ));
   const Vec3 axisY = UnitVec(CrossProduct(axisZ, axisX));
@@ -562,47 +555,7 @@ static void initKeywords()
   };
 }
 
-
-REGISTER_OBJECT_KEYWORD(Cone,"cone");
-REGISTER_OBJECT_KEYWORD(Cube,"cube");
-REGISTER_OBJECT_KEYWORD(Cylinder,"cylinder");
-REGISTER_OBJECT_KEYWORD(Difference,"difference");
-REGISTER_OBJECT_KEYWORD(Disc,"disc");
-REGISTER_OBJECT_KEYWORD(Group,"group");
-REGISTER_OBJECT_KEYWORD(Intersection,"intersect");
-REGISTER_OBJECT_KEYWORD(Paraboloid,"paraboloid");
-REGISTER_OBJECT_KEYWORD(Plane,"plane");
-REGISTER_OBJECT_KEYWORD(Sphere,"sphere");
-REGISTER_OBJECT_KEYWORD(Torus,"torus");
-REGISTER_OBJECT_KEYWORD(Union,"union");
-REGISTER_OBJECT_KEYWORD(Prism,"prism");
-
-REGISTER_LIGHT_KEYWORD(PointLight,"light");
-REGISTER_LIGHT_KEYWORD(SpotLight,"spotlight");
-
-REGISTER_SHADER_KEYWORD(Phong,"phong");
-REGISTER_SHADER_KEYWORD(ShaderSide,"side");
-// ambient shaders
-REGISTER_SHADER_KEYWORD(Occlusion,"occlusion");
-// color shaders
-REGISTER_SHADER_KEYWORD(ColorCube,"colorcube");
-// pattern shaders
-REGISTER_SHADER_KEYWORD(Checkerboard,"checker");
-REGISTER_SHADER_KEYWORD(Checkerboard3D,"checker3d");
-REGISTER_SHADER_KEYWORD(Pinwheel,"pinwheel");
-REGISTER_SHADER_KEYWORD(Ring,"ring");
-REGISTER_SHADER_KEYWORD(SquareRing,"squarering");
-REGISTER_SHADER_KEYWORD(Stripe,"stripe");
-// map shaders
-REGISTER_SHADER_KEYWORD(MapGlobalShader,"map_global");
-REGISTER_SHADER_KEYWORD(MapConeShader,"map_cone");
-REGISTER_SHADER_KEYWORD(MapCubeShader,"map_cube");
-REGISTER_SHADER_KEYWORD(MapCylinderShader,"map_cylinder");
-REGISTER_SHADER_KEYWORD(MapParaboloidShader,"map_paraboloid");
-REGISTER_SHADER_KEYWORD(MapSphereShader,"map_sphere");
-// noise shaders
-REGISTER_SHADER_KEYWORD(NoiseShader,"noise");
-
+// shader flags
 REGISTER_FLAG_KEYWORD(FLAG_AMBIENT,"ambient");
 REGISTER_FLAG_KEYWORD(FLAG_BACKGROUND,"background");
 REGISTER_FLAG_KEYWORD(FLAG_DEFAULT_LT,"defaultlight");
@@ -614,7 +567,7 @@ REGISTER_FLAG_KEYWORD(FLAG_BORDER,"border");
 
 
 // **** Functions ****
-static std::string makeKey(std::string_view keyword)
+[[nodiscard]] static std::string makeKey(std::string_view keyword)
 {
   std::string key{keyword};
   for (char& ch : key) { ch = char(std::tolower(ch)); }
@@ -623,7 +576,7 @@ static std::string makeKey(std::string_view keyword)
 
 ItemFn FindItemFn(std::string_view keyword)
 {
-  auto i = Keywords->find(makeKey(keyword));
+  const auto i = Keywords->find(makeKey(keyword));
   return (i != Keywords->end()) ? i->second : nullptr;
 }
 

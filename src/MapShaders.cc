@@ -1,9 +1,10 @@
 //
 // MapShaders.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "MapShaders.hh"
+#include "RegisterShader.hh"
 #include <algorithm>
 #include <cmath>
 #include <cassert>
@@ -25,7 +26,9 @@ int MapShader::init(Scene& s, const Transform* tr)
 }
 
 
-// **** General Map Shaders ****
+// **** MapGlobalShader Class ****
+REGISTER_SHADER_CLASS(MapGlobalShader,"map_global");
+
 Color MapGlobalShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -34,7 +37,9 @@ Color MapGlobalShader::evaluate(
 }
 
 
-// **** Object Map Shaders ****
+// **** MapCodeShader Class ****
+REGISTER_SHADER_CLASS(MapConeShader,"map_cone");
+
 Color MapConeShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -56,6 +61,9 @@ Color MapConeShader::evaluate(
   return _child->evaluate(js, s, r, eh2);
 }
 
+// **** MapCubeShader Class ****
+REGISTER_SHADER_CLASS(MapCubeShader,"map_cube");
+
 Color MapCubeShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -75,6 +83,9 @@ Color MapCubeShader::evaluate(
 
   return _child->evaluate(js, s, r, eh2);
 }
+
+// **** MapCylinderShader Class ****
+REGISTER_SHADER_CLASS(MapCylinderShader,"map_cylinder");
 
 Color MapCylinderShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
@@ -97,6 +108,9 @@ Color MapCylinderShader::evaluate(
   return _child->evaluate(js, s, r, eh2);
 }
 
+// **** MapParaboloidShader Class ****
+REGISTER_SHADER_CLASS(MapParaboloidShader,"map_paraboloid");
+
 Color MapParaboloidShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -108,6 +122,9 @@ Color MapParaboloidShader::evaluate(
   return _child->evaluate(js, s, r, eh2);
 }
 
+// **** MapSphereShader Class ****
+REGISTER_SHADER_CLASS(MapSphereShader,"map_sphere");
+
 Color MapSphereShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
@@ -118,6 +135,9 @@ Color MapSphereShader::evaluate(
   };
   return _child->evaluate(js, s, r, eh2);
 }
+
+// **** MapTorusShader Class ****
+REGISTER_SHADER_CLASS(MapTorusShader,"map_torus");
 
 Color MapTorusShader::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const

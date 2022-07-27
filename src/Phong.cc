@@ -1,16 +1,19 @@
 //
 // Phong.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Phong.hh"
 #include "Scene.hh"
 #include "Light.hh"
 #include "Ray.hh"
+#include "RegisterShader.hh"
 #include <cassert>
 
 
 // **** Phong Class ****
+REGISTER_SHADER_CLASS(Phong,"phong");
+
 int Phong::init(Scene& s, const Transform* tr)
 {
   if (!_ambient) { _ambient = s.ambient; }

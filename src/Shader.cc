@@ -7,6 +7,7 @@
 #include "Scene.hh"
 #include "Transform.hh"
 #include "StringUtility.hh"
+#include "RegisterShader.hh"
 #include <cassert>
 
 
@@ -24,6 +25,8 @@ Color ShaderColor::evaluate(
 
 
 // **** ShaderSide Class ****
+REGISTER_SHADER_CLASS(ShaderSide,"side");
+
 int ShaderSide::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 {
   assert(sh != nullptr);

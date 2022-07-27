@@ -11,6 +11,7 @@
 #include "BBox.hh"
 #include "HitCostInfo.hh"
 #include "Print.hh"
+#include "RegisterObject.hh"
 #include <algorithm>
 #include <cmath>
 
@@ -21,6 +22,8 @@ static constexpr Vec3 planeBoundPoints[4] = {
 
 
 // **** Disc Class ****
+REGISTER_OBJECT_CLASS(Disc,"disc");
+
 int Disc::init(Scene& s, const Transform* tr)
 {
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
@@ -70,6 +73,8 @@ Vec3 Disc::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Cone Class ****
+REGISTER_OBJECT_CLASS(Cone,"cone");
+
 int Cone::init(Scene& s, const Transform* tr)
 {
   _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
@@ -199,6 +204,8 @@ Flt Cone::hitCost(const HitCostInfo& hc) const
 
 
 // **** Cube Class ****
+REGISTER_OBJECT_CLASS(Cube,"cube");
+
 int Cube::init(Scene& s, const Transform* tr)
 {
   static constexpr Vec3 n[6] = {
@@ -298,6 +305,8 @@ Vec3 Cube::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Cylinder Class ****
+REGISTER_OBJECT_CLASS(Cylinder,"cylinder");
+
 int Cylinder::init(Scene& s, const Transform* tr)
 {
   _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1}, 0);
@@ -399,6 +408,8 @@ Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Paraboloid Class ****
+REGISTER_OBJECT_CLASS(Paraboloid,"paraboloid");
+
 int Paraboloid::init(Scene& s, const Transform* tr)
 {
   _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
@@ -517,6 +528,8 @@ Flt Paraboloid::hitCost(const HitCostInfo& hc) const
 
 
 // **** Plane Class ****
+REGISTER_OBJECT_CLASS(Plane,"plane");
+
 int Plane::init(Scene& s, const Transform* tr)
 {
   _normal = _trans.normalLocalToGlobal({0,0,1}, 0); // cache plane normal
@@ -571,6 +584,8 @@ Vec3 Plane::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Sphere Class ****
+REGISTER_OBJECT_CLASS(Sphere,"sphere");
+
 Flt Sphere::hitCost(const HitCostInfo& hc) const
 {
   return (_cost >= 0.0) ? _cost : hc.sphere;
@@ -636,6 +651,8 @@ Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
 
 
 // **** Torus Class ****
+REGISTER_OBJECT_CLASS(Torus,"torus");
+
 int Torus::init(Scene& s, const Transform* tr)
 {
   if (_radius < VERY_SMALL) {

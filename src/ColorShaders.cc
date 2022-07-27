@@ -1,13 +1,16 @@
 //
 // ColorShaders.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "ColorShaders.hh"
 #include "Ray.hh"
+#include "RegisterShader.hh"
 
 
 // **** ColorCube Class ****
+REGISTER_SHADER_CLASS(ColorCube,"colorcube");
+
 Color ColorCube::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
