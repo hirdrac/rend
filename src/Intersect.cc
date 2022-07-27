@@ -1,6 +1,6 @@
 //
 // Intersect.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #include "Intersect.hh"
@@ -31,7 +31,11 @@ void HitList::mergeList(HitList& list)
 
 void HitList::clear()
 {
-  _cache->store(_hitList);
+  if (!_hitList.empty()) {
+    HitInfo* t = _hitList.tail();
+    HitInfo* h = _hitList.extractNodes();
+    _cache->storeList(h, t);
+  }
 }
 
 HitInfo* HitList::removeFirstHit(const Ray& r)

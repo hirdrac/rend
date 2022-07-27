@@ -4,8 +4,9 @@
 //
 
 #pragma once
-#include "SList.hh"
+#include "ListUtility.hh"
 #include "Types.hh"
+#include <utility>
 
 
 // **** Types ****
@@ -33,14 +34,23 @@ class HitInfo
 class HitCache
 {
  public:
+  ~HitCache() { KillNodes(_head); }
+
   [[nodiscard]] HitInfo* fetch() {
-    HitInfo* ht = _cache.removeHead();
-    return ht ? ht : new HitInfo;
+    if (_head) {
+      HitInfo* ht = _head;
+      _head = std::exchange(ht->next, nullptr);
+      return ht;
+    } else {
+      return new HitInfo;
+    }
   }
 
-  void store(HitInfo* h) { _cache.addToHead(h); }
-  void store(SList<HitInfo>& c) { _cache.addToHead(c); }
+  void store(HitInfo* h) {
+    h->next = _head; _head = h; }
+  void storeList(HitInfo* head, HitInfo* tail) {
+    tail->next = _head; _head = head; }
 
  private:
-  SList<HitInfo> _cache;
+  HitInfo* _head = nullptr;
 };
