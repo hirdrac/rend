@@ -51,8 +51,8 @@ class Primitive : public Object
 {
  public:
   // SceneItem Functions
-  Transform* trans() override { return &_trans; }
-  int setCost(Flt c) override { _cost = c; return 0; }
+  Transform* trans() override final { return &_trans; }
+  int setCost(Flt c) override final { _cost = c; return 0; }
 
   // Object Functions
   BBox bound(const Matrix* t = nullptr) const override;

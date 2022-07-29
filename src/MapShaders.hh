@@ -1,6 +1,6 @@
 //
 // MapShaders.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Default object map (EvaluatedHit.map value) uses the local intersection
 // point as the map value.  These shaders override that.
@@ -22,10 +22,10 @@ class MapShader : public Shader
 {
  public:
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
 
   // Shader Functions
-  int init(Scene& s, const Transform* tr) override;
+  int init(Scene& s, const Transform* tr) override final;
 
  protected:
   ShaderPtr _child;

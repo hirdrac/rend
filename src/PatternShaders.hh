@@ -1,6 +1,6 @@
 //
 // PatternShaders.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Shaders that select sub-shaders based on a (transformable) repeating pattern
 //
@@ -31,12 +31,12 @@ class PatternShader : public Shader
 {
  public:
   // SceneItem Functions
-  Transform* trans() override { return &_trans; }
-  int setBorderwidth(Flt bw) override { _borderwidth = bw; return 0; }
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override;
+  Transform* trans() override final { return &_trans; }
+  int setBorderwidth(Flt bw) override final { _borderwidth = bw; return 0; }
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
 
   // Shader Functions
-  int init(Scene& s, const Transform* tr) override;
+  int init(Scene& s, const Transform* tr) override final;
 
  protected:
   Transform _trans;

@@ -1,6 +1,6 @@
 //
 // CSG.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // CSG object classes
 //
@@ -17,15 +17,17 @@ class CSG : public Primitive
   std::vector<ObjectPtr> objects;
 
   // SceneItem Functions
-  int addObject(const ObjectPtr& ob) override;
+  int addObject(const ObjectPtr& ob) override final;
 
   // Object Functions
-  int init(Scene& s, const Transform* tr) override;
-  const std::vector<ObjectPtr>& children() const override { return objects; }
+  int init(Scene& s, const Transform* tr) override final;
+  const std::vector<ObjectPtr>& children() const override final {
+    return objects; }
 
   // Primitive Functions
-  Flt hitCost(const HitCostInfo& hc) const override;
-  Vec3 normal(const Ray& r, const HitInfo& h) const override { return {}; }
+  Flt hitCost(const HitCostInfo& hc) const override final;
+  Vec3 normal(const Ray& r, const HitInfo& h) const override final {
+    return {}; }
 };
 
 
