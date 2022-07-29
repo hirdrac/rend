@@ -1,6 +1,6 @@
 //
 // BasicLights.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Basic light objects
 //
@@ -30,7 +30,7 @@ class PointLight final : public Light
  public:
   // SceneItem Functions
   std::string desc() const override { return "<PointLight>"; }
-  Transform* trans() override final { return &_trans; }
+  Transform* trans() override { return &_trans; }
 
   // Light Functions
   int init(Scene& s) override;
@@ -47,7 +47,7 @@ class SpotLight final : public Light
  public:
   // SceneItem Functions
   std::string desc() const override { return "<SpotLight>"; }
-  Transform* trans() override final { return &_trans; }
+  Transform* trans() override { return &_trans; }
 
   // Light Functions
   int init(Scene& s) override;
