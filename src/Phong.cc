@@ -17,7 +17,7 @@ REGISTER_SHADER_CLASS(Phong,"phong");
 int Phong::init(Scene& s, const Transform* tr)
 {
   if (!_ambient) { _ambient = s.ambient; }
-  if (int er = InitShader(s, *_ambient, tr); er != 0) { return er; }
+  else if (int er = InitShader(s, *_ambient, tr); er != 0) { return er; }
 
   if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
   if (int er = InitShader(s, *_diffuse, tr); er != 0) { return er; }
