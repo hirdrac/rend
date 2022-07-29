@@ -23,7 +23,6 @@ class Bound final : public Object
   std::string desc() const override;
 
   // Object Functions
-  int init(Scene& s, const Transform* tr) override;
   BBox bound(const Matrix* t) const override { return box; }
   int intersect(const Ray& r, HitList& hl) const override;
   const std::vector<ObjectPtr>& children() const override { return objects; }

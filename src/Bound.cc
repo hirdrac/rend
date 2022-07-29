@@ -22,15 +22,6 @@ std::string Bound::desc() const
   return concat("<Bound ", objects.size(), '>');
 }
 
-int Bound::init(Scene& s, const Transform* tr)
-{
-  for (auto& ob : objects) {
-    if (InitObject(s, *ob, _shader, tr)) { return -1; }
-  }
-
-  return 0;
-}
-
 int Bound::intersect(const Ray& r, HitList& hl) const
 {
   ++hl.stats().bound.tried;
