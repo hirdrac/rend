@@ -1,6 +1,6 @@
 //
 // Group.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #pragma once
@@ -17,7 +17,7 @@ class Group final : public Object
  public:
   // SceneItem Functions
   std::string desc() const override { return "<Group>"; }
-  Transform* trans() override { return &_trans;}
+  Transform* trans() override { return &_trans; }
   int addObject(const ObjectPtr& ob) override;
   int addLight(const LightPtr& lt) override;
 

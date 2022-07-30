@@ -67,7 +67,7 @@ int Bound::intersect(const Ray& r, HitList& hl) const
 
 // **** Prototypes ****
 struct OptNode;
-static Flt treeCost(const OptNode* node_list, Flt bound_weight);
+[[nodiscard]] static Flt treeCost(const OptNode* node_list, Flt bound_weight);
 
 
 // **** OptNode struct ****
@@ -94,7 +94,7 @@ struct OptNode
   ~OptNode() { KillNodes(child); }
 
   // Member Functions
-  Flt cost(Flt weight) const
+  [[nodiscard]] Flt cost(Flt weight) const
   {
     Flt c = weight * objHitCost;
     if (child) { c += treeCost(child, box.weight()); }
@@ -114,7 +114,7 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
   return total;
 }
 
-static Flt calcMergeCost(
+[[nodiscard]] static Flt calcMergeCost(
   const Scene& s, const OptNode* n1, const OptNode* n2, Flt weight)
 {
   const Flt w = BBox{n1->box, n2->box}.weight();
@@ -125,7 +125,8 @@ static Flt calcMergeCost(
   return (weight * s.hitCosts.bound) + m_cost1 + m_cost2;
 }
 
-static OptNode* mergeOptNodes(const Scene& s, OptNode* node1, OptNode* node2)
+[[nodiscard]] static OptNode* mergeOptNodes(
+  const Scene& s, OptNode* node1, OptNode* node2)
 {
   // Create new bounding box
   OptNode* b = new OptNode{s.hitCosts.bound};
@@ -150,7 +151,7 @@ static OptNode* mergeOptNodes(const Scene& s, OptNode* node1, OptNode* node2)
   return b;
 }
 
-static OptNode* makeOptNodeList(
+[[nodiscard]] static OptNode* makeOptNodeList(
   const Scene& s, const std::vector<ObjectPtr>& o_list)
 {
   OptNode* node_list = nullptr;
