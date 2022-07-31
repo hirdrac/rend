@@ -20,8 +20,7 @@ void HitList::mergeList(HitList& list)
 {
   HitInfo* prev = nullptr;
   HitInfo* h = _hitList.head();
-  while (!list.empty()) {
-    HitInfo* ht = list.removeHead();
+  while (HitInfo* ht = list.removeHead()) {
     while (h && h->distance < ht->distance) { prev = h; h = h->next; }
     _hitList.addAfterNode(prev, ht);
     prev = ht;
