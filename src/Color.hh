@@ -1,6 +1,6 @@
 //
 // Color.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Standard color class library
 //
@@ -13,13 +13,15 @@
 class Color
 {
  public:
-  // Constants
-  static constexpr int CHANNELS = 3;
-  static constexpr int RED_CHANNEL = 0;
-  static constexpr int GREEN_CHANNEL = 1;
-  static constexpr int BLUE_CHANNEL = 2;
-
   using value_type = float;
+  using size_type = unsigned int;
+
+  // Constants
+  static constexpr size_type CHANNELS = 3;
+  static constexpr size_type RED_CHANNEL = 0;
+  static constexpr size_type GREEN_CHANNEL = 1;
+  static constexpr size_type BLUE_CHANNEL = 2;
+
 
   Color() = default;
   constexpr Color(value_type r, value_type g, value_type b) : _val{r,g,b} { }
@@ -38,9 +40,9 @@ class Color
   template <class T>
   constexpr Color& operator/=(T s);
 
-  [[nodiscard]] constexpr value_type& operator[](int i) {
+  [[nodiscard]] constexpr value_type& operator[](size_type i) {
     return _val[i]; }
-  [[nodiscard]] constexpr value_type operator[](int i) const {
+  [[nodiscard]] constexpr value_type operator[](size_type i) const {
     return _val[i]; }
 
   [[nodiscard]] constexpr value_type red() const {
@@ -72,7 +74,7 @@ namespace colors {
 }
 
 
-// **** Inline implementation ****
+// **** Inline Implementation ****
 constexpr bool Color::isBlack(value_type min) const
 {
   return !((_val[0] > min) || (_val[1] > min) || (_val[2] > min));
