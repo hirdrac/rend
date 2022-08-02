@@ -1,6 +1,6 @@
 //
 // FrameBuffer.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // RGB image frame buffer class for holding render result
 //
@@ -34,9 +34,8 @@ class FrameBuffer
  private:
   std::unique_ptr<float[]> _buffer;
   int _width = 0, _height = 0; // image size
-  int _rowSize = 0;  // (width * CHANNELS) padded to 64 byte alignment
-
-  static constexpr int CHANNELS = 3; // RGB
+  int _channels = 3; // 3 or 4 only
+  int _rowSize = 0;  // (width * channels) padded to 64 byte alignment
 
   [[nodiscard]] float* bufferRow(int y) {
     return _buffer.get() + (_rowSize * y); }
@@ -44,9 +43,9 @@ class FrameBuffer
     return _buffer.get() + (_rowSize * y); }
 
   [[nodiscard]] float* pixel(int x, int y) {
-    return bufferRow(y) + (x * CHANNELS); }
+    return bufferRow(y) + (x * _channels); }
   [[nodiscard]] const float* pixel(int x, int y) const {
-    return bufferRow(y) + (x * CHANNELS); }
+    return bufferRow(y) + (x * _channels); }
 
   [[nodiscard]] bool inRange(int x, int y) const {
     return (x >= 0) && (x < _width) && (y >= 0) && (y < _height); }

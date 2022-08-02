@@ -19,7 +19,7 @@ int FrameBuffer::init(int w, int h, const Color& c)
   if (w <= 0 || h <= 0) { return -1; }
 
   _width = w;
-  _rowSize = w * CHANNELS;
+  _rowSize = w * _channels;
   if (_rowSize % 16) {
     // padding row size to 64 byte alignment (16 * sizeof float)
     _rowSize += 16 - (_rowSize % 16);
@@ -36,9 +36,9 @@ int FrameBuffer::saveBMP(const std::string& filename) const
 {
   if (!_buffer) { return -1; }
 
-  const int bmp_row_pad = (4 - ((_width * CHANNELS) % 4)) % 4;
+  const int bmp_row_pad = (4 - ((_width * _channels) % 4)) % 4;
     // rows must be padded to 4-byte multiple
-  const int bmp_row_size = (_width * CHANNELS) + bmp_row_pad;
+  const int bmp_row_size = (_width * _channels) + bmp_row_pad;
   const uint32_t file_size = 54 + uint32_t(bmp_row_size * _height);
 
   // setup BMP header
@@ -60,7 +60,7 @@ int FrameBuffer::saveBMP(const std::string& filename) const
   header[24] = uint8_t((_height >> 16) & 255);
   header[25] = uint8_t(_height >> 24);
   header[26] = 1;                                // Planes
-  header[28] = 24;                               // Bit count
+  header[28] = (_channels == 4) ? 32 : 24;       // Bit count
 
   // create BMP file
   std::ofstream file{filename, std::ios::out | std::ios::binary};
@@ -76,13 +76,13 @@ int FrameBuffer::saveBMP(const std::string& filename) const
     const float* src = bufferRow(y);
     uint8_t* out = row.get();
     for (int x = 0; x < _width; ++x) {
-      const float r = *src++;
-      const float g = *src++;
-      const float b = *src++;
-
-      *out++ = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
-      *out++ = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
-      *out++ = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
+      *out++ = uint8_t((std::clamp(src[2], 0.0f, 1.0f) * 255.0f) + .5f); // B
+      *out++ = uint8_t((std::clamp(src[1], 0.0f, 1.0f) * 255.0f) + .5f); // G
+      *out++ = uint8_t((std::clamp(src[0], 0.0f, 1.0f) * 255.0f) + .5f); // R
+      if (_channels == 4) { // alpha
+        *out++ = uint8_t((std::clamp(src[3], 0.0f, 1.0f) * 255.0f) + .5f);
+      }
+      src += _channels;
     }
     file.write(reinterpret_cast<char*>(row.get()), bmp_row_size);
   }
@@ -98,23 +98,23 @@ int FrameBuffer::savePNG(const std::string& filename) const
   image.version = PNG_IMAGE_VERSION;
   image.width   = static_cast<png_uint_32>(_width);
   image.height  = static_cast<png_uint_32>(_height);
-  image.format  = PNG_FORMAT_RGB;  // 8-bit RGB
+  image.format  = (_channels == 4) ? PNG_FORMAT_RGBA : PNG_FORMAT_RGB;
 
   const std::size_t size = PNG_IMAGE_SIZE(image);
-  assert(size >= std::size_t(_width * _height * 3));
+  assert(size >= std::size_t(_width * _height * _channels));
   auto output = std::make_unique<uint8_t[]>(size);
 
   uint8_t* out = output.get();
   for (int y = _height - 1; y >= 0; --y) {
     const float* src = bufferRow(y);
     for (int x = 0; x < _width; ++x) {
-      const float r = *src++;
-      const float g = *src++;
-      const float b = *src++;
-
-      *out++ = uint8_t((std::clamp(r, 0.0f, 1.0f) * 255.0f) + .5f);
-      *out++ = uint8_t((std::clamp(g, 0.0f, 1.0f) * 255.0f) + .5f);
-      *out++ = uint8_t((std::clamp(b, 0.0f, 1.0f) * 255.0f) + .5f);
+      *out++ = uint8_t((std::clamp(src[0], 0.0f, 1.0f) * 255.0f) + .5f); // R
+      *out++ = uint8_t((std::clamp(src[1], 0.0f, 1.0f) * 255.0f) + .5f); // G
+      *out++ = uint8_t((std::clamp(src[2], 0.0f, 1.0f) * 255.0f) + .5f); // B
+      if (_channels == 4) { // alpha
+        *out++ = uint8_t((std::clamp(src[3], 0.0f, 1.0f) * 255.0f) + .5f);
+      }
+      src += _channels;
     }
   }
 
@@ -129,16 +129,13 @@ int FrameBuffer::savePNG(const std::string& filename) const
 
 void FrameBuffer::clear(const Color& c)
 {
-  const float r = static_cast<float>(c.red());
-  const float g = static_cast<float>(c.green());
-  const float b = static_cast<float>(c.blue());
-
   for (int y = 0; y < _height; ++y) {
     float* ptr = bufferRow(y);
     for (int x = 0; x < _width; ++x) {
-      *ptr++ = r;
-      *ptr++ = g;
-      *ptr++ = b;
+      *ptr++ = c[0];
+      *ptr++ = c[1];
+      *ptr++ = c[2];
+      if (_channels == 4) { *ptr++ = c[3]; }
     }
   }
 }
@@ -148,9 +145,10 @@ int FrameBuffer::plot(int x, int y, const Color& c)
   if (!inRange(x, y)) { return -1; }
 
   float* ptr = pixel(x, y);
-  ptr[0] = static_cast<float>(c.red());
-  ptr[1] = static_cast<float>(c.green());
-  ptr[2] = static_cast<float>(c.blue());
+  ptr[0] = c[0];
+  ptr[1] = c[1];
+  ptr[2] = c[2];
+  if (_channels == 4) { ptr[3] = c[3]; }
   return 0;
 }
 
@@ -168,7 +166,7 @@ int FrameBuffer::range(float& min_val, float& max_val) const
   if (!_buffer) { return -1; }
 
   float low = _buffer[0], high = _buffer[0];
-  const int width = _width * CHANNELS;
+  const int width = _width * _channels;
   for (int y = 0; y < _height; ++y) {
     const float* ptr = bufferRow(y);
     const float* end = ptr + width;
