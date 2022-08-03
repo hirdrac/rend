@@ -17,21 +17,24 @@ class Color
   using size_type = unsigned int;
 
   // Constants
-  static constexpr size_type CHANNELS = 3;
+  static constexpr size_type CHANNELS = 4;
   static constexpr size_type RED_CHANNEL = 0;
   static constexpr size_type GREEN_CHANNEL = 1;
   static constexpr size_type BLUE_CHANNEL = 2;
+  static constexpr size_type ALPHA_CHANNEL = 3;
 
 
   Color() = default;
-  constexpr Color(value_type r, value_type g, value_type b) : _val{r,g,b} { }
+  constexpr Color(value_type r, value_type g, value_type b)
+    : _val{r,g,b,1.0f} { }
+  constexpr Color(value_type r, value_type g, value_type b, value_type a)
+    : _val{r,g,b,a} { }
 
   // Member Functions
   [[nodiscard]] constexpr bool isBlack(value_type v) const;
 
   // Operators
   constexpr Color& operator+=(const Color& c);
-  constexpr Color& operator-=(const Color& c);
   constexpr Color& operator*=(const Color& c);
 
   template <class T>
@@ -51,6 +54,8 @@ class Color
     return _val[GREEN_CHANNEL]; }
   [[nodiscard]] constexpr value_type blue() const {
     return _val[BLUE_CHANNEL]; }
+  [[nodiscard]] constexpr value_type alpha() const {
+    return _val[ALPHA_CHANNEL]; }
 
   [[nodiscard]] constexpr value_type grayValue() const {
     return (red() * static_cast<value_type>(.299))
@@ -65,7 +70,7 @@ class Color
   }
 
  private:
-  value_type _val[4];  // 4 performs better than 3
+  value_type _val[CHANNELS];  // RGBA
 };
 
 namespace colors {
@@ -88,19 +93,12 @@ constexpr Color& Color::operator+=(const Color& c)
   return *this;
 }
 
-constexpr Color& Color::operator-=(const Color& c)
-{
-  _val[0] -= c._val[0];
-  _val[1] -= c._val[1];
-  _val[2] -= c._val[2];
-  return *this;
-}
-
 constexpr Color& Color::operator*=(const Color& c)
 {
   _val[0] *= c._val[0];
   _val[1] *= c._val[1];
   _val[2] *= c._val[2];
+  _val[3] *= c._val[3];
   return *this;
 }
 
@@ -127,7 +125,7 @@ constexpr Color& Color::operator/=(T s)
 
 // **** Non-member operators/functions ****
 inline std::ostream& operator<<(std::ostream& os, const Color& c) {
-  return os << '[' << c[0] << ' ' << c[1] << ' ' << c[2] << ']';
+  return os << '[' << c[0] << ' ' << c[1] << ' ' << c[2] << ' ' << c[3] << ']';
 }
 
 template <class T>
@@ -141,5 +139,5 @@ template <class T>
 }
 
 [[nodiscard]] constexpr Color operator*(const Color& a, const Color& b) {
-  return Color{a[0] * b[0], a[1] * b[1], a[2] * b[2]};
+  return Color{a[0] * b[0], a[1] * b[1], a[2] * b[2], a[3] * b[3]};
 }
