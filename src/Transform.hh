@@ -14,7 +14,7 @@
 class Transform
 {
  public:
-  Matrix base{UNINITIALIZED};  // configured transform for item
+  Matrix base{INIT_NONE};  // configured transform for item
 
   Transform() { clear(); }
 
@@ -44,8 +44,8 @@ class Transform
     //   eventually time parameter will allow for motion blur
 
  private:
-  Matrix _final{UNINITIALIZED}; // base transform adjusted by parent transform
-  Matrix _finalInv{UNINITIALIZED};
+  Matrix _final{INIT_NONE}; // base transform adjusted by parent transform
+  Matrix _finalInv{INIT_NONE};
   bool _noParent = false;
 };
 
