@@ -1,6 +1,6 @@
 //
 // Ray.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Definition of ray class and functions
 //
@@ -14,8 +14,8 @@ class Ray
 {
  public:
   // base ray properties
-  Vec3 base;
-  Vec3 dir;
+  Vec3 base{INIT_NONE};
+  Vec3 dir{INIT_NONE};
   Flt  min_length;
   Flt  max_length;
   Flt  time;

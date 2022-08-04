@@ -26,7 +26,7 @@ class HitInfo
   const Primitive* object;
   const Primitive* parent; // CSG object
   Flt distance;
-  Vec3 local_pt;
+  Vec3 local_pt{INIT_NONE};
   int side;
   HitType type;
 };

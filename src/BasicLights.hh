@@ -22,7 +22,7 @@ class Sun final : public Light
                 const EvaluatedHit& eh, LightResult& result) const override;
 
  private:
-  Vec3 _finalDir;
+  Vec3 _finalDir{INIT_NONE};
 };
 
 class PointLight final : public Light
@@ -39,7 +39,7 @@ class PointLight final : public Light
 
  private:
   Transform _trans;
-  Vec3 _finalPos;
+  Vec3 _finalPos{INIT_NONE};
 };
 
 class SpotLight final : public Light
@@ -56,5 +56,5 @@ class SpotLight final : public Light
 
  private:
   Transform _trans;
-  Vec3 _finalPos, _finalDir;
+  Vec3 _finalPos{INIT_NONE}, _finalDir{INIT_NONE};
 };

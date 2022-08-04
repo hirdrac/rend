@@ -174,7 +174,8 @@ Color Scene::traceRay(JobState& js, const Ray& r) const
   if (!hit) {
     // hit background
     const EvaluatedHit eh{
-      {}, {}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}, 0};
+      INIT_ZERO, INIT_ZERO,
+      {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}, 0};
     return background->evaluate(js, *this, r, eh);
   }
 

@@ -45,7 +45,7 @@ static int MoveFn(
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
-  Vec3 v;
+  Vec3 v{INIT_NONE};
   if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
 
   t->base.translate(v);
@@ -60,7 +60,7 @@ static int MoveByBBoxSpotFn(
   Object* ob = dynamic_cast<Object*>(p);
   if (!t || !ob) { return -1; }
 
-  Vec3 v;
+  Vec3 v{INIT_NONE};
   if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
 
   v -= ob->bound(&t->base)(spot);
@@ -98,7 +98,7 @@ static int ScaleFn(
   Transform* t = findTrans(p);
   if (!t) { return -1; }
 
-  Vec3 v;
+  Vec3 v{INIT_NONE};
   if (sp.getVec3(n, v) || notDone(sp, n)) { return -1; }
 
   t->base.scale(v);
@@ -155,7 +155,7 @@ static int StretchXFn(
   Object* ob = dynamic_cast<Object*>(p);
   if (!t || !ob) { return -1; }
 
-  Vec3 p1, p2;
+  Vec3 p1{INIT_NONE}, p2{INIT_NONE};
   if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
 
   const Vec3 dir = p2 - p1;
@@ -192,7 +192,7 @@ static int StretchYFn(
   Object* ob = dynamic_cast<Object*>(p);
   if (!t || !ob) { return -1; }
 
-  Vec3 p1, p2;
+  Vec3 p1{INIT_NONE}, p2{INIT_NONE};
   if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
 
   const Vec3 dir = p2 - p1;
@@ -229,7 +229,7 @@ static int StretchZFn(
   Object* ob = dynamic_cast<Object*>(p);
   if (!t || !ob) { return -1; }
 
-  Vec3 p1, p2;
+  Vec3 p1{INIT_NONE}, p2{INIT_NONE};
   if (sp.getVec3(n, p1) || sp.getVec3(n, p2) || notDone(sp, n)) { return -1; }
 
   const Vec3 dir = p2 - p1;
@@ -437,7 +437,7 @@ static int RadiusFn(
 static int RgbFn(
   SceneParser& sp, Scene& s, SceneItem* p, AstNode* n, SceneItemFlag flag)
 {
-  Vec3 c;
+  Vec3 c{INIT_NONE};
   if (sp.getVec3(n, c) || notDone(sp, n)) { return -1; }
 
   auto sh = makeShader<ShaderColor>(c.r, c.g, c.b);

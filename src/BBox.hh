@@ -12,7 +12,7 @@
 class BBox
 {
  public:
-  Vec3 pmin, pmax;
+  Vec3 pmin{INIT_NONE}, pmax{INIT_NONE};
 
   BBox() { reset(); }
   BBox(const Vec3& pt) : pmin{pt}, pmax{pt} { }

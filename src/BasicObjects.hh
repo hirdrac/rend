@@ -1,6 +1,6 @@
 //
 // BasicObjects.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Definitions for primitive object classes
 //
@@ -26,7 +26,7 @@ class Disc final : public Primitive
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
-  Vec3 _normal;
+  Vec3 _normal{INIT_NONE};
 };
 
 class Cone final : public Primitive
@@ -44,7 +44,7 @@ class Cone final : public Primitive
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
-  Vec3 _baseNormal;
+  Vec3 _baseNormal{INIT_NONE};
 };
 
 class Cube final : public Primitive
@@ -62,7 +62,8 @@ class Cube final : public Primitive
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
-  Vec3 _sideNormal[6];
+  Vec3 _sideNormal[6] = {
+    INIT_NONE,INIT_NONE,INIT_NONE,INIT_NONE,INIT_NONE,INIT_NONE};
 };
 
 class Cylinder final : public Primitive
@@ -80,7 +81,7 @@ class Cylinder final : public Primitive
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
-  Vec3 _endNormal[2];
+  Vec3 _endNormal[2] = {INIT_NONE,INIT_NONE};
 };
 
 class Paraboloid final : public Primitive
@@ -98,7 +99,7 @@ class Paraboloid final : public Primitive
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
-  Vec3 _baseNormal;
+  Vec3 _baseNormal{INIT_NONE};
 };
 
 class Plane final : public Primitive
@@ -117,7 +118,7 @@ class Plane final : public Primitive
   Vec3 normal(const Ray& r, const HitInfo& h) const override;
 
  private:
-  Vec3 _normal;
+  Vec3 _normal{INIT_NONE};
 };
 
 class Sphere final : public Primitive

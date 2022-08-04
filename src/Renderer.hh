@@ -47,9 +47,9 @@ class Renderer
   StatInfo _stats;
 
   // Calculated Data
-  Vec3 _vnormal, _vcenter;
-  Vec3 _pixelX, _pixelY;
-  Vec3 _apertureX, _apertureY;
+  Vec3 _vnormal{INIT_ZERO}, _vcenter{INIT_ZERO};
+  Vec3 _pixelX{INIT_ZERO}, _pixelY{INIT_ZERO};
+  Vec3 _apertureX{INIT_ZERO}, _apertureY{INIT_ZERO};
 
   // jobs/task stuff
   struct alignas(64) Job {

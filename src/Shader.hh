@@ -1,6 +1,6 @@
 //
 // Shader.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Shader base class & simple shaders:
 //
@@ -22,9 +22,9 @@ class Ray;
 class Transform;
 
 struct EvaluatedHit {
-  Vec3 global_pt;
-  Vec3 normal;
-  Vec3 map;
+  Vec3 global_pt{INIT_NONE};
+  Vec3 normal{INIT_NONE};
+  Vec3 map{INIT_NONE};
   int side;
 };
 

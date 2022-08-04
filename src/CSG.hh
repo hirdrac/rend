@@ -27,7 +27,7 @@ class CSG : public Primitive
   // Primitive Functions
   Flt hitCost(const HitCostInfo& hc) const override final;
   Vec3 normal(const Ray& r, const HitInfo& h) const override final {
-    return {}; }
+    return INIT_ZERO; }
 };
 
 

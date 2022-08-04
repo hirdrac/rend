@@ -1,6 +1,6 @@
 //
 // RandomGen.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 
 #pragma once
@@ -32,7 +32,7 @@ class RandomGen
 
   Vec3 dir() {
     // random direction unit vector
-    Vec3 d;
+    Vec3 d{INIT_NONE};
     Flt len2;
     do {
       d.x = jitter();
@@ -44,7 +44,7 @@ class RandomGen
   }
 
   Vec3 hemisphereDir(const Vec3& normal) {
-    Vec3 d;
+    Vec3 d{INIT_NONE};
     Flt dot;
     do {
       d = dir();

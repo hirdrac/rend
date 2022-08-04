@@ -79,7 +79,7 @@ Color Phong::evaluate(
   const bool is_t = !color_t.isBlack(black_val);
 #endif
 
-  Vec3 reflect;
+  Vec3 reflect{INIT_NONE};
   if (is_s) { reflect = CalcReflect(r.dir, eh.normal); }
 
   // ambient calculation
