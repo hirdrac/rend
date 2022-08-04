@@ -1,6 +1,6 @@
 //
 // Light.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // Light base class
 //
@@ -19,10 +19,10 @@ class Ray;
 struct EvaluatedHit;
 
 struct LightResult {
-  Vec3 dir;
+  Vec3 dir{INIT_NONE};
   Flt distance;
   Flt angle;
-  Color energy;
+  Color energy{INIT_NONE};
 };
 
 // Light Base Class

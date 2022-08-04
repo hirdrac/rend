@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "InitType.hh"
 #include <ostream>
 
 
@@ -24,11 +25,15 @@ class Color
   static constexpr size_type ALPHA_CHANNEL = 3;
 
 
-  Color() = default;
+  Color(NoInit_t) { }
+  constexpr Color(ZeroInit_t) : _val{0,0,0,0} { }
   constexpr Color(value_type r, value_type g, value_type b)
     : _val{r,g,b,1.0f} { }
   constexpr Color(value_type r, value_type g, value_type b, value_type a)
     : _val{r,g,b,a} { }
+
+  Color& operator=(NoInit_t) = delete;
+
 
   // Member Functions
   [[nodiscard]] constexpr bool isBlack(value_type v) const;
