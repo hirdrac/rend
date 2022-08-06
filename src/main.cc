@@ -323,7 +323,7 @@ int main(int argc, char** argv)
   bool interactive = false;
   int jobs = -1;
 
-  for (CmdLineParser p(argc, argv); p; ++p) {
+  for (CmdLineParser p{argc, argv}; p; ++p) {
     if (p.option()) {
       if (p.option('i',"interactive")) {
         interactive = true;

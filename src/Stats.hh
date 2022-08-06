@@ -1,6 +1,6 @@
 //
 // Stats.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2022 Richard Bradley
 //
 // raytracing statistics gathering
 //
@@ -36,13 +36,13 @@ class StatInfo
   // Member Functions
   StatInfo& operator+=(const StatInfo& stats);
 
-  uint64_t objectsTried() const {
+  [[nodiscard]] uint64_t objectsTried() const {
     return disc.tried + cone.tried + cube.tried + cylinder.tried
       + paraboloid.tried + plane.tried + prism.tried + sphere.tried
       + torus.tried;
   }
 
-  uint64_t objectsHit() const {
+  [[nodiscard]] uint64_t objectsHit() const {
     return disc.hit + cone.hit + cube.hit + cylinder.hit
       + paraboloid.hit + plane.hit + prism.hit + sphere.hit
       + torus.hit;
