@@ -30,6 +30,8 @@ void Tokenizer::init(std::istream& input)
 
 TokenType Tokenizer::getToken(Token& tk)
 {
+  if (!_input) { return TOKEN_EOF; }
+
   for (;;) {
     // start of token read
     while (std::isspace(_nextChar)) { getChar(); }
@@ -91,7 +93,7 @@ int Tokenizer::getChar()
 {
   // One character pipeline used
   // (to make it easy to look ahead one character)
-  if (!_input || _input->eof()) {
+  if (_input->eof()) {
     _nextChar = '\0';
     return _nextChar;
   }
