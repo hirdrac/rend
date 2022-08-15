@@ -31,12 +31,12 @@ class PatternShader : public Shader
 {
  public:
   // SceneItem Functions
-  Transform* trans() override final { return &_trans; }
-  int setBorderwidth(Flt bw) override final { _borderwidth = bw; return 0; }
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
+  Transform* trans() final { return &_trans; }
+  int setBorderwidth(Flt bw) final { _borderwidth = bw; return 0; }
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) final;
 
   // Shader Functions
-  int init(Scene& s, const Transform* tr) override final;
+  int init(Scene& s, const Transform* tr) final;
 
  protected:
   Transform _trans;

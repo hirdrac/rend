@@ -17,16 +17,16 @@ class CSG : public Primitive
   std::vector<ObjectPtr> objects;
 
   // SceneItem Functions
-  int addObject(const ObjectPtr& ob) override final;
+  int addObject(const ObjectPtr& ob) final;
 
   // Object Functions
-  int init(Scene& s, const Transform* tr) override final;
-  const std::vector<ObjectPtr>& children() const override final {
+  int init(Scene& s, const Transform* tr) final;
+  const std::vector<ObjectPtr>& children() const final {
     return objects; }
 
   // Primitive Functions
-  Flt hitCost(const HitCostInfo& hc) const override final;
-  Vec3 normal(const Ray& r, const HitInfo& h) const override final {
+  Flt hitCost(const HitCostInfo& hc) const final;
+  Vec3 normal(const Ray& r, const HitInfo& h) const final {
     return INIT_ZERO; }
 };
 

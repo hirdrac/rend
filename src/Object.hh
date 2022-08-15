@@ -27,7 +27,7 @@ class Object : public SceneItem
 {
  public:
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) final;
 
   // Member Functions
   virtual int init(Scene& s, const Transform* tr) { return 0; }
@@ -51,8 +51,8 @@ class Primitive : public Object
 {
  public:
   // SceneItem Functions
-  Transform* trans() override final { return &_trans; }
-  int setCost(Flt c) override final { _cost = c; return 0; }
+  Transform* trans() final { return &_trans; }
+  int setCost(Flt c) final { _cost = c; return 0; }
 
   // Object Functions
   BBox bound(const Matrix* t = nullptr) const override;

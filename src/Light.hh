@@ -32,7 +32,7 @@ class Light : public SceneItem
   Vec3 dir{0,0,1};
 
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) final;
 
   // Member Functions
   virtual int init(Scene& s) = 0;

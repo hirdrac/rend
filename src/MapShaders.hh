@@ -22,10 +22,10 @@ class MapShader : public Shader
 {
  public:
   // SceneItem Functions
-  int addShader(const ShaderPtr& sh, SceneItemFlag flag) override final;
+  int addShader(const ShaderPtr& sh, SceneItemFlag flag) final;
 
   // Shader Functions
-  int init(Scene& s, const Transform* tr) override final;
+  int init(Scene& s, const Transform* tr) final;
 
  protected:
   ShaderPtr _child;
