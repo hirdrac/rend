@@ -31,6 +31,8 @@ class PointLight final : public Light
   // SceneItem Functions
   std::string desc() const override { return "<PointLight>"; }
   Transform* trans() override { return &_trans; }
+  int setRadius(Flt v) override { _radius = v; return 0; }
+  int setSamples(int v) override { _samples = v; return 0; }
 
   // Light Functions
   int init(Scene& s) override;
@@ -40,6 +42,8 @@ class PointLight final : public Light
  private:
   Transform _trans;
   Vec3 _finalPos{INIT_NONE};
+  Flt _radius = 0;
+  int _samples = 1;
 };
 
 class SpotLight final : public Light
