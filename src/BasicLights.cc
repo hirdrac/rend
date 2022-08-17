@@ -51,6 +51,8 @@ REGISTER_LIGHT_CLASS(PointLight,"light");
 int PointLight::init(Scene& s)
 {
   _finalPos = _trans.pointLocalToGlobal({0,0,0}, 0);
+  if (!IsPositive(_radius)) { _samples = 1; }
+  else { _samples = std::max(_samples, 1); }
   return 0;
 }
 
