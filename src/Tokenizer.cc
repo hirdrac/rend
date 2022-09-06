@@ -8,14 +8,13 @@
 #include "Tokenizer.hh"
 #include <cctype>
 
-namespace {
-  [[nodiscard]] bool isNumber(const std::string& val)
-  {
-    const char* p = val.c_str();
-    if (*p == '-') { ++p; }
-    if (*p == '.') { ++p; }
-    return std::isdigit(*p);
-  }
+
+[[nodiscard]] static bool isNumber(const std::string& val)
+{
+  const char* p = val.c_str();
+  if (*p == '-') { ++p; }
+  if (*p == '.') { ++p; }
+  return std::isdigit(*p);
 }
 
 
@@ -25,7 +24,7 @@ void Tokenizer::init(std::istream& input)
   _input = &input;
   _line = 1;
   _column = 1;
-  _nextChar = _input->get();
+  readNext();
 }
 
 TokenType Tokenizer::getToken(Token& tk)
@@ -102,8 +101,12 @@ int Tokenizer::getChar()
   if (c == '\n') { ++_line; _column = 1; }
   else if (c != '\0') { ++_column; }
 
+  readNext();
+  return c;
+}
+
+void Tokenizer::readNext()
+{
   do { _nextChar = _input->get(); }
   while ((_nextChar == '\r' || _nextChar == '\0') && !_input->eof());
-
-  return c;
 }

@@ -41,4 +41,5 @@ class Tokenizer
   int _nextChar;
 
   int getChar();
+  void readNext();
 };
