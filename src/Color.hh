@@ -42,10 +42,10 @@ class Color
   constexpr Color& operator+=(const Color& c);
   constexpr Color& operator*=(const Color& c);
 
-  template <class T>
+  template<class T>
   constexpr Color& operator*=(T s);
 
-  template <class T>
+  template<class T>
   constexpr Color& operator/=(T s);
 
   [[nodiscard]] constexpr value_type& operator[](size_type i) {
@@ -74,13 +74,19 @@ class Color
       + (blue() * static_cast<value_type>(.0722));
   }
 
+  // low-level access
+  [[nodiscard]] static constexpr size_type size() { return CHANNELS; }
+
+  [[nodiscard]] constexpr value_type* data() { return _val; }
+  [[nodiscard]] constexpr const value_type* data() const { return _val; }
+
  private:
   value_type _val[CHANNELS];  // RGBA
 };
 
 namespace colors {
-  constexpr Color black{0,0,0};
-  constexpr Color white{1,1,1};
+  inline constexpr Color black{0,0,0};
+  inline constexpr Color white{1,1,1};
 }
 
 
@@ -107,7 +113,7 @@ constexpr Color& Color::operator*=(const Color& c)
   return *this;
 }
 
-template <class T>
+template<class T>
 constexpr Color& Color::operator*=(T s)
 {
   const auto x = static_cast<value_type>(s);
@@ -117,7 +123,7 @@ constexpr Color& Color::operator*=(T s)
   return *this;
 }
 
-template <class T>
+template<class T>
 constexpr Color& Color::operator/=(T s)
 {
   const auto x = static_cast<value_type>(s);
@@ -133,12 +139,12 @@ inline std::ostream& operator<<(std::ostream& os, const Color& c) {
   return os << '[' << c[0] << ' ' << c[1] << ' ' << c[2] << ' ' << c[3] << ']';
 }
 
-template <class T>
+template<class T>
 [[nodiscard]] constexpr Color operator*(const Color& c, T s) {
   return Color{c} *= s;
 }
 
-template <class T>
+template<class T>
 [[nodiscard]] constexpr Color operator/(const Color& c, T s) {
   return Color{c} /= s;
 }
