@@ -32,7 +32,7 @@ int Disc::init(Scene& s, const Transform* tr)
 
 BBox Disc::bound(const Matrix* t) const
 {
-  return {planeBoundPoints, std::size(planeBoundPoints),
+  return {std::data(planeBoundPoints), std::size(planeBoundPoints),
           t ? *t : _trans.final()};
 }
 
@@ -538,7 +538,7 @@ int Plane::init(Scene& s, const Transform* tr)
 
 BBox Plane::bound(const Matrix* t) const
 {
-  return {planeBoundPoints, std::size(planeBoundPoints),
+  return {std::data(planeBoundPoints), std::size(planeBoundPoints),
           t ? *t : _trans.final()};
 }
 
@@ -671,7 +671,7 @@ BBox Torus::bound(const Matrix* t) const
     { r1, -_radius,  r1}, { r1,  _radius, -r1},
     {-r1, -_radius,  r1}, { r1, -_radius, -r1},
     {-r1,  _radius, -r1}, {-r1, -_radius, -r1}};
-  return {pt, std::size(pt), t ? *t : _trans.final()};
+  return {std::data(pt), std::size(pt), t ? *t : _trans.final()};
 }
 
 Flt Torus::hitCost(const HitCostInfo& hc) const
@@ -756,10 +756,7 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
   //const Vec3 n{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)};
 
   const Flt a = DotProduct(h.local_pt, h.local_pt) - 1.0 - Sqr(_radius);
-  const Vec3 n{
-    h.local_pt.x * a,
-    h.local_pt.y * (a + 2.0),
-    h.local_pt.z * a};
+  const Vec3 n = h.local_pt * Vec3{a, a + 2.0, a};
 
   return _trans.normalLocalToGlobal(n, r.time);
 }

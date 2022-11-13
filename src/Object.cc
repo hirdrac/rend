@@ -27,7 +27,7 @@ BBox Primitive::bound(const Matrix* t) const
   static constexpr Vec3 pt[8] = {
     { 1, 1, 1}, {-1, 1, 1}, { 1,-1, 1}, { 1, 1,-1},
     {-1,-1, 1}, { 1,-1,-1}, {-1, 1,-1}, {-1,-1,-1}};
-  return {pt, std::size(pt), t ? *t : _trans.final()};
+  return {std::data(pt), std::size(pt), t ? *t : _trans.final()};
 }
 
 
