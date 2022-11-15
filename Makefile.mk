@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 47 (2022/8/9)
+# Makefile.mk - revision 48 (2022/11/15)
 # Copyright (C) 2022 Richard Bradley
 #
 # Additional contributions from:
@@ -531,8 +531,9 @@ endif
 endef
 $(foreach x,$(_file_labels),$(eval $(call _check_file_entry,$x)))
 
-# macro to encode path as part of name and remove suffix (for object files)
+# macros to create object file name from source file (w/paths)
 override _src_bname = $(subst /,__,$(subst ../,,$(basename $1)))
+override _src_oname = $(addsuffix .o,$(call _src_bname,$1))
 
 # macro to get values that appear multiple times in a list (for error messages)
 override _find_dups = $(strip $(foreach x,$(sort $1),$(if $(filter 1,$(words $(filter $x,$1))),,$x)))
@@ -766,7 +767,7 @@ else ifneq ($(_build_env),)
   endif
 
   override _$1_lang := $$(if $$(filter $(_asm_ptrn),$$(_$1_src)),asm) $$(if $$(filter $(_c_ptrn),$$(_$1_src)),c) $$(if $$(filter $(_cxx_ptrn),$$(_$1_src)),cxx)
-  override _$1_src_objs := $$(addsuffix .o,$$(call _src_bname,$$(_$1_src)))
+  override _$1_src_objs := $$(call _src_oname,$$(_$1_src))
 
   ifneq ($$(strip $$($1.OBJS)),-)
     override _$1_other_objs := $$(foreach x,$$($1.OBJS),$$(if $$(filter $$x,$$(_lib_labels)),\
@@ -891,13 +892,6 @@ else ifneq ($(_build_env),)
     $(eval override _$x_aliases := $x$(SFX))\
     $(eval override _$x_run := $(BUILD_DIR)/$(_$x_build)/$(_$x_name)))
 
-  # check for source conflicts like src/file.cc & src/file.cpp
-  override _all_source := $(sort $(foreach x,$(_src_labels),$(_$x_src)))
-  override _all_source_base := $(call _src_bname,$(_all_source))
-  ifneq ($(words $(_all_source_base)),$(words $(sort $(_all_source_base))))
-    $(error $(_msgErr)Conflicting source files - each basename must be unique$(_end))
-  endif
-
   # halt build for package errors on non-test entries
   $(eval $(call _verify_pkgs,PACKAGES,_pkgs))
   $(foreach x,$(_bin_labels) $(_lib_labels),$(eval $(call _verify_pkgs,$x.PACKAGES,_$x_pkgs)))
@@ -1015,8 +1009,9 @@ endif
 
 
 #### Unknown Target Handling ####
+override _all_src_files := $(foreach x,$(_src_labels),$(addprefix $(_$x_source_dir),$(_$x_src)))
 .SUFFIXES:
-.DEFAULT: ; $(error $(_msgErr)$(if $(filter $<,$(_all_source)),Missing source file '$<','$<' unknown)$(_end))
+.DEFAULT: ; $(error $(_msgErr)$(if $(filter $<,$(_all_src_files)),Missing source file '$<','$<' unknown)$(_end))
 
 
 #### Build Macros ####
@@ -1161,7 +1156,7 @@ endef
 
 
 override define _make_dep  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_bname,$3).o: $$(_src_path_$2)$3 $1/$4 $$(BUILD_DIR)/.compiler_ver $$(_pkg_trigger_$2) | $$(_symlinks)
+$1/$(call _src_oname,$3): $$(_src_path_$2)$3 $1/$4 $$(BUILD_DIR)/.compiler_ver $$(_pkg_trigger_$2) | $$(_symlinks)
 -include $1/$(call _src_bname,$3).mk
 endef
 
@@ -1170,9 +1165,14 @@ override define _make_obj  # <1:path> <2:build> <3:flags> <4:src list>
 $1 $1/: ; @mkdir -p "$$@"
 $1/%.mk: ; @$$(RM) "$$(@:.mk=.o)"
 
+override _all_source_base_$2 := $$(call _src_bname,$4)
+ifneq ($$(words $$(_all_source_base_$2)),$$(words $$(sort $$(_all_source_base_$2))))
+  $$(error $$(_msgErr)Conflicting object files for $2 - each source file basename must be unique$$(_end))
+endif
+
 ifneq ($$(filter $$(_c_ptrn),$4),)
 $$(eval $$(call _rebuild_check,$1/.compile_cmd_c,$$(CC) $$(_cflags_$2) $3))
-$(addprefix $1/,$(addsuffix .o,$(call _src_bname,$(filter $(_c_ptrn),$4)))): | $1
+$(addprefix $1/,$(call _src_oname,$(filter $(_c_ptrn),$4))): | $1
 	$$(strip $$(CC) $$(_cflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_c_ptrn),$4),\
   $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd_c)))
@@ -1180,7 +1180,7 @@ endif
 
 ifneq ($$(filter $$(_asm_ptrn),$4),)
 $$(eval $$(call _rebuild_check,$1/.compile_cmd_s,$$(AS) $$(_asflags_$2) $3))
-$(addprefix $1/,$(addsuffix .o,$(call _src_bname,$(filter $(_asm_ptrn),$4)))): | $1
+$(addprefix $1/,$(call _src_oname,$(filter $(_asm_ptrn),$4))): | $1
 	$$(strip $$(AS) $$(_asflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_asm_ptrn),$4),\
   $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd_s)))
@@ -1188,7 +1188,7 @@ endif
 
 ifneq ($$(filter $$(_cxx_ptrn),$4),)
 $$(eval $$(call _rebuild_check,$1/.compile_cmd,$$(CXX) $$(_cxxflags_$2) $3))
-$(addprefix $1/,$(addsuffix .o,$(call _src_bname,$(filter $(_cxx_ptrn),$4)))): | $1
+$(addprefix $1/,$(call _src_oname,$(filter $(_cxx_ptrn),$4))): | $1
 	$$(strip $$(CXX) $$(_cxxflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_cxx_ptrn),$4),\
   $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd)))
