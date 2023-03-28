@@ -39,8 +39,7 @@ class CmdLineParser
 
   [[nodiscard]] std::string_view arg() const { return _arg; }
 
-  template<class T>
-  bool get(T& val) const { return convertVal(_arg, val); }
+  bool get(auto& val) const { return convertVal(_arg, val); }
 
   [[nodiscard]] bool option() const {
     return !_optionsDone && _arg.size() >= 2 && _arg[0] == '-';
@@ -60,9 +59,8 @@ class CmdLineParser
     return false;
   }
 
-  template<class T>
   [[nodiscard]] bool option(
-    char shortName, std::string_view longName, T& value)
+    char shortName, std::string_view longName, auto& value)
   {
     if (!option()) { return false; }
 

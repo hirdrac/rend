@@ -1,6 +1,6 @@
 //
 // PerlinNoise.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // from 'Improved Noise' by Ken Perlin (SIGGRAPH 2002)
 // http://mrl.nyu.edu/~perlin/noise/
@@ -11,14 +11,8 @@
 
 
 namespace perlin {
-  template<typename T>
-  constexpr T fade(T t) {
+  constexpr auto fade(auto t) {
     return t * t * t * ((t * ((t * 6) - 15)) + 10);
-  }
-
-  template<typename T>
-  constexpr T lerp(T t, T a, T b) {
-    return a + (t * (b-a));
   }
 
   template<typename T>
@@ -85,17 +79,19 @@ namespace perlin {
 
     // final noise value
     const T n1 =
-      lerp(v,
-           lerp(u, grad(data[aa], rx, ry, rz),
-                grad(data[ba], rx-1, ry, rz)),
-           lerp(u, grad(data[ab], rx, ry-1, rz),
-                grad(data[bb], rx-1, ry-1, rz)));
+      std::lerp(
+        std::lerp(grad(data[aa], rx, ry, rz),
+                  grad(data[ba], rx-1, ry, rz), u),
+        std::lerp(grad(data[ab], rx, ry-1, rz),
+                  grad(data[bb], rx-1, ry-1, rz), u),
+        v);
     const T n2 =
-      lerp(v,
-           lerp(u, grad(data[aa+1], rx, ry, rz-1),
-                grad(data[ba+1], rx-1, ry, rz-1)),
-           lerp(u, grad(data[ab+1], rx, ry-1, rz-1),
-                grad(data[bb+1], rx-1, ry-1, rz-1)));
-    return lerp(w, n1, n2);
+      std::lerp(
+        std::lerp(grad(data[aa+1], rx, ry, rz-1),
+                  grad(data[ba+1], rx-1, ry, rz-1), u),
+        std::lerp(grad(data[ab+1], rx, ry-1, rz-1),
+                  grad(data[bb+1], rx-1, ry-1, rz-1), u),
+        v);
+    return std::lerp(n1, n2, w);
   }
 }

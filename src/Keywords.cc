@@ -1,6 +1,6 @@
 //
 // Keywords.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "Keywords.hh"
@@ -88,7 +88,7 @@ static int RotateByAxisFn(
   Flt angle;
   if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
 
-  t->base.rotate<axis>(angle * math::DEG_TO_RAD<Flt>);
+  t->base.rotate<axis>(DegToRad(angle));
   return 0;
 }
 
@@ -585,7 +585,7 @@ bool AddItemFn(std::string_view keyword, ItemFn fn)
   if (!Keywords) { initKeywords(); }
 
   const std::string key = makeKey(keyword);
-  assert(Keywords->find(key) == Keywords->end());
+  assert(!Keywords->contains(key));
 
   (*Keywords)[key] = fn;
   return true;

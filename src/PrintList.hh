@@ -1,14 +1,13 @@
 //
 // PrintList.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #pragma once
 #include "Print.hh"
 
 
-template<class ContainerType>
-void PrintList(const ContainerType& list, int indent = 0)
+void PrintList(const auto& list, int indent = 0)
 {
   if (list.empty()) {
     for (int i = 0; i < indent; ++i) { print(' '); }

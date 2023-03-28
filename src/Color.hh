@@ -1,6 +1,6 @@
 //
 // Color.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // Standard color class library
 //
@@ -41,12 +41,8 @@ class Color
   // Operators
   constexpr Color& operator+=(const Color& c);
   constexpr Color& operator*=(const Color& c);
-
-  template<class T>
-  constexpr Color& operator*=(T s);
-
-  template<class T>
-  constexpr Color& operator/=(T s);
+  constexpr Color& operator*=(auto s);
+  constexpr Color& operator/=(auto s);
 
   [[nodiscard]] constexpr value_type& operator[](size_type i) {
     return _val[i]; }
@@ -113,8 +109,7 @@ constexpr Color& Color::operator*=(const Color& c)
   return *this;
 }
 
-template<class T>
-constexpr Color& Color::operator*=(T s)
+constexpr Color& Color::operator*=(auto s)
 {
   const auto x = static_cast<value_type>(s);
   _val[0] *= x;
@@ -123,8 +118,7 @@ constexpr Color& Color::operator*=(T s)
   return *this;
 }
 
-template<class T>
-constexpr Color& Color::operator/=(T s)
+constexpr Color& Color::operator/=(auto s)
 {
   const auto x = static_cast<value_type>(s);
   _val[0] /= x;
@@ -139,13 +133,11 @@ inline std::ostream& operator<<(std::ostream& os, const Color& c) {
   return os << '[' << c[0] << ' ' << c[1] << ' ' << c[2] << ' ' << c[3] << ']';
 }
 
-template<class T>
-[[nodiscard]] constexpr Color operator*(const Color& c, T s) {
+[[nodiscard]] constexpr Color operator*(const Color& c, auto s) {
   return Color{c} *= s;
 }
 
-template<class T>
-[[nodiscard]] constexpr Color operator/(const Color& c, T s) {
+[[nodiscard]] constexpr Color operator/(const Color& c, auto s) {
   return Color{c} /= s;
 }
 

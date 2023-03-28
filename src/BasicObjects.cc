@@ -1,6 +1,6 @@
 //
 // BasicObjects.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "BasicObjects.hh"
@@ -46,7 +46,7 @@ int Disc::intersect(const Ray& r, HitList& hl) const
   ++hl.stats().disc.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
-  if (UNLIKELY(dir.z == 0.0)) {
+  if (dir.z == 0.0) [[unlikely]] {
     return 0;  // parallel with disc plane
   }
 
@@ -234,7 +234,7 @@ int Cube::intersect(const Ray& r, HitList& hl) const
   int near_side = -1, far_side = -1;
 
   // X
-  if (LIKELY(dir.x != 0.0)) {
+  if (dir.x != 0.0) [[likely]] {
     const Flt h1 = (-1.0 - base.x) / dir.x;
     const Flt h2 = ( 1.0 - base.x) / dir.x;
     if (h1 < h2) {
@@ -250,7 +250,7 @@ int Cube::intersect(const Ray& r, HitList& hl) const
 
   // Y & Z
   for (unsigned int i = 1; i < 3; ++i) {
-    if (LIKELY(dir[i] != 0.0)) {
+    if (dir[i] != 0.0) [[likely]] {
       const int s = int(i)*2;
       const Flt h1 = (-1.0 - base[i]) / dir[i];
       const Flt h2 = ( 1.0 - base[i]) / dir[i];
@@ -351,7 +351,7 @@ int Cylinder::intersect(const Ray& r, HitList& hl) const
 
   // Intersect cylinder ends
   int near_side = 0, far_side = 0;
-  if (LIKELY(dir.z != 0.0)) {
+  if (dir.z != 0.0) [[likely]] {
     Flt h1 = -(base.z - 1.0) / dir.z;  // plane hit 1
     int s1 = 1;
     Flt h2 = -(base.z + 1.0) / dir.z;  // plane hit 2
@@ -552,7 +552,7 @@ int Plane::intersect(const Ray& r, HitList& hl) const
   ++hl.stats().plane.tried;
 
   const Vec3 dir = _trans.rayLocalDir(r);
-  if (UNLIKELY(dir.z == 0.0)) {
+  if (dir.z == 0.0) [[unlikely]] {
     return 0;  // parallel with plane
   }
 

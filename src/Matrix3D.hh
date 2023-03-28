@@ -1,6 +1,6 @@
 //
 // Matrix3D.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
@@ -10,6 +10,7 @@
 #include "MathUtility.hh"
 #include "InitType.hh"
 #include <ostream>
+#include <cmath>
 
 
 // **** Types ****
@@ -513,21 +514,12 @@ constexpr void Matrix4x4<T,MOT>::transpose()
   // [c0 c1 c2 c3]    [a2 b2 c2 d2]
   // [d0 d1 d2 d3]    [a3 b3 c3 d3]
 
-  // std::swap not constexpr until C++20
-  //std::swap(_val[1],  _val[4]);
-  //std::swap(_val[2],  _val[8]);
-  //std::swap(_val[3],  _val[12]);
-  //std::swap(_val[6],  _val[9]);
-  //std::swap(_val[7],  _val[13]);
-  //std::swap(_val[11], _val[14]);
-
-  T tmp;
-  tmp = _val[1];  _val[1]  = _val[4];  _val[4]  = tmp;
-  tmp = _val[2];  _val[2]  = _val[8];  _val[8]  = tmp;
-  tmp = _val[3];  _val[3]  = _val[12]; _val[12] = tmp;
-  tmp = _val[6];  _val[6]  = _val[9];  _val[9]  = tmp;
-  tmp = _val[7];  _val[7]  = _val[13]; _val[13] = tmp;
-  tmp = _val[11]; _val[11] = _val[14]; _val[14] = tmp;
+  std::swap(_val[1],  _val[4]);
+  std::swap(_val[2],  _val[8]);
+  std::swap(_val[3],  _val[12]);
+  std::swap(_val[6],  _val[9]);
+  std::swap(_val[7],  _val[13]);
+  std::swap(_val[11], _val[14]);
 }
 
 

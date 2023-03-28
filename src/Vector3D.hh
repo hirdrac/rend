@@ -1,6 +1,6 @@
 //
 // Vector3D.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // vector template types/functions for 3D calculations
 //
@@ -12,6 +12,7 @@
 #include "MathUtility.hh"
 #include "InitType.hh"
 #include <ostream>
+#include <cmath>
 
 
 // **** Template Types ****

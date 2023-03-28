@@ -20,7 +20,7 @@ BIN_rend.SRC =\
 
 
 SOURCE_DIR = src
-STANDARD = c++17
+STANDARD = c++20
 PACKAGES = readline libpng
 OPTIONS = lto modern_c++
 WARN_EXTRA = fatal-errors
