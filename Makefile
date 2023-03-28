@@ -1,5 +1,5 @@
 # rend Makefile
-# Copyright (C) 2022 Richard Bradley
+# Copyright (C) 2023 Richard Bradley
 
 base_src :=\
   BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc Ray.cc\
