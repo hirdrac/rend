@@ -1,6 +1,6 @@
 //
 // Prism.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "Prism.hh"
@@ -31,7 +31,7 @@ int Prism::init(Scene& s, const Transform* tr)
   _plane.reserve(std::size_t(_sides));
   for (int i = 0; i < _sides; ++i) {
     // side plane normal (D=1.0)
-    const Flt angle = ((math::PI<Flt>*2.0) / Flt(_sides)) * Flt(i);
+    const Flt angle = ((PI*2.0) / Flt(_sides)) * Flt(i);
     _plane.push_back({std::sin(angle), std::cos(angle)});
   }
 
@@ -44,7 +44,7 @@ int Prism::init(Scene& s, const Transform* tr)
   _normal.push_back(_trans.normalLocalToGlobal({0, 0, 1}, 0));
   _normal.push_back(_trans.normalLocalToGlobal({0, 0,-1}, 0));
 
-  _halfSideLenSqr = Sqr(std::tan(math::PI<Flt>/Flt(_sides)));
+  _halfSideLenSqr = Sqr(std::tan(PI/Flt(_sides)));
   return 0;
 }
 
@@ -55,7 +55,7 @@ BBox Prism::bound(const Matrix* t) const
 
   const Flt len = std::sqrt(1.0 + _halfSideLenSqr); // length of hypotenuse
   for (int i = 0; i < _sides; ++i) {
-    const Flt a = ((math::PI<Flt>*2.0) / Flt(_sides)) * (Flt(i)+.5);
+    const Flt a = ((PI*2.0) / Flt(_sides)) * (Flt(i)+.5);
     const Flt x = std::sin(a) * len;
     const Flt y = std::cos(a) * len;
     box.fit(MultPoint({x,y, 1}, m));
