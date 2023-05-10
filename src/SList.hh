@@ -1,8 +1,8 @@
 //
 // SList.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
-// intrusive single linked list
+// Intrusive single linked list
 //
 // Example Usage:
 // ~~~~~~~~~~~~~
@@ -18,7 +18,7 @@
 
 
 // **** SList class ****
-template<typename type>
+template<ListNode type>
 class SList
 {
  public:
@@ -77,7 +77,7 @@ class SList
   type* _tail = nullptr;
 };
 
-template<typename type>
+template<ListNode type>
 void SList<type>::addToHead(type* item)
 {
   //assert(item != nullptr);
@@ -88,7 +88,7 @@ void SList<type>::addToHead(type* item)
   _head = item;
 }
 
-template<typename type>
+template<ListNode type>
 void SList<type>::addToHead(SList<type>& list)
 {
   if (list.empty()) { return; }
@@ -101,7 +101,7 @@ void SList<type>::addToHead(SList<type>& list)
   _head = start;
 }
 
-template<typename type>
+template<ListNode type>
 void SList<type>::addToTail(type* item)
 {
   //assert(item != nullptr);
@@ -114,7 +114,7 @@ void SList<type>::addToTail(type* item)
   _tail = LastNode(item);
 }
 
-template<typename type>
+template<ListNode type>
 void SList<type>::addToTail(SList<type>& list)
 {
   if (list.empty()) { return; }
@@ -131,7 +131,7 @@ void SList<type>::addToTail(SList<type>& list)
   _tail = end;
 }
 
-template<typename type>
+template<ListNode type>
 void SList<type>::addAfterNode(type* node, type* item)
 {
   if (!node) {
@@ -145,7 +145,7 @@ void SList<type>::addAfterNode(type* node, type* item)
   }
 }
 
-template<typename type>
+template<ListNode type>
 type* SList<type>::removeHead()
 {
   if (!_head) { return nullptr; }
@@ -158,7 +158,7 @@ type* SList<type>::removeHead()
   return n;
 }
 
-template<typename type>
+template<ListNode type>
 type* SList<type>::removeNext(type* item)
 {
   if (!item) { return removeHead(); }
@@ -174,7 +174,7 @@ type* SList<type>::removeNext(type* item)
   return n;
 }
 
-template<typename type>
+template<ListNode type>
 type* SList<type>::extractNodes()
 {
   type* list = _head;
@@ -184,5 +184,5 @@ type* SList<type>::extractNodes()
 
 
 // **** Functions ****
-template<typename type>
+template<ListNode type>
 void swap(SList<type>& a, SList<type>& b) noexcept { a.swap(b); }

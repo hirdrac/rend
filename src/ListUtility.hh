@@ -2,17 +2,25 @@
 // ListUtility.hh
 // Copyright (C) 2023 Richard Bradley
 //
-// linked list node template classes & support functions
+// Intrusive linked list node support functions
 //
 // Node structs/classes must have in their public section:
 //  type* next = nullptr;
 //
 
 #pragma once
+#include <concepts>
+
+
+// **** Concepts ****
+template<class T>
+concept ListNode = requires(T t) {
+  { t.next } -> std::same_as<T*&>;
+};
 
 
 // **** Functions ****
-[[nodiscard]] constexpr int CountNodes(const auto* list)
+[[nodiscard]] constexpr int CountNodes(ListNode auto* list)
 {
   int count = 0;
   while (list) {
@@ -23,7 +31,7 @@
   return count;
 }
 
-void KillNodes(auto* list)
+constexpr void KillNodes(ListNode auto* list)
 {
   while (list) {
     decltype(list) tmp = list;
@@ -32,7 +40,7 @@ void KillNodes(auto* list)
   }
 }
 
-[[nodiscard]] auto* LastNode(auto* list)
+[[nodiscard]] constexpr auto* LastNode(ListNode auto* list)
 {
   //assert(item != nullptr);
   while (list->next) { list = list->next; }
