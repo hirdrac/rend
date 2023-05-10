@@ -1,6 +1,6 @@
 //
 // ObjectPtr.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #pragma once
@@ -10,8 +10,7 @@
 class Object;
 using ObjectPtr = std::shared_ptr<Object>;
 
-template<class T, typename... Args>
+template<class T, typename... Args> requires std::is_base_of_v<Object,T>
 [[nodiscard]] inline std::shared_ptr<T> makeObject(Args... args) {
-  static_assert(std::is_base_of_v<Object,T>);
   return std::make_shared<T>(args...);
 }
