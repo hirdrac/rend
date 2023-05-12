@@ -37,14 +37,16 @@ namespace math {
 
 
 // **** Functions ****
-[[nodiscard]] constexpr auto DegToRad(std::floating_point auto deg)
+template<std::floating_point T>
+[[nodiscard]] constexpr T DegToRad(T deg)
 {
-  return deg * math::DEG_TO_RAD<decltype(deg)>;
+  return deg * math::DEG_TO_RAD<T>;
 }
 
-[[nodiscard]] constexpr auto RadToDeg(std::floating_point auto rad)
+template<std::floating_point T>
+[[nodiscard]] constexpr T RadToDeg(T rad)
 {
-  return rad * math::RAD_TO_DEG<decltype(rad)>;
+  return rad * math::RAD_TO_DEG<T>;
 }
 
 template<NumType T>
@@ -123,7 +125,8 @@ template<NumType T>
   return (x & (x - 1)) == 0;
 }
 
-[[nodiscard]] constexpr auto Sqr(auto x)
+template<NumType T>
+[[nodiscard]] constexpr T Sqr(T x)
 {
   return x * x;
 }

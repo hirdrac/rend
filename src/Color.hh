@@ -7,6 +7,7 @@
 
 #pragma once
 #include "InitType.hh"
+#include "MathUtility.hh"
 #include <ostream>
 
 
@@ -41,8 +42,8 @@ class Color
   // Operators
   constexpr Color& operator+=(const Color& c);
   constexpr Color& operator*=(const Color& c);
-  constexpr Color& operator*=(auto s);
-  constexpr Color& operator/=(auto s);
+  constexpr Color& operator*=(NumType auto s);
+  constexpr Color& operator/=(NumType auto s);
 
   [[nodiscard]] constexpr value_type& operator[](size_type i) {
     return _val[i]; }
@@ -109,7 +110,7 @@ constexpr Color& Color::operator*=(const Color& c)
   return *this;
 }
 
-constexpr Color& Color::operator*=(auto s)
+constexpr Color& Color::operator*=(NumType auto s)
 {
   const auto x = static_cast<value_type>(s);
   _val[0] *= x;
@@ -118,7 +119,7 @@ constexpr Color& Color::operator*=(auto s)
   return *this;
 }
 
-constexpr Color& Color::operator/=(auto s)
+constexpr Color& Color::operator/=(NumType auto s)
 {
   const auto x = static_cast<value_type>(s);
   _val[0] /= x;
@@ -133,11 +134,11 @@ inline std::ostream& operator<<(std::ostream& os, const Color& c) {
   return os << '[' << c[0] << ' ' << c[1] << ' ' << c[2] << ' ' << c[3] << ']';
 }
 
-[[nodiscard]] constexpr Color operator*(const Color& c, auto s) {
+[[nodiscard]] constexpr Color operator*(const Color& c, NumType auto s) {
   return Color{c} *= s;
 }
 
-[[nodiscard]] constexpr Color operator/(const Color& c, auto s) {
+[[nodiscard]] constexpr Color operator/(const Color& c, NumType auto s) {
   return Color{c} /= s;
 }
 
