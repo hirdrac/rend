@@ -22,7 +22,7 @@ enum MatrixOrderType { ROW_MAJOR, COLUMN_MAJOR };
   //   [ 8  9 10 11]  |   [ 2  6 10 14]
   //   [12 13 14 15]  |   [ 3  7 11 15]
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 class Matrix4x4
 {
  public:
@@ -136,7 +136,7 @@ class Matrix4x4
 
 
 // **** Binary operators ****
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Matrix4x4<T,ROW_MAJOR> operator*(
   const Matrix4x4<T,ROW_MAJOR>& a, const Matrix4x4<T,ROW_MAJOR>& b)
 {
@@ -157,7 +157,7 @@ template<typename T>
   return m;
 }
 
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Matrix4x4<T,COLUMN_MAJOR> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& a, const Matrix4x4<T,COLUMN_MAJOR>& b)
 {
@@ -178,7 +178,7 @@ template<typename T>
   return m;
 }
 
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector4<T> operator*(
   const Vector4<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -188,7 +188,7 @@ template<typename T>
           (v.x*m[3]) + (v.y*m[7]) + (v.z*m[11]) + (v.w*m[15])};
 }
 
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector4<T> operator*(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector4<T>& v)
 {
@@ -200,7 +200,7 @@ template<typename T>
 
 
 // **** Template Stream Operators ****
-template<typename T>
+template<NumType T>
 inline std::ostream& operator<<(
   std::ostream& os, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -212,7 +212,7 @@ inline std::ostream& operator<<(
   return os;
 }
 
-template<typename T>
+template<NumType T>
 inline std::ostream& operator<<(
   std::ostream& os, const Matrix4x4<T,COLUMN_MAJOR>& m)
 {
@@ -226,7 +226,7 @@ inline std::ostream& operator<<(
 
 
 // **** Inline Implementations ****
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setTranslation(T tx, T ty, T tz)
 {
   // Translation Matrix:
@@ -241,7 +241,7 @@ constexpr void Matrix4x4<T,MOT>::setTranslation(T tx, T ty, T tz)
   _val[12] = tx; _val[13] = ty; _val[14] = tz; _val[15] = 1;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::translate(T tx, T ty, T tz)
 {
   // Translation applied to another matrix (optimized):
@@ -271,7 +271,7 @@ constexpr void Matrix4x4<T,MOT>::translate(T tx, T ty, T tz)
   }
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 void Matrix4x4<T,MOT>::translateOptimized(T tx, T ty, T tz)
 {
   // Translation further optimized for non-projection matrix
@@ -286,7 +286,7 @@ void Matrix4x4<T,MOT>::translateOptimized(T tx, T ty, T tz)
   _val[14] += tz;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setRotationX_sc(T sinVal, T cosVal)
 {
   // X Axis Rotation Matrix:
@@ -301,7 +301,7 @@ constexpr void Matrix4x4<T,MOT>::setRotationX_sc(T sinVal, T cosVal)
   _val[12] = 0; _val[13] = 0;       _val[14] = 0;      _val[15] = 1;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::rotateX_sc(T sinVal, T cosVal)
 {
   // X axis rotation applied to matrix (optimized):
@@ -318,7 +318,7 @@ constexpr void Matrix4x4<T,MOT>::rotateX_sc(T sinVal, T cosVal)
   }
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setRotationY_sc(T sinVal, T cosVal)
 {
   // Y Axis Rotation Matrix:
@@ -333,7 +333,7 @@ constexpr void Matrix4x4<T,MOT>::setRotationY_sc(T sinVal, T cosVal)
   _val[12] = 0;      _val[13] = 0; _val[14] = 0;       _val[15] = 1;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::rotateY_sc(T sinVal, T cosVal)
 {
   // Y axis rotation applied to matrix (optimized):
@@ -350,7 +350,7 @@ constexpr void Matrix4x4<T,MOT>::rotateY_sc(T sinVal, T cosVal)
   }
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setRotationZ_sc(T sinVal, T cosVal)
 {
   // Z Axis Rotation Matrix:
@@ -365,7 +365,7 @@ constexpr void Matrix4x4<T,MOT>::setRotationZ_sc(T sinVal, T cosVal)
   _val[12] = 0;       _val[13] = 0;      _val[14] = 0; _val[15] = 1;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::rotateZ_sc(T sinVal, T cosVal)
 {
   // Z axis rotation applied to matrix (optimized):
@@ -382,7 +382,7 @@ constexpr void Matrix4x4<T,MOT>::rotateZ_sc(T sinVal, T cosVal)
   }
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setRotation_sc(
   const Vector3<T>& axis, T sinVal, T cosVal)
 {
@@ -415,7 +415,7 @@ constexpr void Matrix4x4<T,MOT>::setRotation_sc(
   _val[15] = 1;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::rotate_sc(
   const Vector3<T>& axis, T sinVal, T cosVal)
 {
@@ -448,7 +448,7 @@ constexpr void Matrix4x4<T,MOT>::rotate_sc(
   }
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::setScaling(T sx, T sy, T sz)
 {
   // Scaling Matrix:
@@ -463,7 +463,7 @@ constexpr void Matrix4x4<T,MOT>::setScaling(T sx, T sy, T sz)
   _val[12] = 0;  _val[13] = 0;  _val[14] = 0;  _val[15] = 1;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::scale(T sx, T sy, T sz)
 {
   // Scaling applied to matrix (optimized):
@@ -478,7 +478,7 @@ constexpr void Matrix4x4<T,MOT>::scale(T sx, T sy, T sz)
   _val[12] *= sx; _val[13] *= sy; _val[14] *= sz;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::scaleX(T sx)
 {
   _val[0]  *= sx;
@@ -487,7 +487,7 @@ constexpr void Matrix4x4<T,MOT>::scaleX(T sx)
   _val[12] *= sx;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::scaleY(T sy)
 {
   _val[1]  *= sy;
@@ -496,7 +496,7 @@ constexpr void Matrix4x4<T,MOT>::scaleY(T sy)
   _val[13] *= sy;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::scaleZ(T sz)
 {
   _val[2]  *= sz;
@@ -505,7 +505,7 @@ constexpr void Matrix4x4<T,MOT>::scaleZ(T sz)
   _val[14] *= sz;
 }
 
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 constexpr void Matrix4x4<T,MOT>::transpose()
 {
   // Transposition
@@ -525,7 +525,7 @@ constexpr void Matrix4x4<T,MOT>::transpose()
 
 // **** Template Functions ****
 // MultPoint() - row vector * row major matrix
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector3<T> MultPoint(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -536,7 +536,7 @@ template<typename T>
 }
 
 // MultPoint() - column major matrix * column vector
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector3<T> MultPoint(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
@@ -547,7 +547,7 @@ template<typename T>
 }
 
 // MultPointXY() - row vector * row major matrix; return only (x,y)
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector2<T> MultPointXY(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -556,7 +556,7 @@ template<typename T>
 }
 
 // MultPointXY() - column major matrix * column vector; return only (x,y)
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector2<T> MultPointXY(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
@@ -565,7 +565,7 @@ template<typename T>
 }
 
 // MultPointX() - row vector * row major matrix; return only x
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr T MultPointX(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -573,7 +573,7 @@ template<typename T>
 }
 
 // MultPointX() - column major matrix * column vector; return only x
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr T MultPointX(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
@@ -581,7 +581,7 @@ template<typename T>
 }
 
 // MultVector() - row vector * row major matrix
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector3<T> MultVector(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -592,7 +592,7 @@ template<typename T>
 }
 
 // MultVector() - column major matrix * column vector
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector3<T> MultVector(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
@@ -603,7 +603,7 @@ template<typename T>
 }
 
 // MultVectorTrans - row vector * transpose(row major matrix)
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector3<T> MultVectorTrans(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
@@ -614,7 +614,7 @@ template<typename T>
 }
 
 // MultVectorTrans() - transpose(column major matrix) * column vector
-template<typename T>
+template<NumType T>
 [[nodiscard]] constexpr Vector3<T> MultVectorTrans(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
@@ -625,7 +625,7 @@ template<typename T>
 }
 
 // Matrix Inversion
-template<typename T, MatrixOrderType MOT>
+template<NumType T, MatrixOrderType MOT>
 int InvertMatrix(const Matrix4x4<T,MOT>& m, Matrix4x4<T,MOT>& dst)
 {
   // based off 'Streaming SIMD Extensions - Inverse of 4x4 Matrix'

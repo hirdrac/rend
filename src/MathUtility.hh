@@ -12,6 +12,11 @@
 #include <numbers>
 
 
+// **** Concepts ****
+template<class T>
+concept NumType = std::integral<T> || std::floating_point<T>;
+
+
 // **** Constants ****
 namespace math {
   // various math constants
@@ -42,71 +47,71 @@ namespace math {
   return rad * math::RAD_TO_DEG<decltype(rad)>;
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsZero(numType x)
+template<NumType T>
+[[nodiscard]] constexpr bool IsZero(T x)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
-    return (x > -math::VERY_SMALL<numType>) && (x < math::VERY_SMALL<numType>);
+  if constexpr (std::is_floating_point_v<T>) {
+    return (x > -math::VERY_SMALL<T>) && (x < math::VERY_SMALL<T>);
   } else {
     return (x == 0);
   }
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsOne(numType x)
+template<NumType T>
+[[nodiscard]] constexpr bool IsOne(T x)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
-    return (x > (numType{1} - math::VERY_SMALL<numType>))
-      && (x < (numType{1} + math::VERY_SMALL<numType>));
+  if constexpr (std::is_floating_point_v<T>) {
+    return (x > (static_cast<T>(1) - math::VERY_SMALL<T>))
+      && (x < (static_cast<T>(1) + math::VERY_SMALL<T>));
   } else {
     return (x == 1);
   }
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsPositive(numType x)
+template<NumType T>
+[[nodiscard]] constexpr bool IsPositive(T x)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
-    return (x >= math::VERY_SMALL<numType>);
+  if constexpr (std::is_floating_point_v<T>) {
+    return (x >= math::VERY_SMALL<T>);
   } else {
     return (x > 0);
   }
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsNegative(numType x)
+template<NumType T>
+[[nodiscard]] constexpr bool IsNegative(T x)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
-    return (x <= -math::VERY_SMALL<numType>);
+  if constexpr (std::is_floating_point_v<T>) {
+    return (x <= -math::VERY_SMALL<T>);
   } else {
     return (x < 0);
   }
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsEqual(numType x, numType y)
+template<NumType T>
+[[nodiscard]] constexpr bool IsEqual(T x, T y)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
+  if constexpr (std::is_floating_point_v<T>) {
     return IsZero(x-y);
   } else {
     return (x == y);
   }
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsLess(numType x, numType y)
+template<NumType T>
+[[nodiscard]] constexpr bool IsLess(T x, T y)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
+  if constexpr (std::is_floating_point_v<T>) {
     return IsNegative(x-y);
   } else {
     return (x < y);
   }
 }
 
-template<class numType>
-[[nodiscard]] constexpr bool IsGreater(numType x, numType y)
+template<NumType T>
+[[nodiscard]] constexpr bool IsGreater(T x, T y)
 {
-  if constexpr (std::is_floating_point_v<numType>) {
+  if constexpr (std::is_floating_point_v<T>) {
     return IsPositive(x-y);
   } else {
     return (x > y);
@@ -123,12 +128,12 @@ template<class numType>
   return x * x;
 }
 
-template<class numType>
-[[nodiscard]] constexpr numType iPow(numType x, int y)
+template<NumType T>
+[[nodiscard]] constexpr T iPow(T x, int y)
 {
   if (y < 0) { return 0; }
 
-  auto val = numType{1};
+  auto val = static_cast<T>(1);
   while (y) {
     if (y & 1) { val *= x; }
     y >>= 1;
@@ -138,13 +143,13 @@ template<class numType>
   return val;
 }
 
-template<class numType>
-[[nodiscard]] constexpr int Sgn(numType x)
+template<NumType T>
+[[nodiscard]] constexpr int Sgn(T x)
 {
-  if constexpr (std::is_signed_v<numType>) {
-    return int{x > 0} - int{x < 0};
+  if constexpr (std::is_signed_v<T>) {
+    return int{IsPositive(x)} - int{IsNegative(x)};
   } else {
-    return int{x > 0};
+    return int{IsPositive(x)};
   }
 }
 
@@ -155,10 +160,10 @@ template<class numType>
   return (x < 0) ? -int{x} : int{x}; }
 
 // template for all other types
-template<class numType>
-[[nodiscard]] constexpr numType Abs(numType x)
+template<NumType T>
+[[nodiscard]] constexpr T Abs(T x)
 {
-  if constexpr (std::is_signed_v<numType>) {
+  if constexpr (std::is_signed_v<T>) {
     // constexpr version of std::abs
     // NOTE: Abs(-MAX_INT) is undefined
     return (x < 0) ? -x : x;

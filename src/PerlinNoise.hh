@@ -7,15 +7,17 @@
 //
 
 #pragma once
+#include <concepts>
 #include <cmath>
 
 
 namespace perlin {
-  constexpr auto fade(auto t) {
+  template<std::floating_point T>
+  constexpr T fade(T t) {
     return t * t * t * ((t * ((t * 6) - 15)) + 10);
   }
 
-  template<typename T>
+  template<std::floating_point T>
   constexpr T grad(int hash, T x, T y, T z) {
     const int h = hash & 15;
     const T u = (h < 8) ? x : y;
@@ -23,7 +25,7 @@ namespace perlin {
     return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
   }
 
-  template<typename T>
+  template<std::floating_point T>
   T noise(T x, T y, T z) {
     static constexpr int data[257] = {
       151,160,137,91, 90,15,131,13, 201,95,96,53, 194,233,7,225,
