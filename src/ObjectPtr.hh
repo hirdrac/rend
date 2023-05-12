@@ -5,12 +5,12 @@
 
 #pragma once
 #include <memory>
-#include <type_traits>
+#include <concepts>
 
 class Object;
 using ObjectPtr = std::shared_ptr<Object>;
 
-template<class T, typename... Args> requires std::is_base_of_v<Object,T>
+template<std::derived_from<Object> T, typename... Args>
 [[nodiscard]] inline std::shared_ptr<T> makeObject(Args... args) {
   return std::make_shared<T>(args...);
 }

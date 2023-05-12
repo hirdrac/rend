@@ -5,12 +5,12 @@
 
 #pragma once
 #include <memory>
-#include <type_traits>
+#include <concepts>
 
 class Shader;
 using ShaderPtr = std::shared_ptr<Shader>;
 
-template<class T, typename... Args> requires std::is_base_of_v<Shader,T>
+template<std::derived_from<Shader> T, typename... Args>
 [[nodiscard]] inline std::shared_ptr<T> makeShader(Args... args) {
   return std::make_shared<T>(args...);
 }

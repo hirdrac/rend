@@ -5,12 +5,12 @@
 
 #pragma once
 #include <memory>
-#include <type_traits>
+#include <concepts>
 
 class Light;
 using LightPtr = std::shared_ptr<Light>;
 
-template<class T, typename... Args> requires std::is_base_of_v<Light,T>
+template<std::derived_from<Light> T, typename... Args>
 [[nodiscard]] inline std::shared_ptr<T> makeLight(Args... args) {
   return std::make_shared<T>(args...);
 }
