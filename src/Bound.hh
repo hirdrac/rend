@@ -1,6 +1,6 @@
 //
 // Bound.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // Definition of Bound object class and
 // bounding box hierarchy function
@@ -25,10 +25,10 @@ class Bound final : public Object
   // Object Functions
   BBox bound(const Matrix* t) const override { return box; }
   int intersect(const Ray& r, HitList& hl) const override;
-  const std::vector<ObjectPtr>& children() const override { return objects; }
+  std::span<const ObjectPtr> children() const override { return objects; }
 };
 
 
 // **** Functions ****
-int MakeBoundList(const Scene& s, const std::vector<ObjectPtr>& o_list,
+int MakeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
                   std::vector<ObjectPtr>& bound_list);

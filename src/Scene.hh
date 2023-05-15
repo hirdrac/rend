@@ -1,6 +1,6 @@
 //
 // Scene.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // storage class for all scene information
 //
@@ -13,6 +13,7 @@
 #include "HitCostInfo.hh"
 #include "Types.hh"
 #include <vector>
+#include <span>
 
 
 // **** Types ****
@@ -78,11 +79,11 @@ class Scene
   [[nodiscard]] Color traceRay(JobState& js, const Ray& r) const;
   [[nodiscard]] bool castShadowRay(JobState& js, const Ray& r) const;
 
-  [[nodiscard]] const std::vector<ObjectPtr>& objects() const {
+  [[nodiscard]] std::span<const ObjectPtr> objects() const {
     return _objects; }
-  [[nodiscard]] const std::vector<ObjectPtr>& optObjects() const {
+  [[nodiscard]] std::span<const ObjectPtr> optObjects() const {
     return _optObjects; }
-  [[nodiscard]] const std::vector<LightPtr>& lights() const {
+  [[nodiscard]] std::span<const LightPtr> lights() const {
     return _lights; }
 
   [[nodiscard]] int samplesPerPixel() const {

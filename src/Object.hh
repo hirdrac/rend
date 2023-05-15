@@ -1,6 +1,6 @@
 //
 // Object.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // Definition of base object class
 //
@@ -12,6 +12,7 @@
 #include "ShaderPtr.hh"
 #include "Types.hh"
 #include <vector>
+#include <span>
 
 
 // **** Types ****
@@ -33,15 +34,12 @@ class Object : public SceneItem
   virtual int init(Scene& s, const Transform* tr) { return 0; }
   virtual BBox bound(const Matrix* t = nullptr) const = 0;
   virtual int intersect(const Ray& r, HitList& hl) const = 0;
-  virtual const std::vector<ObjectPtr>& children() const { return _emptyList; }
+  virtual std::span<const ObjectPtr> children() const { return {}; }
 
   [[nodiscard]] const ShaderPtr& shader() const { return _shader; }
 
  protected:
   ShaderPtr _shader;
-
- private:
-  inline static const std::vector<ObjectPtr> _emptyList;
 };
 
 

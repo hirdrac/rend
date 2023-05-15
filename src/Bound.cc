@@ -1,6 +1,6 @@
 //
 // Bound.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "Bound.hh"
@@ -152,7 +152,7 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 }
 
 [[nodiscard]] static OptNode* makeOptNodeList(
-  const Scene& s, const std::vector<ObjectPtr>& o_list)
+  const Scene& s, std::span<const ObjectPtr> o_list)
 {
   OptNode* node_list = nullptr;
   OptNode* tail = nullptr;
@@ -264,13 +264,13 @@ static int convertNodeList(
     } else if (n->type == NODE_UNION) {
       auto u = makeObject<Union>();
       bound_count += convertNodeList(n->child, u->objects, nullptr);
-      bound_list.push_back(u);
       if (bound_box) { bound_box->fit(n->box); }
+      bound_list.push_back(std::move(u));
     } else { // n->type == NODE_BOUND
       auto b = makeObject<Bound>();
       bound_count += 1 + convertNodeList(n->child, b->objects, &b->box);
-      bound_list.push_back(b);
       if (bound_box) { bound_box->fit(b->box); }
+      bound_list.push_back(std::move(b));
     }
   }
 
@@ -281,7 +281,7 @@ static int convertNodeList(
 class OptNodeTree
 {
  public:
-  OptNodeTree(const Scene& s, const std::vector<ObjectPtr>& o_list) {
+  OptNodeTree(const Scene& s, std::span<const ObjectPtr> o_list) {
     _head = makeOptNodeList(s, o_list);
     BBox box{s.eye};
     for (OptNode* n = _head; n != nullptr; n = n->next) { box.fit(n->box); }
@@ -302,7 +302,7 @@ class OptNodeTree
 };
 
 
-int MakeBoundList(const Scene& s, const std::vector<ObjectPtr>& o_list,
+int MakeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
                   std::vector<ObjectPtr>& bound_list)
 {
   OptNodeTree tree{s, o_list};

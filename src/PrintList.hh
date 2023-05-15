@@ -18,8 +18,9 @@ void PrintList(const auto& list, int indent = 0)
   for (auto& x : list) {
     for (int i = 0; i < indent; ++i) { print(' '); }
     println(x->desc());
-    if (!(x->children().empty())) {
-      PrintList(x->children(), indent + 2);
+    const auto children = x->children();
+    if (!(children.empty())) {
+      PrintList(children, indent + 2);
     }
   }
 }

@@ -1,6 +1,6 @@
 //
 // CSG.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // CSG object classes
 //
@@ -21,7 +21,7 @@ class CSG : public Primitive
 
   // Object Functions
   int init(Scene& s, const Transform* tr) final;
-  const std::vector<ObjectPtr>& children() const final {
+  std::span<const ObjectPtr> children() const final {
     return objects; }
 
   // Primitive Functions
