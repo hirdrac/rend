@@ -20,7 +20,7 @@ concept ListNode = requires(T t) {
 
 
 // **** Functions ****
-[[nodiscard]] constexpr int CountNodes(ListNode auto* list)
+[[nodiscard]] constexpr int CountNodes(const ListNode auto* list)
 {
   int count = 0;
   while (list) {
@@ -40,7 +40,8 @@ constexpr void KillNodes(ListNode auto* list)
   }
 }
 
-[[nodiscard]] constexpr auto* LastNode(ListNode auto* list)
+template<ListNode T>
+[[nodiscard]] constexpr T* LastNode(T* list)
 {
   //assert(item != nullptr);
   while (list->next) { list = list->next; }
