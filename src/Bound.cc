@@ -114,22 +114,21 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
   return total;
 }
 
-[[nodiscard]] static Flt calcMergeCost(
-  const Scene& s, const OptNode* n1, const OptNode* n2, Flt weight)
+[[nodiscard]] static Flt calcMergeCost(const OptNode* n1, const OptNode* n2)
 {
   const Flt w = BBox{n1->box, n2->box}.weight();
   const Flt m_cost1 =
     (n1->type == NODE_BOUND) ? treeCost(n1->child, w) : n1->cost(w);
   const Flt m_cost2 =
     (n2->type == NODE_BOUND) ? treeCost(n2->child, w) : n2->cost(w);
-  return (weight * s.hitCosts.bound) + m_cost1 + m_cost2;
+  return m_cost1 + m_cost2;
 }
 
 [[nodiscard]] static OptNode* mergeOptNodes(
-  const Scene& s, OptNode* node1, OptNode* node2)
+  OptNode* node1, OptNode* node2, Flt bound_cost)
 {
   // Create new bounding box
-  OptNode* b = new OptNode{s.hitCosts.bound};
+  OptNode* b = new OptNode{bound_cost};
   b->box = BBox{node1->box, node2->box};
 
   OptNode* n1 = node1;
@@ -152,20 +151,20 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 }
 
 [[nodiscard]] static OptNode* makeOptNodeList(
-  const Scene& s, std::span<const ObjectPtr> o_list)
+  const HitCostInfo& hitCosts, std::span<const ObjectPtr> o_list)
 {
   OptNode* node_list = nullptr;
   OptNode* tail = nullptr;
   for (auto& ob : o_list) {
     OptNode* list = nullptr;
     if (auto uPtr = dynamic_cast<const Union*>(ob.get()); uPtr) {
-      list = new OptNode{NODE_UNION, ob, uPtr->hitCost(s.hitCosts)};
-      list->child = makeOptNodeList(s, uPtr->children());
+      list = new OptNode{NODE_UNION, ob, uPtr->hitCost(hitCosts)};
+      list->child = makeOptNodeList(hitCosts, uPtr->children());
     } else if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
-      list = new OptNode{NODE_OBJECT, ob, pPtr->hitCost(s.hitCosts)};
+      list = new OptNode{NODE_OBJECT, ob, pPtr->hitCost(hitCosts)};
     } else {
       // assume group - ignore it and just process children
-      list = makeOptNodeList(s, ob->children());
+      list = makeOptNodeList(hitCosts, ob->children());
       if (!list) { continue; }
     }
 
@@ -176,12 +175,14 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
   return node_list;
 }
 
-static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
+static void optimizeOptNodeList(
+  OptNode*& node_list, Flt weight, Flt bound_cost)
 {
+  const Flt totalBoundCost = weight * bound_cost;
+
   // create array to index nodes
   std::vector<OptNode*> node_array;
   node_array.reserve(std::size_t(CountNodes(node_list)));
-  const Flt bound_cost = s.hitCosts.bound;
 
   for (OptNode* ptr = node_list; ptr != nullptr; ) {
     OptNode* n = ptr;
@@ -190,7 +191,7 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
 
     const Flt cost1 = n->cost(weight);
     n->currentCost = cost1;
-    const Flt cost2 = (weight * bound_cost) + n->cost(n->box.weight());
+    const Flt cost2 = totalBoundCost + n->cost(n->box.weight());
     if (cost1 > cost2) {
       // Put object into bound (alone)
       OptNode* b = new OptNode{bound_cost};
@@ -215,7 +216,7 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
         OptNode* n2 = node_array[j];
 
         const Flt baseCost = n1->currentCost + n2->currentCost;
-        const Flt mergeCost = calcMergeCost(s, n1, n2, weight);
+        const Flt mergeCost = totalBoundCost + calcMergeCost(n1, n2);
         const Flt costImprove = baseCost - mergeCost;
         if (costImprove > best) {
           best = costImprove;
@@ -228,7 +229,8 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
 
     if (best <= 0) { break; }
 
-    OptNode* n = mergeOptNodes(s, node_array[best_i], node_array[best_j]);
+    OptNode* n = mergeOptNodes(
+      node_array[best_i], node_array[best_j], bound_cost);
     n->currentCost = bestMergeCost;
     node_array[best_i] = n;
     node_array[best_j] = node_array[--node_count];
@@ -246,18 +248,18 @@ static void optimizeOptNodeList(const Scene& s, OptNode*& node_list, Flt weight)
     if (n->child && (n->child->next || n->child->type == NODE_UNION)) {
       // bound/union with 2 or more children
       // - OR - bound containing a single union
-      optimizeOptNodeList(s, n->child, n->box.weight());
+      optimizeOptNodeList(n->child, n->box.weight(), bound_cost);
     }
   }
 }
 
 static int convertNodeList(
-  OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox* bound_box)
+  const OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox* bound_box)
 {
   bound_list.reserve(std::size_t(CountNodes(node_list)));
 
   int bound_count = 0;
-  for (OptNode* n = node_list; n != nullptr; n = n->next) {
+  for (const OptNode* n = node_list; n != nullptr; n = n->next) {
     if (n->type == NODE_OBJECT) {
       bound_list.push_back(n->object);
       if (bound_box) { bound_box->fit(n->box); }
@@ -282,23 +284,25 @@ class OptNodeTree
 {
  public:
   OptNodeTree(const Scene& s, std::span<const ObjectPtr> o_list) {
-    _head = makeOptNodeList(s, o_list);
+    _head = makeOptNodeList(s.hitCosts, o_list);
     BBox box{s.eye};
     for (OptNode* n = _head; n != nullptr; n = n->next) { box.fit(n->box); }
-    _weight = box.weight();
+    _sceneWeight = box.weight();
+    _boundCost = s.hitCosts.bound;
   }
 
   ~OptNodeTree() { KillNodes(_head); }
 
   [[nodiscard]] explicit operator bool() const { return _head != nullptr; }
-  [[nodiscard]] Flt cost() const { return treeCost(_head, _weight); }
-  void optimize(const Scene& s) { optimizeOptNodeList(s, _head, _weight); }
-  int makeBoundList(std::vector<ObjectPtr>& bound_list) {
+  [[nodiscard]] Flt cost() const { return treeCost(_head, _sceneWeight); }
+  void optimize() { optimizeOptNodeList(_head, _sceneWeight, _boundCost); }
+  int makeBoundList(std::vector<ObjectPtr>& bound_list) const {
     return convertNodeList(_head, bound_list, nullptr); }
 
  private:
   OptNode* _head = nullptr;
-  Flt _weight = 0;
+  Flt _sceneWeight = 0;
+  Flt _boundCost = 0;
 };
 
 
@@ -309,7 +313,7 @@ int MakeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
   if (!tree) { return 0; }
 
   println("Old tree cost: ", tree.cost());
-  tree.optimize(s);
+  tree.optimize();
   println("New tree cost: ", tree.cost());
 
   bound_list.clear();
