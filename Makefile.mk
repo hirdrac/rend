@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 50 (2023/5/10)
+# Makefile.mk - revision 50 (2023/5/16)
 # Copyright (C) 2023 Richard Bradley
 #
 # Additional contributions from:
@@ -225,6 +225,13 @@ override LIBPREFIX := lib
 # apply *_EXTRA setting values (WARN_EXTRA handled above)
 $(foreach x,WARN_C WARN_CXX PACKAGES PACKAGES_TEST INCLUDE LIBS LIBS_TEST DEFINE OPTIONS FLAGS FLAGS_TEST FLAGS_RELEASE FLAGS_DEBUG FLAGS_PROFILE LINK_FLAGS EXCLUDE_TARGETS,\
   $(if $($x_EXTRA),$(eval override $x += $($x_EXTRA))))
+
+
+#### Default Make Flags ####
+ifneq ($(shell which nproc 2>/dev/null),)
+  override _threads := $(shell nproc)
+  override GNUMAKEFLAGS += --load-average=$(_threads)
+endif
 
 
 #### OS Specific Values ####
