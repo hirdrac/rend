@@ -1,6 +1,6 @@
 //
 // Occlusion.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "Occlusion.hh"
@@ -40,7 +40,7 @@ Color Occlusion::evaluate(JobState& js, const Scene& s, const Ray& r,
 
   int lit = 0;
   for (int i = 0; i < _samples; ++i) {
-    sray.dir = js.rnd.hemisphereDir(eh.normal);
+    sray.dir = js.rndHemisphereDir(eh.normal);
     if (!s.castShadowRay(js, sray)) { ++lit; }
   }
 

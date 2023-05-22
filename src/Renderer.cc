@@ -1,6 +1,6 @@
 //
 // Renderer.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "Renderer.hh"
@@ -81,15 +81,12 @@ void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
   const Flt halfHeight = Flt(_scene->image_height) * .5;
   const Vec3 eye = _scene->eye;
 
-  const Flt jitterX = _scene->jitter / Flt(std::max(_scene->sample_x, 1));
-  const Flt jitterY = _scene->jitter / Flt(std::max(_scene->sample_y, 1));
   const bool use_jitter = IsPositive(_scene->jitter);
   const bool use_aperture = IsPositive(_scene->aperture);
   const int jitterCount =
     use_jitter || use_aperture ? std::max(_scene->samples, 1) : 1;
   const auto samplesInv = static_cast<Color::value_type>(
     1.0 / double(int(_samples.size()) * jitterCount));
-  RandomGen& rnd = js.rnd;
 
   Ray initRay;
   initRay.base = eye;
@@ -110,13 +107,13 @@ void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
           Flt sx = xx + pt.x;
           Flt sy = yy + pt.y;
           if (use_jitter) {
-            sx += rnd.jitter() * jitterX;
-            sy += rnd.jitter() * jitterY;
+            sx += js.rndJitterX();
+            sy += js.rndJitterY();
           }
 
           Vec3 dir = (_pixelX * sx) + (_pixelY * sy);
           if (use_aperture) {
-            const Vec2 r = rnd.diskPt();
+            const Vec2 r = js.rndAperturePt();
             initRay.base = eye + (_apertureX * r.x) + (_apertureY * r.y);
             dir += _vcenter - initRay.base;
           } else {
@@ -159,7 +156,7 @@ void Renderer::startJobs()
 
   // start render jobs
   for (auto& j : _jobs) {
-    j.state.stats = {};
+    j.state.init(*_scene);
     j.halt = false;
     j.jobThread = std::thread{&Renderer::jobMain, this, &j};
   }

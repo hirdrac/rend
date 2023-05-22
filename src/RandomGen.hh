@@ -1,6 +1,6 @@
 //
 // RandomGen.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #pragma once
@@ -9,58 +9,71 @@
 #include <random>
 
 
-class RandomGen
+class JitterDistribution
 {
  public:
-  RandomGen(uint64_t seed = devRnd64())
-    : _rnd{seed}, _seed{seed} { }
+  JitterDistribution() { }
+  JitterDistribution(Flt scale) : _dist{-.5 * scale, .5 * scale} { }
 
-  [[nodiscard]] uint64_t seed() const { return _seed; }
+  template<class Generator>
+  [[nodiscard]] Flt operator()(Generator& g) { return _dist(g); }
 
-  Flt jitter() { return _jitterDist(_rnd); }
-    // random value in [-.5, .5)
+ private:
+  std::uniform_real_distribution<Flt> _dist;
+};
 
-  Vec2 diskPt() {
-    // random point on diameter=1 disk
+
+class DiskPtDistribution
+{
+ public:
+  DiskPtDistribution() { }
+  DiskPtDistribution(Flt radius)
+    : _dist{-radius, radius}, _radiusSqr{Sqr(radius)} { }
+
+  template<class Generator>
+  [[nodiscard]] Vec2 operator()(Generator& g) {
     Flt x, y;
     do {
-      x = jitter();
-      y = jitter();
-    } while ((Sqr(x) + Sqr(y)) > .25);
+      x = _dist(g);
+      y = _dist(g);
+    } while ((Sqr(x) + Sqr(y)) > _radiusSqr);
     return {x, y};
   }
 
-  Vec3 dir() {
-    // random direction unit vector
+ private:
+  std::uniform_real_distribution<Flt> _dist;
+  Flt _radiusSqr = 0;
+};
+
+
+class UnitDirDistribution
+{
+ public:
+  template<class Generator>
+  [[nodiscard]] Vec3 operator()(Generator& g) {
     Vec3 d{INIT_NONE};
     Flt len2;
     do {
-      d.x = jitter();
-      d.y = jitter();
-      d.z = jitter();
+      d.x = _dist(g);
+      d.y = _dist(g);
+      d.z = _dist(g);
       len2 = d.lengthSqr();
-    } while (len2 > .25 || !IsPositive(len2));
+    } while (len2 > 1.0 || !IsPositive(len2));
     return d / std::sqrt(len2);
   }
 
-  Vec3 hemisphereDir(const Vec3& normal) {
+  template<class Generator>
+  [[nodiscard]] Vec3 operator()(Generator& g, const Vec3& normal) {
+    // hemisphere dir
     Vec3 d{INIT_NONE};
     Flt dot;
     do {
-      d = dir();
+      d = operator()(g);
       dot = DotProduct(normal, d);
     } while (IsZero(dot));
     return (dot < 0.0) ? -d : d;
   }
 
-  static uint32_t devRnd32() { return _devRnd(); }
-  static uint64_t devRnd64() {
-    return uint64_t(_devRnd()) | (uint64_t(_devRnd()) << 32); }
-
  private:
-  std::mt19937_64 _rnd;
-  std::uniform_real_distribution<Flt> _jitterDist{-.5,.5};
-  uint64_t _seed;
-
-  inline static std::random_device _devRnd;
+  std::uniform_real_distribution<Flt> _dist{-1,1};
 };

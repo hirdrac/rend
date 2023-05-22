@@ -1,6 +1,6 @@
 //
 // JobState.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // Job (thread) specific data used in rendering
 //
@@ -11,9 +11,31 @@
 #include "RandomGen.hh"
 
 
+class Scene;
+
 struct JobState
 {
   HitCache cache;
   StatInfo stats;
-  RandomGen rnd;
+
+  // random state
+  std::mt19937_64 rnd;
+  JitterDistribution jitterXDist;
+  JitterDistribution jitterYDist;
+  DiskPtDistribution apertureDist;
+  UnitDirDistribution dirDist;
+
+  // helper functions
+  void init(const Scene& s);
+
+  [[nodiscard]] Flt rndJitterX() {
+    return jitterXDist(rnd); }
+  [[nodiscard]] Flt rndJitterY() {
+    return jitterYDist(rnd); }
+  [[nodiscard]] Vec2 rndAperturePt() {
+    return apertureDist(rnd); }
+  [[nodiscard]] Vec3 rndDir() {
+    return dirDist(rnd); }
+  [[nodiscard]] Vec3 rndHemisphereDir(const Vec3& normal) {
+    return dirDist(rnd, normal); }
 };

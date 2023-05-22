@@ -2,8 +2,8 @@
 # Copyright (C) 2023 Richard Bradley
 
 base_src :=\
-  BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc Ray.cc\
-  Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc Timer.cc
+  BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc JobState.cc\
+  Ray.cc Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc Timer.cc
 object_src :=\
   Object.cc BasicObjects.cc Bound.cc CSG.cc Group.cc Prism.cc
 shader_src :=\
@@ -27,6 +27,7 @@ WARN_EXTRA = fatal-errors
 WARN_CXX_EXTRA = extra-semi conversion cast-align cast-qual
 FLAGS = -march=native -ffast-math -fno-plt
 #FLAGS_RELEASE = -DNDEBUG
+COMPILER = clang
 
 include Makefile.mk
 
