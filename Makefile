@@ -27,7 +27,6 @@ WARN_EXTRA = fatal-errors
 WARN_CXX_EXTRA = extra-semi conversion cast-align cast-qual
 FLAGS = -march=native -ffast-math -fno-plt
 #FLAGS_RELEASE = -DNDEBUG
-COMPILER = clang
 
 include Makefile.mk
 
