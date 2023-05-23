@@ -32,12 +32,36 @@ class DiskPtDistribution
 
   template<class Generator>
   [[nodiscard]] Vec2 operator()(Generator& g) {
-    Flt x, y;
+    Vec2 pt{INIT_NONE};
     do {
-      x = _dist(g);
-      y = _dist(g);
-    } while ((Sqr(x) + Sqr(y)) > _radiusSqr);
-    return {x, y};
+      pt.x = _dist(g);
+      pt.y = _dist(g);
+    } while (pt.lengthSqr() > _radiusSqr);
+    return pt;
+  }
+
+ private:
+  std::uniform_real_distribution<Flt> _dist;
+  Flt _radiusSqr = 0;
+};
+
+
+class SpherePtDistribution
+{
+ public:
+  SpherePtDistribution() { }
+  SpherePtDistribution(Flt radius)
+    : _dist{-radius, radius}, _radiusSqr{Sqr(radius)} { }
+
+  template<class Generator>
+  [[nodiscard]] Vec3 operator()(Generator& g) {
+    Vec3 pt{INIT_NONE};
+    do {
+      pt.x = _dist(g);
+      pt.y = _dist(g);
+      pt.z = _dist(g);
+    } while (pt.lengthSqr() > _radiusSqr);
+    return pt;
   }
 
  private:
