@@ -22,7 +22,7 @@ struct JobState
   std::mt19937_64 rnd;
   JitterDistribution jitterXDist;
   JitterDistribution jitterYDist;
-  DiskPtDistribution apertureDist;
+  DiskDistribution apertureDist;
   UnitDirDistribution dirDist;
 
   // helper functions

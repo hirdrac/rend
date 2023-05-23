@@ -23,11 +23,11 @@ class JitterDistribution
 };
 
 
-class DiskPtDistribution
+class DiskDistribution
 {
  public:
-  DiskPtDistribution() { }
-  DiskPtDistribution(Flt radius)
+  DiskDistribution() { }
+  DiskDistribution(Flt radius)
     : _dist{-radius, radius}, _radiusSqr{Sqr(radius)} { }
 
   template<class Generator>
@@ -46,11 +46,11 @@ class DiskPtDistribution
 };
 
 
-class SpherePtDistribution
+class SphereDistribution
 {
  public:
-  SpherePtDistribution() { }
-  SpherePtDistribution(Flt radius)
+  SphereDistribution() { }
+  SphereDistribution(Flt radius)
     : _dist{-radius, radius}, _radiusSqr{Sqr(radius)} { }
 
   template<class Generator>

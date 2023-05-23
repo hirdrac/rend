@@ -21,5 +21,5 @@ void JobState::init(const Scene& s)
   rnd.seed(randomSeed());
   jitterXDist = JitterDistribution{s.jitter / Flt(std::max(s.sample_x, 1))};
   jitterYDist = JitterDistribution{s.jitter / Flt(std::max(s.sample_y, 1))};
-  apertureDist = DiskPtDistribution{.5};
+  apertureDist = DiskDistribution{.5};
 }
