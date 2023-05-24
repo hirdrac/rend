@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 50 (2023/5/21)
+# Makefile.mk - revision 51 (2023/5/24)
 # Copyright (C) 2023 Richard Bradley
 #
 # Additional contributions from:
@@ -178,7 +178,7 @@ RM ?= rm -f --
 
 
 #### Basic Settings ####
-COMPILER ?= $(firstword $(_compiler_names))
+COMPILER ?=
 LINKER ?=
 CROSS_COMPILE ?=
 STANDARD ?=
@@ -186,8 +186,8 @@ OPT_LEVEL ?= 3
 OPT_LEVEL_DEBUG ?= g
 ifndef WARN
   override _common_warn := all extra missing-include-dirs no-unused-parameter
-  WARN_C ?= $(_common_warn) write-strings $(_$(COMPILER)_warn) $(WARN_EXTRA)
-  WARN_CXX ?= $(_common_warn) non-virtual-dtor overloaded-virtual $(_$(COMPILER)_warn) $(WARN_EXTRA)
+  WARN_C ?= $(_common_warn) write-strings $(_$(_compiler)_warn) $(WARN_EXTRA)
+  WARN_CXX ?= $(_common_warn) non-virtual-dtor overloaded-virtual $(_$(_compiler)_warn) $(WARN_EXTRA)
 else
   WARN_C ?= $(WARN) $(WARN_EXTRA)
   WARN_CXX ?= $(WARN) $(WARN_EXTRA)
@@ -320,17 +320,19 @@ endif
 
 
 #### Compiler/Standard Specific Setup ####
-ifeq ($(filter $(COMPILER),$(_compiler_names)),)
-  $(error $(_msgErr)COMPILER: unknown compiler$(_end))
+override _compiler := $(or $(strip $(COMPILER)),$(firstword $(_compiler_names)))
+ifeq ($(filter $(_compiler),$(_compiler_names)),)
+  $(error $(_msgErr)COMPILER: unsupported compiler '$(_compiler)'$(_end))
 endif
 
-CXX = $(CROSS_COMPILE)$(or $(_$(COMPILER)_cxx),c++)
-CC = $(CROSS_COMPILE)$(or $(_$(COMPILER)_cc),cc)
-AS = $(CROSS_COMPILE)$(or $(_$(COMPILER)_as),as)
-AR = $(CROSS_COMPILE)$(or $(_$(COMPILER)_ar),ar)
+override _cross_compile := $(strip $(CROSS_COMPILE))
+override _cxx := $(_cross_compile)$(or $(_$(_compiler)_cxx),c++)
+override _cc := $(_cross_compile)$(or $(_$(_compiler)_cc),cc)
+override _as := $(_cross_compile)$(or $(_$(_compiler)_as),as)
+override _ar := $(_cross_compile)$(or $(_$(_compiler)_ar),ar)
 
 ifneq ($(strip $(LINKER)),ld)
-  override _linker := $(or $(strip $(LINKER)),$(_$(COMPILER)_ld))
+  override _linker := $(or $(strip $(LINKER)),$(_$(_compiler)_ld))
 endif
 
 override _c_ptrn := %.c
@@ -407,7 +409,7 @@ override $2_op_cxx_warn := $$($2_op_warn)
 override $2_op_cxx_flags := $$($2_op_flags)
 override $2_op_cxx_link := $$($2_op_link)
 ifneq ($$(filter modern_c++,$$($1)),)
-  override $2_op_cxx_warn += $$(_$$(COMPILER)_modern)
+  override $2_op_cxx_warn += $$(_$(_compiler)_modern)
 endif
 ifneq ($$(filter no_rtti,$$($1)),)
   override $2_op_cxx_flags += -fno-rtti
@@ -1084,12 +1086,12 @@ $(if $(filter-out /% ~% -%,$x),../../$x,$x)))
 # link binary/test/shared lib - <1:label>
 override _do_link = $(filter-out -D% -U% -I%,\
 $(if $(filter cxx,$(_$1_lang)),\
-$(CXX) $(_$1_cxx_std) $(call _$(ENV)_opt,$1) $(_$1_op_cxx_flags),\
-$(CC) $(_$1_c_std) $(call _$(ENV)_opt,$1) $(_$1_op_flags)) $(_$1_xflags)) $(_$1_ldflags)
+$(_cxx) $(_$1_cxx_std) $(call _$(ENV)_opt,$1) $(_$1_op_cxx_flags),\
+$(_cc) $(_$1_c_std) $(call _$(ENV)_opt,$1) $(_$1_op_flags)) $(_$1_xflags)) $(_$1_ldflags)
 
 # static library build
 override define _make_static_lib  # <1:label>
-override _$1_link_cmd := cd '$$(_$1_build_dir)'; $$(AR) rcs '../../$$(_$1_name)' $$(strip $$(_$1_src_objs) $$(call _fix_path,$$(_$1_other_objs)))
+override _$1_link_cmd := cd '$$(_$1_build_dir)'; $$(_ar) rcs '../../$$(_$1_name)' $$(strip $$(_$1_src_objs) $$(call _fix_path,$$(_$1_other_objs)))
 override _$1_trigger := $$(_build_dir)/.$$(ENV)-cmd-$1-static
 $$(eval $$(call _rebuild_check_var,$$$$(_$1_trigger),_$1_link_cmd))
 
@@ -1212,9 +1214,9 @@ ifneq ($$(words $$(_all_source_base_$2)),$$(words $$(sort $$(_all_source_base_$2
 endif
 
 ifneq ($$(filter $$(_c_ptrn),$4 $5),)
-$$(eval $$(call _rebuild_check,$1/.compile_cmd_c,$$(CC) $$(_cflags_$2) $3))
+$$(eval $$(call _rebuild_check,$1/.compile_cmd_c,$$(_cc) $$(_cflags_$2) $3))
 $(addprefix $1/,$(call _src_oname,$(filter $(_c_ptrn),$4 $5))): | $1
-	$$(strip $$(CC) $$(_cflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
+	$$(strip $$(_cc) $$(_cflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_c_ptrn),$4),\
   $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd_c)))
 $(foreach x,$(filter $(_c_ptrn),$5),\
@@ -1222,9 +1224,9 @@ $(foreach x,$(filter $(_c_ptrn),$5),\
 endif
 
 ifneq ($$(filter $$(_asm_ptrn),$4 $5),)
-$$(eval $$(call _rebuild_check,$1/.compile_cmd_s,$$(AS) $$(_asflags_$2) $3))
+$$(eval $$(call _rebuild_check,$1/.compile_cmd_s,$$(_as) $$(_asflags_$2) $3))
 $(addprefix $1/,$(call _src_oname,$(filter $(_asm_ptrn),$4 $5))): | $1
-	$$(strip $$(AS) $$(_asflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
+	$$(strip $$(_as) $$(_asflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_asm_ptrn),$4),\
   $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd_s)))
 $(foreach x,$(filter $(_asm_ptrn),$5),\
@@ -1232,9 +1234,9 @@ $(foreach x,$(filter $(_asm_ptrn),$5),\
 endif
 
 ifneq ($$(filter $$(_cxx_ptrn),$4 $5),)
-$$(eval $$(call _rebuild_check,$1/.compile_cmd,$$(CXX) $$(_cxxflags_$2) $3))
+$$(eval $$(call _rebuild_check,$1/.compile_cmd,$$(_cxx) $$(_cxxflags_$2) $3))
 $(addprefix $1/,$(call _src_oname,$(filter $(_cxx_ptrn),$4 $5))): | $1
-	$$(strip $$(CXX) $$(_cxxflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
+	$$(strip $$(_cxx) $$(_cxxflags_$2) $3) -MMD -MP -MT '$$@' -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_cxx_ptrn),$4),\
   $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd)))
 $(foreach x,$(filter $(_cxx_ptrn),$5),\
@@ -1274,7 +1276,7 @@ ifneq ($(_build_env),)
 
   ifneq ($(_src_labels),)
   # .compiler_ver rule (rebuild trigger for compiler version change)
-  $(eval $(call _rebuild_check,$(_build_dir)/.compiler_ver,$(shell $(CC) --version | head -1)))
+  $(eval $(call _rebuild_check,$(_build_dir)/.compiler_ver,$(shell $(_cc) --version | head -1)))
 
   # make .o/.mk files for each build path
   # NOTES:
