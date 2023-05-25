@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 51 (2023/5/24)
+# Makefile.mk - revision 51 (2023/5/25)
 # Copyright (C) 2023 Richard Bradley
 #
 # Additional contributions from:
@@ -1018,7 +1018,7 @@ ifneq ($(filter clean $(foreach e,$(_env_names),clean_$e),$(MAKECMDGOALS)),)
 endif
 
 clean:
-	@$(RM) "$(_build_dir)/.compiler_ver" "$(_build_dir)/.packages_ver"* $(foreach x,$(_symlinks),"$x")
+	@$(RM) "$(_build_dir)/".*_ver $(foreach x,$(_symlinks),"$x")
 	@([ -d "$(_build_dir)" ] && rmdir -p -- "$(_build_dir)") || true
 	@for X in $(_clean_extra); do\
 	  (([ -f "$$X" ] || [ -h "$$X" ]) && echo "$(_msgWarn)Removing '$$X'$(_end)" && $(RM) "$$X") || true; done
@@ -1193,13 +1193,13 @@ endef
 
 
 override define _make_dep  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_oname,$3): $$(_src_path_$2)$3 $1/$4 $$(_build_dir)/.compiler_ver $$(_pkg_trigger_$2) | $$(_symlinks)
+$1/$(call _src_oname,$3): $$(_src_path_$2)$3 $1/$4 $$(_build_dir)/.$(_compiler)_ver $$(_pkg_trigger_$2) | $$(_symlinks)
 -include $1/$(call _src_bname,$3).mk
 endef
 
 
 override define _make_dep2  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_oname,$3): $3 $1/$4 $$(_build_dir)/.compiler_ver $$(_pkg_trigger_$2) | $$(_symlinks)
+$1/$(call _src_oname,$3): $3 $1/$4 $$(_build_dir)/.$(_compiler)_ver $$(_pkg_trigger_$2) | $$(_symlinks)
 -include $1/$(call _src_bname,$3).mk
 endef
 
@@ -1275,8 +1275,8 @@ ifneq ($(_build_env),)
     $(eval $(call _rebuild_check,$(_build_dir)/$(_$x_pkg_trigger),$(call _gen_pkg_ver_list,$(_$x_xpkgs))))))
 
   ifneq ($(_src_labels),)
-  # .compiler_ver rule (rebuild trigger for compiler version change)
-  $(eval $(call _rebuild_check,$(_build_dir)/.compiler_ver,$(shell $(_cc) --version | head -1)))
+  # rebuild trigger for compiler version change
+  $(eval $(call _rebuild_check,$(_build_dir)/.$(_compiler)_ver,$(shell $(_cc) --version | head -1)))
 
   # make .o/.mk files for each build path
   # NOTES:
