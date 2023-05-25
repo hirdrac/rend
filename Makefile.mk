@@ -368,7 +368,6 @@ $(sort $(foreach x,$($1),\
 
 override _get_pkg_flags = $(if $1,$(strip $(shell $(PKGCONF) $1 --cflags)))
 override _get_pkg_libs = $(if $1,$(strip $(shell $(PKGCONF) $1 --libs)))
-override _gen_pkg_ver_list = $(foreach p,$(sort $1),$p:$(strip $(shell $(PKGCONF) $p --modversion)))
 
 override define _verify_pkgs  # <1:config pkgs var> <2:valid pkgs>
 ifeq ($$($1),)
@@ -875,14 +874,6 @@ else ifneq ($(_build_env),)
   ifneq ($$(_$1_xpkgs),)
     override _$1_pkg_libs := $$(call _get_pkg_libs,$$(_$1_xpkgs))
     override _$1_pkg_flags := $$(call _get_pkg_flags,$$(_$1_xpkgs))
-    ifeq ($$(_$1_xpkgs),$$(_pkgs))
-      override _$1_pkg_trigger := .packages_ver
-    else ifeq ($$(_$1_xpkgs),$$(sort $$(_pkgs) $$(_pkgs_test)))
-      override _$1_pkg_trigger := .packages_ver-tests
-    else
-      override _$1_pkg_trigger := .packages_ver-$1
-      override _$1_make_pkg_trigger := 1
-    endif
   endif
 
   override _$1_xlibs := $$(call _format_libs,$$(_$1_libs) $$(_$1_req_libs1) $$(_$1_req_libs2))
@@ -1018,7 +1009,7 @@ ifneq ($(filter clean $(foreach e,$(_env_names),clean_$e),$(MAKECMDGOALS)),)
 endif
 
 clean:
-	@$(RM) "$(_build_dir)/".*_ver "$(_build_dir)/".packages_ver-* $(foreach x,$(_symlinks),"$x")
+	@$(RM) "$(_build_dir)/".*_ver $(foreach x,$(_symlinks),"$x")
 	@([ -d "$(_build_dir)" ] && rmdir -p -- "$(_build_dir)") || true
 	@for X in $(_clean_extra); do\
 	  (([ -f "$$X" ] || [ -h "$$X" ]) && echo "$(_msgWarn)Removing '$$X'$(_end)" && $(RM) "$$X") || true; done
@@ -1193,13 +1184,13 @@ endef
 
 
 override define _make_dep  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_oname,$3): $$(_src_path_$2)$3 $1/$4 $$(_build_dir)/.$(_compiler)_ver $$(_pkg_trigger_$2) | $$(_symlinks)
+$1/$(call _src_oname,$3): $$(_src_path_$2)$3 $1/$4 $$(_triggers_$2) | $$(_symlinks)
 -include $1/$(call _src_bname,$3).mk
 endef
 
 
 override define _make_dep2  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_oname,$3): $3 $1/$4 $$(_build_dir)/.$(_compiler)_ver $$(_pkg_trigger_$2) | $$(_symlinks)
+$1/$(call _src_oname,$3): $3 $1/$4 $$(_triggers_$2) | $$(_symlinks)
 -include $1/$(call _src_bname,$3).mk
 endef
 
@@ -1261,22 +1252,18 @@ ifneq ($(_build_env),)
   # symlink creation rule
   $(foreach x,$(_symlinks),$(eval $x: ; @ln -s . "$x"))
 
-  # .packages_ver rules (rebuild triggers for package version changes)
-  $(if $(_pkgs),\
-    $(eval override _pkg_trigger_$(ENV) := $(_build_dir)/.packages_ver)\
-    $(eval $(call _rebuild_check,$(_build_dir)/.packages_ver,$(call _gen_pkg_ver_list,$(_pkgs)))))
-
-  $(if $(_pkgs_test),\
-    $(eval override _pkg_trigger_$(ENV)-tests := $(_build_dir)/.packages_ver-tests)\
-    $(eval $(call _rebuild_check,$(_build_dir)/.packages_ver-tests,$(call _gen_pkg_ver_list,$(_pkgs) $(_pkgs_test)))))
-
-  $(foreach x,$(_src_labels),$(if $(_$x_make_pkg_trigger),\
-    $(eval override _pkg_trigger_$(ENV)-$x := $(_build_dir)/$(_$x_pkg_trigger))\
-    $(eval $(call _rebuild_check,$(_build_dir)/$(_$x_pkg_trigger),$(call _gen_pkg_ver_list,$(_$x_xpkgs))))))
-
   ifneq ($(_src_labels),)
   # rebuild trigger for compiler version change
   $(eval $(call _rebuild_check,$(_build_dir)/.$(_compiler)_ver,$(shell $(_cc) --version | head -1)))
+
+  # package version change triggers
+  $(foreach p,$(sort $(foreach x,$(_src_labels),$(_$x_xpkgs))),\
+    $(eval $(call _rebuild_check,$(_build_dir)/.pkg_$p_ver,$(strip $(shell $(PKGCONF) $p --modversion)))))
+
+  override _triggers_$(ENV) := $(_build_dir)/.$(_compiler)_ver $(foreach p,$(_pkgs),$(_build_dir)/.pkg_$p_ver)
+  override _triggers_$(ENV)-tests := $(_build_dir)/.$(_compiler)_ver $(foreach p,$(_pkgs_test),$(_build_dir)/.pkg_$p_ver)
+  $(foreach x,$(_src_labels),\
+    $(eval override _triggers_$(ENV)-$x := $(_build_dir)/.$(_compiler)_ver $(foreach p,$(_$x_xpkgs),$(_build_dir)/.pkg_$p_ver)))
 
   # make .o/.mk files for each build path
   # NOTES:
