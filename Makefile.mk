@@ -1018,7 +1018,7 @@ ifneq ($(filter clean $(foreach e,$(_env_names),clean_$e),$(MAKECMDGOALS)),)
 endif
 
 clean:
-	@$(RM) "$(_build_dir)/".*_ver $(foreach x,$(_symlinks),"$x")
+	@$(RM) "$(_build_dir)/".*_ver "$(_build_dir)/".packages_ver-* $(foreach x,$(_symlinks),"$x")
 	@([ -d "$(_build_dir)" ] && rmdir -p -- "$(_build_dir)") || true
 	@for X in $(_clean_extra); do\
 	  (([ -f "$$X" ] || [ -h "$$X" ]) && echo "$(_msgWarn)Removing '$$X'$(_end)" && $(RM) "$$X") || true; done
