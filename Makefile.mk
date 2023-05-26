@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 51 (2023/5/25)
+# Makefile.mk - revision 51 (2023/5/26)
 # Copyright (C) 2023 Richard Bradley
 #
 # Additional contributions from:
@@ -331,8 +331,10 @@ override _cc := $(_cross_compile)$(or $(_$(_compiler)_cc),cc)
 override _as := $(_cross_compile)$(or $(_$(_compiler)_as),as)
 override _ar := $(_cross_compile)$(or $(_$(_compiler)_ar),ar)
 
-ifneq ($(strip $(LINKER)),ld)
-  override _linker := $(or $(strip $(LINKER)),$(_$(_compiler)_ld))
+ifneq ($(strip $(LINKER)),-)
+  ifneq ($(strip $(LINKER)),ld)
+    override _linker := $(or $(strip $(LINKER)),$(_$(_compiler)_ld))
+  endif
 endif
 
 override _c_ptrn := %.c
@@ -1113,7 +1115,7 @@ endif
 
 .PHONY: $$(_$1_shared_aliases)
 $$(_$1_shared_aliases) $$(_$1_implib): $$(_$1_shared_name)
-$$(_$1_shared_name): $$(_$1_shared_objs) $$(_$1_other_objs) $$(_$1_link_deps) $$(_$1_shared_trigger)
+$$(_$1_shared_name): $$(_$1_shared_objs) $$(_$1_other_objs) $$(_$1_link_deps) $$(_$1_shared_trigger) $$(_link_trigger)
 	$$(call _make_path,$$@)
 	$$(call _make_path,$$(_$1_implib))
 	$$(_$1_shared_link_cmd)
@@ -1133,7 +1135,7 @@ endif
 
 .PHONY: $$(_$1_aliases)
 $$(_$1_aliases): $$(_$1_name)
-$$(_$1_name): $$(_$1_all_objs) $$(_$1_other_objs) $$(_$1_link_deps) $$(_$1_trigger) | $$(_lib_goals)
+$$(_$1_name): $$(_$1_all_objs) $$(_$1_other_objs) $$(_$1_link_deps) $$(_$1_trigger) $$(_link_trigger) | $$(_lib_goals)
 	$$(call _make_path,$$@)
 	$$(_$1_link_cmd)
 	@echo "$$(_msgInfo)Binary '$$@' built$$(_end)"
@@ -1166,7 +1168,7 @@ ifneq ($$(_$1_deps),)
 $$(_$1_all_objs): | $$(_$1_deps)
 endif
 
-$$(_$1_run): $$(_$1_all_objs) $$(_$1_other_objs) $$(_$1_link_deps) $$(_$1_trigger) | $$(_lib_goals) $$(_bin_goals)
+$$(_$1_run): $$(_$1_all_objs) $$(_$1_other_objs) $$(_$1_link_deps) $$(_$1_trigger) $$(_link_trigger) | $$(_lib_goals) $$(_bin_goals)
 	$$(_$1_link_cmd)
 ifeq ($$(filter tests tests_$$(ENV) $1$$(SFX),$$(MAKECMDGOALS)),)
 	@LD_LIBRARY_PATH=.:$$$$LD_LIBRARY_PATH ./$$(_$1_run) $$($1.ARGS);\
@@ -1258,18 +1260,20 @@ ifneq ($(_build_env),)
 
   # package version change triggers
   $(foreach p,$(sort $(foreach x,$(_src_labels),$(_$x_xpkgs))),\
-    $(eval $(call _rebuild_check,$(_build_dir)/.pkg_$p_ver,$(strip $(shell $(PKGCONF) $p --modversion)))))
+    $(eval $(call _rebuild_check,$(_build_dir)/.pkg_$p_ver,$(shell $(PKGCONF) $p --modversion))))
 
   override _triggers_$(ENV) := $(_build_dir)/.$(_compiler)_ver $(foreach p,$(_pkgs),$(_build_dir)/.pkg_$p_ver)
   override _triggers_$(ENV)-tests := $(_build_dir)/.$(_compiler)_ver $(foreach p,$(_pkgs_test),$(_build_dir)/.pkg_$p_ver)
   $(foreach x,$(_src_labels),\
     $(eval override _triggers_$(ENV)-$x := $(_build_dir)/.$(_compiler)_ver $(foreach p,$(_$x_xpkgs),$(_build_dir)/.pkg_$p_ver)))
 
+  ifneq ($(_linker),)
+    # linker version change trigger
+    override _link_trigger := $(_build_dir)/.$(_linker)_ver
+    $(eval $(call _rebuild_check,$(_link_trigger),$(shell ld.$(_linker) --version | head -1)))
+  endif
+
   # make .o/.mk files for each build path
-  # NOTES:
-  # - don't put 'call' args on separate lines, this can add spaces to values
-  # - object builds are before linking so '<objs>: DEPS' rules don't affect
-  #   compile commands by changing '$<' var
   $(foreach b,$(sort $(foreach x,$(_nonpic_labels),$(_$x_build))),\
     $(eval $(call _make_obj,$(_build_dir)/$b,$b,,$(call _get_src,$b),$(call _get_src2,$b))))
 
