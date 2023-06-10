@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 51 (2023/6/4)
+# Makefile.mk - revision 52 (2023/6/8)
 # Copyright (C) 2023 Richard Bradley
 #
 # Additional contributions from:
@@ -350,12 +350,12 @@ $(foreach x,$($1),\
     $(call _pkg_n,$x),\
     $(warning $(_msgWarn)$1: package '$(call _pkg_n,$x)'$(if $(call _pkg_v,$x), [version >= $(call _pkg_v,$x)]) not found$(_end))))
 
-override _get_pkg_flags = $(if $1,$(strip $(shell $(PKGCONF) $1 --cflags)))
-override _get_pkg_libs = $(if $1,$(strip $(shell $(PKGCONF) $1 --libs)))
+override _get_pkg_flags = $(if $1,$(shell $(PKGCONF) $1 --cflags))
+override _get_pkg_libs = $(if $1,$(shell $(PKGCONF) $1 --libs))
 
 override define _verify_pkgs  # <1:config pkgs var> <2:valid pkgs>
-ifeq ($$($1),)
-else ifeq ($$($1),-)
+ifeq ($$(strip $$($1)),)
+else ifeq ($$(strip $$($1)),-)
 else ifneq ($$(words $$($1)),$$(words $$($2)))
   $$(error $$(_msgErr)Cannot build because of package error$$(_end))
 endif
@@ -714,14 +714,14 @@ else ifneq ($(_build_env),)
 
   # setup compile flags for each build path
   override _pkg_flags := $(call _get_pkg_flags,$(sort $(_pkgs)))
-  override _xflags :=  $(_pkg_flags) $(FLAGS) $(FLAGS_$(_$(ENV)_uc))
+  override _xflags :=  $(_pkg_flags) $(FLAGS_$(_$(ENV)_uc)) $(FLAGS)
   override _cxxflags_$(ENV) := $(strip $(_cxx_std) $(_$(ENV)_opt) $(_warn_cxx) $(_op_cxx_warn) $(_define) $(_include) $(_op_cxx_flags) $(_xflags))
   override _cflags_$(ENV) := $(strip $(_c_std) $(_$(ENV)_opt) $(_warn_c) $(_op_warn) $(_define) $(_include) $(_op_flags) $(_xflags))
   override _asflags_$(ENV) := $(strip $(_$(ENV)_opt) $(_op_warn) $(_define) $(_include) $(_op_flags) $(_xflags))
   override _src_path_$(ENV) := $(_src_path)
 
   ifneq ($(_test_labels),)
-    override _test_xflags := $(if $(_pkgs_test),$(call _get_pkg_flags,$(sort $(_pkgs) $(_pkgs_test))),$(_pkg_flags)) $(FLAGS) $(FLAGS_TEST) $(FLAGS_$(_$(ENV)_uc))
+    override _test_xflags := $(if $(_pkgs_test),$(call _get_pkg_flags,$(sort $(_pkgs) $(_pkgs_test))),$(_pkg_flags)) $(FLAGS_$(_$(ENV)_uc)) $(FLAGS) $(FLAGS_TEST)
     override _cxxflags_$(ENV)-tests := $(strip $(_cxx_std) $(_$(ENV)_opt) $(_warn_cxx) $(_op_cxx_warn) $(_op_test_cxx_warn) $(_define) $(_define_test) $(_include) $(_include_test) $(_op_cxx_flags) $(_op_test_cxx_flags) $(_test_xflags))
     override _cflags_$(ENV)-tests := $(strip $(_c_std) $(_$(ENV)_opt) $(_warn_c) $(_op_warn) $(_op_test_warn) $(_define) $(_define_test) $(_include) $(_include_test) $(_op_flags) $(_op_test_flags) $(_test_xflags))
     override _asflags_$(ENV)-tests := $(strip $(_$(ENV)_opt) $(_op_warn) $(_op_test_warn) $(_define) $(_define_test) $(_include) $(_include_test) $(_op_flags) $(_op_test_flags) $(_test_xflags))
@@ -868,7 +868,7 @@ else ifneq ($(_build_env),)
   override _$1_xlibs := $$(call _format_libs,$$(_$1_libs) $$(_$1_req_libs1) $$(_$1_req_libs2))
 
   # NOTE: LIBS before PACKAGES libs in case included static lib requires package
-  override _$1_xflags := $$(_$1_pkg_flags) $$(_$1_flags) $$(FLAGS_$$(_$$(ENV)_uc))
+  override _$1_xflags := $$(_$1_pkg_flags) $$(FLAGS_$$(_$$(ENV)_uc)) $$(_$1_flags)
   override _cxxflags_$$(ENV)-$1 := $$(strip $$(_$1_cxx_std) $$(call _$$(ENV)_opt,$1) $$(_warn_cxx) $$(_$1_op_cxx_warn) $$(_$1_define) $$(_$1_include) $$(_$1_op_cxx_flags) $$(_$1_xflags))
   override _cflags_$$(ENV)-$1 := $$(strip $$(_$1_c_std) $$(call _$$(ENV)_opt,$1) $$(_warn_c) $$(_$1_op_warn) $$(_$1_define) $$(_$1_include) $$(_$1_op_flags) $$(_$1_xflags))
   override _asflags_$$(ENV)-$1 := $$(strip $$(call _$$(ENV)_opt,$1) $$(_$1_op_warn) $$(_$1_define) $$(_$1_include) $$(_$1_op_flags) $$(_$1_xflags))
@@ -993,11 +993,11 @@ endef
 $(foreach e,$(_env_names),$(eval $(call _setup_env_targets,$e)))
 
 
-ifneq ($(filter clean,$(MAKECMDGOALS)),)
-  override _clean_files := $(foreach f,$(CLEAN_EXTRA),$(call _do_wildcard,$f))
-else ifneq ($(filter clobber,$(MAKECMDGOALS)),)
+ifneq ($(filter clobber,$(MAKECMDGOALS)),)
   override _clean_files := $(foreach e,$(_env_names),$(_$e_libbin_targets) $(_$e_links) $(_$e_file_targets)) $(foreach f,$(CLEAN_EXTRA) $(CLOBBER_EXTRA),$(call _do_wildcard,$f)) core gmon.out
   override _clean_dirs := $(foreach d,$(sort $(filter-out ./,$(foreach e,$(_env_names),$(foreach x,$(_$e_libbin_targets) $(_$e_file_targets),$(dir $x))))),"$d")
+else ifneq ($(filter clean,$(MAKECMDGOALS)),)
+  override _clean_files := $(foreach f,$(CLEAN_EXTRA),$(call _do_wildcard,$f))
 endif
 
 clean:
