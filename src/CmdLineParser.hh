@@ -2,7 +2,7 @@
 // CmdLineParser.hh
 // Copyright (C) 2023 Richard Bradley
 //
-// Helper class for parsing command line arguments.
+// Helper class for parsing command line arguments (C++17 version)
 //
 // Option arguments must follow one of these forms:
 //  -x             single letter option flag
@@ -39,7 +39,8 @@ class CmdLineParser
 
   [[nodiscard]] std::string_view arg() const { return _arg; }
 
-  bool get(auto& val) const { return convertVal(_arg, val); }
+  template<class T>
+  bool get(T& val) const { return convertVal(_arg, val); }
 
   [[nodiscard]] bool option() const {
     return !_optionsDone && _arg.size() >= 2 && _arg[0] == '-';
@@ -59,8 +60,9 @@ class CmdLineParser
     return false;
   }
 
+  template<class T>
   [[nodiscard]] bool option(
-    char shortName, std::string_view longName, auto& value)
+    char shortName, std::string_view longName, T& value)
   {
     if (!option()) { return false; }
 
