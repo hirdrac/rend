@@ -1,5 +1,5 @@
 #
-# Makefile.mk - revision 52 (2023/6/8)
+# Makefile.mk - revision 52 (2023/7/9)
 # Copyright (C) 2023 Richard Bradley
 #
 # Additional contributions from:
@@ -194,9 +194,9 @@ endif
 BUILD_DIR ?= build
 
 # default values to be more obvious if used/handled improperly
-override ENV := ENV
-override SFX := SFX
-override BUILD_TMP := BUILD_TMP
+override ENV := ENV_NOT_SET
+override SFX := SFX_NOT_SET
+override BUILD_TMP := BUILD_TMP_NOT_SET
 override LIBPREFIX := lib
 
 # apply *_EXTRA setting values (WARN_EXTRA handled above)
@@ -1169,57 +1169,51 @@ endif
 endef
 
 
-override define _make_dep  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_oname,$3): $$(_src_path_$2)$3 $1/$4 $$(_triggers_$2) | $$(_symlinks)
--include $1/$(call _src_bname,$3).mk
+override define _make_dep  # <1:path> <2:build> <3:source dir> <4:src file> <5:cmd file>
+$1/$(call _src_oname,$4): $3$4 $1/$5 $$(_triggers_$2) | $$(_symlinks)
+-include $1/$(call _src_bname,$4).mk
 endef
 
 
-override define _make_dep2  # <1:path> <2:build> <3:src> <4:cmd trigger>
-$1/$(call _src_oname,$3): $3 $1/$4 $$(_triggers_$2) | $$(_symlinks)
--include $1/$(call _src_bname,$3).mk
-endef
-
-
-override define _make_obj  # <1:path> <2:build> <3:flags> <4:src list> <5:other src>
+override define _make_objs  # <1:path> <2:build> <3:flags> <4:src list> <5:src2 list>
 $1: ; @mkdir -p "$$@"
 $1/%.mk: ; @$$(RM) "$$(@:.mk=.o)"
 
-override _all_source_base_$2 := $$(call _src_bname,$4 $5)
-ifneq ($$(words $$(_all_source_base_$2)),$$(words $$(sort $$(_all_source_base_$2))))
+ifneq ($(words $4 $5),$(words $(sort $(call _src_bname,$4 $5))))
   $$(error $$(_msgErr)Conflicting object files for $2 - each source file basename must be unique$$(_end))
 endif
 
-ifneq ($$(filter $$(_c_ptrn),$4 $5),)
+ifneq ($(filter $(_c_ptrn),$4 $5),)
 $$(eval $$(call _rebuild_check,$1/.compile_cmd_c,$$(_cc) $$(_cflags_$2) $3))
 $(addprefix $1/,$(call _src_oname,$(filter $(_c_ptrn),$4 $5))): | $1
 	$$(strip $$(_cc) $$(_cflags_$2) $3) -MMD -MP -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_c_ptrn),$4),\
-  $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd_c)))
+  $$(eval $$(call _make_dep,$1,$2,$$(_src_path_$2),$x,.compile_cmd_c)))
 $(foreach x,$(filter $(_c_ptrn),$5),\
-  $$(eval $$(call _make_dep2,$1,$2,$x,.compile_cmd_c)))
+  $$(eval $$(call _make_dep,$1,$2,,$x,.compile_cmd_c)))
 endif
 
-ifneq ($$(filter $$(_asm_ptrn),$4 $5),)
+ifneq ($(filter $(_asm_ptrn),$4 $5),)
 $$(eval $$(call _rebuild_check,$1/.compile_cmd_s,$$(_as) $$(_asflags_$2) $3))
 $(addprefix $1/,$(call _src_oname,$(filter $(_asm_ptrn),$4 $5))): | $1
 	$$(strip $$(_as) $$(_asflags_$2) $3) -MMD -MP -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_asm_ptrn),$4),\
-  $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd_s)))
+  $$(eval $$(call _make_dep,$1,$2,$$(_src_path_$2),$x,.compile_cmd_s)))
 $(foreach x,$(filter $(_asm_ptrn),$5),\
-  $$(eval $$(call _make_dep2,$1,$2,$x,.compile_cmd_s)))
+  $$(eval $$(call _make_dep,$1,$2,,$x,.compile_cmd_s)))
 endif
 
-ifneq ($$(filter $$(_cxx_ptrn),$4 $5),)
+ifneq ($(filter $(_cxx_ptrn),$4 $5),)
 $$(eval $$(call _rebuild_check,$1/.compile_cmd,$$(_cxx) $$(_cxxflags_$2) $3))
 $(addprefix $1/,$(call _src_oname,$(filter $(_cxx_ptrn),$4 $5))): | $1
 	$$(strip $$(_cxx) $$(_cxxflags_$2) $3) -MMD -MP -MF '$$(@:.o=.mk)' -c -o '$$@' $$<
 $(foreach x,$(filter $(_cxx_ptrn),$4),\
-  $$(eval $$(call _make_dep,$1,$2,$x,.compile_cmd)))
+  $$(eval $$(call _make_dep,$1,$2,$$(_src_path_$2),$x,.compile_cmd)))
 $(foreach x,$(filter $(_cxx_ptrn),$5),\
-  $$(eval $$(call _make_dep2,$1,$2,$x,.compile_cmd)))
+  $$(eval $$(call _make_dep,$1,$2,,$x,.compile_cmd)))
 endif
 endef
+
 
 override _nonpic_labels := $(if $(_pic_flag),$(_static_lib_labels),$(_lib_labels)) $(_bin_labels) $(_test_labels)
 override _pic_labels := $(if $(_pic_flag),$(_shared_lib_labels))
@@ -1259,11 +1253,11 @@ ifneq ($(_build_env),)
 
   # make .o/.mk files for each build path
   $(foreach b,$(sort $(foreach x,$(_nonpic_labels),$(_$x_build))),\
-    $(eval $(call _make_obj,$(_build_dir)/$b,$b,,$(call _get_src,$b),$(call _get_src2,$b))))
+    $(eval $(call _make_objs,$(_build_dir)/$b,$b,,$(call _get_src,$b),$(call _get_src2,$b))))
 
   # use unique build path for all PIC compiled code
   $(foreach b,$(sort $(foreach x,$(_pic_labels),$(_$x_build))),\
-    $(eval $(call _make_obj,$(_build_dir)/$b-pic,$b,$(_pic_flag),$(call _get_pic_src,$b),$(call _get_pic_src2,$b))))
+    $(eval $(call _make_objs,$(_build_dir)/$b-pic,$b,$(_pic_flag),$(call _get_pic_src,$b),$(call _get_pic_src2,$b))))
   endif
 
   # make binary/library/test build targets
