@@ -12,27 +12,26 @@
 
 // print()
 template<typename... Args>
-inline void print(std::ostream& out, const Args&... args)
+inline void print(std::ostream& out, Args&&... args)
 {
-  ((out << args),...);
+  (out << ... << args);
 }
 
 template<typename... Args>
-inline void print(const Args&... args)
+inline void print(Args&&... args)
 {
   print(std::cout, args...);
 }
 
 // println()
 template<typename... Args>
-inline void println(std::ostream& out, const Args&... args)
+inline void println(std::ostream& out, Args&&... args)
 {
-  ((out << args),...);
-  out.put('\n');
+  (out << ... << args) << '\n';
 }
 
 template<typename... Args>
-inline void println(const Args&... args)
+inline void println(Args&&... args)
 {
   println(std::cout, args...);
 }
@@ -40,13 +39,13 @@ inline void println(const Args&... args)
 
 // std error output
 template<typename... Args>
-inline void print_err(const Args&... args)
+inline void print_err(Args&&... args)
 {
   print(std::cerr, args...);
 }
 
 template<typename... Args>
-inline void println_err(const Args&... args)
+inline void println_err(Args&&... args)
 {
   println(std::cerr, args...);
 }
