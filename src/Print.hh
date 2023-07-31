@@ -14,7 +14,7 @@
 template<typename... Args>
 inline void print(std::ostream& out, const Args&... args)
 {
-  ((std::cout << args),...);
+  ((out << args),...);
 }
 
 template<typename... Args>
