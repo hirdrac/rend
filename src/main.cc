@@ -101,6 +101,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   if (ren.jobs() <= 0) {
     // render on main thread
     JobState js;
+    js.init(s);
     for (int y = s.region_min[1]; y <= s.region_max[1]; ++y) {
       print_err("\rscanlines remaining -- ", s.region_max[1] - y, " \b");
       ren.render(js, s.region_min[0], y, s.region_max[0], y);
