@@ -1,6 +1,6 @@
 //
 // Phong.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "Phong.hh"
@@ -114,13 +114,14 @@ Color Phong::evaluate(
 
   // reflection calculation
   if (is_s && r.depth < s.max_ray_depth) {
-    Ray ray;
-    ray.base       = eh.global_pt;
-    ray.dir        = reflect;
-    ray.min_length = s.ray_moveout;
-    ray.max_length = VERY_LARGE;
-    ray.time       = r.time;
-    ray.depth      = r.depth + 1;
+    Ray ray {
+      .base       = eh.global_pt,
+      .dir        = reflect,
+      .min_length = s.ray_moveout,
+      .max_length = VERY_LARGE,
+      .time       = r.time,
+      .depth      = r.depth + 1
+    };
 
     result += s.traceRay(js, ray) * color_s;
   }

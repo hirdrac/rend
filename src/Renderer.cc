@@ -88,12 +88,13 @@ void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
   const auto samplesInv = static_cast<Color::value_type>(
     1.0 / double(int(_samples.size()) * jitterCount));
 
-  Ray initRay;
-  initRay.base = eye;
-  initRay.min_length = 0;
-  initRay.max_length = VERY_LARGE;
-  initRay.time = 0.0;
-  initRay.depth = 0;
+  Ray initRay {
+    .base = eye,
+    .min_length = 0,
+    .max_length = VERY_LARGE,
+    .time = 0.0,
+    .depth = 0
+  };
 
   // start rendering
   for (int y = min_y; y <= max_y; ++y) {

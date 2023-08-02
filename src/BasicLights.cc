@@ -1,6 +1,6 @@
 //
 // BasicLights.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 
 #include "BasicLights.hh"
@@ -26,13 +26,14 @@ bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
   if (!IsPositive(angle)) { return false; }
 
   if (s.shadow) {
-    Ray sray;
-    sray.base       = eh.global_pt;
-    sray.dir        = unit_dir;
-    sray.min_length = s.ray_moveout;
-    sray.max_length = VERY_LARGE;
-    sray.time       = r.time;
-    sray.depth      = 0;
+    Ray sray {
+      .base       = eh.global_pt,
+      .dir        = unit_dir,
+      .min_length = s.ray_moveout,
+      .max_length = VERY_LARGE,
+      .time       = r.time,
+      .depth      = 0
+    };
 
     if (s.castShadowRay(js, sray)) { return false; }
   }
@@ -66,13 +67,14 @@ bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
   if (!IsPositive(angle)) { return false; }
 
   if (s.shadow) {
-    Ray sray;
-    sray.base       = eh.global_pt;
-    sray.dir        = unit_dir;
-    sray.min_length = s.ray_moveout;
-    sray.max_length = len;
-    sray.time       = r.time;
-    sray.depth      = 0;
+    Ray sray {
+      .base       = eh.global_pt,
+      .dir        = unit_dir,
+      .min_length = s.ray_moveout,
+      .max_length = len,
+      .time       = r.time,
+      .depth      = 0
+    };
 
     if (s.castShadowRay(js, sray)) { return false; }
   }

@@ -31,12 +31,13 @@ int Occlusion::init(Scene& s, const Transform* tr)
 Color Occlusion::evaluate(JobState& js, const Scene& s, const Ray& r,
                           const EvaluatedHit& eh) const
 {
-  Ray sray;
-  sray.base       = eh.global_pt;
-  sray.min_length = s.ray_moveout;
-  sray.max_length = _radius;
-  sray.time       = r.time;
-  sray.depth      = 0;
+  Ray sray {
+    .base       = eh.global_pt,
+    .min_length = s.ray_moveout,
+    .max_length = _radius,
+    .time       = r.time,
+    .depth      = 0
+  };
 
   int lit = 0;
   for (int i = 0; i < _samples; ++i) {
