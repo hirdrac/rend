@@ -12,9 +12,9 @@
 
 // print()
 template<typename... Args>
-inline void print(std::ostream& out, Args&&... args)
+inline void print(std::ostream& os, Args&&... args)
 {
-  (out << ... << args);
+  (os << ... << args);
 }
 
 template<typename... Args>
@@ -25,9 +25,9 @@ inline void print(Args&&... args)
 
 // println()
 template<typename... Args>
-inline void println(std::ostream& out, Args&&... args)
+inline void println(std::ostream& os, Args&&... args)
 {
-  (out << ... << args) << '\n';
+  (os << ... << args) << '\n';
 }
 
 template<typename... Args>
