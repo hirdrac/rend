@@ -1,6 +1,6 @@
 //
 // main.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2023 Richard Bradley
 //
 // startup for rend
 //
