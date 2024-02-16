@@ -119,7 +119,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
       const ItemFn fn = FindItemFn(t.value);
       if (fn) {
         n->type = AST_ITEM;
-        n->ptr = (void*)fn;
+        n->ptr = reinterpret_cast<void*>(fn);
       }
     } else if (type == TOKEN_NUMBER) {
       n->type = AST_NUMBER;
