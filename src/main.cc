@@ -1,6 +1,6 @@
 //
 // main.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // startup for rend
 //
@@ -12,12 +12,12 @@
 #include "Object.hh"
 #include "Light.hh"
 #include "Stats.hh"
-#include "Timer.hh"
 #include "Print.hh"
 #include "PrintList.hh"
 #include "CmdLineParser.hh"
 #include <sstream>
 #include <thread>
+#include <chrono>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -65,6 +65,17 @@ int ShellLoad(Scene& s, const std::string& file)
   return 0;
 }
 
+[[nodiscard]] int64_t usecTime()
+{
+  const auto t = std::chrono::steady_clock::now();
+  return std::chrono::duration_cast<std::chrono::microseconds>(
+    t.time_since_epoch()).count();
+}
+
+[[nodiscard]] double secDiff(int64_t t0, int64_t t1)
+{
+  return double(t1 - t0) / 1000000.0;
+}
 
 int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 {
@@ -76,8 +87,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   const int samples = s.samplesPerPixel();
   println("Rendering ", s.image_width, "x", s.image_height, " image (",
           samples, ((samples == 1) ? " sample" : " samples"), "/pixel)");
-  Timer t;
-  t.start();
+  const int64_t t0 = usecTime();
 
   if (s.init()) {
     println_err("Scene Initialization Failed - can't render");
@@ -97,7 +107,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     return -1;
   }
 
-  const auto setupTime = t.elapsedSec();
+  const int64_t t1 = usecTime();
   if (ren.jobs() <= 0) {
     // render on main thread
     JobState js;
@@ -121,10 +131,9 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     ren.stopJobs();
   }
 
-  t.stop();
-  const auto totalTime = t.elapsedSec();
-  println("\rTotal Time: ", totalTime, "  (setup ", setupTime,
-          ", rendering ", (totalTime - setupTime), ")");
+  const auto t2 = usecTime();
+  println("\rTotal Time: ", secDiff(t0,t2), "  (setup ", secDiff(t0,t1),
+          ", rendering ", secDiff(t1,t2), ")");
   return 0;
 }
 

@@ -1,9 +1,9 @@
 # rend Makefile
-# Copyright (C) 2023 Richard Bradley
+# Copyright (C) 2024 Richard Bradley
 
 base_src :=\
   BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc JobState.cc\
-  Ray.cc Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc Timer.cc
+  Ray.cc Renderer.cc Roots.cc Scene.cc Stats.cc Transform.cc
 object_src :=\
   Object.cc BasicObjects.cc Bound.cc CSG.cc Group.cc Prism.cc
 shader_src :=\
