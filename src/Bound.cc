@@ -1,6 +1,6 @@
 //
 // Bound.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Bound.hh"
@@ -125,20 +125,20 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 }
 
 [[nodiscard]] static OptNode* makeOptNodeList(
-  const HitCostInfo& hitCosts, std::span<const ObjectPtr> o_list)
+  const Scene& s, std::span<const ObjectPtr> o_list)
 {
   OptNode* node_list = nullptr;
   OptNode* tail = nullptr;
   for (auto& ob : o_list) {
     OptNode* list = nullptr;
     if (auto uPtr = dynamic_cast<const Union*>(ob.get()); uPtr) {
-      list = new OptNode{NODE_UNION, ob, uPtr->hitCost(hitCosts)};
-      list->child = makeOptNodeList(hitCosts, uPtr->children());
+      list = new OptNode{NODE_UNION, ob, uPtr->hitCost(s.hitCosts)};
+      list->child = makeOptNodeList(s, uPtr->children());
     } else if (auto pPtr = dynamic_cast<const Primitive*>(ob.get()); pPtr) {
-      list = new OptNode{NODE_OBJECT, ob, pPtr->hitCost(hitCosts)};
+      list = new OptNode{NODE_OBJECT, ob, pPtr->hitCost(s.hitCosts)};
     } else {
       // assume group - ignore it and just process children
-      list = makeOptNodeList(hitCosts, ob->children());
+      list = makeOptNodeList(s, ob->children());
       if (!list) { continue; }
     }
 
@@ -180,7 +180,7 @@ class OptNodeTree
 {
  public:
   OptNodeTree(const Scene& s, std::span<const ObjectPtr> o_list) {
-    _head = makeOptNodeList(s.hitCosts, o_list);
+    _head = makeOptNodeList(s, o_list);
     BBox box{s.eye};
     for (OptNode* n = _head; n != nullptr; n = n->next) { box.fit(n->box); }
     _sceneWeight = box.weight();
