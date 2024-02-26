@@ -72,7 +72,7 @@ int ShellLoad(Scene& s, const std::string& file)
     t.time_since_epoch()).count();
 }
 
-[[nodiscard]] double secDiff(int64_t t0, int64_t t1)
+[[nodiscard]] constexpr double secDiff(int64_t t0, int64_t t1)
 {
   return double(t1 - t0) / 1000000.0;
 }
@@ -113,7 +113,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     JobState js;
     js.init(s);
     for (int y = s.region_min[1]; y <= s.region_max[1]; ++y) {
-      print_err("\rscanlines remaining -- ", s.region_max[1] - y, " \b");
+      print_err("\rScanlines remaining -- ", s.region_max[1] - y, " \b");
       ren.render(js, s.region_min[0], y, s.region_max[0], y);
     }
     ren.setStats(js.stats);
@@ -124,7 +124,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
     do {
       tr = ren.waitForJobs(50);
       if (tr != last_tr) {
-        print_err("\rtasks remaining -- ", tr, " \b");
+        print_err("\rTasks remaining -- ", tr, " \b");
         last_tr = tr;
       }
     } while (tr > 0);
@@ -146,26 +146,26 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
 
   const auto x = file.rfind('.');
   std::string ext;
-  if (x != std::string::npos) { ext = file.substr(x); }
+  if (x != std::string::npos) { ext = file.substr(x+1); }
 
-  if (ext.empty()) { ext = ".png"; }
-  else if (ext != ".bmp" && ext != ".png") {
-    println_err("Invalid image file extension '", ext.substr(1),
+  if (ext.empty()) { ext = "png"; }
+  else if (ext != "bmp" && ext != "png") {
+    println_err("Invalid image file extension '", ext,
                 "'\n(currently supported: bmp,png)");
     return -1;
   }
 
-  const std::string fn = file.substr(0,x) + ext;
+  const std::string fn = file.substr(0,x) + "." + ext;
   println("Saving image to '", fn, "'");
 
   int error = -1;
-  if (ext == ".bmp") {
+  if (ext == "bmp") {
     error = fb.saveBMP(fn);
-  } else if (ext == ".png") {
+  } else if (ext == "png") {
     error = fb.savePNG(fn);
   }
 
-  if (error) { println_err("image save failed"); }
+  if (error) { println_err("Image save failed"); }
   return error;
 }
 
@@ -222,7 +222,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
 
   std::string arg;
   if (!(input >> arg)) {
-    println_err("please enter a command or '?' for help");
+    println_err("Please enter a command or '?' for help");
     return -1; // error
   }
 
@@ -305,7 +305,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
 }
 
 
-int Usage(char** argv)
+int Usage(const char* const* argv)
 {
   println("Usage: ", argv[0], " [options] [<scene file> [<image save>]]");
   println("Options:");
@@ -317,7 +317,7 @@ int Usage(char** argv)
   return 0;
 }
 
-int ErrorUsage(char** argv)
+int ErrorUsage(const char* const* argv)
 {
   println_err("Try '", argv[0], " --help' for usage information.");
   return -1;
@@ -327,7 +327,7 @@ int ErrorUsage(char** argv)
 // **** Main Function ****
 int main(int argc, char** argv)
 {
-  println("Rend v0.1 (alpha) - Copyright (C) 2022 Richard Bradley");
+  println("Rend v0.1 (alpha) - Copyright (C) 2024 Richard Bradley");
 
   std::string fileLoad, imageSave;
   bool interactive = false;
