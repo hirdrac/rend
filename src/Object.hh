@@ -1,6 +1,6 @@
 //
 // Object.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Definition of base object class
 //
@@ -11,7 +11,6 @@
 #include "ObjectPtr.hh"
 #include "ShaderPtr.hh"
 #include "Types.hh"
-#include <vector>
 #include <span>
 
 

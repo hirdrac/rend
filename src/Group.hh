@@ -1,12 +1,13 @@
 //
 // Group.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #pragma once
 #include "Object.hh"
 #include "LightPtr.hh"
 #include "Transform.hh"
+#include <vector>
 
 
 // **** Types ****
