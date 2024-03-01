@@ -1,6 +1,6 @@
 //
-// RandomGen.hh
-// Copyright (C) 2023 Richard Bradley
+// RandomDist.hh
+// Copyright (C) 2024 Richard Bradley
 //
 
 #pragma once

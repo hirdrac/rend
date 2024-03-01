@@ -1,12 +1,12 @@
 //
 // Renderer.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Renderer.hh"
 #include "Scene.hh"
 #include "FrameBuffer.hh"
-#include "RandomGen.hh"
+#include "RandomDist.hh"
 #include "Ray.hh"
 #include "Color.hh"
 #include "Print.hh"

@@ -1,6 +1,6 @@
 //
 // JobState.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Job (thread) specific data used in rendering
 //
@@ -8,7 +8,7 @@
 #pragma once
 #include "HitInfo.hh"
 #include "Stats.hh"
-#include "RandomGen.hh"
+#include "RandomDist.hh"
 
 
 class Scene;
