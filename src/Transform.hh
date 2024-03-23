@@ -40,7 +40,7 @@ class Transform
   [[nodiscard]] inline Vec3 rayLocalDir(const Ray& r) const;
   [[nodiscard]] inline Vec3 rayLocalBase(const Ray& r) const;
 
-    // FIXME - time/r.time ignored for now.
+    // FIXME: time/r.time ignored for now.
     //   eventually time parameter will allow for motion blur
 
  private:

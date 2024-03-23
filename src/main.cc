@@ -95,7 +95,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   }
 
 #if 0
-  // FIXME - output in verbose mode
+  // FIXME: output in verbose mode
   if (!s.optObjects().empty()) {
     PrintList(s.optObjects());
   }
