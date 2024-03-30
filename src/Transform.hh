@@ -1,6 +1,6 @@
 //
 // Transform.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // scene item transform state
 //
@@ -14,7 +14,7 @@
 class Transform
 {
  public:
-  Matrix base{INIT_NONE};  // configured transform for item
+  Matrix base{INIT_ZERO};  // configured transform for item
 
   Transform() { clear(); }
 
@@ -44,8 +44,8 @@ class Transform
     //   eventually time parameter will allow for motion blur
 
  private:
-  Matrix _final{INIT_NONE}; // base transform adjusted by parent transform
-  Matrix _finalInv{INIT_NONE};
+  Matrix _final{INIT_ZERO}; // base transform adjusted by parent transform
+  Matrix _finalInv{INIT_ZERO};
   bool _noParent = false;
 };
 
