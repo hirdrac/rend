@@ -1,6 +1,6 @@
 //
 // Color.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Standard color class library
 //
@@ -26,14 +26,12 @@ class Color
   static constexpr size_type ALPHA_CHANNEL = 3;
 
 
-  Color(NoInit_t) { }
+  explicit Color(NoInit_t) { }
   constexpr Color(ZeroInit_t) : _val{0,0,0,0} { }
   constexpr Color(value_type r, value_type g, value_type b)
     : _val{r,g,b,1.0f} { }
   constexpr Color(value_type r, value_type g, value_type b, value_type a)
     : _val{r,g,b,a} { }
-
-  Color& operator=(NoInit_t) = delete;
 
 
   // Member Functions
@@ -47,7 +45,7 @@ class Color
 
   [[nodiscard]] constexpr value_type& operator[](size_type i) {
     return _val[i]; }
-  [[nodiscard]] constexpr value_type operator[](size_type i) const {
+  [[nodiscard]] constexpr const value_type& operator[](size_type i) const {
     return _val[i]; }
 
   [[nodiscard]] constexpr value_type red() const {

@@ -1,6 +1,6 @@
 //
 // Matrix3D.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
@@ -31,7 +31,7 @@ class Matrix4x4
   using size_type = unsigned int;
 
 
-  Matrix4x4(NoInit_t) { }
+  explicit Matrix4x4(NoInit_t) { }
 
   constexpr Matrix4x4(ZeroInit_t)
     : Matrix4x4{0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0} { }
@@ -42,12 +42,11 @@ class Matrix4x4
                       T i, T j, T k, T l, T m, T n, T o, T p)
     : _val{a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p} { }
 
-  type& operator=(NoInit_t) = delete;
-
 
   // Operators
   [[nodiscard]] constexpr T& operator[](size_type i) { return _val[i]; }
-  [[nodiscard]] constexpr T  operator[](size_type i) const { return _val[i]; }
+  [[nodiscard]] constexpr const T& operator[](size_type i) const {
+    return _val[i]; }
 
   constexpr type& operator*=(const type& m) { return *this = (*this * m); }
 
