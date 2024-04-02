@@ -1,6 +1,6 @@
 //
 // CSG.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // CSG object classes
 //
@@ -26,8 +26,7 @@ class CSG : public Primitive
 
   // Primitive Functions
   Flt hitCost(const HitCostInfo& hc) const final;
-  Vec3 normal(const Ray& r, const HitInfo& h) const final {
-    return INIT_ZERO; }
+  Vec3 normal(const Ray& r, const HitInfo& h) const final { return {}; }
 };
 
 

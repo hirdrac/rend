@@ -1,6 +1,6 @@
 //
 // Scene.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Scene.hh"
@@ -174,8 +174,7 @@ Color Scene::traceRay(JobState& js, const Ray& r) const
   if (!hit) {
     // hit background
     const EvaluatedHit eh{
-      INIT_ZERO, INIT_ZERO,
-      {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}, 0};
+      {}, {}, {(r.dir.z > 0.0) ? r.dir.x : -r.dir.x, r.dir.y, 0.0}, 0};
     return background->evaluate(js, *this, r, eh);
   }
 

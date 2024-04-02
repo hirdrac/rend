@@ -37,9 +37,9 @@ class Scene
   int region_min[2], region_max[2];  // Render region
 
   // camera settings
-  Vec3 eye{INIT_ZERO};      // camera location
-  Vec3 coi{INIT_ZERO};      // center-of-interest
-  Vec3 vup{INIT_ZERO};      // view-up vector
+  Vec3 eye;                 // camera location
+  Vec3 coi;                 // center-of-interest
+  Vec3 vup;                 // view-up vector
   Flt  fov;                 // field of view angle
   Flt  aperture;            // depth-of-field jitter amount when positive
   Flt  focus;               // focal distance

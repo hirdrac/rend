@@ -27,7 +27,7 @@ class Color
 
 
   explicit Color(NoInit_t) { }
-  constexpr Color(ZeroInit_t) : _val{0,0,0,0} { }
+  constexpr Color() : _val{0,0,0,0} { }
   constexpr Color(value_type r, value_type g, value_type b)
     : _val{r,g,b,1.0f} { }
   constexpr Color(value_type r, value_type g, value_type b, value_type a)

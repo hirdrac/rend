@@ -36,7 +36,7 @@ class Vector2
 
 
   explicit Vector2(NoInit_t) { }
-  constexpr Vector2(ZeroInit_t) : Vector2{0,0} { }
+  constexpr Vector2() : Vector2{0,0} { }
   constexpr Vector2(T vx, T vy) : x{vx}, y{vy} { }
 
 
@@ -106,7 +106,7 @@ class Vector3
 
 
   explicit Vector3(NoInit_t) { }
-  constexpr Vector3(ZeroInit_t) : Vector3{0,0,0} { }
+  constexpr Vector3() : Vector3{0,0,0} { }
   constexpr Vector3(T vx, T vy, T vz) : x{vx}, y{vy}, z{vz} { }
 
 
@@ -177,7 +177,7 @@ class Vector4
 
 
   explicit Vector4(NoInit_t) { }
-  constexpr Vector4(ZeroInit_t) : Vector4{0,0,0,0} { }
+  constexpr Vector4() : Vector4{0,0,0,0} { }
   constexpr Vector4(T vx, T vy, T vz, T vw) : x{vx}, y{vy}, z{vz}, w{vw} { }
   constexpr Vector4(const Vector3<T>& v, T vw)
     : Vector4{v.x, v.y, v.z, vw} { }

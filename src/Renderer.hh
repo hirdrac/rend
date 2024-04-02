@@ -1,6 +1,6 @@
 //
 // Renderer.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #pragma once
@@ -47,9 +47,9 @@ class Renderer
   StatInfo _stats;
 
   // Calculated Data
-  Vec3 _vnormal{INIT_ZERO}, _vcenter{INIT_ZERO};
-  Vec3 _pixelX{INIT_ZERO}, _pixelY{INIT_ZERO};
-  Vec3 _apertureX{INIT_ZERO}, _apertureY{INIT_ZERO};
+  Vec3 _vnormal, _vcenter;
+  Vec3 _pixelX, _pixelY;
+  Vec3 _apertureX, _apertureY;
 
   // jobs/task stuff
   struct alignas(64) Job {
