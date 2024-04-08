@@ -1,6 +1,6 @@
 //
 // Parser.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Scene description file parser
 //
@@ -68,7 +68,7 @@ class SceneParser
     return (itr == _files.end()) ? unknown : itr->second;
   }
 
-  template<typename... Args>
+  template<class... Args>
   void reportError(const AstNode* n, const Args&... args) const {
     println_err("[", fileName(n->file_id), ":", n->line, ":", n->column, "] ",
                 args...);

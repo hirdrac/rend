@@ -1,6 +1,6 @@
 //
 // ObjectPtr.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #pragma once
@@ -10,7 +10,7 @@
 class Object;
 using ObjectPtr = std::shared_ptr<Object>;
 
-template<std::derived_from<Object> T, typename... Args>
+template<std::derived_from<Object> T, class... Args>
 [[nodiscard]] inline std::shared_ptr<T> makeObject(Args... args) {
   return std::make_shared<T>(args...);
 }

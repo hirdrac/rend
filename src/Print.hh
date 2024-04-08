@@ -1,6 +1,6 @@
 //
 // Print.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // simplified stdout/stderr output
 // (note that these functions are not equivalent to C++23 print/println)
@@ -11,26 +11,26 @@
 
 
 // print()
-template<typename... Args>
+template<class... Args>
 inline void print(std::ostream& os, Args&&... args)
 {
   (os << ... << args);
 }
 
-template<typename... Args>
+template<class... Args>
 inline void print(Args&&... args)
 {
   print(std::cout, args...);
 }
 
 // println()
-template<typename... Args>
+template<class... Args>
 inline void println(std::ostream& os, Args&&... args)
 {
   (os << ... << args) << '\n';
 }
 
-template<typename... Args>
+template<class... Args>
 inline void println(Args&&... args)
 {
   println(std::cout, args...);
@@ -38,13 +38,13 @@ inline void println(Args&&... args)
 
 
 // std error output
-template<typename... Args>
+template<class... Args>
 inline void print_err(Args&&... args)
 {
   print(std::cerr, args...);
 }
 
-template<typename... Args>
+template<class... Args>
 inline void println_err(Args&&... args)
 {
   println(std::cerr, args...);

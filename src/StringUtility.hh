@@ -1,6 +1,6 @@
 //
 // StringUtility.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #pragma once
@@ -8,7 +8,7 @@
 #include <sstream>
 
 
-template<typename... Args>
+template<class... Args>
 [[nodiscard]] inline std::string concat(const Args&... args)
 {
   std::ostringstream os;
