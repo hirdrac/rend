@@ -12,8 +12,8 @@
 #include "Print.hh"
 #include <string>
 #include <string_view>
-#include <map>
-#include <set>
+#include <unordered_map>
+#include <unordered_set>
 
 
 // **** Types ****
@@ -76,8 +76,8 @@ class SceneParser
 
  private:
   SList<AstNode> _astList;
-  std::map<int,std::string,std::less<>> _files;
-  std::set<std::string,std::less<>> _activeFiles;
+  std::unordered_map<int,std::string> _files;
+  std::unordered_set<std::string> _activeFiles;
   int _lastID = 0;
 
   int includeFile(
