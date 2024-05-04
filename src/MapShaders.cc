@@ -1,6 +1,6 @@
 //
 // MapShaders.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "MapShaders.hh"
@@ -22,7 +22,7 @@ int MapShader::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 int MapShader::init(Scene& s, const Transform* tr)
 {
-  return _child ? InitShader(s, *_child, tr) : -1;
+  return _child ? s.initShader(*_child, tr) : -1;
 }
 
 

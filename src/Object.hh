@@ -62,7 +62,3 @@ class Primitive : public Object
   Transform _trans;
   Flt _cost = -1.0; // non-negative to override default cost
 };
-
-
-// **** Functions ****
-int InitObject(Scene& s, Object& ob, const ShaderPtr& sh, const Transform* tr);

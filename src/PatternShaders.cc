@@ -1,6 +1,6 @@
 //
 // PatternShaders.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "PatternShaders.hh"
@@ -36,12 +36,12 @@ int PatternShader::init(Scene& s, const Transform* tr)
       return -1;
     }
 
-    const int err = InitShader(s, *_border, tr);
+    const int err = s.initShader(*_border, tr);
     if (err) { return err; }
   }
 
   for (auto& sh : _children) {
-    const int err = InitShader(s, *sh, tr);
+    const int err = s.initShader(*sh, tr);
     if (err) { return err; }
   }
 

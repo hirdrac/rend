@@ -1,11 +1,9 @@
 //
 // Shader.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Shader.hh"
-#include "Scene.hh"
-#include "Transform.hh"
 #include "StringUtility.hh"
 #include "RegisterShader.hh"
 #include <cassert>
@@ -41,15 +39,4 @@ Color ShaderSide::evaluate(
 {
   int x = eh.side % int(_sideShaders.size());
   return _sideShaders[std::size_t(x)]->evaluate(js, s, r, eh);
-}
-
-
-// **** Functions ****
-int InitShader(Scene& s, Shader& sh, const Transform* tr)
-{
-  Transform* trans = sh.trans();
-  if (trans) { trans->init(tr); tr = trans; }
-
-  ++s.shader_count;
-  return sh.init(s, tr);
 }

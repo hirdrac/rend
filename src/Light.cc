@@ -1,11 +1,9 @@
 //
 // Light.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Light.hh"
-#include "Scene.hh"
-#include "Print.hh"
 #include <cassert>
 
 
@@ -17,16 +15,4 @@ int Light::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
   _energy = sh;
   return 0;
-}
-
-
-// **** Functions ****
-int InitLight(Scene& s, Light& lt, const Transform* tr)
-{
-  Transform* trans = lt.trans();
-  if (trans) { trans->init(tr); }
-
-  if (!lt.energy()) { lt.addShader(s.default_lt, FLAG_NONE); }
-
-  return lt.init(s);
 }

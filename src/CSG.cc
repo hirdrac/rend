@@ -1,6 +1,6 @@
 //
 // CSG.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "CSG.hh"
@@ -34,7 +34,7 @@ int CSG::init(Scene& s, const Transform* tr)
   }
 
   for (auto& ob : objects) {
-    if (InitObject(s, *ob, shader(), tr)) { return -1; }
+    if (s.initObject(*ob, shader(), tr)) { return -1; }
   }
 
   const BBox b = bound(nullptr);

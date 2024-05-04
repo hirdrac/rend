@@ -1,6 +1,6 @@
 //
 // Shader.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Shader base class & simple shaders:
 //
@@ -72,7 +72,3 @@ class ShaderSide final : public Shader
  private:
   std::vector<ShaderPtr> _sideShaders;
 };
-
-
-// **** Functions ****
-int InitShader(Scene& s, Shader& sh, const Transform* tr);

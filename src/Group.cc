@@ -1,6 +1,6 @@
 //
 // Group.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Group.hh"
@@ -32,11 +32,11 @@ int Group::addLight(const LightPtr& lt)
 int Group::init(Scene& s, const Transform* tr)
 {
   for (auto& lt : _lights) {
-    if (InitLight(s, *lt, tr)) { return -1; }
+    if (s.initLight(*lt, tr)) { return -1; }
   }
 
   for (auto& ob : _objects) {
-    if (InitObject(s, *ob, _shader, tr)) { return -1; }
+    if (s.initObject(*ob, _shader, tr)) { return -1; }
   }
 
   ++s.group_count;

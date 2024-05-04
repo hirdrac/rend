@@ -1,6 +1,6 @@
 //
 // Phong.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Phong.hh"
@@ -17,16 +17,16 @@ REGISTER_SHADER_CLASS(Phong,"phong");
 int Phong::init(Scene& s, const Transform* tr)
 {
   if (!_ambient) { _ambient = s.ambient; }
-  else if (int er = InitShader(s, *_ambient, tr); er != 0) { return er; }
+  else if (int er = s.initShader(*_ambient, tr); er != 0) { return er; }
 
   if (!_diffuse) { _diffuse = makeShader<ShaderColor>(.5, .5, .5); }
-  if (int er = InitShader(s, *_diffuse, tr); er != 0) { return er; }
+  if (int er = s.initShader(*_diffuse, tr); er != 0) { return er; }
 
   if (!_specular) { _specular = makeShader<ShaderColor>(0, 0, 0); }
-  if (int er = InitShader(s, *_specular, tr); er != 0) { return er; }
+  if (int er = s.initShader(*_specular, tr); er != 0) { return er; }
 
   if (!_transmit) { _transmit = makeShader<ShaderColor>(0, 0, 0); }
-  if (int er = InitShader(s, *_transmit, tr); er != 0) { return er; }
+  if (int er = s.initShader(*_transmit, tr); er != 0) { return er; }
 
   return 0;
 }

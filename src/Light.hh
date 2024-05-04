@@ -1,6 +1,6 @@
 //
 // Light.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Light base class
 //
@@ -44,7 +44,3 @@ class Light : public SceneItem
  protected:
   ShaderPtr _energy;
 };
-
-
-// **** Functions ****
-int InitLight(Scene& s, Light& lt, const Transform* tr);

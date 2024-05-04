@@ -74,7 +74,11 @@ class Scene
   int addObject(const ObjectPtr& ob);
   int addLight(const LightPtr& lt);
   int addShader(const ShaderPtr& sh, SceneItemFlag flag);
+
   int init();
+  int initLight(Light& lt, const Transform* tr);
+  int initObject(Object& ob, const ShaderPtr& sh, const Transform* tr);
+  int initShader(Shader& sh, const Transform* tr);
 
   [[nodiscard]] Color traceRay(JobState& js, const Ray& r) const;
   [[nodiscard]] bool castShadowRay(JobState& js, const Ray& r) const;

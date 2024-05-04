@@ -129,7 +129,7 @@ int Scene::init()
   // (lights initialized before objects so lights contained in groups will
   //  be re-initialized with the correct parent transform)
   for (auto& lt : _lights) {
-    if (InitLight(*this, *lt, nullptr)) {
+    if (initLight(*lt, nullptr)) {
       println("Error initializing light list");
       return -1;  // error
     }
@@ -140,7 +140,7 @@ int Scene::init()
   group_count = 0;
   object_count = 0;
   for (auto& ob : _objects) {
-    if (InitObject(*this, *ob, nullptr, nullptr)) {
+    if (initObject(*ob, nullptr, nullptr)) {
       println("Error initializing object list");
       return -1;  // error
     }
@@ -152,7 +152,7 @@ int Scene::init()
   // init shaders
   shader_count = 0;
   for (auto& sh : _shaders) {
-    if (InitShader(*this, *sh, nullptr)) {
+    if (initShader(*sh, nullptr)) {
       println("Error initializing shaders");
       return -1;
     }
@@ -160,6 +160,43 @@ int Scene::init()
 
   // everything okay
   return 0;
+}
+
+int Scene::initLight(Light& lt, const Transform* tr)
+{
+  Transform* trans = lt.trans();
+  if (trans) { trans->init(tr); }
+
+  if (!lt.energy()) { lt.addShader(default_lt, FLAG_NONE); }
+
+  return lt.init(*this);
+}
+
+int Scene::initObject(Object& ob, const ShaderPtr& sh, const Transform* tr)
+{
+  Transform* trans = ob.trans();
+  if (trans) { trans->init(tr); tr = trans; }
+
+  // Assign provided shader if none is set
+  if (sh && !ob.shader()) { ob.addShader(sh, FLAG_NONE); }
+
+  ++object_count;
+  int error = ob.init(*this, tr);
+  if (error) {
+    println("INIT ERROR: ", ob.desc());
+    return error;
+  }
+
+  return 0;
+}
+
+int Scene::initShader(Shader& sh, const Transform* tr)
+{
+  Transform* trans = sh.trans();
+  if (trans) { trans->init(tr); tr = trans; }
+
+  ++shader_count;
+  return sh.init(*this, tr);
 }
 
 Color Scene::traceRay(JobState& js, const Ray& r) const

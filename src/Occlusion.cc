@@ -1,6 +1,6 @@
 //
 // Occlusion.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Occlusion.hh"
@@ -25,7 +25,7 @@ int Occlusion::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 
 int Occlusion::init(Scene& s, const Transform* tr)
 {
-  return _child ? InitShader(s, *_child, tr) : -1;
+  return _child ? s.initShader(*_child, tr) : -1;
 }
 
 Color Occlusion::evaluate(JobState& js, const Scene& s, const Ray& r,
