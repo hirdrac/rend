@@ -23,8 +23,8 @@ void Scene::clear()
 {
   ambient.reset();
   background.reset();
-  default_obj.reset();
-  default_lt.reset();
+  _defaultObj.reset();
+  _defaultLt.reset();
   image_width = 256;
   image_height = 256;
   region_min[0] = 0;
@@ -86,10 +86,10 @@ int Scene::addShader(const ShaderPtr& sh, SceneItemFlag flag)
       if (background) { return -1; } else { background = sh; }
       break;
     case FLAG_DEFAULT_LT:
-      if (default_lt) { return -1; } else { default_lt = sh; }
+      if (_defaultLt) { return -1; } else { _defaultLt = sh; }
       break;
     case FLAG_DEFAULT_OBJ:
-      if (default_obj) { return -1; } else { default_obj = sh; }
+      if (_defaultObj) { return -1; } else { _defaultObj = sh; }
       break;
     case FLAG_INIT_ONLY:
       break;
@@ -115,14 +115,14 @@ int Scene::init()
     _shaders.push_back(background);
   }
 
-  if (!default_obj) {
-    default_obj = makeShader<ShaderColor>( .3,  .3,  .3);
-    _shaders.push_back(default_obj);
+  if (!_defaultObj) {
+    _defaultObj = makeShader<ShaderColor>( .3,  .3,  .3);
+    _shaders.push_back(_defaultObj);
   }
 
-  if (!default_lt) {
-    default_lt = makeShader<ShaderColor>(1.0, 1.0, 1.0);
-    _shaders.push_back(default_lt);
+  if (!_defaultLt) {
+    _defaultLt = makeShader<ShaderColor>(1.0, 1.0, 1.0);
+    _shaders.push_back(_defaultLt);
   }
 
   // init lights
@@ -167,7 +167,7 @@ int Scene::initLight(Light& lt, const Transform* tr)
   Transform* trans = lt.trans();
   if (trans) { trans->init(tr); }
 
-  if (!lt.energy()) { lt.addShader(default_lt, FLAG_NONE); }
+  if (!lt.energy()) { lt.addShader(_defaultLt, FLAG_NONE); }
 
   return lt.init(*this);
 }
@@ -181,7 +181,7 @@ int Scene::initObject(Object& ob, const ShaderPtr& sh, const Transform* tr)
   if (sh && !ob.shader()) { ob.addShader(sh, FLAG_NONE); }
 
   ++object_count;
-  int error = ob.init(*this, tr);
+  const int error = ob.init(*this, tr);
   if (error) {
     println("INIT ERROR: ", ob.desc());
     return error;
@@ -219,7 +219,7 @@ Color Scene::traceRay(JobState& js, const Ray& r) const
 
   const Primitive* obj = hit->object;
   const Shader* sh = obj->shader().get();
-  if (!sh) { sh = default_obj.get(); }
+  if (!sh) { sh = _defaultObj.get(); }
 
   EvaluatedHit eh{
     CalcHitPoint(r.base, r.dir, hit->distance),

@@ -29,10 +29,6 @@ class Scene
   ShaderPtr ambient;
   ShaderPtr background;
 
-  // Default shaders
-  ShaderPtr default_obj;
-  ShaderPtr default_lt;
-
   int image_width, image_height;     // Image pixel size
   int region_min[2], region_max[2];  // Render region
 
@@ -107,4 +103,8 @@ class Scene
 
   std::vector<ShaderPtr> _shaders;
     // all top-level shader objects (for initialization)
+
+  // Default shaders
+  ShaderPtr _defaultObj;
+  ShaderPtr _defaultLt;
 };
