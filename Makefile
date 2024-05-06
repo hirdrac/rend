@@ -23,8 +23,8 @@ SOURCE_DIR = src
 STANDARD = c++20
 PACKAGES = readline libpng
 OPTIONS = lto modern_c++
-WARN_EXTRA = fatal-errors
-WARN_CXX_EXTRA = extra-semi conversion cast-align cast-qual
+WARN_EXTRA = fatal-errors cast-qual
+WARN_CXX_EXTRA = extra-semi conversion cast-align
 FLAGS = -march=native -ffast-math -fno-plt
 #FLAGS_RELEASE = -DNDEBUG
 
