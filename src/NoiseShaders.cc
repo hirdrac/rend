@@ -29,7 +29,7 @@ int NoiseShader::init(Scene& s, const Transform* tr)
 Color NoiseShader::evaluate(JobState& js, const Scene& s, const Ray& r,
                             const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map);
   EvaluatedHit eh2 = eh;
   eh2.map.x += perlin::noise<Flt>(m.x, m.y, m.z) * _value;
   return _child->evaluate(js, s, r, eh2);

@@ -118,8 +118,6 @@ Color Phong::evaluate(
       .base       = eh.global_pt,
       .dir        = reflect,
       .min_length = s.ray_moveout,
-      .max_length = VERY_LARGE,
-      .time       = r.time,
       .depth      = r.depth + 1
     };
 

@@ -1,6 +1,6 @@
 //
 // Prism.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "Prism.hh"
@@ -38,11 +38,11 @@ int Prism::init(Scene& s, const Transform* tr)
   _normal.clear();
   _normal.reserve(std::size_t(_sides + 2));
   for (const Vec2& n : _plane) {
-    _normal.push_back(_trans.normalLocalToGlobal({n.x, n.y, 0}, 0));
+    _normal.push_back(_trans.normalLocalToGlobal({n.x, n.y, 0}));
   }
 
-  _normal.push_back(_trans.normalLocalToGlobal({0, 0, 1}, 0));
-  _normal.push_back(_trans.normalLocalToGlobal({0, 0,-1}, 0));
+  _normal.push_back(_trans.normalLocalToGlobal({0, 0, 1}));
+  _normal.push_back(_trans.normalLocalToGlobal({0, 0,-1}));
 
   _halfSideLenSqr = Sqr(std::tan(PI/Flt(_sides)));
   return 0;

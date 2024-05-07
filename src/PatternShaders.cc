@@ -4,7 +4,6 @@
 //
 
 #include "PatternShaders.hh"
-#include "Ray.hh"
 #include "Print.hh"
 #include "RegisterShader.hh"
 #include <cmath>
@@ -55,7 +54,7 @@ REGISTER_SHADER_CLASS(Checkerboard,"checker");
 Color Checkerboard::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map);
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;
@@ -77,7 +76,7 @@ REGISTER_SHADER_CLASS(Checkerboard3D,"checker3d");
 Color Checkerboard3D::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec3 m = _trans.pointLocalToGlobal(eh.map, r.time);
+  const Vec3 m = _trans.pointLocalToGlobal(eh.map);
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;
@@ -101,7 +100,7 @@ REGISTER_SHADER_CLASS(Pinwheel,"pinwheel");
 Color Pinwheel::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map);
 
   const Flt radius = std::sqrt(Sqr(m.x) + Sqr(m.y));
   const Flt spin_val = _spin * radius * PI * .25;
@@ -131,7 +130,7 @@ REGISTER_SHADER_CLASS(Ring,"ring");
 Color Ring::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map);
   const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y)) + _offset;
 
   if (_border) {
@@ -153,7 +152,7 @@ REGISTER_SHADER_CLASS(SquareRing,"squarering");
 Color SquareRing::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map, r.time);
+  const Vec2 m = _trans.pointLocalToGlobalXY(eh.map);
   const Flt d = std::max(Abs(m.x), Abs(m.y)) + _offset;
 
   if (_border) {
@@ -175,7 +174,7 @@ REGISTER_SHADER_CLASS(Stripe,"stripe");
 Color Stripe::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  const Flt d = _trans.pointLocalToGlobalX(eh.map, r.time);
+  const Flt d = _trans.pointLocalToGlobalX(eh.map);
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;

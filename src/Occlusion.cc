@@ -34,9 +34,7 @@ Color Occlusion::evaluate(JobState& js, const Scene& s, const Ray& r,
   Ray sray {
     .base       = eh.global_pt,
     .min_length = s.ray_moveout,
-    .max_length = _radius,
-    .time       = r.time,
-    .depth      = 0
+    .max_length = _radius
   };
 
   int lit = 0;

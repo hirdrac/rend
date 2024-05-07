@@ -1,6 +1,6 @@
 //
 // Ray.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Definition of ray class and functions
 //
@@ -16,10 +16,9 @@ class Ray
   // base ray properties
   Vec3 base{INIT_NONE};
   Vec3 dir{INIT_NONE};
-  Flt  min_length;
-  Flt  max_length;
-  Flt  time;
-  int  depth;
+  Flt  min_length = 0;
+  Flt  max_length = VERY_LARGE;
+  int  depth = 0;
 
   // Member Functions
   void moveOut(Flt amount) { base += dir * amount; }
@@ -30,7 +29,7 @@ class Ray
 
 
 // **** Functions ****
-int CalcTransmitResult(
+bool CalcTransmitResult(
   Vec3& transmit, const Vec3& incident, const Vec3& normal,
   Flt i_index, Flt t_index);
 

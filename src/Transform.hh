@@ -27,21 +27,15 @@ class Transform
   [[nodiscard]] bool noParent() const { return _noParent; }
   void setNoParent(bool v) { _noParent = v; }
 
-  [[nodiscard]] inline Vec3 normalLocalToGlobal(const Vec3& n, Flt time) const;
-  [[nodiscard]] inline Vec3 pointLocalToGlobal(const Vec3& pos, Flt time) const;
-
-  [[nodiscard]] inline Vec2 pointLocalToGlobalXY(
-    const Vec3& pos, Flt time) const;
-  [[nodiscard]] inline Flt pointLocalToGlobalX(
-    const Vec3& pos, Flt time) const;
-
-  [[nodiscard]] inline Vec3 vectorLocalToGlobal(const Vec3& dir, Flt time) const;
+  [[nodiscard]] inline Vec3 normalLocalToGlobal(const Vec3& n) const;
+  [[nodiscard]] inline Vec3 pointLocalToGlobal(const Vec3& pos) const;
+  [[nodiscard]] inline Vec2 pointLocalToGlobalXY(const Vec3& pos) const;
+  [[nodiscard]] inline Flt pointLocalToGlobalX(const Vec3& pos) const;
+  [[nodiscard]] inline Vec3 vectorLocalToGlobal(const Vec3& dir) const;
+    // TODO: add time parameter to support motion blur/animation
 
   [[nodiscard]] inline Vec3 rayLocalDir(const Ray& r) const;
   [[nodiscard]] inline Vec3 rayLocalBase(const Ray& r) const;
-
-    // FIXME: time/r.time ignored for now.
-    //   eventually time parameter will allow for motion blur
 
  private:
   Matrix _final;  // base transform adjusted by parent transform
@@ -51,28 +45,28 @@ class Transform
 
 
 // **** Inline Implementation ****
-Vec3 Transform::normalLocalToGlobal(const Vec3& n, Flt time) const
+Vec3 Transform::normalLocalToGlobal(const Vec3& n) const
 {
   // global normal = local normal * transpose(inverse(global transform))
   return UnitVec(MultVectorTrans(n, _finalInv));
 }
 
-Vec3 Transform::pointLocalToGlobal(const Vec3& pos, Flt time) const
+Vec3 Transform::pointLocalToGlobal(const Vec3& pos) const
 {
   return MultPoint(pos, _final);
 }
 
-Vec2 Transform::pointLocalToGlobalXY(const Vec3& pos, Flt time) const
+Vec2 Transform::pointLocalToGlobalXY(const Vec3& pos) const
 {
   return MultPointXY(pos, _final);
 }
 
-Flt Transform::pointLocalToGlobalX(const Vec3& pos, Flt time) const
+Flt Transform::pointLocalToGlobalX(const Vec3& pos) const
 {
   return MultPointX(pos, _final);
 }
 
-Vec3 Transform::vectorLocalToGlobal(const Vec3& dir, Flt time) const
+Vec3 Transform::vectorLocalToGlobal(const Vec3& dir) const
 {
   return MultVector(dir, _final);
 }

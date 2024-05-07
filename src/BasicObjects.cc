@@ -1,6 +1,6 @@
 //
 // BasicObjects.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "BasicObjects.hh"
@@ -26,7 +26,7 @@ REGISTER_OBJECT_CLASS(Disc,"disc");
 
 int Disc::init(Scene& s, const Transform* tr)
 {
-  _normal = _trans.normalLocalToGlobal({0,0,1}, 0);  // cache plane normal
+  _normal = _trans.normalLocalToGlobal({0,0,1});  // cache plane normal
   return 0;
 }
 
@@ -77,7 +77,7 @@ REGISTER_OBJECT_CLASS(Cone,"cone");
 
 int Cone::init(Scene& s, const Transform* tr)
 {
-  _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
+  _baseNormal = _trans.normalLocalToGlobal({0,0,-1});
   return 0;
 }
 
@@ -194,7 +194,7 @@ Vec3 Cone::normal(const Ray& r, const HitInfo& h) const
   // zn = 2*C*zi + E*xi + F*yi + I = -.5zi + .5
 
   const Vec3 n{h.local_pt.x, h.local_pt.y, .25 * (1.0 - h.local_pt.z)};
-  return _trans.normalLocalToGlobal(n, r.time);
+  return _trans.normalLocalToGlobal(n);
 }
 
 Flt Cone::hitCost(const HitCostInfo& hc) const
@@ -212,7 +212,7 @@ int Cube::init(Scene& s, const Transform* tr)
     {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}};
 
   for (int i = 0; i < 6; ++i) {
-    _sideNormal[i] = _trans.normalLocalToGlobal(n[i], 0);
+    _sideNormal[i] = _trans.normalLocalToGlobal(n[i]);
   }
 
   return 0;
@@ -298,7 +298,7 @@ Vec3 Cube::normal(const Ray& r, const HitInfo& h) const
 {
   //static constexpr Vec3 n[6] = {
   //  {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
-  //return _trans.normalLocalToGlobal(n[h.side], r.time);
+  //return _trans.normalLocalToGlobal(n[h.side]);
 
   return _sideNormal[h.side];
 }
@@ -309,8 +309,8 @@ REGISTER_OBJECT_CLASS(Cylinder,"cylinder");
 
 int Cylinder::init(Scene& s, const Transform* tr)
 {
-  _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1}, 0);
-  _endNormal[1] = _trans.normalLocalToGlobal({0, 0, -1}, 0);
+  _endNormal[0] = _trans.normalLocalToGlobal({0, 0,  1});
+  _endNormal[1] = _trans.normalLocalToGlobal({0, 0, -1});
   return 0;
 }
 
@@ -403,7 +403,7 @@ Vec3 Cylinder::normal(const Ray& r, const HitInfo& h) const
   // zn = 2*C*zi + E*xi + F*yi + I = 0
 
   const Vec3 n{h.local_pt.x, h.local_pt.y, 0.0};
-  return _trans.normalLocalToGlobal(n, r.time);
+  return _trans.normalLocalToGlobal(n);
 }
 
 
@@ -412,7 +412,7 @@ REGISTER_OBJECT_CLASS(Paraboloid,"paraboloid");
 
 int Paraboloid::init(Scene& s, const Transform* tr)
 {
-  _baseNormal = _trans.normalLocalToGlobal({0,0,-1}, 0);
+  _baseNormal = _trans.normalLocalToGlobal({0,0,-1});
   return 0;
 }
 
@@ -518,7 +518,7 @@ Vec3 Paraboloid::normal(const Ray& r, const HitInfo& h) const
   // zn = 2*C*zi + E*xi + F*yi + I = .5
 
   const Vec3 n{h.local_pt.x, h.local_pt.y, .25};
-  return _trans.normalLocalToGlobal(n, r.time);
+  return _trans.normalLocalToGlobal(n);
 }
 
 Flt Paraboloid::hitCost(const HitCostInfo& hc) const
@@ -532,7 +532,7 @@ REGISTER_OBJECT_CLASS(Plane,"plane");
 
 int Plane::init(Scene& s, const Transform* tr)
 {
-  _normal = _trans.normalLocalToGlobal({0,0,1}, 0); // cache plane normal
+  _normal = _trans.normalLocalToGlobal({0,0,1}); // cache plane normal
   return 0;
 }
 
@@ -646,7 +646,7 @@ Vec3 Sphere::normal(const Ray& r, const HitInfo& h) const
   // yn = 2*B*yi + D*xi + F*zi + H = 2yi
   // zn = 2*C*zi + E*xi + F*yi + I = 2zi
 
-  return _trans.normalLocalToGlobal(h.local_pt, r.time);
+  return _trans.normalLocalToGlobal(h.local_pt);
 }
 
 
@@ -758,7 +758,7 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
   const Flt a = DotProduct(h.local_pt, h.local_pt) - 1.0 - Sqr(_radius);
   const Vec3 n = h.local_pt * Vec3{a, a + 2.0, a};
 
-  return _trans.normalLocalToGlobal(n, r.time);
+  return _trans.normalLocalToGlobal(n);
 }
 
 
