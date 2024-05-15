@@ -11,7 +11,11 @@
 template<class... Args>
 [[nodiscard]] inline std::string concat(const Args&... args)
 {
-  std::ostringstream os;
-  ((os << args),...);
-  return os.str();
+  if constexpr (sizeof...(args) == 0) {
+    return {};
+  } else {
+    std::ostringstream os;
+    ((os << args),...);
+    return os.str();
+  }
 }
