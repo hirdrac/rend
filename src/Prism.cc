@@ -8,7 +8,7 @@
 #include "BBox.hh"
 #include "Stats.hh"
 #include "Print.hh"
-#include "StringUtility.hh"
+#include "StringUtil.hh"
 #include "RegisterObject.hh"
 
 

@@ -4,7 +4,7 @@
 //
 
 #include "Shader.hh"
-#include "StringUtility.hh"
+#include "StringUtil.hh"
 #include "RegisterShader.hh"
 #include <cassert>
 
@@ -37,6 +37,6 @@ int ShaderSide::addShader(const ShaderPtr& sh, SceneItemFlag flag)
 Color ShaderSide::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
-  int x = eh.side % int(_sideShaders.size());
+  const int x = eh.side % int(_sideShaders.size());
   return _sideShaders[std::size_t(x)]->evaluate(js, s, r, eh);
 }

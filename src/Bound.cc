@@ -12,7 +12,7 @@
 #include "Print.hh"
 #include "Scene.hh"
 #include "ListUtility.hh"
-#include "StringUtility.hh"
+#include "StringUtil.hh"
 #include <vector>
 
 

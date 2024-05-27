@@ -1,5 +1,5 @@
 //
-// StringUtility.hh
+// StringUtil.hh
 // Copyright (C) 2024 Richard Bradley
 //
 
