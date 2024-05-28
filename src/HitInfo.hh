@@ -1,10 +1,10 @@
 //
 // HitInfo.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #pragma once
-#include "ListUtility.hh"
+#include "ListUtil.hh"
 #include "Types.hh"
 #include <utility>
 

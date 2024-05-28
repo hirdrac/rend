@@ -1,5 +1,5 @@
 //
-// ListUtility.hh
+// ListUtil.hh
 // Copyright (C) 2024 Richard Bradley
 //
 // Intrusive linked list node support functions
