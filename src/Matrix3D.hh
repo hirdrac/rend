@@ -7,7 +7,7 @@
 
 #pragma once
 #include "Vector3D.hh"
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 #include "InitType.hh"
 #include <ostream>
 #include <cmath>

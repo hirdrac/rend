@@ -4,7 +4,7 @@
 //
 
 #pragma once
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 #include "Types.hh"
 #include <random>
 

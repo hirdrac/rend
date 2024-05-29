@@ -7,7 +7,7 @@
 
 #pragma once
 #include "InitType.hh"
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 #include <ostream>
 
 

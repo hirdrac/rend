@@ -1,6 +1,6 @@
 //
 // Types.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // Definition of standard types and constants
 //
@@ -8,7 +8,7 @@
 #pragma once
 #include "Matrix3D.hh"
 #include "Vector3D.hh"
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 
 
 // **** Types ****

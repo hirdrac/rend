@@ -1,10 +1,10 @@
 //
 // FrameBuffer.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 
 #include "FrameBuffer.hh"
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 #include "Print.hh"
 #include <fstream>
 #include <algorithm>

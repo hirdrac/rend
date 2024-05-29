@@ -1,13 +1,13 @@
 //
 // Roots.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2024 Richard Bradley
 //
 // SolveQuadric(), SolveCubic(), SolveQuartic() based on code
 // by Jochen Schwarze (Graphics Gems I)
 //
 
 #include "Roots.hh"
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 #include <cmath>
 
 

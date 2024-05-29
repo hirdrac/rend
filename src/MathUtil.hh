@@ -1,6 +1,6 @@
 //
-// MathUtility.hh
-// Copyright (C) 2023 Richard Bradley
+// MathUtil.hh
+// Copyright (C) 2024 Richard Bradley
 //
 // fun and useful numeric constants and
 // various numeric functions needing a home

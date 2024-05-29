@@ -9,7 +9,7 @@
 //
 
 #pragma once
-#include "MathUtility.hh"
+#include "MathUtil.hh"
 #include "InitType.hh"
 #include <ostream>
 #include <cmath>
