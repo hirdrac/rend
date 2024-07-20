@@ -65,11 +65,11 @@ int ShellLoad(Scene& s, const std::string& file)
   return 0;
 }
 
-[[nodiscard]] int64_t usecTime()
+[[nodiscard]] inline int64_t usecTime()
 {
-  const auto t = std::chrono::steady_clock::now();
-  return std::chrono::duration_cast<std::chrono::microseconds>(
-    t.time_since_epoch()).count();
+  using namespace std::chrono;
+  return duration_cast<microseconds>(
+    steady_clock::now().time_since_epoch()).count();
 }
 
 [[nodiscard]] constexpr double secDiff(int64_t t0, int64_t t1)
