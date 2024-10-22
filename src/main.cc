@@ -42,7 +42,7 @@ int ShellInfo(const Scene& s, const FrameBuffer& fb)
   println();
 
   float min, max;
-  fb.range(min, max);
+  fb.getRange(min, max);
   println("Color ranges: ", min, " to ", max);
   return 0;
 }

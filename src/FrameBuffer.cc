@@ -14,9 +14,9 @@
 
 
 // **** FrameBuffer Class ****
-int FrameBuffer::init(int w, int h, const Color& c)
+bool FrameBuffer::init(int w, int h, const Color& c)
 {
-  if (w <= 0 || h <= 0) { return -1; }
+  if (w <= 0 || h <= 0) { return false; }
 
   _width = w;
   _rowSize = w * _channels;
@@ -29,7 +29,7 @@ int FrameBuffer::init(int w, int h, const Color& c)
   _height = h;
   _buffer.reset(new(std::align_val_t{64}) float[std::size_t(_rowSize * h)]);
   clear(c);
-  return 0;
+  return true;
 }
 
 int FrameBuffer::saveBMP(const std::string& filename) const
@@ -140,30 +140,30 @@ void FrameBuffer::clear(const Color& c)
   }
 }
 
-int FrameBuffer::plot(int x, int y, const Color& c)
+bool FrameBuffer::plot(int x, int y, const Color& c)
 {
-  if (!inRange(x, y)) { return -1; }
+  if (!inFrame(x, y)) { return false; }
 
   float* ptr = pixel(x, y);
   ptr[0] = c[0];
   ptr[1] = c[1];
   ptr[2] = c[2];
   if (_channels == 4) { ptr[3] = c[3]; }
-  return 0;
+  return true;
 }
 
 Color FrameBuffer::value(int x, int y) const
 {
-  if (!inRange(x, y)) { return colors::black; }
+  if (!inFrame(x, y)) { return colors::black; }
 
   const float* ptr = pixel(x, y);
   return {ptr[0], ptr[1], ptr[2]};
 }
 
-int FrameBuffer::range(float& min_val, float& max_val) const
+bool FrameBuffer::getRange(float& min_val, float& max_val) const
 {
   min_val = max_val = 0;
-  if (!_buffer) { return -1; }
+  if (!_buffer) { return false; }
 
   float low = _buffer[0], high = _buffer[0];
   const int width = _width * _channels;
@@ -179,5 +179,5 @@ int FrameBuffer::range(float& min_val, float& max_val) const
 
   min_val = low;
   max_val = high;
-  return 0;
+  return true;
 }
