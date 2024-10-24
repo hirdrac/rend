@@ -166,14 +166,15 @@ bool FrameBuffer::getRange(float& min_val, float& max_val) const
   if (!_buffer) { return false; }
 
   float low = _buffer[0], high = _buffer[0];
-  const int width = _width * _channels;
   for (int y = 0; y < _height; ++y) {
     const float* ptr = bufferRow(y);
-    const float* end = ptr + width;
-    while (ptr != end) {
-      const float v = *ptr++;
-      if (v < low)  { low = v; }
-      if (v > high) { high = v; }
+    const float* end = ptr + (_width * _channels);
+    for (; ptr != end; ptr += _channels) {
+      for (int i = 0; i < 3; ++i) {
+        const float v = ptr[i];
+        if (v < low)  { low = v; }
+        if (v > high) { high = v; }
+      }
     }
   }
 
