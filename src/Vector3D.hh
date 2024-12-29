@@ -54,8 +54,8 @@ class Vector2
   constexpr type& operator/=(T v) {
     x /= v; y /= v; return *this; }
 
-  [[nodiscard]] constexpr bool operator==(const type& v) const {
-    return (x == v.x) && (y == v.y); }
+  [[nodiscard]] constexpr bool operator==(const type& v) const = default;
+  [[nodiscard]] constexpr type operator-() const { return {-x, -y}; }
 
 
   // Iterators
@@ -106,6 +106,8 @@ class Vector3
   explicit Vector3(NoInit_t) { }
   constexpr Vector3() : Vector3{0,0,0} { }
   constexpr Vector3(T vx, T vy, T vz) : x{vx}, y{vy}, z{vz} { }
+  constexpr Vector3(const Vector2<T>& v, T vz)
+    : Vector3{v.x, v.y, vz} { }
 
 
   // Operators
@@ -122,8 +124,8 @@ class Vector3
   constexpr type& operator/=(T v) {
     x /= v; y /= v; z /= v; return *this; }
 
-  [[nodiscard]] constexpr bool operator==(const type& v) const {
-    return (x == v.x) && (y == v.y) && (z == v.z); }
+  [[nodiscard]] constexpr bool operator==(const type& v) const = default;
+  [[nodiscard]] constexpr type operator-() const { return {-x, -y, -z}; }
 
 
   // Iterators
@@ -193,8 +195,8 @@ class Vector4
   constexpr type& operator/=(T v) {
     x /= v; y /= v; z /= v; w /= v; return *this; }
 
-  [[nodiscard]] constexpr bool operator==(const type& v) const {
-    return (x == v.x) && (y == v.y) && (z == v.z) && (w == v.w); }
+  [[nodiscard]] constexpr bool operator==(const type& v) const = default;
+  [[nodiscard]] constexpr type operator-() const { return {-x, -y, -z, -w}; }
 
 
   // Iterators
@@ -219,20 +221,6 @@ class Vector4
   constexpr void set(const T* v) { set(v[0], v[1], v[2], v[3]); }
   constexpr void set(const Vector3<T>& v, T vw) { set(v.x, v.y, v.z, vw); }
 };
-
-
-// **** Unary Operators ****
-template<NumType T>
-[[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& v) {
-  return {-v.x, -v.y}; }
-
-template<NumType T>
-[[nodiscard]] constexpr Vector3<T> operator-(const Vector3<T>& v) {
-  return {-v.x, -v.y, -v.z}; }
-
-template<NumType T>
-[[nodiscard]] constexpr Vector4<T> operator-(const Vector4<T>& v) {
-  return {-v.x, -v.y, -v.z, -v.w}; }
 
 
 // **** Binary Operators ****
