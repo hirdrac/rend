@@ -1,6 +1,6 @@
 //
 // CmdLineParser.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Helper class for parsing command line arguments.
 //
@@ -34,8 +34,26 @@ class CmdLineParser
   CmdLineParser(int argc, const char* const* argv)
     : _argv{argv}, _argc{argc} { next(); }
 
-  [[nodiscard]] explicit operator bool() const { return _current < _argc; }
-  CmdLineParser& operator++() { next(); return *this; }
+  // member functions
+  [[nodiscard]] bool done() const { return _current >= _argc; }
+
+  bool next() {
+    for (;;) {
+      if (++_current < _argc) {
+        _arg = _argv[_current];
+        if (_optionsDone || _arg.size() < 2 || _arg[0] != '-') {
+          _argType = VALUE;
+        } else if (_arg == "--") {
+          _optionsDone = true; continue;
+        } else {
+          _argType = (_arg[1] == '-') ? OPTION_LONG : OPTION_SHORT;
+        }
+      } else {
+        _arg = {}; _argType = ARGS_DONE;
+      }
+      return !done();
+    }
+  }
 
   [[nodiscard]] std::string_view arg() const { return _arg; }
 
@@ -46,8 +64,7 @@ class CmdLineParser
     return (_argType == OPTION_SHORT) || (_argType == OPTION_LONG);
   }
 
-  [[nodiscard]] bool option(char shortName, std::string_view longName) const
-  {
+  [[nodiscard]] bool option(char shortName, std::string_view longName) const {
     if (_argType == OPTION_SHORT) {
       // short name option check (-x)
       return (shortName != '\0' && _arg.size() == 2 && _arg[1] == shortName);
@@ -96,6 +113,10 @@ class CmdLineParser
     return true;
   }
 
+  // helper operators
+  [[nodiscard]] explicit operator bool() const { return !done(); }
+  CmdLineParser& operator++() { next(); return *this; }
+
  private:
   const char* const* _argv;
   int _argc;
@@ -104,21 +125,6 @@ class CmdLineParser
   std::string_view _arg;
   enum { OPTION_SHORT, OPTION_LONG, VALUE, ARGS_DONE } _argType = ARGS_DONE;
   bool _optionsDone = false;
-
-  void next() {
-    if (++_current < _argc) {
-      _arg = _argv[_current];
-      if (_optionsDone || _arg.size() < 2 || _arg[0] != '-') {
-        _argType = VALUE;
-      } else if (_arg == "--") {
-        _optionsDone = true; next();
-      } else {
-        _argType = (_arg[1] == '-') ? OPTION_LONG : OPTION_SHORT;
-      }
-    } else {
-      _arg = {}; _optionsDone = true; _argType = ARGS_DONE;
-    }
-  }
 
   template<class T>
   static bool convertVal(std::string_view v, T& result) {
