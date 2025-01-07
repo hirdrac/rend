@@ -1,6 +1,6 @@
 //
 // MathUtil.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // fun and useful numeric constants and
 // various numeric functions needing a home
@@ -63,8 +63,8 @@ template<NumType T>
 [[nodiscard]] constexpr bool IsOne(T x)
 {
   if constexpr (std::is_floating_point_v<T>) {
-    return (x > (static_cast<T>(1) - math::VERY_SMALL<T>))
-      && (x < (static_cast<T>(1) + math::VERY_SMALL<T>));
+    return (x > (T{1} - math::VERY_SMALL<T>))
+      && (x < (T{1} + math::VERY_SMALL<T>));
   } else {
     return (x == 1);
   }
@@ -136,7 +136,7 @@ template<NumType T>
 {
   if (y < 0) { return 0; }
 
-  auto val = static_cast<T>(1);
+  auto val = T{1};
   while (y) {
     if (y & 1) { val *= x; }
     y >>= 1;
