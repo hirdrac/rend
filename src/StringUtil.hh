@@ -1,6 +1,6 @@
 //
 // StringUtil.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 
 #pragma once
@@ -9,7 +9,7 @@
 
 
 template<class... Args>
-[[nodiscard]] inline std::string concat(const Args&... args)
+[[nodiscard]] std::string concat(const Args&... args)
 {
   if constexpr (sizeof...(args) == 0) {
     return {};

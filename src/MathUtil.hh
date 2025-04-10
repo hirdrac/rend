@@ -21,18 +21,18 @@ concept NumType = std::integral<T> || std::floating_point<T>;
 namespace math {
   // various math constants
   template<std::floating_point T>
-  inline constexpr T PI = std::numbers::pi_v<T>;
+  constexpr T PI = std::numbers::pi_v<T>;
 
   template<std::floating_point T>
-  inline constexpr T DEG_TO_RAD = PI<T> / T{180};
+  constexpr T DEG_TO_RAD = PI<T> / T{180};
 
   template<std::floating_point T>
-  inline constexpr T RAD_TO_DEG = T{180} / PI<T>;
+  constexpr T RAD_TO_DEG = T{180} / PI<T>;
 
   template<std::floating_point T>
-  inline constexpr T VERY_SMALL = static_cast<T>(1.0e-12);
+  constexpr T VERY_SMALL = static_cast<T>(1.0e-12);
   template<>
-  inline constexpr float VERY_SMALL<float> = 1.0e-7f;
+  constexpr float VERY_SMALL<float> = 1.0e-7f;
 }
 
 

@@ -1,6 +1,6 @@
 //
 // Matrix3D.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
@@ -200,8 +200,7 @@ template<NumType T>
 
 // **** Template Stream Operators ****
 template<NumType T>
-inline std::ostream& operator<<(
-  std::ostream& os, const Matrix4x4<T,ROW_MAJOR>& m)
+std::ostream& operator<<(std::ostream& os, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   for (unsigned int i = 0; i != 16; i += 4) {
     os << '[' << m[i] << '\t' << m[i+1] << '\t' << m[i+2]
@@ -212,8 +211,7 @@ inline std::ostream& operator<<(
 }
 
 template<NumType T>
-inline std::ostream& operator<<(
-  std::ostream& os, const Matrix4x4<T,COLUMN_MAJOR>& m)
+std::ostream& operator<<(std::ostream& os, const Matrix4x4<T,COLUMN_MAJOR>& m)
 {
   for (unsigned int i = 0; i != 4; ++i) {
     os << '[' << m[i] << '\t' << m[i+4] << '\t' << m[i+8]

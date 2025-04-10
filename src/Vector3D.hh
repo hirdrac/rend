@@ -1,6 +1,6 @@
 //
 // Vector3D.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // vector template types/functions for 3D calculations
 //
@@ -331,15 +331,15 @@ template<NumType T>
 
 // **** Template Stream Operators ****
 template<NumType T>
-inline std::ostream& operator<<(std::ostream& os, const Vector2<T>& v) {
+std::ostream& operator<<(std::ostream& os, const Vector2<T>& v) {
   return os << '[' << v.x << ' ' << v.y << ']'; }
 
 template<NumType T>
-inline std::ostream& operator<<(std::ostream& os, const Vector3<T>& v) {
+std::ostream& operator<<(std::ostream& os, const Vector3<T>& v) {
   return os << '[' << v.x << ' ' << v.y << ' ' << v.z << ']'; }
 
 template<NumType T>
-inline std::ostream& operator<<(std::ostream& os, const Vector4<T>& v) {
+std::ostream& operator<<(std::ostream& os, const Vector4<T>& v) {
   return os << '[' << v.x << ' ' << v.y << ' ' << v.z << ' ' << v.w << ']'; }
 
 
@@ -353,11 +353,11 @@ template<NumType T>
   return (a - b).lengthSqr(); }
 
 template<NumType T>
-[[nodiscard]] inline T PointDistance(const Vector2<T>& a, const Vector2<T>& b) {
+[[nodiscard]] T PointDistance(const Vector2<T>& a, const Vector2<T>& b) {
   return (a - b).length(); }
 
 template<NumType T>
-[[nodiscard]] inline T PointDistance(const Vector3<T>& a, const Vector3<T>& b) {
+[[nodiscard]] T PointDistance(const Vector3<T>& a, const Vector3<T>& b) {
   return (a - b).length(); }
 
 template<NumType T>
@@ -377,9 +377,21 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] inline Vector2<T> UnitVec(const Vector2<T>& v) {
+[[nodiscard]] Vector2<T> UnitVec(const Vector2<T>& v) {
   return v * v.lengthInv(); }
 
 template<NumType T>
-[[nodiscard]] inline Vector3<T> UnitVec(const Vector3<T>& v) {
+[[nodiscard]] Vector3<T> UnitVec(const Vector3<T>& v) {
   return v * v.lengthInv(); }
+
+template<NumType T>
+[[nodiscard]] Vector2<T> UnitVec(T x, T y) {
+  const T inv = T{1} / std::sqrt(Sqr(x) + Sqr(y));
+  return {x * inv, y * inv};
+}
+
+template<NumType T>
+[[nodiscard]] Vector3<T> UnitVec(T x, T y, T z) {
+  const T inv = T{1} / std::sqrt(Sqr(x) + Sqr(y) + Sqr(z));
+  return {x * inv, y * inv, z * inv};
+}
