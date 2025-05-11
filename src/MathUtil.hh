@@ -32,7 +32,7 @@ namespace math {
   template<std::floating_point T>
   constexpr T VERY_SMALL = static_cast<T>(1.0e-12);
   template<>
-  constexpr float VERY_SMALL<float> = 1.0e-7f;
+  inline constexpr float VERY_SMALL<float> = 1.0e-7f;
 }
 
 
