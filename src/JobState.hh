@@ -1,6 +1,6 @@
 //
 // JobState.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Job (thread) specific data used in rendering
 //
@@ -9,9 +9,8 @@
 #include "HitInfo.hh"
 #include "Stats.hh"
 #include "RandomDist.hh"
+#include "Types.hh"
 
-
-class Scene;
 
 struct JobState
 {

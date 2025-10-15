@@ -1,6 +1,6 @@
 //
 // Light.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Light base class
 //
@@ -13,11 +13,6 @@
 
 
 // **** Types ****
-struct JobState;
-class Scene;
-class Ray;
-struct EvaluatedHit;
-
 struct LightResult {
   Vec3 dir{INIT_NONE};
   Flt distance;

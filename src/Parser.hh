@@ -1,15 +1,15 @@
 //
 // Parser.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Scene description file parser
 //
 
 #pragma once
 #include "SceneItem.hh"
-#include "Types.hh"
 #include "SList.hh"
 #include "Print.hh"
+#include "Types.hh"
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -17,9 +17,6 @@
 
 
 // **** Types ****
-class Scene;
-class Tokenizer;
-
 enum AstType {
   AST_UNKNOWN, AST_LIST, AST_ITEM, AST_NUMBER, AST_STRING
 };

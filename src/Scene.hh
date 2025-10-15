@@ -17,11 +17,6 @@
 
 
 // **** Types ****
-class Color;
-struct JobState;
-class Ray;
-
-
 class Scene
 {
  public:

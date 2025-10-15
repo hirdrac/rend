@@ -1,6 +1,6 @@
 //
 // Object.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Definition of base object class
 //
@@ -15,13 +15,6 @@
 
 
 // **** Types ****
-class HitInfo;
-class HitList;
-class HitCostInfo;
-class Ray;
-class BBox;
-
-
 // Object base class
 class Object : public SceneItem
 {

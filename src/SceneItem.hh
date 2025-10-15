@@ -1,6 +1,6 @@
 //
 // SceneItem.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 
 #pragma once
@@ -12,9 +12,6 @@
 
 
 // **** Types ****
-class Scene;
-class Transform;
-
 enum SceneItemFlag {
   FLAG_NONE,
   // scene shader types

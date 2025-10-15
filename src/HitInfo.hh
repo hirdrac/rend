@@ -1,6 +1,6 @@
 //
 // HitInfo.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 
 #pragma once
@@ -10,8 +10,6 @@
 
 
 // **** Types ****
-class Primitive;
-
 enum HitType {
   HIT_NORMAL, // non-CSG surface hit
   HIT_ENTER,  // enter CSG solid

@@ -1,6 +1,6 @@
 //
 // Intersect.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Intersection class and calculations
 //
@@ -12,10 +12,6 @@
 
 
 // **** Types ****
-class Primitive;
-class Ray;
-class StatInfo;
-
 class HitList
 {
  public:

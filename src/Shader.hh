@@ -1,6 +1,6 @@
 //
 // Shader.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Shader base class & simple shaders:
 //
@@ -17,10 +17,6 @@
 
 
 // **** Types ****
-struct JobState;
-class Ray;
-class Transform;
-
 struct EvaluatedHit {
   Vec3 global_pt{INIT_NONE};
   Vec3 normal{INIT_NONE};

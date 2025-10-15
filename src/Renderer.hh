@@ -1,6 +1,6 @@
 //
 // Renderer.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 
 #pragma once
@@ -13,9 +13,6 @@
 
 
 // **** Types ****
-class Scene;
-class FrameBuffer;
-
 class Renderer
 {
  public:

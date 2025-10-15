@@ -1,6 +1,6 @@
 //
 // Types.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2025 Richard Bradley
 //
 // Definition of standard types and constants
 //
@@ -9,6 +9,25 @@
 #include "Matrix3D.hh"
 #include "Vector3D.hh"
 #include "MathUtil.hh"
+
+
+// **** Forward Declare Major Types ****
+class AstNode;
+class BBox;
+class Color;
+struct EvaluatedHit;
+class FrameBuffer;
+class HitCostInfo;
+class HitInfo;
+class HitList;
+struct JobState;
+class Primitive;
+class Ray;
+class Scene;
+class SceneParser;
+class StatInfo;
+class Tokenizer;
+class Transform;
 
 
 // **** Types ****
