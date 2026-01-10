@@ -1,6 +1,6 @@
 //
 // Keywords.cc
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Keywords.hh"
@@ -496,7 +496,7 @@ static int ValueFn(
 
 // **** Data ****
 using KeywordMap = std::map<std::string,ItemFn,std::less<>>;
-static std::unique_ptr<KeywordMap> Keywords;
+static constinit std::unique_ptr<KeywordMap> Keywords;
 
 static void initKeywords()
 {
