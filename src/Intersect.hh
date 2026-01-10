@@ -1,6 +1,6 @@
 //
 // Intersect.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Intersection class and calculations
 //
@@ -38,7 +38,7 @@ class HitList
 
   [[nodiscard]] HitInfo* removeHead() { return _hitList.removeHead(); }
   [[nodiscard]] bool empty() const { return _hitList.empty(); }
-  [[nodiscard]] int  count() const { return _hitList.count(); }
+  [[nodiscard]] int  size() const { return _hitList.size(); }
 
   [[nodiscard]] bool csg() const { return _csg; }
     // if true, both enter/exit hits should be added

@@ -1,6 +1,6 @@
 //
 // CSG.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "CSG.hh"
@@ -85,7 +85,7 @@ int Union::intersect(const Ray& r, HitList& hl) const
   hl2.csgUnion(this);
 
   if (hl.csg()) {
-    const int hits = hl2.count();
+    const int hits = hl2.size();
     hl.mergeList(hl2);
     return hits;
   } else {
@@ -138,7 +138,7 @@ int Intersection::intersect(const Ray& r, HitList& hl) const
   hl2.csgIntersection(this, int(objects.size()));
 
   if (hl.csg()) {
-    const int hits = hl2.count();
+    const int hits = hl2.size();
     hl.mergeList(hl2);
     return hits;
   } else {
@@ -175,7 +175,7 @@ int Difference::intersect(const Ray& r, HitList& hl) const
   hl2.csgDifference(this, objects[0].get());
 
   if (hl.csg()) {
-    const int hits = hl2.count();
+    const int hits = hl2.size();
     hl.mergeList(hl2);
     return hits;
   } else {

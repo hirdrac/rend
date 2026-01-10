@@ -55,7 +55,7 @@ class SList
   [[nodiscard]] const T* tail() const { return _tail; }
 
   [[nodiscard]] bool empty() const { return !_head; }
-  [[nodiscard]] int count() const { return countNodes(_head); }
+  [[nodiscard]] int size() const { return countNodes(_head); }
 
   void purge() { killNodes(_head); _head = _tail = nullptr; }
 
