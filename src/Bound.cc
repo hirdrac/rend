@@ -1,6 +1,6 @@
 //
 // Bound.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Bound.hh"
@@ -91,7 +91,7 @@ struct OptNode
   OptNode(OptNodeType t, const ObjectPtr& ob, Flt cost)
     : object{ob}, box{ob->bound(nullptr)}, objHitCost{cost}, type{t} { }
 
-  ~OptNode() { KillNodes(child); }
+  ~OptNode() { killNodes(child); }
 
   // Member Functions
   [[nodiscard]] Flt cost(Flt weight) const
@@ -143,7 +143,7 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
     }
 
     if (tail) { tail->next = list; } else { node_list = list; }
-    tail = LastNode(list);
+    tail = lastNode(list);
   }
 
   return node_list;
@@ -152,7 +152,7 @@ static Flt treeCost(const OptNode* node_list, Flt bound_weight)
 static int convertNodeList(
   const OptNode* node_list, std::vector<ObjectPtr>& bound_list, BBox* bound_box)
 {
-  bound_list.reserve(std::size_t(CountNodes(node_list)));
+  bound_list.reserve(std::size_t(countNodes(node_list)));
 
   int bound_count = 0;
   for (const OptNode* n = node_list; n != nullptr; n = n->next) {
@@ -187,7 +187,7 @@ class OptNodeTree
     _boundCost = s.hitCosts.bound;
   }
 
-  ~OptNodeTree() { KillNodes(_head); }
+  ~OptNodeTree() { killNodes(_head); }
 
   [[nodiscard]] explicit operator bool() const { return _head != nullptr; }
 
@@ -212,7 +212,7 @@ void OptNodeTree::optimizeOptNodeList(OptNode*& node_list, Flt weight)
 
   // create array to index nodes
   std::vector<OptNode*> node_array;
-  node_array.reserve(std::size_t(CountNodes(node_list)));
+  node_array.reserve(std::size_t(countNodes(node_list)));
 
   for (OptNode* ptr = node_list; ptr != nullptr; ) {
     OptNode* n = ptr;
@@ -303,7 +303,7 @@ OptNode* OptNodeTree::mergeOptNodes(OptNode* node1, OptNode* node2)
   }
 
   b->child = n1;
-  LastNode(n1)->next = n2;
+  lastNode(n1)->next = n2;
   return b;
 }
 

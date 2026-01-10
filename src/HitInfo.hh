@@ -1,6 +1,6 @@
 //
 // HitInfo.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #pragma once
@@ -32,7 +32,7 @@ class HitInfo
 class HitCache
 {
  public:
-  ~HitCache() { KillNodes(_head); }
+  ~HitCache() { killNodes(_head); }
 
   [[nodiscard]] HitInfo* fetch() {
     if (_head) {

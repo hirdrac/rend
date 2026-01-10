@@ -1,6 +1,6 @@
 //
 // ListUtil.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Intrusive linked list node support functions
 //
@@ -21,7 +21,7 @@ concept ListNode = requires(T t) {
 
 // **** Functions ****
 template<ListNode T>
-[[nodiscard]] constexpr int CountNodes(const T* list)
+[[nodiscard]] constexpr int countNodes(const T* list)
 {
   int count = 0;
   while (list) {
@@ -33,7 +33,7 @@ template<ListNode T>
 }
 
 template<ListNode T>
-constexpr void KillNodes(T* list)
+constexpr void killNodes(T* list)
 {
   while (list) {
     decltype(list) tmp = list;
@@ -43,7 +43,7 @@ constexpr void KillNodes(T* list)
 }
 
 template<ListNode T>
-[[nodiscard]] constexpr T* LastNode(T* list)
+[[nodiscard]] constexpr T* lastNode(T* list)
 {
   //assert(item != nullptr);
   while (list->next) { list = list->next; }

@@ -1,6 +1,6 @@
 //
 // SList.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Intrusive single linked list
 //
@@ -25,8 +25,8 @@ class SList
   using type = SList<T>;
 
   SList() = default;
-  explicit SList(T* item) : _head{item}, _tail{LastNode(item)} { }
-  ~SList() { KillNodes(_head); }
+  explicit SList(T* item) : _head{item}, _tail{lastNode(item)} { }
+  ~SList() { killNodes(_head); }
 
   // prevent copy/assign
   SList(const type&) = delete;
@@ -39,7 +39,7 @@ class SList
 
   type& operator=(type&& x) noexcept {
     if (this != &x) {
-      KillNodes(_head);
+      killNodes(_head);
       _head = std::exchange(x._head, nullptr);
       _tail = std::exchange(x._tail, nullptr);
     }
@@ -55,9 +55,9 @@ class SList
   [[nodiscard]] const T* tail() const { return _tail; }
 
   [[nodiscard]] bool empty() const { return !_head; }
-  [[nodiscard]] int count() const { return CountNodes(_head); }
+  [[nodiscard]] int count() const { return countNodes(_head); }
 
-  void purge() { KillNodes(_head); _head = _tail = nullptr; }
+  void purge() { killNodes(_head); _head = _tail = nullptr; }
 
   void addToHead(T* item);
   void addToHead(type& list);
@@ -83,7 +83,7 @@ template<ListNode T>
 void SList<T>::addToHead(T* item)
 {
   //assert(item != nullptr);
-  T* end = LastNode(item);
+  T* end = lastNode(item);
   end->next = _head;
   if (!_tail) { _tail = end; }
 
@@ -113,7 +113,7 @@ void SList<T>::addToTail(T* item)
     _head = item;
   }
 
-  _tail = LastNode(item);
+  _tail = lastNode(item);
 }
 
 template<ListNode T>
@@ -142,7 +142,7 @@ void SList<T>::addAfterNode(T* node, T* item)
     addToTail(item);
   } else {
     //assert(item != nullptr);
-    LastNode(item)->next = node->next;
+    lastNode(item)->next = node->next;
     node->next = item;
   }
 }

@@ -1,6 +1,6 @@
 //
 // Parser.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Scene description file parser
 //
@@ -35,7 +35,7 @@ class AstNode
   AstType     type = AST_UNKNOWN;
 
   AstNode(std::string_view value) : val{value} { }
-  ~AstNode() { KillNodes(child); }
+  ~AstNode() { killNodes(child); }
 
   // Member Functions
   [[nodiscard]] std::string desc() const;
