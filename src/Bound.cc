@@ -309,7 +309,7 @@ OptNode* OptNodeTree::mergeOptNodes(OptNode* node1, OptNode* node2)
 
 
 // **** Functions ****
-int MakeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
+int makeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
                   std::vector<ObjectPtr>& bound_list)
 {
   OptNodeTree tree{s, o_list};

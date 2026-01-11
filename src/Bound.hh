@@ -1,6 +1,6 @@
 //
 // Bound.hh
-// Copyright (C) 2023 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Definition of Bound object class and
 // bounding box hierarchy function
@@ -30,5 +30,5 @@ class Bound final : public Object
 
 
 // **** Functions ****
-int MakeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
+int makeBoundList(const Scene& s, std::span<const ObjectPtr> o_list,
                   std::vector<ObjectPtr>& bound_list);

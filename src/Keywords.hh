@@ -1,6 +1,6 @@
 //
 // Keywords.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #pragma once
@@ -15,5 +15,5 @@ using ItemFn = int(*)(SceneParser& sp, Scene& s, SceneItem* parent,
 
 
 // **** Functions ****
-[[nodiscard]] ItemFn FindItemFn(std::string_view keyword);
-bool AddItemFn(std::string_view keyword, ItemFn fn);
+[[nodiscard]] ItemFn findItemFn(std::string_view keyword);
+bool addItemFn(std::string_view keyword, ItemFn fn);

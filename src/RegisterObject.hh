@@ -1,6 +1,6 @@
 //
 // RegisterObject.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #pragma once
@@ -11,7 +11,7 @@
 
 
 template<class ObjectType>
-int ObjectItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
+int objectItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
                  SceneItemFlag) {
   auto ob = makeObject<ObjectType>();
   const int error = p ? p->addObject(ob) : s.addObject(ob);
@@ -19,4 +19,4 @@ int ObjectItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
 }
 
 #define REGISTER_OBJECT_CLASS(type,keyword)\
-  static bool _object_keyword_##type = AddItemFn(keyword,&ObjectItemFn<type>)
+  static bool _object_keyword_##type = addItemFn(keyword,&objectItemFn<type>)

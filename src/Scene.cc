@@ -1,6 +1,6 @@
 //
 // Scene.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Scene.hh"
@@ -147,7 +147,7 @@ int Scene::init()
   }
 
   // setup bounding boxes
-  bound_count = MakeBoundList(*this, _objects, _optObjects);
+  bound_count = makeBoundList(*this, _objects, _optObjects);
 
   // init shaders
   shader_count = 0;

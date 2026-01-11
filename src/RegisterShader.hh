@@ -1,6 +1,6 @@
 //
 // RegisterShader.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #pragma once
@@ -12,7 +12,7 @@
 
 
 template<class ShaderType>
-int ShaderItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
+int shaderItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
                  SceneItemFlag flag) {
   auto sh = makeShader<ShaderType>();
   int error = 0;
@@ -26,4 +26,4 @@ int ShaderItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
 }
 
 #define REGISTER_SHADER_CLASS(type,keyword)\
-  static bool _shader_keyword_##type = AddItemFn(keyword,&ShaderItemFn<type>)
+  static bool _shader_keyword_##type = addItemFn(keyword,&shaderItemFn<type>)

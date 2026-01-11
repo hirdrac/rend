@@ -574,13 +574,13 @@ REGISTER_FLAG_KEYWORD(FLAG_BORDER,"border");
   return key;
 }
 
-ItemFn FindItemFn(std::string_view keyword)
+ItemFn findItemFn(std::string_view keyword)
 {
   const auto i = Keywords->find(makeKey(keyword));
   return (i != Keywords->end()) ? i->second : nullptr;
 }
 
-bool AddItemFn(std::string_view keyword, ItemFn fn)
+bool addItemFn(std::string_view keyword, ItemFn fn)
 {
   if (!Keywords) { initKeywords(); }
 

@@ -1,6 +1,6 @@
 //
 // RegisterLight.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #pragma once
@@ -11,7 +11,7 @@
 
 
 template<class LightType>
-int LightItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
+int lightItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
                 SceneItemFlag) {
   auto lt = makeLight<LightType>();
   int error = s.addLight(lt);
@@ -20,4 +20,4 @@ int LightItemFn(SceneParser& sp, Scene& s, SceneItem* p, AstNode* n,
 }
 
 #define REGISTER_LIGHT_CLASS(type,keyword)\
-  static bool _light_keyword_##type = AddItemFn(keyword,&LightItemFn<type>)
+  static bool _light_keyword_##type = addItemFn(keyword,&lightItemFn<type>)

@@ -1,6 +1,6 @@
 //
 // Parser.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Parser.hh"
@@ -116,7 +116,7 @@ AstNode* SceneParser::nextBlock(Tokenizer& tk, int fileID, int depth)
       n->type = AST_LIST;
 
     } else if (type == TOKEN_SYMBOL) {
-      const ItemFn fn = FindItemFn(t.value);
+      const ItemFn fn = findItemFn(t.value);
       if (fn) {
         n->type = AST_ITEM;
         n->ptr = reinterpret_cast<void*>(fn);
