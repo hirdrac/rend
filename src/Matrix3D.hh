@@ -1,6 +1,6 @@
 //
 // Matrix3D.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // 4x4 matrix template type/functions for 3D calculations
 //
@@ -521,7 +521,7 @@ constexpr void Matrix4x4<T,MOT>::transpose()
 // **** Template Functions ****
 // MultPoint() - row vector * row major matrix
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> MultPoint(
+[[nodiscard]] constexpr Vector3<T> multPoint(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v[3] = 1, m[3,7,11] = 0, m[15] = 1
@@ -532,7 +532,7 @@ template<NumType T>
 
 // MultPoint() - column major matrix * column vector
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> MultPoint(
+[[nodiscard]] constexpr Vector3<T> multPoint(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v[3] = 1, m[3,7,11] = 0, m[15] = 1
@@ -543,7 +543,7 @@ template<NumType T>
 
 // MultPointXY() - row vector * row major matrix; return only (x,y)
 template<NumType T>
-[[nodiscard]] constexpr Vector2<T> MultPointXY(
+[[nodiscard]] constexpr Vector2<T> multPointXY(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   return {(v[0]*m[0]) + (v[1]*m[4]) + (v[2]*m[8]) + m[12],
@@ -552,7 +552,7 @@ template<NumType T>
 
 // MultPointXY() - column major matrix * column vector; return only (x,y)
 template<NumType T>
-[[nodiscard]] constexpr Vector2<T> MultPointXY(
+[[nodiscard]] constexpr Vector2<T> multPointXY(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   return {(m[0]*v[0]) + (m[4]*v[1]) + (m[8]*v[2]) + m[12],
@@ -561,7 +561,7 @@ template<NumType T>
 
 // MultPointX() - row vector * row major matrix; return only x
 template<NumType T>
-[[nodiscard]] constexpr T MultPointX(
+[[nodiscard]] constexpr T multPointX(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   return (v[0]*m[0]) + (v[1]*m[4]) + (v[2]*m[8]) + m[12];
@@ -569,7 +569,7 @@ template<NumType T>
 
 // MultPointX() - column major matrix * column vector; return only x
 template<NumType T>
-[[nodiscard]] constexpr T MultPointX(
+[[nodiscard]] constexpr T multPointX(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   return (m[0]*v[0]) + (m[4]*v[1]) + (m[8]*v[2]) + m[12];
@@ -577,7 +577,7 @@ template<NumType T>
 
 // MultVector() - row vector * row major matrix
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> MultVector(
+[[nodiscard]] constexpr Vector3<T> multVector(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v[3] = 0, m[3,7,11] = 0, m[15] = 1
@@ -588,7 +588,7 @@ template<NumType T>
 
 // MultVector() - column major matrix * column vector
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> MultVector(
+[[nodiscard]] constexpr Vector3<T> multVector(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v[3] = 0, m[3,7,11] = 0, m[15] = 1
@@ -599,7 +599,7 @@ template<NumType T>
 
 // MultVectorTrans - row vector * transpose(row major matrix)
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> MultVectorTrans(
+[[nodiscard]] constexpr Vector3<T> multVectorTrans(
   const Vector3<T>& v, const Matrix4x4<T,ROW_MAJOR>& m)
 {
   // assumptions: v[3] = 0, m[12,13,14] = 0, m[15] = 1
@@ -610,7 +610,7 @@ template<NumType T>
 
 // MultVectorTrans() - transpose(column major matrix) * column vector
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> MultVectorTrans(
+[[nodiscard]] constexpr Vector3<T> multVectorTrans(
   const Matrix4x4<T,COLUMN_MAJOR>& m, const Vector3<T>& v)
 {
   // assumptions: v[3] = 0, m[12,13,14] = 0, m[15] = 1
@@ -621,7 +621,7 @@ template<NumType T>
 
 // Matrix Inversion
 template<NumType T, MatrixOrderType MOT>
-int InvertMatrix(const Matrix4x4<T,MOT>& m, Matrix4x4<T,MOT>& dst)
+int invertMatrix(const Matrix4x4<T,MOT>& m, Matrix4x4<T,MOT>& dst)
 {
   // based off 'Streaming SIMD Extensions - Inverse of 4x4 Matrix'
   // (Intel document AP-928)

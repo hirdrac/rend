@@ -1,6 +1,6 @@
 //
 // Transform.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // scene item transform state
 //
@@ -48,35 +48,35 @@ class Transform
 Vec3 Transform::normalLocalToGlobal(const Vec3& n) const
 {
   // global normal = local normal * transpose(inverse(global transform))
-  return UnitVec(MultVectorTrans(n, _finalInv));
+  return UnitVec(multVectorTrans(n, _finalInv));
 }
 
 Vec3 Transform::pointLocalToGlobal(const Vec3& pos) const
 {
-  return MultPoint(pos, _final);
+  return multPoint(pos, _final);
 }
 
 Vec2 Transform::pointLocalToGlobalXY(const Vec3& pos) const
 {
-  return MultPointXY(pos, _final);
+  return multPointXY(pos, _final);
 }
 
 Flt Transform::pointLocalToGlobalX(const Vec3& pos) const
 {
-  return MultPointX(pos, _final);
+  return multPointX(pos, _final);
 }
 
 Vec3 Transform::vectorLocalToGlobal(const Vec3& dir) const
 {
-  return MultVector(dir, _final);
+  return multVector(dir, _final);
 }
 
 Vec3 Transform::rayLocalDir(const Ray& r) const
 {
-  return MultVector(r.dir, _finalInv);
+  return multVector(r.dir, _finalInv);
 }
 
 Vec3 Transform::rayLocalBase(const Ray& r) const
 {
-  return MultPoint(r.base, _finalInv);
+  return multPoint(r.base, _finalInv);
 }

@@ -1,6 +1,6 @@
 //
 // Transform.cc
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Transform.hh"
@@ -14,7 +14,7 @@ int Transform::init(const Transform* parent)
     _final *= parent->final();
   }
 
-  if (InvertMatrix(_final, _finalInv)) {
+  if (invertMatrix(_final, _finalInv)) {
     return -1;
   }
 

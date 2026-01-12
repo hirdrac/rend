@@ -1,6 +1,6 @@
 //
 // Prism.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Prism.hh"
@@ -58,8 +58,8 @@ BBox Prism::bound(const Matrix* t) const
     const Flt a = ((PI*2.0) / Flt(_sides)) * (Flt(i)+.5);
     const Flt x = std::sin(a) * len;
     const Flt y = std::cos(a) * len;
-    box.fit(MultPoint({x,y, 1}, m));
-    box.fit(MultPoint({x,y,-1}, m));
+    box.fit(multPoint({x,y, 1}, m));
+    box.fit(multPoint({x,y,-1}, m));
   }
 
   return box;

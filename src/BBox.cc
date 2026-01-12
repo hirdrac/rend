@@ -1,6 +1,6 @@
 //
 // BBox.cc
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "BBox.hh"
@@ -29,7 +29,7 @@ BBox::BBox(const Vec3* pt_list, int pt_count, const Matrix& t)
 {
   reset();
   for (int i = 0; i < pt_count; ++i) {
-    fit(MultPoint(pt_list[i], t));
+    fit(multPoint(pt_list[i], t));
   }
 }
 
