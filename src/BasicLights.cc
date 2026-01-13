@@ -1,6 +1,6 @@
 //
 // BasicLights.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "BasicLights.hh"
@@ -14,7 +14,7 @@ REGISTER_LIGHT_CLASS(Sun,"sun");
 
 int Sun::init(Scene& s)
 {
-  _finalDir = UnitVec(dir);
+  _finalDir = unitVec(dir);
   return 0;
 }
 
@@ -22,7 +22,7 @@ bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
                    const EvaluatedHit& eh, LightResult& result) const
 {
   const Vec3 unit_dir = -_finalDir;
-  const Flt angle = DotProduct(eh.normal, unit_dir);
+  const Flt angle = dotProduct(eh.normal, unit_dir);
   if (!IsPositive(angle)) { return false; }
 
   if (s.shadow) {
@@ -60,7 +60,7 @@ bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
   const Vec3 dir = _finalPos - eh.global_pt;
   const Flt len = dir.length();
   const Vec3 unit_dir = dir * (1.0 / len);
-  const Flt angle = DotProduct(eh.normal, unit_dir);
+  const Flt angle = dotProduct(eh.normal, unit_dir);
   if (!IsPositive(angle)) { return false; }
 
   if (s.shadow) {

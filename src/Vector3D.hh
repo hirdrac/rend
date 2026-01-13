@@ -1,6 +1,6 @@
 //
 // Vector3D.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // vector template types/functions for 3D calculations
 //
@@ -425,45 +425,45 @@ std::ostream& operator<<(std::ostream& os, const Vector4<T>& v)
 
 // **** Template Functions ****
 template<NumType T>
-[[nodiscard]] constexpr T PointDistanceSqr(
+[[nodiscard]] constexpr T pointDistanceSqr(
   const Vector2<T>& a, const Vector2<T>& b)
 {
   return (a - b).lengthSqr();
 }
 
 template<NumType T>
-[[nodiscard]] constexpr T PointDistanceSqr(
+[[nodiscard]] constexpr T pointDistanceSqr(
   const Vector3<T>& a, const Vector3<T>& b)
 {
   return (a - b).lengthSqr();
 }
 
 template<NumType T>
-[[nodiscard]] T PointDistance(const Vector2<T>& a, const Vector2<T>& b)
+[[nodiscard]] T pointDistance(const Vector2<T>& a, const Vector2<T>& b)
 {
   return (a - b).length();
 }
 
 template<NumType T>
-[[nodiscard]] T PointDistance(const Vector3<T>& a, const Vector3<T>& b)
+[[nodiscard]] T pointDistance(const Vector3<T>& a, const Vector3<T>& b)
 {
   return (a - b).length();
 }
 
 template<NumType T>
-[[nodiscard]] constexpr T DotProduct(const Vector2<T>& a, const Vector2<T>& b)
+[[nodiscard]] constexpr T dotProduct(const Vector2<T>& a, const Vector2<T>& b)
 {
   return (a[0] * b[0]) + (a[1] * b[1]);
 }
 
 template<NumType T>
-[[nodiscard]] constexpr T DotProduct(const Vector3<T>& a, const Vector3<T>& b)
+[[nodiscard]] constexpr T dotProduct(const Vector3<T>& a, const Vector3<T>& b)
 {
   return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
 }
 
 template<NumType T>
-[[nodiscard]] constexpr Vector3<T> CrossProduct(
+[[nodiscard]] constexpr Vector3<T> crossProduct(
   const Vector3<T>& a, const Vector3<T>& b)
 {
   return {(a[1] * b[2]) - (a[2] * b[1]),
@@ -472,26 +472,26 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] Vector2<T> UnitVec(const Vector2<T>& v)
+[[nodiscard]] Vector2<T> unitVec(const Vector2<T>& v)
 {
   return v * v.lengthInv();
 }
 
 template<NumType T>
-[[nodiscard]] Vector3<T> UnitVec(const Vector3<T>& v)
+[[nodiscard]] Vector3<T> unitVec(const Vector3<T>& v)
 {
   return v * v.lengthInv();
 }
 
 template<NumType T>
-[[nodiscard]] Vector2<T> UnitVec(T x, T y)
+[[nodiscard]] Vector2<T> unitVec(T x, T y)
 {
   const T inv = T{1} / std::sqrt(Sqr(x) + Sqr(y));
   return {x * inv, y * inv};
 }
 
 template<NumType T>
-[[nodiscard]] Vector3<T> UnitVec(T x, T y, T z)
+[[nodiscard]] Vector3<T> unitVec(T x, T y, T z)
 {
   const T inv = T{1} / std::sqrt(Sqr(x) + Sqr(y) + Sqr(z));
   return {x * inv, y * inv, z * inv};

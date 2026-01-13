@@ -1,6 +1,6 @@
 //
 // Ray.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Definition of ray class and functions
 //
@@ -39,7 +39,7 @@ bool CalcTransmitResult(
   const Vec3& incident, const Vec3& normal)
 {
   // NOTE: output is normalized if both inputs are
-  return (normal * (2.0 * DotProduct(-incident, normal))) + incident;
+  return (normal * (2.0 * dotProduct(-incident, normal))) + incident;
 
   // alternate version
   //return incident - (normal * (2.0 * DotProduct(incident, normal)));

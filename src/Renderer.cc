@@ -1,6 +1,6 @@
 //
 // Renderer.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Renderer.hh"
@@ -23,17 +23,17 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   _stats = {};
 
   // Set up view vectors
-  _vnormal = UnitVec(_scene->coi - _scene->eye);
-  const Vec3 vup = UnitVec(_scene->vup);
-  const Flt vnvup_dot = DotProduct(_vnormal, vup);
+  _vnormal = unitVec(_scene->coi - _scene->eye);
+  const Vec3 vup = unitVec(_scene->vup);
+  const Flt vnvup_dot = dotProduct(_vnormal, vup);
   if (IsOne(Abs(vnvup_dot))) {
     println_err("Bad VUP vector");
     return -1;
   }
 
-  const Vec3 vtop = UnitVec(vup - (_vnormal * vnvup_dot));
-  const Vec3 vside = UnitVec(CrossProduct(_vnormal, vtop));
-  //Vec3 vside = UnitVec(CrossProduct(vtop, _vnormal)); // right-handed coords
+  const Vec3 vtop = unitVec(vup - (_vnormal * vnvup_dot));
+  const Vec3 vside = unitVec(crossProduct(_vnormal, vtop));
+  //Vec3 vside = unitVec(crossProduct(vtop, _vnormal)); // right-handed coords
 
   // Default Left-Handed Coords
   // +Y
@@ -115,7 +115,7 @@ void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
             dir += _vnormal;
           }
 
-          initRay.dir = UnitVec(dir);
+          initRay.dir = unitVec(dir);
           c += _scene->traceRay(js, initRay);
         }
       }

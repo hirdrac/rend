@@ -1,6 +1,6 @@
 //
 // Ray.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Ray.hh"
@@ -15,7 +15,7 @@ bool CalcTransmitResult(
   const Flt alpha = i_index / t_index;
 
   // beta
-  const Flt dot = DotProduct(-normal, incident);
+  const Flt dot = dotProduct(-normal, incident);
   const Flt root = 1.0 + (Sqr(alpha) * (Sqr(dot) - 1.0));
   if (root < 0) {
     return false;  // internal refraction
@@ -24,6 +24,6 @@ bool CalcTransmitResult(
   const Flt beta = (alpha * dot) - std::sqrt(root);
 
   // result
-  transmit = UnitVec((incident * alpha) + (normal * beta));
+  transmit = unitVec((incident * alpha) + (normal * beta));
   return true;
 }

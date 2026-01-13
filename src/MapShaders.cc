@@ -1,6 +1,6 @@
 //
 // MapShaders.cc
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "MapShaders.hh"
@@ -51,7 +51,7 @@ Color MapConeShader::evaluate(
     eh2.map = {-(eh.map.x), eh.map.y, -1.0};
   } else {
     // side
-    const Vec2 dir = UnitVec(eh.map.x, eh.map.y);
+    const Vec2 dir = unitVec(eh.map.x, eh.map.y);
     const Flt x = std::clamp(dir.x, -1.0 + VERY_SMALL, 1.0 - VERY_SMALL);
     const Flt u = (std::acos(x) * (2.0/PI)) - 1.0;
     eh2.map = {(eh.map.y >= 0.0) ? u : -u, eh.map.z, 0.0};

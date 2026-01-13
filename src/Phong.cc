@@ -1,6 +1,6 @@
 //
 // Phong.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "Phong.hh"
@@ -97,14 +97,14 @@ Color Phong::evaluate(
       // specular hi-light calculation
 #if 1
       // phong
-      const Flt angle = DotProduct(reflect, lresult.dir);
+      const Flt angle = dotProduct(reflect, lresult.dir);
       if (IsPositive(angle)) {
 	result += (lresult.energy * color_s) * std::pow(angle, exp);
       }
 #else
       // blinn-phong
       const Vec3 halfway = UnitVec(lresult.dir - r.dir);
-      const Flt angle = DotProduct(halfway, eh.normal);
+      const Flt angle = dotProduct(halfway, eh.normal);
       if (IsPositive(angle)) {
 	result += (lresult.energy * color_s) * std::pow(angle, exp * 4.0);
       }

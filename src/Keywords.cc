@@ -168,8 +168,8 @@ static int StretchXFn(
   const Vec3 center = (p1+p2) * .5;
   const Vec3 axisX = dir / len;
   const Vec3 up = IsOne(Abs(axisX.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
-  const Vec3 axisZ = UnitVec(CrossProduct(up, axisX));
-  const Vec3 axisY = UnitVec(CrossProduct(axisX, axisZ));
+  const Vec3 axisZ = unitVec(crossProduct(up, axisX));
+  const Vec3 axisY = unitVec(crossProduct(axisX, axisZ));
 
   // use bound of object without parent transform for stretch calc
   const BBox b = ob->bound(&t->base);
@@ -205,8 +205,8 @@ static int StretchYFn(
   const Vec3 center = (p1+p2) * .5;
   const Vec3 axisY = dir / len;
   const Vec3 side = IsOne(Abs(axisY.x)) ? Vec3{0,-1,0} : Vec3{1,0,0};
-  const Vec3 axisZ = UnitVec(CrossProduct(side, axisY));
-  const Vec3 axisX = UnitVec(CrossProduct(axisY, axisZ));
+  const Vec3 axisZ = unitVec(crossProduct(side, axisY));
+  const Vec3 axisX = unitVec(crossProduct(axisY, axisZ));
 
   // use bound of object without parent transform for stretch calc
   const BBox b = ob->bound(&t->base);
@@ -244,8 +244,8 @@ static int StretchZFn(
   const Vec3 up = IsOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
     // FIXME: may need to make 'up' configurable or come up with a better
     //   rule for when axisZ == +/- 1
-  const Vec3 axisX = UnitVec(CrossProduct(up, axisZ));
-  const Vec3 axisY = UnitVec(CrossProduct(axisZ, axisX));
+  const Vec3 axisX = unitVec(crossProduct(up, axisZ));
+  const Vec3 axisY = unitVec(crossProduct(axisZ, axisX));
 
   // use bound of object without parent transform for stretch calc
   const BBox b = ob->bound(&t->base);

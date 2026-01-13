@@ -48,7 +48,7 @@ class Transform
 Vec3 Transform::normalLocalToGlobal(const Vec3& n) const
 {
   // global normal = local normal * transpose(inverse(global transform))
-  return UnitVec(multVectorTrans(n, _finalInv));
+  return unitVec(multVectorTrans(n, _finalInv));
 }
 
 Vec3 Transform::pointLocalToGlobal(const Vec3& pos) const

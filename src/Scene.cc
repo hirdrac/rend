@@ -227,7 +227,7 @@ Color Scene::traceRay(JobState& js, const Ray& r) const
     hit->local_pt,
     hit->side
   };
-  if (DotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
+  if (dotProduct(r.dir, eh.normal) > 0.0) { eh.normal = -eh.normal; }
 
   return sh->evaluate(js, *this, r, eh);
 }

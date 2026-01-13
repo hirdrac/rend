@@ -1,6 +1,6 @@
 //
 // BasicObjects.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "BasicObjects.hh"
@@ -605,9 +605,9 @@ int Sphere::intersect(const Ray& r, HitList& hl) const
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
-  const Flt a = DotProduct(dir,  dir);
-  const Flt b = DotProduct(base, dir);
-  const Flt c = DotProduct(base, base) - 1.0;
+  const Flt a = dotProduct(dir,  dir);
+  const Flt b = dotProduct(base, dir);
+  const Flt c = dotProduct(base, base) - 1.0;
   const Flt d = Sqr(b) - (a * c);
   if (d < VERY_SMALL) {
     return 0;  // missed (avoid single intersection case)
@@ -689,9 +689,9 @@ int Torus::intersect(const Ray& r, HitList& hl) const
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
-  const Flt bd = DotProduct(base, dir);
-  const Flt dd = DotProduct(dir,  dir);
-  const Flt t1 = DotProduct(base, base) + (1.0 - Sqr(_radius));
+  const Flt bd = dotProduct(base, dir);
+  const Flt dd = dotProduct(dir,  dir);
+  const Flt t1 = dotProduct(base, base) + (1.0 - Sqr(_radius));
 
   Flt c[5];
   c[0] = Sqr(t1) - 4 * (Sqr(base.x) + Sqr(base.z));
@@ -755,7 +755,7 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
   //const Flt sqrt_d = std::sqrt(Sqr(x) + Sqr(z));
   //const Vec3 n{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)};
 
-  const Flt a = DotProduct(h.local_pt, h.local_pt) - 1.0 - Sqr(_radius);
+  const Flt a = dotProduct(h.local_pt, h.local_pt) - 1.0 - Sqr(_radius);
   const Vec3 n = h.local_pt * Vec3{a, a + 2.0, a};
 
   return _trans.normalLocalToGlobal(n);

@@ -1,6 +1,6 @@
 //
 // RandomDist.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #pragma once
@@ -93,7 +93,7 @@ class UnitDirDistribution
     Flt dot;
     do {
       d = operator()(g);
-      dot = DotProduct(normal, d);
+      dot = dotProduct(normal, d);
     } while (IsZero(dot));
     return (dot < 0.0) ? -d : d;
   }
