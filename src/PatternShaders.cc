@@ -1,6 +1,6 @@
 //
 // PatternShaders.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "PatternShaders.hh"
@@ -30,7 +30,7 @@ int PatternShader::init(Scene& s, const Transform* tr)
   if (_children.empty()) { return -1; }
 
   if (_border) {
-    if (!IsPositive(_borderwidth)) {
+    if (!isPositive(_borderwidth)) {
       println("Invalid borderwidth of ", _borderwidth);
       return -1;
     }
@@ -102,7 +102,7 @@ Color Pinwheel::evaluate(
 {
   const Vec2 m = _trans.pointLocalToGlobalXY(eh.map);
 
-  const Flt radius = std::sqrt(Sqr(m.x) + Sqr(m.y));
+  const Flt radius = std::sqrt(sqr(m.x) + sqr(m.y));
   const Flt spin_val = _spin * radius * PI * .25;
   const Flt angle = std::atan2(m.y, m.x) + spin_val;
 
@@ -114,7 +114,7 @@ Color Pinwheel::evaluate(
       ((std::floor(sect + .5) / Flt(_sectors)) * PI * 2.0) - spin_val;
     const Flt edge_x = radius * std::cos(edge_angle);
     const Flt edge_y = radius * std::sin(edge_angle);
-    if ((Sqr(edge_x - m.x) + Sqr(edge_y - m.y)) < Sqr(_borderwidth * .5)) {
+    if ((sqr(edge_x - m.x) + sqr(edge_y - m.y)) < sqr(_borderwidth * .5)) {
       return _border->evaluate(js, s, r, eh);
     }
   }
@@ -131,7 +131,7 @@ Color Ring::evaluate(
   JobState& js, const Scene& s, const Ray& r, const EvaluatedHit& eh) const
 {
   const Vec2 m = _trans.pointLocalToGlobalXY(eh.map);
-  const Flt d = std::sqrt(Sqr(m.x) + Sqr(m.y)) + _offset;
+  const Flt d = std::sqrt(sqr(m.x) + sqr(m.y)) + _offset;
 
   if (_border) {
     const Flt half_bw = _borderwidth * .5;

@@ -98,14 +98,14 @@ Color Phong::evaluate(
 #if 1
       // phong
       const Flt angle = dotProduct(reflect, lresult.dir);
-      if (IsPositive(angle)) {
+      if (isPositive(angle)) {
 	result += (lresult.energy * color_s) * std::pow(angle, exp);
       }
 #else
       // blinn-phong
       const Vec3 halfway = UnitVec(lresult.dir - r.dir);
       const Flt angle = dotProduct(halfway, eh.normal);
-      if (IsPositive(angle)) {
+      if (isPositive(angle)) {
 	result += (lresult.energy * color_s) * std::pow(angle, exp * 4.0);
       }
 #endif

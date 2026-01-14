@@ -28,7 +28,7 @@ class DiskDistribution
  public:
   DiskDistribution() { }
   DiskDistribution(Flt radius)
-    : _dist{-radius, radius}, _radiusSqr{Sqr(radius)} { }
+    : _dist{-radius, radius}, _radiusSqr{radius * radius} { }
 
   template<class Generator>
   [[nodiscard]] Vec2 operator()(Generator& g) {
@@ -51,7 +51,7 @@ class SphereDistribution
  public:
   SphereDistribution() { }
   SphereDistribution(Flt radius)
-    : _dist{-radius, radius}, _radiusSqr{Sqr(radius)} { }
+    : _dist{-radius, radius}, _radiusSqr{radius * radius} { }
 
   template<class Generator>
   [[nodiscard]] Vec3 operator()(Generator& g) {
@@ -82,7 +82,7 @@ class UnitDirDistribution
       d.y = _dist(g);
       d.z = _dist(g);
       len2 = d.lengthSqr();
-    } while (len2 > 1.0 || !IsPositive(len2));
+    } while (len2 > 1.0 || !isPositive(len2));
     return d / std::sqrt(len2);
   }
 
@@ -94,7 +94,7 @@ class UnitDirDistribution
     do {
       d = operator()(g);
       dot = dotProduct(normal, d);
-    } while (IsZero(dot));
+    } while (isZero(dot));
     return (dot < 0.0) ? -d : d;
   }
 

@@ -44,7 +44,7 @@ int Prism::init(Scene& s, const Transform* tr)
   _normal.push_back(_trans.normalLocalToGlobal({0, 0, 1}));
   _normal.push_back(_trans.normalLocalToGlobal({0, 0,-1}));
 
-  _halfSideLenSqr = Sqr(std::tan(PI/Flt(_sides)));
+  _halfSideLenSqr = sqr(std::tan(PI/Flt(_sides)));
   return 0;
 }
 
@@ -91,7 +91,7 @@ int Prism::intersect(const Ray& r, HitList& hl) const
 
     const Flt pt_x = base.x + (dir.x * h);
     const Flt pt_y = base.y + (dir.y * h);
-    const Flt lenSqr = Sqr(pt_x - n.x) + Sqr(pt_y - n.y);
+    const Flt lenSqr = sqr(pt_x - n.x) + sqr(pt_y - n.y);
     if (lenSqr < _halfSideLenSqr) {
       if (h < near_h) { near_h = h; near_s = i; }
       if (h > far_h) { far_h = h; far_s = i; }

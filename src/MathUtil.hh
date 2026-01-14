@@ -1,6 +1,6 @@
 //
 // MathUtil.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // fun and useful numeric constants and
 // various numeric functions needing a home
@@ -38,19 +38,19 @@ namespace math {
 
 // **** Functions ****
 template<std::floating_point T>
-[[nodiscard]] constexpr T DegToRad(T deg)
+[[nodiscard]] constexpr T degToRad(T deg)
 {
   return deg * math::DEG_TO_RAD<T>;
 }
 
 template<std::floating_point T>
-[[nodiscard]] constexpr T RadToDeg(T rad)
+[[nodiscard]] constexpr T radToDeg(T rad)
 {
   return rad * math::RAD_TO_DEG<T>;
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsZero(T x)
+[[nodiscard]] constexpr bool isZero(T x)
 {
   if constexpr (std::is_floating_point_v<T>) {
     return (x > -math::VERY_SMALL<T>) && (x < math::VERY_SMALL<T>);
@@ -60,7 +60,7 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsOne(T x)
+[[nodiscard]] constexpr bool isOne(T x)
 {
   if constexpr (std::is_floating_point_v<T>) {
     return (x > (T{1} - math::VERY_SMALL<T>))
@@ -71,7 +71,7 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsPositive(T x)
+[[nodiscard]] constexpr bool isPositive(T x)
 {
   if constexpr (std::is_floating_point_v<T>) {
     return (x >= math::VERY_SMALL<T>);
@@ -81,7 +81,7 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsNegative(T x)
+[[nodiscard]] constexpr bool isNegative(T x)
 {
   if constexpr (std::is_floating_point_v<T>) {
     return (x <= -math::VERY_SMALL<T>);
@@ -91,7 +91,7 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsEqual(T x, T y)
+[[nodiscard]] constexpr bool isEqual(T x, T y)
 {
   if constexpr (std::is_floating_point_v<T>) {
     return IsZero(x-y);
@@ -101,32 +101,32 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsLess(T x, T y)
+[[nodiscard]] constexpr bool isLess(T x, T y)
 {
   if constexpr (std::is_floating_point_v<T>) {
-    return IsNegative(x-y);
+    return isNegative(x-y);
   } else {
     return (x < y);
   }
 }
 
 template<NumType T>
-[[nodiscard]] constexpr bool IsGreater(T x, T y)
+[[nodiscard]] constexpr bool isGreater(T x, T y)
 {
   if constexpr (std::is_floating_point_v<T>) {
-    return IsPositive(x-y);
+    return isPositive(x-y);
   } else {
     return (x > y);
   }
 }
 
-[[nodiscard]] constexpr bool IsPowerOf2(std::integral auto x)
+[[nodiscard]] constexpr bool isPowerOf2(std::integral auto x)
 {
   return (x & (x - 1)) == 0;
 }
 
 template<NumType T>
-[[nodiscard]] constexpr T Sqr(T x)
+[[nodiscard]] constexpr T sqr(T x)
 {
   return x * x;
 }
@@ -147,12 +147,12 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr int Sgn(T x)
+[[nodiscard]] constexpr int sgn(T x)
 {
   if constexpr (std::is_signed_v<T>) {
-    return int{IsPositive(x)} - int{IsNegative(x)};
+    return int{isPositive(x)} - int{isNegative(x)};
   } else {
-    return int{IsPositive(x)};
+    return int{isPositive(x)};
   }
 }
 

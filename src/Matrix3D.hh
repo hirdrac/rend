@@ -649,7 +649,7 @@ int invertMatrix(const Matrix4x4<T,MOT>& m, Matrix4x4<T,MOT>& dst)
 
   // calculate determinant
   const T det = m[0]*c0 + m[4]*c1 + m[8]*c2 + m[12]*c3;
-  if (IsZero(det)) {
+  if (isZero(det)) {
     return -1; // error - singular matrix
   }
 

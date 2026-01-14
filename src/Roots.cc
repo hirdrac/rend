@@ -1,6 +1,6 @@
 //
 // Roots.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // SolveQuadric(), SolveCubic(), SolveQuartic() based on code
 // by Jochen Schwarze (Graphics Gems I)
@@ -30,9 +30,9 @@ int SolveQuadric(const Flt c[3], Flt s[2])
   // normal form: x^2 + px + q = 0
   const Flt p = c[1] / (2 * c[2]);
   const Flt q = c[0] / c[2];
-  const Flt d = Sqr(p) - q;
+  const Flt d = p*p - q;
 
-  if (IsPositive(d)) {
+  if (isPositive(d)) {
     // two solutions
     const Flt sqrt_d = std::sqrt(d);
     s[0] = -p - sqrt_d;
@@ -54,16 +54,16 @@ int SolveCubic(const Flt c[4], Flt s[3])
   const Flt C = c[0] / c[3];
 
   // substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0
-  const Flt sq_A = Sqr(A);
+  const Flt sq_A = A*A;
   const Flt third_A = A / 3.0;
   const Flt p = (-1.0/3.0 * sq_A + B) / 3.0;
   const Flt q = .5 * (2.0/27.0 * A * sq_A - third_A * B + C);
 
   // use Cardano's formula
-  const Flt cb_p = Sqr(p) * p;
-  const Flt D = Sqr(q) + cb_p;
+  const Flt cb_p = p*p*p;
+  const Flt D = q*q + cb_p;
 
-  if (IsNegative(D)) {
+  if (isNegative(D)) {
     // three real solutions
     const Flt phi = std::acos(-q / std::sqrt(-cb_p)) / 3.0;
     const Flt t = 2 * std::sqrt(-p);
@@ -71,14 +71,14 @@ int SolveCubic(const Flt c[4], Flt s[3])
     s[1] = (-t * std::cos(phi + (PI / 3))) - third_A;
     s[2] = (-t * std::cos(phi - (PI / 3))) - third_A;
     return 3;
-  } else if (IsPositive(D)) {
+  } else if (isPositive(D)) {
     // one real solution
     const Flt sqrt_D = std::sqrt(D);
     const Flt u =  CBRT(sqrt_D - q);
     const Flt v = -CBRT(sqrt_D + q);
     s[0] = (u + v) - third_A;
     return 1;
-  } else if (IsZero(q)) {
+  } else if (isZero(q)) {
     // one triple solution
     s[0] = -third_A;
     return 1;
@@ -100,16 +100,16 @@ static int solveCubic1only(const Flt c[4], Flt* s)
   const Flt C = c[0] / c[3];
 
   // substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0
-  const Flt sq_A = Sqr(A);
+  const Flt sq_A = A*A;
   const Flt third_A = A / 3.0;
   const Flt p = (-1.0/3.0 * sq_A + B) / 3.0;
   const Flt q = .5 * (2.0/27.0 * A * sq_A - third_A * B + C);
 
   // use Cardano's formula
-  const Flt cb_p = Sqr(p) * p;
-  const Flt D = Sqr(q) + cb_p;
+  const Flt cb_p = p*p*p;
+  const Flt D = q*q + cb_p;
 
-  if (IsNegative(D)) {
+  if (isNegative(D)) {
     // three real solutions
     const Flt phi = std::acos(-q / std::sqrt(-cb_p)) / 3.0;
     const Flt t = 2 * std::sqrt(-p);
@@ -117,14 +117,14 @@ static int solveCubic1only(const Flt c[4], Flt* s)
     //s[1] = (-t * std::cos(phi + (PI / 3))) - third_A;
     //s[2] = (-t * std::cos(phi - (PI / 3))) - third_A;
     return 1; // 3
-  } else if (IsPositive(D)) {
+  } else if (isPositive(D)) {
     // one real solution
     const Flt sqrt_D = std::sqrt(D);
     const Flt u =  CBRT(sqrt_D - q);
     const Flt v = -CBRT(sqrt_D + q);
     s[0] = (u + v) - third_A;
     return 1;
-  } else if (IsZero(q)) {
+  } else if (isZero(q)) {
     // one triple solution
     s[0] = -third_A;
     return 1;
@@ -147,7 +147,7 @@ int SolveQuartic(const Flt c[5], Flt s[4])
   const Flt D = c[0] / c[4];
 
   // substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
-  const Flt sq_A = Sqr(A);
+  const Flt sq_A = A*A;
   const Flt qtr_A = .25 * A;
   const Flt p = -.375 * sq_A + B;
   const Flt q =  .125 * sq_A * A - .5 * A * B + C;
@@ -157,7 +157,7 @@ int SolveQuartic(const Flt c[5], Flt s[4])
   Flt coeffs[4];
   int num;
 
-  if (IsZero(r)) {
+  if (isZero(r)) {
     // no absolute term: y(y^3 + py + q) = 0
     coeffs[0] = q;
     coeffs[1] = p;
@@ -168,7 +168,7 @@ int SolveQuartic(const Flt c[5], Flt s[4])
 
   } else {
     // solve the resolvent cubic
-    coeffs[0] = .5 * r * p - .125 * Sqr(q);
+    coeffs[0] = .5 * r * p - .125 * q*q;
     coeffs[1] = -r;
     coeffs[2] = -.5 * p;
     coeffs[3] = 1;
@@ -177,14 +177,14 @@ int SolveQuartic(const Flt c[5], Flt s[4])
     // take the one real solution to build two quadric equations
     const Flt z = s[0];
 
-    Flt u = Sqr(z) - r;
-    if (IsNegative(u)) { return 0; }
+    Flt u = z*z - r;
+    if (isNegative(u)) { return 0; }
 
     Flt v = (2 * z) - p;
-    if (IsNegative(v)) { return 0; }
+    if (isNegative(v)) { return 0; }
 
-    if (IsPositive(u)) { u = std::sqrt(u); } else { u = 0; }
-    if (IsPositive(v)) { v = std::sqrt(v); } else { v = 0; }
+    if (isPositive(u)) { u = std::sqrt(u); } else { u = 0; }
+    if (isPositive(v)) { v = std::sqrt(v); } else { v = 0; }
 
     coeffs[0] = z - u;
     coeffs[1] = (q < 0) ? -v : v;

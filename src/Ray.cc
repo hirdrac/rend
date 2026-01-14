@@ -16,7 +16,7 @@ bool CalcTransmitResult(
 
   // beta
   const Flt dot = dotProduct(-normal, incident);
-  const Flt root = 1.0 + (Sqr(alpha) * (Sqr(dot) - 1.0));
+  const Flt root = 1.0 + (sqr(alpha) * (sqr(dot) - 1.0));
   if (root < 0) {
     return false;  // internal refraction
   }

@@ -57,7 +57,7 @@ int Disc::intersect(const Ray& r, HitList& hl) const
   }
 
   const Vec3 pt{base.x + (dir.x * h), base.y + (dir.y * h), 0.0};
-  if ((Sqr(pt.x) + Sqr(pt.y)) > 1.0) {
+  if ((sqr(pt.x) + sqr(pt.y)) > 1.0) {
     return 0;
   }
 
@@ -105,11 +105,11 @@ int Cone::intersect(const Ray& r, HitList& hl) const
   int side[2];
   int hits = 0;
 
-  const Flt a = Sqr(dir.x) + Sqr(dir.y) - (.25 * Sqr(dir.z));
+  const Flt a = sqr(dir.x) + sqr(dir.y) - (.25 * sqr(dir.z));
   const Flt b = (base.x * dir.x) + (base.y * dir.y)
     + (.25 * dir.z * (1.0 - base.z));
-  const Flt c = Sqr(base.x) + Sqr(base.y) - (.25 * Sqr(base.z - 1.0));
-  if (IsZero(a)) {
+  const Flt c = sqr(base.x) + sqr(base.y) - (.25 * sqr(base.z - 1.0));
+  if (isZero(a)) {
     // ray parallel with cone side (1 hit)
     const Flt h1 = -c / (2.0 * b);
     const Flt h1z = base.z + (dir.z * h1);
@@ -118,7 +118,7 @@ int Cone::intersect(const Ray& r, HitList& hl) const
     }
   } else {
     // solve quadradic
-    const Flt d = Sqr(b) - (a * c);
+    const Flt d = sqr(b) - (a * c);
     if (d < VERY_SMALL) { return 0; } // 0 or 1 hit
 
     const Flt sqrt_d = std::sqrt(d);
@@ -140,7 +140,7 @@ int Cone::intersect(const Ray& r, HitList& hl) const
     const Flt h0 = -(base.z + 1.0) / dir.z;
     const Flt h0x = base.x + (dir.x * h0);
     const Flt h0y = base.y + (dir.y * h0);
-    if ((Sqr(h0x) + Sqr(h0y)) <= 1.0) {
+    if ((sqr(h0x) + sqr(h0y)) <= 1.0) {
       h[hits] = h0;
       side[hits] = 1;
       ++hits;
@@ -333,17 +333,17 @@ int Cylinder::intersect(const Ray& r, HitList& hl) const
   const Vec3 dir = _trans.rayLocalDir(r);
   const Vec3 base = _trans.rayLocalBase(r);
 
-  const Flt a = Sqr(dir.x) + Sqr(dir.y);
+  const Flt a = sqr(dir.x) + sqr(dir.y);
   const Flt b = (dir.x * base.x) + (dir.y * base.y);
-  const Flt c = Sqr(base.x) + Sqr(base.y) - 1.0;
-  const Flt d = Sqr(b) - (a * c);
+  const Flt c = sqr(base.x) + sqr(base.y) - 1.0;
+  const Flt d = sqr(b) - (a * c);
 
   Flt near_h = -VERY_LARGE, far_h = VERY_LARGE;
-  if (IsPositive(d)) {
+  if (isPositive(d)) {
     const Flt sqrt_d = std::sqrt(d);
     near_h = (-b - sqrt_d) / a;  // cylinder hit 1
     far_h  = (-b + sqrt_d) / a;  // cylinder hit 2
-  } else if (IsNegative(d) || c > 0.0) {
+  } else if (isNegative(d) || c > 0.0) {
     // cylinder missed completely or
     // ray parallel with cylinder side but outside cylinder
     return 0;
@@ -438,10 +438,10 @@ int Paraboloid::intersect(const Ray& r, HitList& hl) const
   int side[2];
   int hits = 0;
 
-  const Flt a = Sqr(dir.x) + Sqr(dir.y);
+  const Flt a = sqr(dir.x) + sqr(dir.y);
   const Flt b = (dir.x * base.x) + (dir.y * base.y) + (.25 * dir.z);
-  const Flt c = Sqr(base.x) + Sqr(base.y) + (.5 * base.z) - .5;
-  if (IsZero(a)) {
+  const Flt c = sqr(base.x) + sqr(base.y) + (.5 * base.z) - .5;
+  if (isZero(a)) {
     // special single intersection case
     const Flt h1 = -c / (2.0 * b);
     if ((base.z + (dir.z * h1)) >= -1.0) {
@@ -449,7 +449,7 @@ int Paraboloid::intersect(const Ray& r, HitList& hl) const
     }
   } else {
     // solve quadradic
-    const Flt d = Sqr(b) - (a * c);
+    const Flt d = sqr(b) - (a * c);
     if (d < VERY_SMALL) { return 0; } // 0 or 1 hit
 
     const Flt sqrt_d = std::sqrt(d);
@@ -608,7 +608,7 @@ int Sphere::intersect(const Ray& r, HitList& hl) const
   const Flt a = dotProduct(dir,  dir);
   const Flt b = dotProduct(base, dir);
   const Flt c = dotProduct(base, base) - 1.0;
-  const Flt d = Sqr(b) - (a * c);
+  const Flt d = sqr(b) - (a * c);
   if (d < VERY_SMALL) {
     return 0;  // missed (avoid single intersection case)
   }
@@ -691,14 +691,14 @@ int Torus::intersect(const Ray& r, HitList& hl) const
 
   const Flt bd = dotProduct(base, dir);
   const Flt dd = dotProduct(dir,  dir);
-  const Flt t1 = dotProduct(base, base) + (1.0 - Sqr(_radius));
+  const Flt t1 = dotProduct(base, base) + (1.0 - sqr(_radius));
 
   Flt c[5];
-  c[0] = Sqr(t1) - 4 * (Sqr(base.x) + Sqr(base.z));
+  c[0] = sqr(t1) - 4 * (sqr(base.x) + sqr(base.z));
   c[1] = 4 * bd * t1 - 8 * (base.x * dir.x + base.z * dir.z);
-  c[2] = 4 * Sqr(bd) + 2 * t1 * dd - 4 * (Sqr(dir.x) + Sqr(dir.z));
+  c[2] = 4 * sqr(bd) + 2 * t1 * dd - 4 * (sqr(dir.x) + sqr(dir.z));
   c[3] = 4 * bd * dd;
-  c[4] = Sqr(dd);
+  c[4] = sqr(dd);
 
   Flt root[4];
   const int n = SolveQuartic(c, root);
@@ -752,10 +752,10 @@ Vec3 Torus::normal(const Ray& r, const HitInfo& h) const
   // previous normal calc
   //const Flt x = h.local_pt.x;
   //const Flt z = h.local_pt.z;
-  //const Flt sqrt_d = std::sqrt(Sqr(x) + Sqr(z));
+  //const Flt sqrt_d = std::sqrt(sqr(x) + sqr(z));
   //const Vec3 n{x - (x / sqrt_d), h.local_pt.y, z - (z / sqrt_d)};
 
-  const Flt a = dotProduct(h.local_pt, h.local_pt) - 1.0 - Sqr(_radius);
+  const Flt a = dotProduct(h.local_pt, h.local_pt) - 1.0 - sqr(_radius);
   const Vec3 n = h.local_pt * Vec3{a, a + 2.0, a};
 
   return _trans.normalLocalToGlobal(n);

@@ -23,7 +23,7 @@ bool Sun::luminate(JobState& js, const Scene& s, const Ray& r,
 {
   const Vec3 unit_dir = -_finalDir;
   const Flt angle = dotProduct(eh.normal, unit_dir);
-  if (!IsPositive(angle)) { return false; }
+  if (!isPositive(angle)) { return false; }
 
   if (s.shadow) {
     Ray sray {
@@ -49,7 +49,7 @@ REGISTER_LIGHT_CLASS(PointLight,"light");
 int PointLight::init(Scene& s)
 {
   _finalPos = _trans.pointLocalToGlobal({0,0,0});
-  if (!IsPositive(_radius)) { _samples = 1; }
+  if (!isPositive(_radius)) { _samples = 1; }
   else { _samples = std::max(_samples, 1); }
   return 0;
 }
@@ -61,7 +61,7 @@ bool PointLight::luminate(JobState& js, const Scene& s, const Ray& r,
   const Flt len = dir.length();
   const Vec3 unit_dir = dir * (1.0 / len);
   const Flt angle = dotProduct(eh.normal, unit_dir);
-  if (!IsPositive(angle)) { return false; }
+  if (!isPositive(angle)) { return false; }
 
   if (s.shadow) {
     Ray sray {

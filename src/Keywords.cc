@@ -88,7 +88,7 @@ static int RotateByAxisFn(
   Flt angle;
   if (sp.getFlt(n, angle) || notDone(sp, n)) { return -1; }
 
-  t->base.rotate<axis>(DegToRad(angle));
+  t->base.rotate<axis>(degToRad(angle));
   return 0;
 }
 
@@ -160,14 +160,14 @@ static int StretchXFn(
 
   const Vec3 dir = p2 - p1;
   const Flt len = dir.length();
-  if (IsZero(len)) {
+  if (isZero(len)) {
     println_err("Invalid stretch length");
     return -1;
   }
 
   const Vec3 center = (p1+p2) * .5;
   const Vec3 axisX = dir / len;
-  const Vec3 up = IsOne(Abs(axisX.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
+  const Vec3 up = isOne(Abs(axisX.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
   const Vec3 axisZ = unitVec(crossProduct(up, axisX));
   const Vec3 axisY = unitVec(crossProduct(axisX, axisZ));
 
@@ -197,14 +197,14 @@ static int StretchYFn(
 
   const Vec3 dir = p2 - p1;
   const Flt len = dir.length();
-  if (IsZero(len)) {
+  if (isZero(len)) {
     println_err("Invalid stretch length");
     return -1;
   }
 
   const Vec3 center = (p1+p2) * .5;
   const Vec3 axisY = dir / len;
-  const Vec3 side = IsOne(Abs(axisY.x)) ? Vec3{0,-1,0} : Vec3{1,0,0};
+  const Vec3 side = isOne(Abs(axisY.x)) ? Vec3{0,-1,0} : Vec3{1,0,0};
   const Vec3 axisZ = unitVec(crossProduct(side, axisY));
   const Vec3 axisX = unitVec(crossProduct(axisY, axisZ));
 
@@ -234,14 +234,14 @@ static int StretchZFn(
 
   const Vec3 dir = p2 - p1;
   const Flt len = dir.length();
-  if (IsZero(len)) {
+  if (isZero(len)) {
     println_err("Invalid stretch length");
     return -1;
   }
 
   const Vec3 center = (p1+p2) * .5;
   const Vec3 axisZ = dir / len;
-  const Vec3 up = IsOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
+  const Vec3 up = isOne(Abs(axisZ.y)) ? Vec3{0,0,-1} : Vec3{0,1,0};
     // FIXME: may need to make 'up' configurable or come up with a better
     //   rule for when axisZ == +/- 1
   const Vec3 axisX = unitVec(crossProduct(up, axisZ));

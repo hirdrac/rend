@@ -1,6 +1,6 @@
 //
 // Scene.hh
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // storage class for all scene information
 //
@@ -82,7 +82,7 @@ class Scene
     return _lights; }
 
   [[nodiscard]] int samplesPerPixel() const {
-    const bool multiSample = IsPositive(jitter) || IsPositive(aperture);
+    const bool multiSample = isPositive(jitter) || isPositive(aperture);
     return (std::max(sample_x, 1) * std::max(sample_y, 1))
       * (multiSample ? std::max(samples, 1) : 1);
   }

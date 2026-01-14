@@ -1,6 +1,6 @@
 //
 // BBox.hh
-// Copyright (C) 2022 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Axis-aligned bounding box
 //
@@ -76,6 +76,6 @@ void BBox::reset()
 
 bool BBox::empty() const
 {
-  return IsGreater(pmin.x, pmax.x) || IsGreater(pmin.y, pmax.y)
-    || IsGreater(pmin.z, pmax.z);
+  return isGreater(pmin.x, pmax.x) || isGreater(pmin.y, pmax.y)
+    || isGreater(pmin.z, pmax.z);
 }

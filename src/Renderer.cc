@@ -26,7 +26,7 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   _vnormal = unitVec(_scene->coi - _scene->eye);
   const Vec3 vup = unitVec(_scene->vup);
   const Flt vnvup_dot = dotProduct(_vnormal, vup);
-  if (IsOne(Abs(vnvup_dot))) {
+  if (isOne(Abs(vnvup_dot))) {
     println_err("Bad VUP vector");
     return -1;
   }
@@ -45,8 +45,8 @@ int Renderer::init(const Scene* s, FrameBuffer* fb)
   // Calculate Screen/Pixel vectors
   const Flt imgW = Flt(s->image_width);
   const Flt imgH = Flt(s->image_height);
-  const Flt focalLen = IsPositive(_scene->aperture) ? s->focus : 1.0;
-  const Flt ss = std::tan(DegToRad(s->fov * .5)) * focalLen;
+  const Flt focalLen = isPositive(_scene->aperture) ? s->focus : 1.0;
+  const Flt ss = std::tan(degToRad(s->fov * .5)) * focalLen;
   const Flt screenHeight = ss;
   const Flt screenWidth = ss * (imgW / imgH);
   // FIXME: assumes width > height for fov calc
@@ -81,8 +81,8 @@ void Renderer::render(JobState& js, int min_x, int min_y, int max_x, int max_y)
   const Flt halfHeight = Flt(_scene->image_height) * .5;
   const Vec3 eye = _scene->eye;
 
-  const bool use_jitter = IsPositive(_scene->jitter);
-  const bool use_aperture = IsPositive(_scene->aperture);
+  const bool use_jitter = isPositive(_scene->jitter);
+  const bool use_aperture = isPositive(_scene->aperture);
   const int jitterCount =
     use_jitter || use_aperture ? std::max(_scene->samples, 1) : 1;
   const auto samplesInv = static_cast<Color::value_type>(

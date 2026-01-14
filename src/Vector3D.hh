@@ -79,7 +79,7 @@ class Vector2
   [[nodiscard]] constexpr const T* data() const { return _val; }
 
   [[nodiscard]] constexpr T lengthSqr() const {
-    return Sqr(_val[0])+Sqr(_val[1]); }
+    return dotProduct(*this, *this); }
   [[nodiscard]] T length() const { return std::sqrt(lengthSqr()); }
   [[nodiscard]] T lengthInv() const { return T{1} / length(); }
   [[nodiscard]] constexpr bool isUnit() const { return IsOne(lengthSqr()); }
@@ -152,7 +152,7 @@ class Vector3
   [[nodiscard]] constexpr const T* data() const { return _val; }
 
   [[nodiscard]] constexpr T lengthSqr() const {
-    return Sqr(_val[0]) + Sqr(_val[1]) + Sqr(_val[2]); }
+    return dotProduct(*this, *this); }
   [[nodiscard]] T length() const { return std::sqrt(lengthSqr()); }
   [[nodiscard]] T lengthInv() const { return T{1} / length(); }
   [[nodiscard]] constexpr bool isUnit() const { return IsOne(lengthSqr()); }
@@ -486,13 +486,13 @@ template<NumType T>
 template<NumType T>
 [[nodiscard]] Vector2<T> unitVec(T x, T y)
 {
-  const T inv = T{1} / std::sqrt(Sqr(x) + Sqr(y));
+  const T inv = T{1} / std::sqrt(x*x + y*y);
   return {x * inv, y * inv};
 }
 
 template<NumType T>
 [[nodiscard]] Vector3<T> unitVec(T x, T y, T z)
 {
-  const T inv = T{1} / std::sqrt(Sqr(x) + Sqr(y) + Sqr(z));
+  const T inv = T{1} / std::sqrt(x*x + y*y + z*z);
   return {x * inv, y * inv, z * inv};
 }
