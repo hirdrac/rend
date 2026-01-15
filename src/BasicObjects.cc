@@ -701,12 +701,12 @@ int Torus::intersect(const Ray& r, HitList& hl) const
   c[4] = sqr(dd);
 
   Flt root[4];
-  const int n = SolveQuartic(c, root);
+  const int n = solveQuartic(c, root);
   if ((n != 2) && (n != 4)) {
     return 0;
   }
 
-  // NOTE: output order of SolveQuartic() ok for addHit() logic below
+  // NOTE: output order of solveQuartic() ok for addHit() logic below
   // if 2 hits:
   //   root[0] < root[1]
   // if 4 hits:

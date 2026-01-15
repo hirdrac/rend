@@ -2,7 +2,7 @@
 // Roots.cc
 // Copyright (C) 2026 Richard Bradley
 //
-// SolveQuadric(), SolveCubic(), SolveQuartic() based on code
+// solveQuadric(), solveCubic(), solveQuartic() based on code
 // by Jochen Schwarze (Graphics Gems I)
 //
 
@@ -25,7 +25,7 @@ static inline Flt CBRT(Flt x)
 
 
 // **** Functions ****
-int SolveQuadric(const Flt c[3], Flt s[2])
+int solveQuadric(const Flt c[3], Flt s[2])
 {
   // normal form: x^2 + px + q = 0
   const Flt p = c[1] / (2 * c[2]);
@@ -46,7 +46,7 @@ int SolveQuadric(const Flt c[3], Flt s[2])
 }
 
 
-int SolveCubic(const Flt c[4], Flt s[3])
+int solveCubic(const Flt c[4], Flt s[3])
 {
   // normal form: x^3 + Ax^2 + Bx + C = 0
   const Flt A = c[2] / c[3];
@@ -138,7 +138,7 @@ static int solveCubic1only(const Flt c[4], Flt* s)
 }
 
 
-int SolveQuartic(const Flt c[5], Flt s[4])
+int solveQuartic(const Flt c[5], Flt s[4])
 {
   // normal form: x^4 + Ax^3 + Bx^2 + Cx + D = 0
   const Flt A = c[3] / c[4];
@@ -163,7 +163,7 @@ int SolveQuartic(const Flt c[5], Flt s[4])
     coeffs[1] = p;
     coeffs[2] = 0;
     coeffs[3] = 1;
-    num = SolveCubic(coeffs, s);
+    num = solveCubic(coeffs, s);
     s[num++] = 0;
 
   } else {
@@ -189,12 +189,12 @@ int SolveQuartic(const Flt c[5], Flt s[4])
     coeffs[0] = z - u;
     coeffs[1] = (q < 0) ? -v : v;
     coeffs[2] = 1;
-    num = SolveQuadric(coeffs, s);
+    num = solveQuadric(coeffs, s);
 
     coeffs[0] = z + u;
     coeffs[1] = (q < 0) ? v : -v;
     coeffs[2] = 1;
-    num += SolveQuadric(coeffs, s + num);
+    num += solveQuadric(coeffs, s + num);
   }
 
   // resubstitute

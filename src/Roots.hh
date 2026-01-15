@@ -1,6 +1,6 @@
 //
 // Roots.hh
-// Copyright (C) 2021 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Functions for solving polynomial equations
 //
@@ -10,6 +10,6 @@
 
 
 // **** Functions ****
-int SolveQuadric(const Flt c[3], Flt s[2]);
-int   SolveCubic(const Flt c[4], Flt s[3]);
-int SolveQuartic(const Flt c[5], Flt s[4]);
+int solveQuadric(const Flt c[3], Flt s[2]);
+int solveCubic(const Flt c[4], Flt s[3]);
+int solveQuartic(const Flt c[5], Flt s[4]);
