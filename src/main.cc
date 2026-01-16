@@ -1,6 +1,6 @@
 //
 // main.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // startup for rend
 //
@@ -23,7 +23,7 @@
 
 
 // **** Functions ****
-int ShellInfo(const Scene& s, const FrameBuffer& fb)
+int shellInfo(const Scene& s, const FrameBuffer& fb)
 {
   if (s.objects().empty()) {
     println("No scene loaded");
@@ -48,7 +48,7 @@ int ShellInfo(const Scene& s, const FrameBuffer& fb)
 }
 
 
-int ShellLoad(Scene& s, const std::string& file)
+int shellLoad(Scene& s, const std::string& file)
 {
   SceneParser parser;
   if (parser.loadFile(file) < 0) {
@@ -77,7 +77,7 @@ int ShellLoad(Scene& s, const std::string& file)
   return double(t1 - t0) / 1000000.0;
 }
 
-int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
+int shellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 {
   if (s.objects().empty()) {
     println_err("No scene loaded yet");
@@ -97,7 +97,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
 #if 0
   // FIXME: output in verbose mode
   if (!s.optObjects().empty()) {
-    PrintList(s.optObjects());
+    printList(s.optObjects());
   }
 #endif
 
@@ -137,7 +137,7 @@ int ShellRender(Renderer& ren, Scene& s, FrameBuffer& fb)
   return 0;
 }
 
-int ShellSave(const FrameBuffer& fb, const std::string& file)
+int shellSave(const FrameBuffer& fb, const std::string& file)
 {
   if (fb.width() <= 0 || fb.height() <= 0) {
     println_err("No image to save");
@@ -169,7 +169,7 @@ int ShellSave(const FrameBuffer& fb, const std::string& file)
   return error;
 }
 
-void ShellStats(const Renderer& ren, const Scene& s)
+void shellStats(const Renderer& ren, const Scene& s)
 {
   const StatInfo& st = ren.stats();
   const uint64_t object_tried = st.objectsTried();
@@ -205,7 +205,7 @@ void ShellStats(const Renderer& ren, const Scene& s)
   }
 }
 
-int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
+int shellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
 {
   static std::string lastFile;
 
@@ -238,7 +238,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
     break;
 
   case 'i':
-    ShellInfo(s, fb);
+    shellInfo(s, fb);
     break;
 
   case 'j':
@@ -257,10 +257,10 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
 
   case 'l':
     if (input >> arg) {
-      ShellLoad(s, arg);
+      shellLoad(s, arg);
       lastFile = arg;
     } else if (!lastFile.empty()) {
-      ShellLoad(s, lastFile);
+      shellLoad(s, lastFile);
     } else {
       println_err("Load requires a file name");
     }
@@ -270,7 +270,7 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
     if (s.objects().empty()) {
       println("No object list");
     } else {
-      PrintList(s.objects());
+      printList(s.objects());
     }
     break;
 
@@ -279,21 +279,21 @@ int ShellLoop(Renderer& ren, Scene& s, FrameBuffer& fb)
     return 0; // quit
 
   case 'r':
-    ShellRender(ren, s, fb);
+    shellRender(ren, s, fb);
     break;
 
   case 's':
     if (input >> arg) {
-      ShellSave(fb, arg);
+      shellSave(fb, arg);
     } else {
       std::string name = lastFile.substr(0, lastFile.rfind('.'));
       if (name.empty()) { name = "out"; }
-      ShellSave(fb, name);
+      shellSave(fb, name);
     }
     break;
 
   case 'z':
-    ShellStats(ren, s);
+    shellStats(ren, s);
     break;
 
   default:
@@ -327,7 +327,7 @@ int ErrorUsage(const char* const* argv)
 // **** Main Function ****
 int main(int argc, char** argv)
 {
-  println("Rend v0.1 (alpha) - Copyright (C) 2024 Richard Bradley");
+  println("Rend v0.1 (alpha) - Copyright (C) Richard Bradley");
 
   std::string fileLoad, imageSave;
   bool interactive = false;
@@ -370,17 +370,17 @@ int main(int argc, char** argv)
   Scene s;
   FrameBuffer fb;
   if (!fileLoad.empty()) {
-    if (ShellLoad(s, fileLoad)) { return -1; }
-    if (ShellRender(ren, s, fb)) { return -1; }
+    if (shellLoad(s, fileLoad)) { return -1; }
+    if (shellRender(ren, s, fb)) { return -1; }
   }
 
   if (!imageSave.empty()) {
-    ShellSave(fb, imageSave);
+    shellSave(fb, imageSave);
   }
 
   if (interactive) {
     println("Starting Rend Shell - Enter '?' for help, 'Q' to quit");
-    while (ShellLoop(ren, s, fb)) { }
+    while (shellLoop(ren, s, fb)) { }
   }
 
   return 0;
