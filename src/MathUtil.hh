@@ -2,8 +2,7 @@
 // MathUtil.hh
 // Copyright (C) 2026 Richard Bradley
 //
-// fun and useful numeric constants and
-// various numeric functions needing a home
+// useful numeric constants and various numeric functions
 //
 
 #pragma once
@@ -147,7 +146,7 @@ template<NumType T>
 }
 
 template<NumType T>
-[[nodiscard]] constexpr int sgn(T x)
+[[nodiscard]] constexpr int sign(T x)
 {
   if constexpr (std::is_signed_v<T>) {
     return int{isPositive(x)} - int{isNegative(x)};
