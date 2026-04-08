@@ -55,7 +55,8 @@ class Vector2
   constexpr type& operator/=(T v) {
     _val[0] /= v; _val[1] /= v; return *this; }
 
-  [[nodiscard]] constexpr bool operator==(const type& v) const = default;
+  [[nodiscard]] constexpr bool operator==(const type& v) const {
+    return (_val[0] == v[0]) && (_val[1] == v[1]); }
   [[nodiscard]] constexpr type operator-() const {
     return {-_val[0], -_val[1]}; }
 
@@ -128,7 +129,8 @@ class Vector3
   constexpr type& operator/=(T v) {
     _val[0] /= v; _val[1] /= v; _val[2] /= v; return *this; }
 
-  [[nodiscard]] constexpr bool operator==(const type& v) const = default;
+  [[nodiscard]] constexpr bool operator==(const type& v) const {
+    return (_val[0] == v[0]) && (_val[1] == v[1]) && (_val[2] == v[2]); }
   [[nodiscard]] constexpr type operator-() const {
     return {-_val[0], -_val[1], -_val[2]}; }
 
@@ -207,7 +209,10 @@ class Vector4
   constexpr type& operator/=(T v) {
     _val[0] /= v; _val[1] /= v; _val[2] /= v; _val[3] /= v; return *this; }
 
-  [[nodiscard]] constexpr bool operator==(const type& v) const = default;
+  [[nodiscard]] constexpr bool operator==(const type& v) const {
+    return (_val[0] == v[0]) && (_val[1] == v[1])
+      && (_val[2] == v[2]) && (_val[3] == v[3]);
+  }
   [[nodiscard]] constexpr type operator-() const {
     return {-_val[0], -_val[1], -_val[2], -_val[3]}; }
 

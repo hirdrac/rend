@@ -1,0 +1,5 @@
+FLAG_TEST = -UNDEBUG
+INCLUDE_TEST = src
+SOURCE_DIR_TEST = tests
+
+TEST_Vector3D.SRC = Vector3DTest.cc

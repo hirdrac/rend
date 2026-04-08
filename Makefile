@@ -1,5 +1,5 @@
 # rend Makefile
-# Copyright (C) 2024 Richard Bradley
+# Copyright (C) 2026 Richard Bradley
 
 base_src :=\
   BBox.cc FrameBuffer.cc HitCostInfo.cc Intersect.cc JobState.cc\
@@ -28,6 +28,7 @@ WARN_CXX_EXTRA = extra-semi conversion cast-align
 FLAGS = -march=native -ffast-math -fno-plt
 #FLAGS_RELEASE = -DNDEBUG
 
+include tests/tests.mk
 include Makefile.mk
 
 # END
