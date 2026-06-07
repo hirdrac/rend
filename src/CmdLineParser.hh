@@ -1,6 +1,6 @@
 //
 // CmdLineParser.hh
-// Copyright (C) 2025 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 // Helper class for parsing command line arguments.
 //
@@ -56,6 +56,7 @@ class CmdLineParser
   }
 
   [[nodiscard]] std::string_view arg() const { return _arg; }
+  [[nodiscard]] std::string_view operator*() const { return _arg; }
 
   template<class T>
   bool get(T& val) const { return convertVal(_arg, val); }
@@ -64,7 +65,8 @@ class CmdLineParser
     return (_argType == OPTION_SHORT) || (_argType == OPTION_LONG);
   }
 
-  [[nodiscard]] bool option(char shortName, std::string_view longName) const {
+  [[nodiscard]] bool option(char shortName, std::string_view longName) const
+  {
     if (_argType == OPTION_SHORT) {
       // short name option check (-x)
       return (shortName != '\0' && _arg.size() == 2 && _arg[1] == shortName);
@@ -123,7 +125,7 @@ class CmdLineParser
 
   int _current = 0;
   std::string_view _arg;
-  enum { OPTION_SHORT, OPTION_LONG, VALUE, ARGS_DONE } _argType = ARGS_DONE;
+  enum { ARGS_DONE, OPTION_SHORT, OPTION_LONG, VALUE } _argType;
   bool _optionsDone = false;
 
   template<class T>
