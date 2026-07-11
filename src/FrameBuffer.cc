@@ -1,6 +1,6 @@
 //
 // FrameBuffer.cc
-// Copyright (C) 2024 Richard Bradley
+// Copyright (C) 2026 Richard Bradley
 //
 
 #include "FrameBuffer.hh"
@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 #include <cassert>
+#include <cstdint>
 #include <png.h>
 
 
